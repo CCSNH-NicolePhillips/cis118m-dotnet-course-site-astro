@@ -1,57 +1,19 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 01 - Extra Practice"
-description: "Optional practice for Week 1"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 01 • Extra Practice"
+description: "Week 1 Extra Practice: Getting comfortable with output"
 ---
 
-<ViewedMarker week="01" slug="extra-practice" client:load />
+# Week 1 Extra Practice: Getting comfortable with output
 
-# Extra practice: Hello, .NET refinements
+Pick **1–2** items (optional).
 
-## Goal
-- Get comfortable editing and re-running a console app
-- Practice adding multiple output lines
-- Reinforce entry point understanding
+- Make your program print a 5-line ‘About Me’ card (labels + values).
+- Add one line that prints today’s date as text (you can type it manually for now).
+- Challenge: Make your output look like a tiny menu:
+  - 1) Start
+  - 2) Help
+  - 3) Quit
 
-## What to know
-- You can add as many `Console.WriteLine` calls as you want.
-- The order of lines in code matches the order of output.
-- Empty strings create blank lines for spacing.
-
-## Examples
-```csharp
-Console.WriteLine("--- About Me ---");
-Console.WriteLine("Name: Taylor");
-Console.WriteLine("Goal: Learn .NET");
-Console.WriteLine("");
-Console.WriteLine("Thanks for reading!");
-```
-
-## Try it
-- Add a header and footer line around your output.
-- Insert a blank line between sections.
-- Change one line to include the current date or year.
-
-## Common mistakes
-- Copy/pasting quotes that are curly instead of straight ASCII quotes.
-- Forgetting to save before running.
-- Leaving extra spaces that change alignment.
-
-## Mini-check
-- How do you add a blank line to the output?
-<details>
-<summary>Show answer</summary>
-Use `Console.WriteLine("");` to print an empty line.
-</details>
-
-## Next
-- <a class="button" href={editorUrl("01", "extra-practice")}>
-    Open in Editor (Week 1 Extra Practice)
-  </a>
-- <a class="button-ghost" href="../lab/">Go to Lab</a>
-
-<ProgressBadge week="01" client:load />
+## Open in Editor
+- Use: `/editor/?week=01&starter=week-01-extra-practice`

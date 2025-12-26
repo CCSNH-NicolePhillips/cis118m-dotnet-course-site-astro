@@ -2,17 +2,6 @@
 import "../styles/global.css";
 import { COURSE, WEEKS } from "../config/site";
 const { title = "Course Page", description = "" } = Astro.props;
-
-const segments = Astro.url.pathname.split("/").filter(Boolean);
-const weekSegment = segments[0];
-const subSegment = segments[1];
-const maybeWeek = weekSegment?.startsWith("week-") ? weekSegment.replace("week-", "") : "";
-const starterSegment = subSegment && ["lesson-1", "lesson-2", "extra-practice"].includes(subSegment)
-  ? subSegment
-  : "";
-const deepLink = maybeWeek && starterSegment
-  ? `/editor/?week=${maybeWeek}&starter=${starterSegment}`
-  : COURSE.editorUrl || "";
 ---
 <html lang="en">
   <head>
@@ -52,11 +41,11 @@ const deepLink = maybeWeek && starterSegment
 
           <hr />
 
-          <div class="hint editor-link">
-            {deepLink
-              ? <a class="button" href={deepLink}>Open Browser Code Editor</a>
-              : <span>Editor link coming in Step 5.</span>
-            }
+          <div class="hint">
+            <a href="/editor/">Open Browser Code Editor</a>
+          </div>
+          <div class="hint" style="margin-top:8px;">
+            <span style="opacity:.9;">Progress is saved on this device.</span>
           </div>
         </aside>
 
@@ -65,5 +54,113 @@ const deepLink = maybeWeek && starterSegment
         </main>
       </div>
     </div>
+
+    <!-- Simple local progress tracker (no login). -->
+    <script is:inline>
+      (() => {
+        const KEY = "cis118m_progress_v1";
+
+        const safeJsonParse = (s) => {
+          try { return JSON.parse(s); } catch { return null; }
+        };
+
+        const load = () => {
+          try {
+            const raw = localStorage.getItem(KEY);
+            const obj = raw ? safeJsonParse(raw) : null;
+            if (obj && typeof obj === "object") return obj;
+          } catch {}
+          return { weeks: {} };
+        };
+
+        const save = (data) => {
+          try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
+        };
+
+        const ensureWeek = (data, week) => {
+          data.weeks ||= {};
+          data.weeks[week] ||= { viewed: {}, selfMarked: {}, lastUpdated: new Date().toISOString() };
+          data.weeks[week].viewed ||= {};
+          data.weeks[week].selfMarked ||= {};
+          return data.weeks[week];
+        };
+
+        const getWeekAndSlugFromPath = () => {
+          const path = window.location.pathname;
+          const m = path.match(/^\/week-(\d{2})\/(.*)$/);
+          if (!m) return null;
+          const week = m[1];
+          const rest = (m[2] || "").replace(/\/+$/, "");
+          const slug = rest === "" ? "index" : rest.split("/")[0];
+          return { week, slug };
+        };
+
+        const markViewed = () => {
+          const info = getWeekAndSlugFromPath();
+          if (!info) return;
+          const { week, slug } = info;
+          const data = load();
+          const w = ensureWeek(data, week);
+          const trackable = new Set(["lesson-1","lesson-2","extra-practice","lab","homework","index"]);
+          if (trackable.has(slug)) {
+            w.viewed[slug] = true;
+            w.lastUpdated = new Date().toISOString();
+            save(data);
+          }
+        };
+
+        const applyProgressBadges = () => {
+          const info = getWeekAndSlugFromPath();
+          if (!info) return;
+          const { week } = info;
+          const data = load();
+          const w = ensureWeek(data, week);
+
+          document.querySelectorAll("[data-progress-slug]").forEach((el) => {
+            const slug = el.getAttribute("data-progress-slug");
+            const kind = el.getAttribute("data-progress-kind") || "viewed"; // viewed | selfMarked
+            const done = kind === "selfMarked" ? !!w.selfMarked?.[slug] : !!w.viewed?.[slug];
+
+            el.textContent = done ? "✅ Done" : "⬜ Not yet";
+            el.setAttribute("aria-label", done ? "Done" : "Not yet");
+            el.style.fontWeight = "600";
+            el.style.opacity = done ? "1" : ".85";
+          });
+        };
+
+        const wireMarkCompleteButtons = () => {
+          const info = getWeekAndSlugFromPath();
+          if (!info) return;
+          const { week } = info;
+
+          document.querySelectorAll("[data-mark-complete]").forEach((btn) => {
+            const slug = btn.getAttribute("data-mark-complete");
+            btn.addEventListener("click", () => {
+              const data = load();
+              const w = ensureWeek(data, week);
+              w.selfMarked[slug] = true;
+              w.lastUpdated = new Date().toISOString();
+              save(data);
+              applyProgressBadges();
+              btn.disabled = true;
+              btn.textContent = "Marked complete ✅";
+            });
+
+            const data = load();
+            const w = ensureWeek(data, week);
+            if (w.selfMarked?.[slug]) {
+              btn.disabled = true;
+              btn.textContent = "Marked complete ✅";
+            }
+          });
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+          markViewed();
+          applyProgressBadges();
+          wireMarkCompleteButtons();
+        });
+      })();
+    </script>
   </body>
 </html>

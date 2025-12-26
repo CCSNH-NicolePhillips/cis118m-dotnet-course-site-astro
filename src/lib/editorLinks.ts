@@ -4,3 +4,6 @@ export const starterIdFor = (week: string, slug: string) => `week-${padWeek(week
 
 export const editorUrl = (week: string, slug: string) =>
   `/editor/?week=${padWeek(week)}&starter=${starterIdFor(week, slug)}`;
+
+// Backward compatibility for existing calls
+export const buildEditorUrl = editorUrl;

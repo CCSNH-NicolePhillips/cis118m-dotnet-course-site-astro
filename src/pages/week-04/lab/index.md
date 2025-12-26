@@ -1,18 +1,19 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 02 • Week 2 Lab: Mini Calculator (variables + output)"
-description: "Week 2 Lab: Mini Calculator (variables + output)"
+title: "Week 04 • Week 4 Lab: Eligibility Checker"
+description: "Week 4 Lab: Eligibility Checker"
 ---
 
-# Week 2 Lab: Mini Calculator (variables + output)
+# Week 4 Lab: Eligibility Checker
 
 ## Overview
-Create variables, do simple math, and print labeled results.
+Use if/else to determine eligibility based on a value (like age or score).
 
 ## Requirements checklist (acceptance criteria)
-- [ ] Uses at least 3 numeric variables
-- [ ] Performs at least 2 calculations (example: sum and product)
-- [ ] Prints results with labels using interpolation
+- [ ] Prompts the user for a value (age or score)
+- [ ] Validates the input (TryParse recommended but not required)
+- [ ] Uses if/else or else-if to print at least 3 different outcomes
+- [ ] Output includes clear reason/label (not just “yes/no”)
 - [ ] Runs without errors
 
 ## Submit to Canvas
@@ -20,7 +21,7 @@ Create variables, do simple math, and print labeled results.
 - Submit screenshot of output
 
 ## Open in Editor
-- Start here: `/editor/?week=02&starter=week-02-lesson-1`
+- Start here: `/editor/?week=04&starter=week-04-lesson-1`
 
 <button data-mark-complete="lab" style="margin-top:12px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background: rgba(15,23,42,.8); color: #e5e7eb; cursor:pointer;">
   Mark complete

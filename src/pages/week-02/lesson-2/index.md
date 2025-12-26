@@ -1,59 +1,59 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 02 - Lesson 2"
-description: "Printing values with labels and formatting"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 02 • Lesson 2"
+description: "Week 2 Lesson 2: Printing values clearly (string interpolation)"
 ---
 
-<ViewedMarker week="02" slug="lesson-2" client:load />
-
-# Printing values (labels + formatting)
+# Week 2 Lesson 2: Printing values clearly (string interpolation)
 
 ## Goal
-- Print readable output with labels
-- Use interpolation and format specifiers
-- Keep numbers clean and consistent
+- Print labeled output that humans can read
+- Use `$"...{variable}..."` (string interpolation)
+- Avoid confusing “mystery output”
 
 ## What to know
-- Interpolation: `$"Name: {name}"`.
-- Format numbers: `{price:F2}` for two decimals.
-- Combine text and values to make output self-explanatory.
+- **Interpolation**: Put variables inside a string using `{ }`.
+- **Label**: Text like `Name:` that tells the reader what a value means.
 
 ## Examples
 ```csharp
-double subtotal = 18.5;
-double tax = subtotal * 0.06;
-double total = subtotal + tax;
+string name = "Jordan";
+int age = 18;
 
-Console.WriteLine($"Subtotal: ${subtotal:F2}");
-Console.WriteLine($"Tax (6%): ${tax:F2}");
-Console.WriteLine($"Total: ${total:F2}");
+Console.WriteLine($"Name: {name}");
+Console.WriteLine($"Age: {age}");
+```
+
+```csharp
+double price = 19.99;
+int quantity = 3;
+double total = price * quantity;
+
+Console.WriteLine($"Price: {price}");
+Console.WriteLine($"Quantity: {quantity}");
+Console.WriteLine($"Total: {total}");
 ```
 
 ## Try it
-- Add another line for a discount and subtract it from total.
-- Change tax to 8% and re-run.
-- Align labels by keeping them similar length.
+- Print your variables with labels (Name:, Age:, etc.).
+- Create `price` and `quantity`, calculate `total`, and print all three.
+- Add a blank line between sections using `Console.WriteLine();`.
 
 ## Common mistakes
-- Forgetting the `$` before strings that contain `{}` placeholders.
-- Using too many decimals (or none) on money values.
-- Typos in variable names inside interpolation braces.
+- Forgetting the `$` before the string (then `{age}` prints literally).
+- Printing values without labels (the reader won’t know what 19.99 means).
+- Mixing types in weird ways (like adding strings and numbers without thinking).
 
 ## Mini-check
-- How do you print a price with two decimals?
+**1) What does the `$` do in `$"Age: {age}"`?**
+
 <details>
 <summary>Show answer</summary>
-Use interpolation with a format specifier, e.g., `$"Price: ${price:F2}"`.
+
+It turns on interpolation so `{age}` becomes the variable’s value.
+
 </details>
 
 ## Next
-- <a class="button" href={editorUrl("02", "lesson-2")}>
-    Open in Editor (Week 2 Lesson 2)
-  </a>
-- <a class="button-ghost" href="../extra-practice/">Next: Extra practice</a>
-
-<ProgressBadge week="02" client:load />
+- Optional extra practice: [Extra practice](../extra-practice/)
+- Open the editor: `/editor/?week=02&starter=week-02-lesson-2`

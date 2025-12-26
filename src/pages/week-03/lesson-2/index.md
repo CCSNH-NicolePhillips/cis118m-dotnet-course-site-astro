@@ -1,65 +1,75 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 03 - Lesson 2"
-description: "TryParse and validation loop"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 03 • Lesson 2"
+description: "Week 3 Lesson 2: Converting input safely (TryParse + retry loop)"
 ---
 
-<ViewedMarker week="03" slug="lesson-2" client:load />
-
-# TryParse and validation
+# Week 3 Lesson 2: Converting input safely (TryParse + retry loop)
 
 ## Goal
-- Validate numeric input safely
-- Use `TryParse` to avoid crashes
-- Loop until valid input is provided
+- Convert user input to a number without crashing
+- Use `TryParse` to check if conversion worked
+- Re-prompt if the input is invalid
 
 ## What to know
-- `int.TryParse(input, out int value)` returns true/false and sets `value`.
-- A `while (!TryParse)` loop keeps prompting until valid.
-- Trim input to avoid accidental spaces.
+- **Parsing**: Turning text into a number.
+- **TryParse**: A safe way to parse that tells you if it worked (true/false).
+- **Validation loop**: A loop that keeps asking until input is valid.
 
 ## Examples
 ```csharp
-int score;
+Console.WriteLine("Enter a whole number:");
+string text = Console.ReadLine();
+
+int number;
+bool ok = int.TryParse(text, out number);
+
+if (ok)
+{
+    Console.WriteLine($"You entered: {number}");
+}
+else
+{
+    Console.WriteLine("That was not a whole number.");
+}
+```
+
+```csharp
+int value;
 while (true)
 {
-    Console.Write("Enter a score (0-100): ");
-    string? text = Console.ReadLine();
-    if (int.TryParse(text, out score) && score >= 0 && score <= 100)
-    {
+    Console.WriteLine("Enter your age (whole number):");
+    string input = Console.ReadLine();
+
+    if (int.TryParse(input, out value))
         break;
-    }
-    Console.WriteLine("Please enter a whole number between 0 and 100.\n");
+
+    Console.WriteLine("Try again. Please type a whole number (like 18).");
 }
 
-Console.WriteLine($"Thanks! You entered: {score}");
+Console.WriteLine($"Age saved: {value}");
 ```
 
 ## Try it
-- Change the range to 110 and update the message.
-- Convert the loop to `do { } while`.
-- Add a second prompt for age and reuse the pattern.
+- Ask for an age and keep asking until the input is valid.
+- Switch to `double.TryParse` and ask for a price.
+- Print a friendly message when the input is invalid.
 
 ## Common mistakes
-- Calling `Parse` directly on unknown input (can throw exceptions).
-- Forgetting to reset the loop or provide feedback.
-- Not handling blank input.
+- Using `int.Parse` (it crashes if input is not a number).
+- Forgetting `out number` in TryParse.
+- Not telling the user what “valid” means (whole number? decimal allowed?).
 
 ## Mini-check
-- What does `TryParse` return on bad input?
+**1) What does TryParse return when parsing fails?**
+
 <details>
 <summary>Show answer</summary>
-It returns false and leaves the output variable unchanged (default value).
+
+It returns `false`.
+
 </details>
 
 ## Next
-- <a class="button" href={editorUrl("03", "lesson-2")}>
-    Open in Editor (Week 3 Lesson 2)
-  </a>
-- <a class="button-ghost" href="../extra-practice/">Next: Extra practice</a>
-
-<ProgressBadge week="03" client:load />
+- Optional extra practice: [Extra practice](../extra-practice/)
+- Open the editor: `/editor/?week=03&starter=week-03-lesson-2`

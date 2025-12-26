@@ -1,32 +1,32 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 02 - Homework"
-description: "Personal budget snapshot"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import MarkCompleteButton from "../../../components/progress/MarkCompleteButton";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 02 • Week 2 Homework: Personal Budget Snapshot"
+description: "Week 2 Homework: Personal Budget Snapshot"
 ---
 
-<ViewedMarker week="02" slug="homework" client:load />
-
-# Homework: Personal budget snapshot
+# Week 2 Homework: Personal Budget Snapshot
 
 ## Overview
-Print a short budget summary with totals and clean formatting.
+Build a small program that prints a budget snapshot (income, expenses, and what’s left).
 
-## Requirements
-- Declare income and at least three expense categories (doubles).
-- Compute total expenses and remaining balance.
-- Print each line with labels and two-decimal formatting.
-- Add one comment describing the program.
+## Requirements checklist (acceptance criteria)
+- [ ] Uses at least 1 income number and at least 3 expense numbers
+- [ ] Calculates total expenses
+- [ ] Calculates remaining money (income - expenses)
+- [ ] Prints labeled output (income, each expense, total, remaining)
+- [ ] Runs without errors and is easy to read
 
-## Submission
-- Paste your final code and a screenshot of the output into Canvas.
+## Submit to Canvas
+- Submit code (paste/export)
+- Submit screenshot of output
 
-<a class="button" href={editorUrl("02", "lesson-1")}>Open in Editor (Week 2 starter)</a>
+## Open in Editor
+- Start here: `/editor/?week=02&starter=week-02-lesson-2`
 
-<MarkCompleteButton week="02" slug="homework" client:load />
+<button data-mark-complete="homework" style="margin-top:12px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background: rgba(15,23,42,.8); color: #e5e7eb; cursor:pointer;">
+  Mark complete
+</button>
 
-<ProgressBadge week="02" client:load />
+<div class="hint" style="margin-top:10px;">
+  Status: <span data-progress-slug="homework" data-progress-kind="selfMarked"></span>
+</div>

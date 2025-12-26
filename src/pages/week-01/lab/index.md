@@ -1,33 +1,31 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 01 - Lab"
-description: "Hello, .NET lab"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import MarkCompleteButton from "../../../components/progress/MarkCompleteButton";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 01 • Week 1 Lab: Hello, .NET"
+description: "Week 1 Lab: Hello, .NET"
 ---
 
-<ViewedMarker week="01" slug="lab" client:load />
-
-# Lab: Hello, .NET
+# Week 1 Lab: Hello, .NET
 
 ## Overview
-Run the starter, change the output, and add a comment so you can prove you edited and ran the code.
+You’ll run a starter program and make small changes to prove you can control output.
 
-## Requirements
-- Open the starter in the browser editor or local IDE.
-- Change one line to print your name.
-- Add a second `Console.WriteLine` with a new message.
-- Add one C# comment (`//`) explaining what the program does.
-- Run it and confirm the output shows both lines.
+## Requirements checklist (acceptance criteria)
+- [ ] Program runs without errors
+- [ ] You changed the main output message (your own words)
+- [ ] You added at least one comment explaining a line of code
+- [ ] You added at least one additional output line
 
-## Submission
-- Paste your final code and a screenshot of the output into Canvas.
+## Submit to Canvas
+- Submit your code (paste/export from the editor) OR a screenshot of your code
+- Also include a screenshot of your program output
 
-<a class="button" href={editorUrl("01", "lesson-1")}>Open in Editor (Week 1 starter)</a>
+## Open in Editor
+- Start here: `/editor/?week=01&starter=week-01-lesson-1`
 
-<MarkCompleteButton week="01" slug="lab" client:load />
+<button data-mark-complete="lab" style="margin-top:12px; padding:10px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background: rgba(15,23,42,.8); color: #e5e7eb; cursor:pointer;">
+  Mark complete
+</button>
 
-<ProgressBadge week="01" client:load />
+<div class="hint" style="margin-top:10px;">
+  Status: <span data-progress-slug="lab" data-progress-kind="selfMarked"></span>
+</div>

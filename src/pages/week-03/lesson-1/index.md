@@ -1,60 +1,47 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 03 - Lesson 1"
-description: "Reading input with Console.ReadLine"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 03 • Lesson 1"
+description: "Week 3 Lesson 1: Getting input (Console.ReadLine)"
 ---
 
-<ViewedMarker week="03" slug="lesson-1" client:load />
-
-# Input: prompts and Console.ReadLine
+# Week 3 Lesson 1: Getting input (Console.ReadLine)
 
 ## Goal
-- Prompt the user for input
-- Capture text from `Console.ReadLine`
-- Convert input to a number
+- Ask the user a question (a prompt)
+- Read what they typed
+- Store that input in a variable
 
 ## What to know
-- `Console.Write` shows a prompt without a newline; `Console.WriteLine` adds one.
-- `Console.ReadLine()` returns a string (or null).
-- Convert with `int.Parse`/`double.Parse` or safer `TryParse`.
+- **Prompt**: A message that tells the user what to type.
+- **Console.ReadLine()**: Reads a line of text the user typed (it always starts as a string).
 
 ## Examples
 ```csharp
-Console.Write("Enter your name: ");
-string? name = Console.ReadLine();
-Console.WriteLine($"Hi {name}!\n");
-
-Console.Write("Enter your age: ");
-string? ageText = Console.ReadLine();
-int age = int.Parse(ageText ?? "0");
-Console.WriteLine($"Next year you will be {age + 1}.");
+Console.WriteLine("What is your name?");
+string name = Console.ReadLine();
+Console.WriteLine($"Hi, {name}!");
 ```
 
 ## Try it
-- Change the prompt text to be more specific.
-- Ask for a favorite color and echo it back.
-- Add an empty line between prompts for readability.
+- Ask the user for their favorite food and print it back.
+- Ask two questions and print both answers.
+- Add labels so output is super clear.
 
 ## Common mistakes
-- Not handling null/empty input.
-- Using `WriteLine` when you meant `Write`, leading to prompts on new lines.
-- Parsing a non-number without validation (use TryParse in Lesson 2).
+- Forgetting that ReadLine returns a **string** (even if user typed a number).
+- Not prompting clearly (user doesn’t know what to do).
+- Printing the prompt and the answer on the same line by accident (keep it simple early).
 
 ## Mini-check
-- What does `Console.ReadLine` return when the user just presses Enter?
+**1) What type is `Console.ReadLine()`?**
+
 <details>
 <summary>Show answer</summary>
-An empty string (or null); treat it as input that needs validation.
+
+It returns a `string`.
+
 </details>
 
 ## Next
-- <a class="button" href={editorUrl("03", "lesson-1")}>
-    Open in Editor (Week 3 Lesson 1)
-  </a>
-- <a class="button-ghost" href="../lesson-2/">Next: TryParse + validation</a>
-
-<ProgressBadge week="03" client:load />
+- Go to Lesson 2: [TryParse + validation](../lesson-2/)
+- Open the editor: `/editor/?week=03&starter=week-03-lesson-1`

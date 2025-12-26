@@ -1,61 +1,65 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 02 - Lesson 1"
-description: "Variables and data types"
-setup: |
-  import ViewedMarker from "../../../components/progress/ViewedMarker";
-  import ProgressBadge from "../../../components/progress/ProgressBadge";
-  import { editorUrl } from "../../../lib/editorLinks";
+title: "Week 02 • Lesson 1"
+description: "Week 2 Lesson 1: Variables + data types (your program’s memory)"
 ---
 
-<ViewedMarker week="02" slug="lesson-1" client:load />
-
-# Variables and data types
+# Week 2 Lesson 1: Variables + data types (your program’s memory)
 
 ## Goal
-- Declare and initialize variables
-- Use string, int, double, and bool
-- Pick readable names
+- Understand what a variable is (and why we use them)
+- Use `string`, `int`, `double`, and `bool`
+- Name variables so your code reads like a sentence
 
 ## What to know
-- **string** for text, **int** for whole numbers, **double** for decimals, **bool** for true/false.
-- Variables must be declared before use.
-- Interpolation ($"...") inserts values into strings.
+- **Variable**: A named box that stores a value (so you can use it later).
+- **string**: Text, like names or sentences.
+- **int**: Whole numbers, like 0, 5, -12.
+- **double**: Numbers with decimals, like 3.14 or 19.99.
+- **bool**: True/false (yes/no).
 
 ## Examples
 ```csharp
-string name = "Avery";
-int age = 20;
-double gpa = 3.6;
-bool isFullTime = true;
+string name = "Jordan";
+int age = 18;
+double gpa = 3.5;
+bool likesPizza = true;
 
-Console.WriteLine($"Name: {name}");
-Console.WriteLine($"Age: {age}");
-Console.WriteLine($"GPA: {gpa:F1}");
-Console.WriteLine($"Full time: {isFullTime}");
+Console.WriteLine(name);
+Console.WriteLine(age);
+Console.WriteLine(gpa);
+Console.WriteLine(likesPizza);
 ```
 
 ## Try it
-- Change the values to your own and rerun.
-- Add a new bool that tracks if you have programming experience.
-- Add a double for hours studied and print it with one decimal place.
+- Create 3 variables about you: one `string`, one `int`, one `bool`.
+- Change the values and re-run. What changes in output?
+- Make a variable called `favoriteNumber` and print it.
 
 ## Common mistakes
-- Forgetting to initialize variables before printing them.
-- Using the wrong type (e.g., `int` for 3.14).
-- Mismatched braces or quotes in interpolation strings.
+- Putting quotes around numbers (that makes them text).
+- Using `int` when you need decimals (use `double` for money/measurements).
+- Naming variables like `x` and `y` when a real name would be clearer.
 
 ## Mini-check
-- Which type would you use for "3.14"? Why?
+**1) Which type should you use for ‘price = 19.99’?**
+
 <details>
 <summary>Show answer</summary>
-Use `double` because it stores decimal numbers; int only stores whole numbers.
+
+Use `double` (it has decimals).
+
+</details>
+
+**2) Which type should you use for ‘isStudent = true’?**
+
+<details>
+<summary>Show answer</summary>
+
+Use `bool` (true/false).
+
 </details>
 
 ## Next
-- <a class="button" href={editorUrl("02", "lesson-1")}>
-    Open in Editor (Week 2 Lesson 1)
-  </a>
-- <a class="button-ghost" href="../lesson-2/">Next: Output formatting</a>
-
-<ProgressBadge week="02" client:load />
+- Go to Lesson 2: [Printing with labels + interpolation](../lesson-2/)
+- Open the editor: `/editor/?week=02&starter=week-02-lesson-1`
