@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "allowJs": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "types": ["vitest/globals", "vite/client"],
+    "strict": true,
+    "baseUrl": "./",
+    "noEmit": true
+  },
+  "include": ["src", "netlify", "vitest.setup.ts", "vite.config.ts"],
+  "exclude": ["dist", "node_modules"]
+}

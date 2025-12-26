@@ -1,0 +1,69 @@
+---
+import "../styles/global.css";
+import { COURSE, WEEKS } from "../config/site";
+const { title = "Course Page", description = "" } = Astro.props;
+
+const segments = Astro.url.pathname.split("/").filter(Boolean);
+const weekSegment = segments[0];
+const subSegment = segments[1];
+const maybeWeek = weekSegment?.startsWith("week-") ? weekSegment.replace("week-", "") : "";
+const starterSegment = subSegment && ["lesson-1", "lesson-2", "extra-practice"].includes(subSegment)
+  ? subSegment
+  : "";
+const deepLink = maybeWeek && starterSegment
+  ? `/editor/?week=${maybeWeek}&starter=${starterSegment}`
+  : COURSE.editorUrl || "";
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} • {COURSE.code}</title>
+    {description ? <meta name="description" content={description} /> : null}
+  </head>
+  <body>
+    <div class="container">
+      <div class="shell">
+        <aside class="card sidebar">
+          <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+            <h2 style="margin:0; font-size:16px;">{COURSE.code}</h2>
+            <span class="badge">{COURSE.title}</span>
+          </div>
+          <p class="hint" style="margin:10px 0 0;">
+            {COURSE.term} • CRN {COURSE.crn}<br/>
+            Contact: <a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a>
+          </p>
+
+          <hr />
+
+          <nav>
+            <div class="hint" style="margin-bottom:8px;">Weeks</div>
+            <ul class="navlist">
+              {WEEKS.map((w) => (
+                <li class="navitem">
+                  <a href={w.href}>
+                    <strong>Week {w.n}</strong><br/>
+                    <span class="hint" style="font-size:12px;">Lesson 1 • Lesson 2 • Extra</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <hr />
+
+          <div class="hint editor-link">
+            {deepLink
+              ? <a class="button" href={deepLink}>Open Browser Code Editor</a>
+              : <span>Editor link coming in Step 5.</span>
+            }
+          </div>
+        </aside>
+
+        <main class="card main">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

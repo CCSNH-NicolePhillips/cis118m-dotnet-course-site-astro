@@ -1,0 +1,24 @@
+---
+import CourseLayout from "../../layouts/CourseLayout.astro";
+import EditorApp from "../../components/editor/EditorApp.tsx";
+import "../../styles/editor.css";
+
+const title = "Browser Code Editor";
+const description = "Practice C# in the browser with Monaco, autosave, copy, download, and run stub.";
+---
+
+<CourseLayout title={title} description={description}>
+  <h1>Browser Code Editor</h1>
+  <p>
+    Practice C# directly in the browser. Pick the week starter, type your code, and use copy or download to
+    move it into Visual Studio when you are ready. Run is in safe stub mode until the sandbox proxy is enabled.
+  </p>
+  <ul>
+    <li>Monaco editor with C# highlighting</li>
+    <li>Auto-save per week/starter to your browser</li>
+    <li>Reset, Copy, Download buttons</li>
+    <li>Output panel with Run stub/proxy path</li>
+  </ul>
+
+  <EditorApp client:load />
+</CourseLayout>
