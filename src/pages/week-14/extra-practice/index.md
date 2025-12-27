@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 14 • Extra Practice"
-description: "Optional practice"
+description: "Week 14 Extra Practice: Encapsulation reps"
 ---
 
-# Optional extra practice
+# Week 14 Extra Practice: Encapsulation reps
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Make a `Thermostat` class that blocks temps below 50 or above 90.
+- Make a `GameCharacter` class with Health that can’t go below 0.
+- Challenge: Add a method that returns a formatted status string for printing.
+
+## Open in Editor
+- Use: `/editor/?week=14&starter=week-14-extra-practice`

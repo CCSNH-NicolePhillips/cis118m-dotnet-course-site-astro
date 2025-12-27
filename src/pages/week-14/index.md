@@ -6,14 +6,19 @@ description: "Week 14 overview"
 
 # Week 14
 
-**Focus:** Week 14 lesson content (placeholder — replace with your final lesson text).
+**Focus:** OOP deeper: encapsulation + simple validation rules inside classes.
 
-## You should be able to…
-- Outcome 1 (placeholder)
-- Outcome 2 (placeholder)
-- Outcome 3 (placeholder)
+## This week’s pages
+- Lesson 1: [./lesson-1/](./lesson-1/) — <span data-progress-slug="lesson-1"></span>
+- Lesson 2: [./lesson-2/](./lesson-2/) — <span data-progress-slug="lesson-2"></span>
+- Extra practice: [./extra-practice/](./extra-practice/) — <span data-progress-slug="extra-practice"></span>
+- Lab: [./lab/](./lab/) — <span data-progress-slug="lab" data-progress-kind="selfMarked"></span>
+- Homework: [./homework/](./homework/) — <span data-progress-slug="homework" data-progress-kind="selfMarked"></span>
 
-## Pages
-- Lesson 1: [./lesson-1/](./lesson-1/)
-- Lesson 2: [./lesson-2/](./lesson-2/)
-- Extra practice: [./extra-practice/](./extra-practice/)
+## By the end of this week, you can:
+- Explain encapsulation (protecting data with rules)
+- Use private fields with public methods/properties
+- Add simple validation in setters or methods
+
+## Open the editor
+- `/editor/?week=14&starter=week-14-lesson-1`

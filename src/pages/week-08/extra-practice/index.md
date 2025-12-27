@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 08 • Extra Practice"
-description: "Optional practice"
+description: "Week 8 Extra Practice: Collection thinking"
 ---
 
-# Optional extra practice
+# Week 8 Extra Practice: Collection thinking
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Make a list of 5 items and print them with foreach.
+- Make a list of prices and compute the total.
+- Challenge: Ask the user for 3 items and add them to a list (use ReadLine).
+
+## Open in Editor
+- Use: `/editor/?week=08&starter=week-08-extra-practice`

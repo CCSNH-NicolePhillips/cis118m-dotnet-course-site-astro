@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 06 • Extra Practice"
-description: "Optional practice"
+description: "Week 6 Extra Practice: Tiny method library"
 ---
 
-# Optional extra practice
+# Week 6 Extra Practice: Tiny method library
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Make a `Min(int a, int b)` method that returns the smaller number.
+- Make a `Max(int a, int b)` method that returns the bigger number.
+- Challenge: Make `FormatMoney(double amount)` that returns a string like `$12.34` (keep it simple).
+
+## Open in Editor
+- Use: `/editor/?week=06&starter=week-06-extra-practice`

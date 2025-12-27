@@ -60,4 +60,8 @@ It prints a line of text (output) to the console.
 
 ## Next
 - Go to Lesson 2: [Console project basics](../lesson-2/)
-- Open the editor: `/editor/?week=01&starter=week-01-lesson-1`
+- Open the editor: [Open the code editor](/editor/?week=01&starter=week-01-lesson-1)
+
+<a href="/editor/?week=01&starter=week-01-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
+
+

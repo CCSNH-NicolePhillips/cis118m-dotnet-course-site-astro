@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 09 • Extra Practice"
-description: "Optional practice"
+description: "Week 9 Extra Practice: Text analyzer mini-challenges"
 ---
 
-# Optional extra practice
+# Week 9 Extra Practice: Text analyzer mini-challenges
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Ask for a sentence and count how many characters it has.
+- Ask for a sentence and count how many times the letter 'a' appears (simple loop).
+- Challenge: Ask for a word and print it backwards (loop from end to start).
+
+## Open in Editor
+- Use: `/editor/?week=09&starter=week-09-extra-practice`

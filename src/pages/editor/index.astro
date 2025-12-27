@@ -1,24 +1,435 @@
 ---
 import CourseLayout from "../../layouts/CourseLayout.astro";
-import EditorApp from "../../components/editor/EditorApp.tsx";
-import "../../styles/editor.css";
+import { PUBLIC_RUNNER_URL } from "astro:env/client";
 
 const title = "Browser Code Editor";
-const description = "Practice C# in the browser with Monaco, autosave, copy, download, and run stub.";
+const description = "Practice C# in the browser with Monaco, autosave, reset, download, compile, and run.";
 ---
 
 <CourseLayout title={title} description={description}>
-  <h1>Browser Code Editor</h1>
-  <p>
-    Practice C# directly in the browser. Pick the week starter, type your code, and use copy or download to
-    move it into Visual Studio when you are ready. Run is in safe stub mode until the sandbox proxy is enabled.
-  </p>
-  <ul>
-    <li>Monaco editor with C# highlighting</li>
-    <li>Auto-save per week/starter to your browser</li>
-    <li>Reset, Copy, Download buttons</li>
-    <li>Output panel with Run stub/proxy path</li>
-  </ul>
+  <h1 style="margin-bottom:12px;">Browser Code Editor</h1>
+  <p class="hint" style="margin-bottom:18px;">Autosaves per starter. Reset returns to the starter template. Download gives you Program.cs.</p>
 
-  <EditorApp client:load />
+  <div class="editor-bar">
+    <div class="editor-meta">
+      <div class="pill-soft" id="week-pill">Week ??</div>
+      <div class="pill-soft" id="starter-pill">Starter: loading...</div>
+    </div>
+    <div class="editor-actions">
+      <button id="save-btn" class="button editor-btn" type="button">Save</button>
+      <button id="reset-btn" class="button editor-btn" type="button">Reset</button>
+      <button id="download-btn" class="button editor-btn" type="button">Download Program.cs</button>
+      <button id="compile-btn" class="button editor-btn" type="button">Compile</button>
+      <button id="run-btn" class="button editor-btn" type="button">Run</button>
+      <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
+    </div>
+  </div>
+
+  <div class="stdin-wrap">
+    <label for="stdin-input" class="input-label">Program Input (optional)</label>
+    <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Values passed to your program's stdin"></textarea>
+  </div>
+
+  <div id="editor" aria-label="Monaco editor" style="height:70vh; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:#0b1220;"></div>
+
+  <div class="output-panel">
+    <div class="output-header">
+      <h2 style="margin:0; font-size:16px;">Output</h2>
+      <span id="output-status" class="hint">Waiting to compile/run…</span>
+    </div>
+    <div class="output-grid">
+      <section class="output-section">
+        <div class="section-title">Stdout</div>
+        <pre id="stdout" class="output-pre">(no stdout yet)</pre>
+      </section>
+      <section class="output-section">
+        <div class="section-title">Stderr</div>
+        <pre id="stderr" class="output-pre">(no stderr yet)</pre>
+      </section>
+      <section class="output-section">
+        <div class="section-title">Diagnostics</div>
+        <ul id="diagnostics-list" class="diagnostics-list"></ul>
+        <div id="diagnostics-empty" class="hint" style="display:none;">No diagnostics.</div>
+      </section>
+    </div>
+  </div>
+
+  <script type="text/javascript">window.require = undefined; window.define = undefined;</script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js" type="text/javascript"></script>
+  <script type="module">
+    import { buildRunnerPayload, resolveRunnerUrl } from "../../lib/runnerClient";
+
+    (() => {
+      const envRunnerUrl = "${PUBLIC_RUNNER_URL ?? ""}";
+      const qs = new URLSearchParams(window.location.search);
+      const week = (qs.get("week") || "").padStart(2, "0");
+      const starterId = qs.get("starter") || (week ? `week-${week}-lesson-1` : "week-01-lesson-1");
+      const storageKey = `cis118m:${starterId}:Program.cs`;
+      const runnerBase = resolveRunnerUrl(envRunnerUrl, window.location.origin);
+
+      const starterTemplates = {
+        "week-01-lesson-1": `// Week 1 Lesson 1: Hello, C#\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello, world!");\n    }\n}\n`,
+        "week-01-lesson-2": `// Week 1 Lesson 2: Console basics\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("This is lesson 2.");\n        Console.WriteLine("Edit and run me in your IDE.");\n    }\n}\n`,
+        "week-01-extra-practice": `// Week 1 Extra Practice\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Menu:");\n        Console.WriteLine("1. Start");\n        Console.WriteLine("2. Help");\n        Console.WriteLine("3. Quit");\n    }\n}\n`,
+      };
+
+      const genericTemplate = (id) => `// Starter: ${id}\n// Add your code below.\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
+
+      const weekLabel = document.getElementById("week-pill");
+      const starterLabel = document.getElementById("starter-pill");
+      const status = document.getElementById("status");
+      const saveBtn = document.getElementById("save-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const downloadBtn = document.getElementById("download-btn");
+      const compileBtn = document.getElementById("compile-btn");
+      const runBtn = document.getElementById("run-btn");
+      const stdinInput = document.getElementById("stdin-input");
+      const editorHost = document.getElementById("editor");
+      const stdoutBlock = document.getElementById("stdout");
+      const stderrBlock = document.getElementById("stderr");
+      const diagnosticsList = document.getElementById("diagnostics-list");
+      const diagnosticsEmpty = document.getElementById("diagnostics-empty");
+      const outputStatus = document.getElementById("output-status");
+
+      weekLabel.textContent = week ? `Week ${Number(week)}` : "Week ??";
+      starterLabel.textContent = `Starter: ${starterId}`;
+
+      const setStatus = (msg) => {
+        status.textContent = msg;
+      };
+
+      const setBusy = (busy, msg) => {
+        compileBtn.disabled = busy;
+        runBtn.disabled = busy;
+        if (busy && msg) setStatus(msg);
+      };
+
+      const makeRunnerUrl = (path) => `${runnerBase}${path}`;
+
+      const loadFromStorage = () => {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) {
+            setStatus("Loaded saved code");
+            return saved;
+          }
+        } catch (err) {
+          setStatus("Storage unavailable");
+        }
+        const template = starterTemplates[starterId] || genericTemplate(starterId);
+        setStatus("Loaded starter");
+        return template;
+      };
+
+      const saveToStorage = (value) => {
+        try {
+          localStorage.setItem(storageKey, value);
+          setStatus("Saved");
+        } catch (err) {
+          setStatus("Save failed");
+        }
+      };
+
+      let editorInstance = null;
+
+      const applyMarkers = (diagnostics) => {
+        if (!editorInstance || !window.monaco) return;
+        const model = editorInstance.getModel();
+        if (!model) return;
+        const markers = (diagnostics || []).map((d) => ({
+          startLineNumber: d.line,
+          startColumn: d.column,
+          endLineNumber: d.line,
+          endColumn: d.column + 1,
+          message: d.message,
+          severity: monaco.MarkerSeverity.Error,
+        }));
+        monaco.editor.setModelMarkers(model, "runner", markers);
+      };
+
+      const renderDiagnostics = (diagnostics) => {
+        diagnosticsList.innerHTML = "";
+        if (!diagnostics || diagnostics.length === 0) {
+          diagnosticsEmpty.style.display = "block";
+          return;
+        }
+        diagnosticsEmpty.style.display = "none";
+        diagnostics.forEach((d) => {
+          const li = document.createElement("li");
+          li.textContent = `Line ${d.line}, Col ${d.column}: ${d.message}`;
+          diagnosticsList.appendChild(li);
+        });
+      };
+
+      const updateOutputs = (result, kind) => {
+        const stdout = result?.stdout || "";
+        const stderr = result?.stderr || "";
+        const diagnostics = result?.diagnostics || [];
+
+        stdoutBlock.textContent = stdout.trim() ? stdout : "(no stdout)";
+        stderrBlock.textContent = stderr.trim() ? stderr : "(no stderr)";
+
+        renderDiagnostics(diagnostics);
+        applyMarkers(diagnostics);
+
+        const compileOk = Boolean(result?.compileOk);
+        const runOk = kind === "run" ? Boolean(result?.runOk) : false;
+        const maybeTimedOut = kind === "run" && !runOk && !stderr.trim();
+
+        if (kind === "compile") {
+          outputStatus.textContent = compileOk ? "Compile succeeded" : "Compile failed";
+          setStatus(compileOk ? "Compile succeeded" : "Compile failed");
+          return;
+        }
+
+        if (!compileOk) {
+          outputStatus.textContent = "Compile failed";
+          setStatus("Compile failed");
+          return;
+        }
+
+        const runMsg = runOk ? "Run succeeded" : maybeTimedOut ? "Run may have timed out" : "Run failed";
+        outputStatus.textContent = runMsg;
+        setStatus(runMsg);
+      };
+
+      const runnerRequest = async (path, payload, kind) => {
+        setBusy(true, kind === "run" ? "Running..." : "Compiling...");
+        try {
+          const res = await fetch(makeRunnerUrl(path), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            throw new Error(`Runner HTTP ${res.status}`);
+          }
+          const data = await res.json();
+          updateOutputs(data, kind);
+        } catch (err) {
+          setStatus("Runner error");
+          outputStatus.textContent = "Runner error";
+          stderrBlock.textContent = err?.message || "Runner unavailable";
+          applyMarkers([]);
+          renderDiagnostics([]);
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      const bootstrap = () => {
+        const r = window.require;
+        if (!r || !r.config) {
+          setStatus("Loading editor...");
+          setTimeout(bootstrap, 50);
+          return;
+        }
+
+        const basePath = "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs";
+        r.config({ paths: { vs: basePath } });
+
+        r(["vs/editor/editor.main"], () => {
+          const initialValue = loadFromStorage();
+          editorInstance = monaco.editor.create(editorHost, {
+            value: initialValue,
+            language: "csharp",
+            theme: "vs-dark",
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14,
+          });
+
+          let timer;
+          editorInstance.onDidChangeModelContent(() => {
+            clearTimeout(timer);
+            timer = setTimeout(() => saveToStorage(editorInstance.getValue()), 450);
+          });
+
+          saveBtn.addEventListener("click", () => saveToStorage(editorInstance.getValue()));
+
+          resetBtn.addEventListener("click", () => {
+            const template = starterTemplates[starterId] || genericTemplate(starterId);
+            editorInstance.setValue(template);
+            saveToStorage(template);
+            applyMarkers([]);
+            renderDiagnostics([]);
+            setStatus("Reset to starter");
+          });
+
+          downloadBtn.addEventListener("click", () => {
+            const blob = new Blob([editorInstance.getValue()], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "Program.cs";
+            link.click();
+            URL.revokeObjectURL(url);
+            setStatus("Downloaded Program.cs");
+          });
+
+          compileBtn.addEventListener("click", () => {
+            if (!editorInstance) return;
+            const payload = buildRunnerPayload(starterId, editorInstance.getValue(), "");
+            runnerRequest("/compile", payload, "compile");
+          });
+
+          runBtn.addEventListener("click", () => {
+            if (!editorInstance) return;
+            const payload = buildRunnerPayload(starterId, editorInstance.getValue(), stdinInput.value || "");
+            runnerRequest("/run", payload, "run");
+          });
+
+          setStatus("Editor ready");
+          outputStatus.textContent = runnerBase ? `Runner: ${runnerBase}` : "Runner: same origin";
+        });
+      };
+
+      const startWhenReady = () => {
+        if (document.readyState === "complete") {
+          bootstrap();
+        } else {
+          window.addEventListener("load", bootstrap, { once: true });
+        }
+      };
+
+      startWhenReady();
+    })();
+  </script>
+
+  <style>
+    .editor-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 12px;
+    }
+
+    .editor-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .editor-btn {
+      border-radius: 10px;
+      border: 1px solid rgba(147, 197, 253, 0.35);
+      background: rgba(147, 197, 253, 0.12);
+      color: #e8f2ff;
+      padding: 9px 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .editor-btn:hover {
+      background: rgba(147, 197, 253, 0.2);
+      border-color: rgba(147, 197, 253, 0.55);
+    }
+
+    .editor-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .pill-soft {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e5e7eb;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .stdin-wrap {
+      margin: 8px 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stdin-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: #e5e7eb;
+      padding: 8px 10px;
+      font-family: monospace;
+      resize: vertical;
+    }
+
+    .input-label {
+      font-weight: 600;
+      color: #cfd8e3;
+      font-size: 14px;
+    }
+
+    .output-panel {
+      margin-top: 16px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .output-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .output-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #dbeafe;
+    }
+
+    .output-pre {
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      color: #e5e7eb;
+      padding: 10px;
+      min-height: 96px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13px;
+    }
+
+    .diagnostics-list {
+      list-style: disc;
+      padding-left: 18px;
+      margin: 0;
+      color: #fecdd3;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  </style>
 </CourseLayout>

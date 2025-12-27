@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 13 • Extra Practice"
-description: "Optional practice"
+description: "Week 13 Extra Practice: File drills"
 ---
 
-# Optional extra practice
+# Week 13 Extra Practice: File drills
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Save a list of 5 favorite foods to a file and reload it.
+- Make a ‘log file’ that appends a new line each time the program runs (use AppendAllText).
+- Challenge: Load a CSV file and count how many lines it contains.
+
+## Open in Editor
+- Use: `/editor/?week=13&starter=week-13-extra-practice`

@@ -73,4 +73,8 @@ It means “greater than or equal to.”
 
 ## Next
 - Go to Lesson 2: [Validation patterns + boolean basics](../lesson-2/)
-- Open the editor: `/editor/?week=04&starter=week-04-lesson-1`
+- Open the editor: [Open the code editor](/editor/?week=04&starter=week-04-lesson-1)
+
+<a href="/editor/?week=04&starter=week-04-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
+
+

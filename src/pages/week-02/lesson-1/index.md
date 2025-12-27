@@ -62,4 +62,8 @@ Use `bool` (true/false).
 
 ## Next
 - Go to Lesson 2: [Printing with labels + interpolation](../lesson-2/)
-- Open the editor: `/editor/?week=02&starter=week-02-lesson-1`
+- Open the editor: [Open the code editor](/editor/?week=02&starter=week-02-lesson-1)
+
+<a href="/editor/?week=02&starter=week-02-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
+
+

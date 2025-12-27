@@ -57,4 +57,8 @@ Use `&&`: `n >= 1 && n <= 10`.
 
 ## Next
 - Optional extra practice: [Extra practice](../extra-practice/)
-- Open the editor: `/editor/?week=04&starter=week-04-lesson-2`
+- Open the editor: [Open the code editor](/editor/?week=04&starter=week-04-lesson-2)
+
+<a href="/editor/?week=04&starter=week-04-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
+
+

@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 07 • Extra Practice"
-description: "Optional practice"
+description: "Week 7 Extra Practice: Array drills"
 ---
 
-# Optional extra practice
+# Week 7 Extra Practice: Array drills
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Make an array of 5 test scores. Print the highest score.
+- Make an array of 6 numbers. Count the even numbers.
+- Challenge: Reverse-print an array (print from last index to 0).
+
+## Open in Editor
+- Use: `/editor/?week=07&starter=week-07-extra-practice`

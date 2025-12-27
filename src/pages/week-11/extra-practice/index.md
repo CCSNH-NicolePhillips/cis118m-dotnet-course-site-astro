@@ -1,13 +1,16 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 11 • Extra Practice"
-description: "Optional practice"
+description: "Week 11 Extra Practice: Mini roster features"
 ---
 
-# Optional extra practice
+# Week 11 Extra Practice: Mini roster features
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Add a ‘remove by ID’ feature (search then remove).
+- Count how many students have names longer than 4 characters.
+- Challenge: Create a method `FindById(List<Student> roster, string id)` that returns a Student (or null).
+
+## Open in Editor
+- Use: `/editor/?week=11&starter=week-11-extra-practice`

@@ -1,13 +1,21 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 05 • Extra Practice"
-description: "Optional practice"
+description: "Week 5 Extra Practice: Loop confidence builders"
 ---
 
-# Optional extra practice
+# Week 5 Extra Practice: Loop confidence builders
 
-Pick 1–2 items only (this is optional).
+Pick **1–2** items (optional).
 
-- Re-read Lesson 1 and write a 2–3 sentence summary in your own words.
-- Change the example program output in 3 different ways.
-- Challenge: Add one more `Console.WriteLine` that prints a label + a value.
+- Make a countdown from 5 to 1, then print “GO!”
+- Ask the user for a number, then print that many smiley faces (as text like ":)").
+- Challenge: Print this pattern using loops:
+  *
+  **
+  ***
+  ****
+  *****
+
+## Open in Editor
+- Use: `/editor/?week=05&starter=week-05-extra-practice`
