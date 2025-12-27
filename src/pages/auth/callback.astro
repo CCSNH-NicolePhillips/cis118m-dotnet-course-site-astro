@@ -1,13 +1,28 @@
 ---
+import { createAuth0Client } from "@auth0/auth0-spa-js";
+
+const redirectUrl = import.meta.env.PUBLIC_AUTH0_REDIRECT_URI;
+const domain = import.meta.env.PUBLIC_AUTH0_DOMAIN;
+const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
 ---
 <html lang="en">
   <head><meta charset="utf-8" /></head>
   <body>
-    <script>
-      import { handleCallback } from "../../lib/auth";
+    <script define:vars={{ redirectUrl, domain, clientId }}>
       (async () => {
-        const to = await handleCallback();
-        window.location.replace(to);
+        const { createAuth0Client } = await import("@auth0/auth0-spa-js");
+        
+        const client = await createAuth0Client({
+          domain: domain,
+          clientId: clientId,
+          authorizationParams: { redirect_uri: redirectUrl },
+          cacheLocation: "localstorage",
+          useRefreshTokens: true,
+        });
+        
+        const result = await client.handleRedirectCallback();
+        const returnTo = (result.appState?.returnTo) || "/";
+        window.location.replace(returnTo);
       })();
     </script>
     Redirecting...
