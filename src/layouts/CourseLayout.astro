@@ -32,6 +32,13 @@ const { title = "Course Page", description = "" } = Astro.props;
               </svg>
             </button>
           </div>
+          
+          <div class="auth-bar" style="margin-bottom:12px; padding:8px; background:var(--panel); border-radius:6px; font-size:13px;">
+            <span data-auth="who" style="display:block; margin-bottom:6px; color:var(--text-secondary);"></span>
+            <button data-auth="login" type="button" style="font-size:13px; padding:4px 12px;">Sign in</button>
+            <button data-auth="logout" type="button" style="display:none; font-size:13px; padding:4px 12px;">Sign out</button>
+          </div>
+          
           <p class="hint" style="margin:10px 0 0;">
             {COURSE.term} • CRN {COURSE.crn}<br/>
             Contact: <a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a>
@@ -441,6 +448,18 @@ const { title = "Course Page", description = "" } = Astro.props;
           applyProgressBadges();
           wireMarkCompleteButtons();
         });
+      })();
+    </script>
+    <script type="module" src="/src/scripts/auth-ui.ts"></script>
+    <script type="module">
+      import { isAuthed, login } from "/src/lib/auth.ts";
+      
+      // Force login on first visit
+      (async () => {
+        const authed = await isAuthed();
+        if (!authed) {
+          await login(window.location.pathname + window.location.search);
+        }
       })();
     </script>
   </body>
