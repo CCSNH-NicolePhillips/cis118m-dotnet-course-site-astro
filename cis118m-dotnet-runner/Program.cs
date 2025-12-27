@@ -5,88 +5,266 @@ using System.Text.RegularExpressions;
 
 [assembly: InternalsVisibleTo("cis118m-dotnet-runner.Tests")]
 
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
-
-app.MapGet("/health", () => Results.Ok(new { ok = true, service = "cis118m-dotnet-runner" }));
-
-app.MapPost("/compile", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: false));
-app.MapPost("/run", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: true));
-
-app.Run();
-
-record RunnerRequest(string StarterId, Dictionary<string, string>? Files, string? Stdin);
-record Diagnostic(int Line, int Column, string Message);
-record RunnerResponse(bool Ok, bool CompileOk, bool RunOk, string Stdout, string Stderr, List<Diagnostic> Diagnostics);
-
-static async Task<IResult> HandleRequest(RunnerRequest req, bool runAfterCompile)
+public class Program
 {
-    var jobId = $"job-{Guid.NewGuid():N}";
-    var root = Path.Combine(Path.GetTempPath(), jobId);
-    Directory.CreateDirectory(root);
+    public static WebApplication App { get; private set; } = null!; // exposed for tests if needed
 
-    try
+    public static async Task Main(string[] args)
     {
-        var projectFile = Path.Combine(root, "App.csproj");
-        var programFile = Path.Combine(root, "Program.cs");
+        var builder = WebApplication.CreateBuilder(args);
 
-        await File.WriteAllTextAsync(projectFile, RunnerUtilities.CsprojText);
-        var programText = req.Files != null && req.Files.TryGetValue("Program.cs", out var val)
-            ? val
-            : RunnerUtilities.GenericProgram(req.StarterId);
-        await File.WriteAllTextAsync(programFile, programText);
-
-        var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", root, TimeSpan.FromSeconds(5));
-        var diagnostics = RunnerUtilities.ParseDiagnostics(compile.Stdout + "\n" + compile.Stderr);
-        var compileOk = !compile.TimedOut && compile.ExitCode == 0;
-
-        if (!runAfterCompile)
+        // CORS: allow configured origins plus localhost for dev
+        var allowedOrigins = (Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? string.Empty)
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList();
+        if (builder.Environment.IsDevelopment() && !allowedOrigins.Contains("http://localhost:4321"))
         {
-            return Results.Json(new RunnerResponse(
-                Ok: compileOk,
-                CompileOk: compileOk,
-                RunOk: false,
-                Stdout: compile.Stdout,
-                Stderr: compile.Stderr,
-                Diagnostics: diagnostics));
+            allowedOrigins.Add("http://localhost:4321");
         }
 
-        if (!compileOk)
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("runner", policy =>
+            {
+                if (allowedOrigins.Count > 0)
+                {
+                    policy.WithOrigins(allowedOrigins.ToArray());
+                }
+                else
+                {
+                    policy.AllowAnyOrigin();
+                }
+
+                policy.WithMethods("GET", "POST")
+                      .WithHeaders("Content-Type");
+            });
+        });
+
+        var app = builder.Build();
+        App = app;
+
+        app.UseCors("runner");
+
+        app.MapGet("/health", () => Results.Ok(new { ok = true, service = "cis118m-dotnet-runner" }));
+        app.MapPost("/compile", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: false));
+        app.MapPost("/run", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: true));
+        app.MapPost("/check", async (RunnerRequest req) => await HandleCheck(req));
+
+        await app.RunAsync();
+    }
+
+    private static async Task<IResult> HandleRequest(RunnerRequest req, bool runAfterCompile)
+    {
+        var jobId = $"job-{Guid.NewGuid():N}";
+        var root = Path.Combine(Path.GetTempPath(), jobId);
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            var projectFile = Path.Combine(root, "App.csproj");
+            var programFile = Path.Combine(root, "Program.cs");
+
+            await File.WriteAllTextAsync(projectFile, RunnerUtilities.CsprojText);
+            var programText = req.Files != null && req.Files.TryGetValue("Program.cs", out var val)
+                ? val
+                : RunnerUtilities.GenericProgram(req.StarterId);
+            await File.WriteAllTextAsync(programFile, programText);
+
+            var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", root, TimeSpan.FromSeconds(5));
+            var diagnostics = RunnerUtilities.ParseDiagnostics(compile.Stdout + "\n" + compile.Stderr);
+            var compileOk = !compile.TimedOut && compile.ExitCode == 0;
+
+            if (!runAfterCompile)
+            {
+                return Results.Json(new RunnerResponse(
+                    Ok: compileOk,
+                    CompileOk: compileOk,
+                    RunOk: false,
+                    CompileTimedOut: compile.TimedOut,
+                    RunTimedOut: false,
+                    Stdout: compile.Stdout,
+                    Stderr: compile.Stderr,
+                    Diagnostics: diagnostics));
+            }
+
+            if (!compileOk)
+            {
+                return Results.Json(new RunnerResponse(
+                    Ok: false,
+                    CompileOk: false,
+                    RunOk: false,
+                    CompileTimedOut: compile.TimedOut,
+                    RunTimedOut: false,
+                    Stdout: compile.Stdout,
+                    Stderr: compile.Stderr,
+                    Diagnostics: diagnostics));
+            }
+
+            var run = await RunnerUtilities.RunProcess("dotnet", "run -c Release --no-build", root, TimeSpan.FromSeconds(3), req.Stdin);
+            var runDiagnostics = diagnostics; // reuse compile diagnostics if any
+            var runOk = !run.TimedOut && run.ExitCode == 0;
+
+            return Results.Json(new RunnerResponse(
+                Ok: runOk,
+                CompileOk: true,
+                RunOk: runOk,
+                CompileTimedOut: false,
+                RunTimedOut: run.TimedOut,
+                Stdout: run.Stdout,
+                Stderr: run.Stderr,
+                Diagnostics: runDiagnostics));
+        }
+        catch (Exception ex)
         {
             return Results.Json(new RunnerResponse(
                 Ok: false,
                 CompileOk: false,
                 RunOk: false,
+                CompileTimedOut: false,
+                RunTimedOut: false,
+                Stdout: string.Empty,
+                Stderr: ex.Message,
+                Diagnostics: new()));
+        }
+        finally
+        {
+            try { Directory.Delete(root, recursive: true); } catch { }
+        }
+    }
+
+    private static async Task<IResult> HandleCheck(RunnerRequest req)
+    {
+        var jobId = $"check-{Guid.NewGuid():N}";
+        var root = Path.Combine(Path.GetTempPath(), jobId);
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            var projectFile = Path.Combine(root, "App.csproj");
+            var programFile = Path.Combine(root, "Program.cs");
+
+            await File.WriteAllTextAsync(projectFile, RunnerUtilities.CsprojText);
+            var programText = req.Files != null && req.Files.TryGetValue("Program.cs", out var val)
+                ? val
+                : RunnerUtilities.GenericProgram(req.StarterId);
+            await File.WriteAllTextAsync(programFile, programText);
+
+            // Compile first
+            var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", root, TimeSpan.FromSeconds(5));
+            var diagnostics = RunnerUtilities.ParseDiagnostics(compile.Stdout + "\n" + compile.Stderr);
+            var compileOk = !compile.TimedOut && compile.ExitCode == 0;
+
+            if (!compileOk)
+            {
+                return Results.Json(new CheckResponse(
+                    Ok: false,
+                    CompileOk: false,
+                    Checks: new List<CheckResult>(),
+                    Hint: "Fix compile errors first.",
+                    Stdout: compile.Stdout,
+                    Stderr: compile.Stderr,
+                    Diagnostics: diagnostics));
+            }
+
+            // Run checks based on starterId
+            var checks = CheckRunner.RunChecks(req.StarterId, programText);
+            var allPassed = checks.All(c => c.Passed);
+            var hint = allPassed ? "" : CheckRunner.GetHint(req.StarterId, checks);
+
+            return Results.Json(new CheckResponse(
+                Ok: allPassed,
+                CompileOk: true,
+                Checks: checks,
+                Hint: hint,
                 Stdout: compile.Stdout,
                 Stderr: compile.Stderr,
                 Diagnostics: diagnostics));
         }
-
-        var run = await RunnerUtilities.RunProcess("dotnet", "run -c Release --no-build", root, TimeSpan.FromSeconds(3), req.Stdin);
-        var runDiagnostics = diagnostics; // reuse compile diagnostics if any
-        var runOk = !run.TimedOut && run.ExitCode == 0;
-
-        return Results.Json(new RunnerResponse(
-            Ok: runOk,
-            CompileOk: true,
-            RunOk: runOk,
-            Stdout: run.Stdout,
-            Stderr: run.Stderr,
-            Diagnostics: runDiagnostics));
+        catch (Exception ex)
+        {
+            return Results.Json(new CheckResponse(
+                Ok: false,
+                CompileOk: false,
+                Checks: new List<CheckResult>(),
+                Hint: "",
+                Stdout: string.Empty,
+                Stderr: ex.Message,
+                Diagnostics: new()));
+        }
+        finally
+        {
+            try { Directory.Delete(root, recursive: true); } catch { }
+        }
     }
-    catch (Exception ex)
+}
+
+internal static class CheckRunner
+{
+    internal static List<CheckResult> RunChecks(string starterId, string programCs)
     {
-        return Results.Json(new RunnerResponse(
-            Ok: false,
-            CompileOk: false,
-            RunOk: false,
-            Stdout: string.Empty,
-            Stderr: ex.Message,
-            Diagnostics: new()));
+        return starterId switch
+        {
+            "week-01-lesson-1" => Week01Lesson1Checks(programCs),
+            _ => new List<CheckResult>()
+        };
     }
-    finally
+
+    internal static string GetHint(string starterId, List<CheckResult> checks)
     {
-        try { Directory.Delete(root, recursive: true); } catch { }
+        return starterId switch
+        {
+            "week-01-lesson-1" => Week01Lesson1Hint(checks),
+            _ => "Keep working on your solution."
+        };
+    }
+
+    private static List<CheckResult> Week01Lesson1Checks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Contains at least one Console.WriteLine
+        var hasWriteLine = programCs.Contains("Console.WriteLine");
+        checks.Add(new CheckResult(
+            Name: "HasConsoleWriteLine",
+            Passed: hasWriteLine,
+            Message: hasWriteLine
+                ? "Found Console.WriteLine statement."
+                : "You need at least one Console.WriteLine statement."));
+
+        // Check 2: Contains at least two Console.WriteLine calls
+        var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
+        var hasTwoWriteLines = writeLineCount >= 2;
+        checks.Add(new CheckResult(
+            Name: "HasTwoWriteLines",
+            Passed: hasTwoWriteLines,
+            Message: hasTwoWriteLines
+                ? $"Found {writeLineCount} Console.WriteLine statements."
+                : $"You need at least 2 Console.WriteLine statements. Found {writeLineCount}."));
+
+        // Check 3: Contains at least one string literal
+        var hasStringLiteral = Regex.IsMatch(programCs, @"""[^""]*""");
+        checks.Add(new CheckResult(
+            Name: "HasStringLiteral",
+            Passed: hasStringLiteral,
+            Message: hasStringLiteral
+                ? "Found string literal(s) in quotes."
+                : "You need at least one string literal in quotes."));
+
+        return checks;
+    }
+
+    private static string Week01Lesson1Hint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasConsoleWriteLine" => "Try adding a Console.WriteLine() statement to print something.",
+            "HasTwoWriteLines" => "Try adding a second Console.WriteLine() with your name or a greeting.",
+            "HasStringLiteral" => "Make sure your WriteLine statements have text in quotes, like \"Hello!\"",
+            _ => "Keep working on your solution."
+        };
     }
 }
 
@@ -109,7 +287,7 @@ internal static class RunnerUtilities
     internal static List<Diagnostic> ParseDiagnostics(string text)
     {
         var list = new List<Diagnostic>();
-        var regex = new Regex(@"\((?<line>\d+),(?<col>\d+)\):\s+(error|warning)\s+[A-Z0-9]+:\s+(?<msg>.+)", RegexOptions.Multiline);
+        var regex = new Regex(@"(?:[\w\.-]+)?\((?<line>\d+),(?<col>\d+)\):\s+(error|warning)\s+[A-Z0-9]+:\s+(?<msg>.+)", RegexOptions.Multiline);
         foreach (Match m in regex.Matches(text))
         {
             if (int.TryParse(m.Groups["line"].Value, out var line) && int.TryParse(m.Groups["col"].Value, out var col))
@@ -177,4 +355,9 @@ internal static class RunnerUtilities
     }
 }
 
-record ProcessResult(int ExitCode, string Stdout, string Stderr, bool TimedOut);
+internal record RunnerRequest(string StarterId, Dictionary<string, string>? Files, string? Stdin);
+internal record Diagnostic(int Line, int Column, string Message);
+internal record RunnerResponse(bool Ok, bool CompileOk, bool RunOk, bool CompileTimedOut, bool RunTimedOut, string Stdout, string Stderr, List<Diagnostic> Diagnostics);
+internal record CheckResponse(bool Ok, bool CompileOk, List<CheckResult> Checks, string Hint, string Stdout, string Stderr, List<Diagnostic> Diagnostics);
+internal record CheckResult(string Name, bool Passed, string Message);
+internal record ProcessResult(int ExitCode, string Stdout, string Stderr, bool TimedOut);

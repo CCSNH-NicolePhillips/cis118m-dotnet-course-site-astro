@@ -13,10 +13,24 @@ const { title = "Course Page", description = "" } = Astro.props;
   <body>
     <div class="container">
       <div class="shell">
-        <aside class="card sidebar">
-          <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
-            <h2 style="margin:0; font-size:16px;">{COURSE.code}</h2>
-            <span class="badge">{COURSE.title}</span>
+        <aside class="card sidebar" id="sidebar">
+          <button class="sidebar-collapse-btn" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="sidebar-content" id="sidebar-content">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;">
+              <h2 style="margin:0; font-size:16px;">{COURSE.code}</h2>
+              <span class="badge">{COURSE.title}</span>
+            </div>
+            <button class="sidebar-pin-btn" id="sidebar-pin" type="button" aria-label="Pin sidebar" title="Pin sidebar">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.5 2.5L8 1L4 5L5.5 6.5L3 9L5 11L7.5 8.5L9 10L13 6L11.5 4.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M5 11L2 14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
           <p class="hint" style="margin:10px 0 0;">
             {COURSE.term} • CRN {COURSE.crn}<br/>
@@ -27,16 +41,46 @@ const { title = "Course Page", description = "" } = Astro.props;
 
           <nav>
             <div class="hint" style="margin-bottom:8px;">Weeks</div>
-            <ul class="navlist">
+            <div class="week-menu">
               {WEEKS.map((w) => (
-                <li class="navitem">
-                  <a href={w.href}>
-                    <strong>Week {w.n}</strong><br/>
-                    <span class="hint" style="font-size:12px;">Lesson 1 • Lesson 2 • Extra</span>
-                  </a>
-                </li>
+                <div class="week-item" data-week={w.slug}>
+                  <button 
+                    class="week-header" 
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls={`week-${w.slug}-content`}
+                    data-week={w.slug}
+                  >
+                    <span class="week-title">Week {w.n}</span>
+                    <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <div class="week-content" id={`week-${w.slug}-content`}>
+                    <ul class="week-links">
+                      <li>
+                        <a href={w.lesson1} data-page={w.lesson1} data-starter={`week-${w.slug}-lesson-1`}>
+                          <span class="lesson-text">Lesson 1</span>
+                          <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href={w.lesson2} data-page={w.lesson2} data-starter={`week-${w.slug}-lesson-2`}>
+                          <span class="lesson-text">Lesson 2</span>
+                          <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`}></span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href={w.extra} data-page={w.extra} data-starter={`week-${w.slug}-extra-practice`}>
+                          <span class="lesson-text">Extra Practice</span>
+                          <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`}></span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </nav>
 
           <hr />
@@ -47,6 +91,12 @@ const { title = "Course Page", description = "" } = Astro.props;
           <div class="hint" style="margin-top:8px;">
             <span style="opacity:.9;">Progress is saved on this device.</span>
           </div>
+          </div>
+          <button class="sidebar-expand-btn" id="sidebar-expand" type="button" aria-label="Expand sidebar" title="Expand sidebar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </aside>
 
         <main class="card main">
@@ -54,6 +104,237 @@ const { title = "Course Page", description = "" } = Astro.props;
         </main>
       </div>
     </div>
+
+    <!-- Sidebar collapse behavior -->
+    <script is:inline>
+      (() => {
+        const themeKey = "cis118m:theme";
+        const storedTheme = localStorage.getItem(themeKey);
+        
+        const getSystemTheme = () => {
+          return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        };
+        
+        const theme = storedTheme || getSystemTheme();
+        document.body.setAttribute("data-theme", theme);
+        
+        // Listen for system theme changes if user hasn't set preference
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+          if (!localStorage.getItem(themeKey)) {
+            document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
+          }
+        });
+      })();
+    </script>
+
+    <!-- Sidebar collapse behavior -->
+    <script is:inline>
+      (() => {
+        const sidebar = document.getElementById("sidebar");
+        const collapseBtn = document.getElementById("sidebar-toggle");
+        const expandBtn = document.getElementById("sidebar-expand");
+        const pinBtn = document.getElementById("sidebar-pin");
+        const sidebarKey = "cis118m:sidebarExpanded";
+        const pinKey = "cis118m:sidebarPinned";
+        
+        if (!sidebar || !collapseBtn || !expandBtn || !pinBtn) {
+          console.error("Sidebar elements not found");
+          return;
+        }
+        
+        let isExpanded = localStorage.getItem(sidebarKey) !== "false";
+        let isPinned = localStorage.getItem(pinKey) === "true";
+        
+        const applySidebarState = () => {
+          sidebar.classList.toggle("collapsed", !isExpanded);
+          sidebar.classList.toggle("pinned", isPinned);
+          pinBtn.style.opacity = isPinned ? "1" : "0.5";
+          
+          // Trigger window resize event to update Monaco editor layout
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+          }, 100);
+        };
+        
+        applySidebarState();
+        
+        collapseBtn.addEventListener("click", () => {
+          isExpanded = false;
+          applySidebarState();
+          localStorage.setItem(sidebarKey, "false");
+        });
+        
+        expandBtn.addEventListener("click", () => {
+          isExpanded = true;
+          applySidebarState();
+          localStorage.setItem(sidebarKey, "true");
+        });
+        
+        pinBtn.addEventListener("click", () => {
+          isPinned = !isPinned;
+          applySidebarState();
+          localStorage.setItem(pinKey, String(isPinned));
+        });
+        
+        // Auto-close sidebar when clicking outside (only if not pinned)
+        document.addEventListener("click", (e) => {
+          if (!isExpanded || isPinned) return;
+          
+          // Check if click is outside sidebar and not on toggle buttons
+          if (!sidebar.contains(e.target) && 
+              e.target !== expandBtn && 
+              !expandBtn.contains(e.target)) {
+            isExpanded = false;
+            applySidebarState();
+            localStorage.setItem(sidebarKey, "false");
+          }
+        });
+      })();
+    </script>
+
+    <!-- Week menu behavior -->
+    <script is:inline>
+      (() => {
+        const openWeekKey = "cis118m:openWeek";
+        const allHeaders = document.querySelectorAll(".week-header");
+        const allItems = document.querySelectorAll(".week-item");
+        
+        // Get current week from URL path or query params
+        const getCurrentWeek = () => {
+          const path = window.location.pathname;
+          const match = path.match(/\/week-(\d{2})/);
+          if (match) return match[1];
+          
+          // Check query params for editor page
+          const params = new URLSearchParams(window.location.search);
+          const week = params.get("week");
+          if (week) return week.padStart(2, "0");
+          
+          // Check starter param for week extraction
+          const starter = params.get("starter");
+          if (starter) {
+            const starterMatch = starter.match(/week-(\d+)/);
+            if (starterMatch) return starterMatch[1].padStart(2, "0");
+          }
+          
+          return null;
+        };
+        
+        // Highlight active link
+        const highlightActiveLink = () => {
+          const currentPath = window.location.pathname;
+          document.querySelectorAll(".week-links a").forEach(link => {
+            if (link.getAttribute("href") === currentPath) {
+              link.setAttribute("aria-current", "page");
+            }
+          });
+        };
+        
+        // Toggle week open/closed
+        const toggleWeek = (header, shouldOpen) => {
+          const item = header.closest(".week-item");
+          const content = item.querySelector(".week-content");
+          const isOpen = item.classList.contains("isOpen");
+          
+          if (shouldOpen === undefined) {
+            shouldOpen = !isOpen;
+          }
+          
+          if (shouldOpen && !isOpen) {
+            // Open this week
+            item.classList.add("isOpen");
+            header.setAttribute("aria-expanded", "true");
+            content.style.maxHeight = content.scrollHeight + "px";
+            
+            // Save to localStorage
+            const week = header.getAttribute("data-week");
+            localStorage.setItem(openWeekKey, week);
+            
+            // Close all other weeks (single-open mode)
+            allItems.forEach(otherItem => {
+              if (otherItem !== item && otherItem.classList.contains("isOpen")) {
+                const otherHeader = otherItem.querySelector(".week-header");
+                const otherContent = otherItem.querySelector(".week-content");
+                otherItem.classList.remove("isOpen");
+                otherHeader.setAttribute("aria-expanded", "false");
+                otherContent.style.maxHeight = "0";
+              }
+            });
+          } else if (!shouldOpen && isOpen) {
+            // Close this week
+            item.classList.remove("isOpen");
+            header.setAttribute("aria-expanded", "false");
+            content.style.maxHeight = "0";
+          }
+        };
+        
+        // Attach click listeners
+        allHeaders.forEach(header => {
+          header.addEventListener("click", () => {
+            toggleWeek(header);
+          });
+        });
+        
+        // Determine which week to open
+        const currentWeek = getCurrentWeek();
+        const savedWeek = localStorage.getItem(openWeekKey);
+        const weekToOpen = currentWeek || savedWeek || "01";
+        
+        // Open the appropriate week
+        allHeaders.forEach(header => {
+          if (header.getAttribute("data-week") === weekToOpen) {
+            toggleWeek(header, true);
+          }
+        });
+        
+        highlightActiveLink();
+      })();
+    </script>
+
+    <!-- Progress tracking and status badges -->
+    <script is:inline>
+      (() => {
+        const PROGRESS_KEY = "cis118m:progress";
+        
+        const getProgress = () => {
+          try {
+            const data = localStorage.getItem(PROGRESS_KEY);
+            return data ? JSON.parse(data) : {};
+          } catch {
+            return {};
+          }
+        };
+        
+        const updateStatusBadges = () => {
+          const progress = getProgress();
+          const statusElements = document.querySelectorAll(".lesson-status");
+          
+          statusElements.forEach(el => {
+            const starterId = el.getAttribute("data-starter");
+            const status = progress[starterId] || "not-started";
+            
+            // Clear previous content
+            el.textContent = "";
+            el.className = "lesson-status";
+            
+            if (status === "completed") {
+              el.textContent = "✓";
+              el.classList.add("completed");
+            } else if (status === "in-progress") {
+              el.classList.add("in-progress");
+            }
+          });
+        };
+        
+        // Update on load
+        updateStatusBadges();
+        
+        // Listen for progress updates from editor
+        window.addEventListener("progressUpdated", () => {
+          updateStatusBadges();
+        });
+      })();
+    </script>
 
     <!-- Simple local progress tracker (no login). -->
     <script is:inline>

@@ -3,7 +3,7 @@ layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 1"
 description: "Week 1 Lesson 1: .NET vs C# (and what a “console app” is)"
 ---
-
+import EditorButton from '../../../components/EditorButton.astro';
 # Week 1 Lesson 1: .NET vs C# (and what a “console app” is)
 
 ## Goal
@@ -62,6 +62,6 @@ It prints a line of text (output) to the console.
 - Go to Lesson 2: [Console project basics](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=01&starter=week-01-lesson-1)
 
-<a href="/editor/?week=01&starter=week-01-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
+<EditorButton starterId="week-01-lesson-1" week="01" />
 
 
