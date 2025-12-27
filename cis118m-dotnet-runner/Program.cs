@@ -49,10 +49,33 @@ public class Program
 
         app.UseCors("runner");
 
+        // Helper to validate x-runner-key header
+        bool HasKey(HttpRequest httpReq)
+        {
+            var runnerKey = app.Configuration["RUNNER_KEY"];
+            if (string.IsNullOrEmpty(runnerKey)) return true; // If no key configured, allow all
+            return httpReq.Headers.TryGetValue("x-runner-key", out var val) && val == runnerKey;
+        }
+
         app.MapGet("/health", () => Results.Ok(new { ok = true, service = "cis118m-dotnet-runner" }));
-        app.MapPost("/compile", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: false));
-        app.MapPost("/run", async (RunnerRequest req) => await HandleRequest(req, runAfterCompile: true));
-        app.MapPost("/check", async (RunnerRequest req) => await HandleCheck(req));
+        
+        app.MapPost("/compile", async (HttpRequest httpReq, RunnerRequest req) => 
+        {
+            if (!HasKey(httpReq)) return Results.Unauthorized();
+            return await HandleRequest(req, runAfterCompile: false);
+        });
+        
+        app.MapPost("/run", async (HttpRequest httpReq, RunnerRequest req) => 
+        {
+            if (!HasKey(httpReq)) return Results.Unauthorized();
+            return await HandleRequest(req, runAfterCompile: true);
+        });
+        
+        app.MapPost("/check", async (HttpRequest httpReq, RunnerRequest req) => 
+        {
+            if (!HasKey(httpReq)) return Results.Unauthorized();
+            return await HandleCheck(req);
+        });
 
         await app.RunAsync();
     }
