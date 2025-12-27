@@ -20,29 +20,28 @@
 [functions]
   directory = "netlify/functions"
 
-# Proxy API requests to the deployed .NET runner
-# Replace RUNNER_HOST with your deployed runner URL (e.g., your-runner.railway.app)
+# Proxy API requests to the deployed .NET runner on Render
 [[redirects]]
   from = "/health"
-  to = "https://RUNNER_HOST/health"
+  to = "https://cis118m-dotnet-course-site-astro.onrender.com/health"
   status = 200
   force = true
 
 [[redirects]]
   from = "/compile"
-  to = "https://RUNNER_HOST/compile"
+  to = "https://cis118m-dotnet-course-site-astro.onrender.com/compile"
   status = 200
   force = true
 
 [[redirects]]
   from = "/run"
-  to = "https://RUNNER_HOST/run"
+  to = "https://cis118m-dotnet-course-site-astro.onrender.com/run"
   status = 200
   force = true
 
 [[redirects]]
   from = "/check"
-  to = "https://RUNNER_HOST/check"
+  to = "https://cis118m-dotnet-course-site-astro.onrender.com/check"
   status = 200
   force = true
 
