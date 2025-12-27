@@ -1,8 +1,24 @@
+# Netlify Deploy Configuration
+#
+# This site is the Astro-based frontend only.
+# The cis118m-dotnet-runner backend should be deployed separately.
+#
+# The runner is NOT deployed to Netlify.
+
 [build]
   command = "npm run build"
   publish = "dist"
+  ignore = "cis118m-dotnet-runner/**,cis118m-dotnet-runner.Tests/**"
 
 [dev]
   command = "npm run dev"
   targetPort = 4321
   port = 8888
+
+# Explicitly set functions directory to avoid auto-detection
+[functions]
+  directory = "netlify/functions"
+  
+# Environment variables needed:
+# PUBLIC_RUNNER_URL - URL of the deployed runner API
+
