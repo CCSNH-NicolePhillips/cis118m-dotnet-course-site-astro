@@ -8,23 +8,39 @@ const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
 <html lang="en">
   <head><meta charset="utf-8" /></head>
   <body>
+    <div id="status">Redirecting...</div>
     <script define:vars={{ redirectUrl, domain, clientId }}>
       (async () => {
-        const { createAuth0Client } = await import("@auth0/auth0-spa-js");
-        
-        const client = await createAuth0Client({
-          domain: domain,
-          clientId: clientId,
-          authorizationParams: { redirect_uri: redirectUrl },
-          cacheLocation: "localstorage",
-          useRefreshTokens: true,
-        });
-        
-        const result = await client.handleRedirectCallback();
-        const returnTo = (result.appState?.returnTo) || "/";
-        window.location.replace(returnTo);
+        try {
+          console.log("Starting callback...");
+          document.getElementById("status").textContent = "Loading Auth0...";
+          
+          const { createAuth0Client } = await import("@auth0/auth0-spa-js");
+          console.log("Auth0 SDK loaded");
+          
+          document.getElementById("status").textContent = "Processing callback...";
+          const client = await createAuth0Client({
+            domain: domain,
+            clientId: clientId,
+            authorizationParams: { redirect_uri: redirectUrl },
+            cacheLocation: "localstorage",
+            useRefreshTokens: true,
+          });
+          
+          console.log("Handling redirect callback...");
+          const result = await client.handleRedirectCallback();
+          console.log("Callback result:", result);
+          
+          const returnTo = (result.appState?.returnTo) || "/";
+          console.log("Redirecting to:", returnTo);
+          document.getElementById("status").textContent = "Redirecting to " + returnTo + "...";
+          
+          window.location.replace(returnTo);
+        } catch (err) {
+          console.error("Callback error:", err);
+          document.getElementById("status").textContent = "Error: " + err.message;
+        }
       })();
     </script>
-    Redirecting...
   </body>
 </html>
