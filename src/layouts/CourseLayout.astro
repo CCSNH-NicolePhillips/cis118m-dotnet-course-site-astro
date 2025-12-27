@@ -450,12 +450,36 @@ const { title = "Course Page", description = "" } = Astro.props;
         });
       })();
     </script>
-    <script type="module" src="/src/scripts/auth-ui.ts"></script>
-    <script type="module">
-      import { isAuthed, login } from "/src/lib/auth.ts";
-      
-      // Force login on first visit
+    <script>
+      import { login, logout, getUser, isAuthed } from "../lib/auth";
+
+      // Auth UI management
+      function qs(sel) {
+        return document.querySelector(sel);
+      }
+
       (async () => {
+        const btnIn = qs("[data-auth='login']");
+        const btnOut = qs("[data-auth='logout']");
+        const who = qs("[data-auth='who']");
+
+        const user = await getUser();
+
+        if (btnIn) {
+          btnIn.style.display = user ? "none" : "inline-flex";
+          btnIn.addEventListener("click", () => login(window.location.pathname + window.location.search));
+        }
+
+        if (btnOut) {
+          btnOut.style.display = user ? "inline-flex" : "none";
+          btnOut.addEventListener("click", () => logout());
+        }
+
+        if (who) {
+          who.textContent = user?.email ? `Signed in: ${user.email}` : "";
+        }
+
+        // Force login on first visit
         const authed = await isAuthed();
         if (!authed) {
           await login(window.location.pathname + window.location.search);
