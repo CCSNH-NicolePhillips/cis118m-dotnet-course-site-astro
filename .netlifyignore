@@ -1,0 +1,7 @@
+# Exclude .NET runner backend from Netlify deployment
+cis118m-dotnet-runner/
+cis118m-dotnet-runner.Tests/
+
+# Exclude build artifacts
+**/bin/
+**/obj/
