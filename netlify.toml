@@ -8,7 +8,6 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  ignore = "cis118m-dotnet-runner/**,cis118m-dotnet-runner.Tests/**"
 
 [dev]
   command = "npm run dev"
