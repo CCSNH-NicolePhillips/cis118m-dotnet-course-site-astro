@@ -3,7 +3,9 @@
 # This site is the Astro-based frontend only.
 # The cis118m-dotnet-runner backend should be deployed separately.
 #
-# The runner is NOT deployed to Netlify.
+# Proxy configuration: When PUBLIC_RUNNER_URL is unset, the editor
+# calls same-origin paths (/compile, /run, /check) which Netlify
+# proxies to the deployed runner.
 
 [build]
   command = "npm run build"
@@ -17,7 +19,34 @@
 # Explicitly set functions directory to avoid auto-detection
 [functions]
   directory = "netlify/functions"
-  
-# Environment variables needed:
-# PUBLIC_RUNNER_URL - URL of the deployed runner API
+
+# Proxy API requests to the deployed .NET runner
+# Replace RUNNER_HOST with your deployed runner URL (e.g., your-runner.railway.app)
+[[redirects]]
+  from = "/health"
+  to = "https://RUNNER_HOST/health"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/compile"
+  to = "https://RUNNER_HOST/compile"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/run"
+  to = "https://RUNNER_HOST/run"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/check"
+  to = "https://RUNNER_HOST/check"
+  status = 200
+  force = true
+
+# Environment variables:
+# - Do NOT set PUBLIC_RUNNER_URL in Netlify (leave empty for proxy approach)
+# - Set ALLOWED_ORIGINS on the runner to include your Netlify domain
 

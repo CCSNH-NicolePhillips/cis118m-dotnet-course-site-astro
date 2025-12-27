@@ -13,6 +13,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // Bind to PORT environment variable (required by most hosting platforms)
+        var port = Environment.GetEnvironmentVariable("PORT") ?? "8787";
+        builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
         // CORS: allow configured origins plus localhost for dev
         var allowedOrigins = (Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? string.Empty)
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
