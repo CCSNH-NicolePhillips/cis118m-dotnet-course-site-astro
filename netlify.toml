@@ -3,9 +3,8 @@
 # This site is the Astro-based frontend only.
 # The cis118m-dotnet-runner backend should be deployed separately.
 #
-# Proxy configuration: When PUBLIC_RUNNER_URL is unset, the editor
-# calls same-origin paths (/compile, /run, /check) which Netlify
-# proxies to the deployed runner.
+# Proxy configuration: Editor calls /api/* which routes to Netlify Function
+# that forwards to the deployed runner with authentication.
 
 [build]
   command = "npm run build"
@@ -16,36 +15,20 @@
   targetPort = 4321
   port = 8888
 
-# Explicitly set functions directory to avoid auto-detection
+# Netlify Functions configuration
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
-# Proxy API requests to the deployed .NET runner on Render
+# Route /api/* to the runner-proxy function
 [[redirects]]
-  from = "/health"
-  to = "https://cis118m-dotnet-course-site-astro.onrender.com/health"
+  from = "/api/*"
+  to = "/.netlify/functions/runner-proxy"
   status = 200
   force = true
 
-[[redirects]]
-  from = "/compile"
-  to = "https://cis118m-dotnet-course-site-astro.onrender.com/compile"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/run"
-  to = "https://cis118m-dotnet-course-site-astro.onrender.com/run"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/check"
-  to = "https://cis118m-dotnet-course-site-astro.onrender.com/check"
-  status = 200
-  force = true
-
-# Environment variables:
-# - Do NOT set PUBLIC_RUNNER_URL in Netlify (leave empty for proxy approach)
-# - Set ALLOWED_ORIGINS on the runner to include your Netlify domain
+# Environment variables needed in Netlify dashboard:
+# - RUNNER_URL: https://cis118m-dotnet-course-site-astro.onrender.com
+# - RUNNER_KEY: A secret key that the runner will validate
+# - Do NOT set PUBLIC_RUNNER_URL (leave empty)
 

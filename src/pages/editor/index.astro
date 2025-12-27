@@ -545,19 +545,19 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           compileBtn.addEventListener("click", () => {
             if (!editorInstance) return;
             const payload = buildRunnerPayload(starterId, editorInstance.getValue(), "");
-            runnerRequest("/compile", payload, "compile");
+            runnerRequest("/api/compile", payload, "compile");
           });
 
           runBtn.addEventListener("click", () => {
             if (!editorInstance) return;
             const payload = buildRunnerPayload(starterId, editorInstance.getValue(), stdinInput.value || "");
-            runnerRequest("/run", payload, "run");
+            runnerRequest("/api/run", payload, "run");
           });
           
           checkBtn.addEventListener("click", () => {
             if (!editorInstance) return;
             const payload = buildRunnerPayload(starterId, editorInstance.getValue(), "");
-            runnerRequest("/check", payload, "check");
+            runnerRequest("/api/check", payload, "check");
           });
           
           // Keyboard shortcuts
