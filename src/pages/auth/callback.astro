@@ -3,8 +3,8 @@
 <html lang="en">
   <head><meta charset="utf-8" /></head>
   <body>
-    <script type="module">
-      import { handleCallback } from "/src/lib/auth.ts";
+    <script>
+      import { handleCallback } from "../../lib/auth";
       (async () => {
         const to = await handleCallback();
         window.location.replace(to);
