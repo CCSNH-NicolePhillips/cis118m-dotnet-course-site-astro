@@ -1,10 +1,17 @@
-import { createAuth0Client, type Auth0Client, type User } from "@auth0/auth0-spa-js";
+// Auth0 SPA SDK is loaded via CDN in the layout
+// window.auth0.createAuth0Client is available globally
 
-let client: Auth0Client | null = null;
+let client: any = null;
 
 async function getClient() {
   if (client) return client;
-  client = await createAuth0Client({
+  
+  // Wait for auth0 to be available (loaded from CDN)
+  while (!(window as any).auth0) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  
+  client = await (window as any).auth0.createAuth0Client({
     domain: import.meta.env.PUBLIC_AUTH0_DOMAIN,
     clientId: import.meta.env.PUBLIC_AUTH0_CLIENT_ID,
     authorizationParams: {
@@ -35,7 +42,7 @@ export async function handleCallback() {
   return (result.appState?.returnTo as string) || "/";
 }
 
-export async function getUser(): Promise<User | null> {
+export async function getUser(): Promise<any> {
   const c = await getClient();
   const authed = await c.isAuthenticated();
   if (!authed) return null;
