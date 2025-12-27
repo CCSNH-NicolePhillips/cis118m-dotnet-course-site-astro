@@ -74,7 +74,7 @@ public class Program
                 : RunnerUtilities.GenericProgram(req.StarterId);
             await File.WriteAllTextAsync(programFile, programText);
 
-            var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", root, TimeSpan.FromSeconds(5));
+            var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", root, TimeSpan.FromSeconds(30));
             var diagnostics = RunnerUtilities.ParseDiagnostics(compile.Stdout + "\n" + compile.Stderr);
             var compileOk = !compile.TimedOut && compile.ExitCode == 0;
 
