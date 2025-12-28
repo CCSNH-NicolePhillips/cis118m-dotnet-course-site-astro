@@ -479,7 +479,11 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         }
       };
 
+      let bootstrapped = false;
+      
       const bootstrap = () => {
+        if (bootstrapped) return;
+        
         const r = window.require;
         if (!r || !r.config) {
           setStatus("Loading editor...");
@@ -487,22 +491,17 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           return;
         }
 
+        bootstrapped = true;
+
         // Configure Monaco to use local assets
         window.MonacoEnvironment = {
-          getWorkerUrl: function (moduleId, label) {
-            if (label === 'json') {
-              return '/monaco/vs/language/json/json.worker.js';
-            }
-            if (label === 'css' || label === 'scss' || label === 'less') {
-              return '/monaco/vs/language/css/css.worker.js';
-            }
-            if (label === 'html' || label === 'handlebars' || label === 'razor') {
-              return '/monaco/vs/language/html/html.worker.js';
-            }
-            if (label === 'typescript' || label === 'javascript') {
-              return '/monaco/vs/language/typescript/ts.worker.js';
-            }
-            return '/monaco/vs/editor/editor.worker.js';
+          getWorkerUrl: function (workerId, label) {
+            return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+              self.MonacoEnvironment = {
+                baseUrl: '${window.location.origin}/monaco/'
+              };
+              importScripts('${window.location.origin}/monaco/vs/base/worker/workerMain.js');
+            `)}`;
           }
         };
         
