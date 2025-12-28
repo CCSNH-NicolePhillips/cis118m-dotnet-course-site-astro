@@ -231,7 +231,11 @@ const snippetId = `snippet-${Math.random().toString(36).substr(2, 9)}`;
           applyMarkers(result.diagnostics);
         }
         
-        outputStatus.textContent = result.success ? 'Success' : 'Completed with errors';
+        // Check if there are actual errors (not just warnings)
+        const hasErrors = result.stderr || 
+          (result.diagnostics && result.diagnostics.some(d => d.severity === 'Error'));
+        
+        outputStatus.textContent = hasErrors ? 'Completed with errors' : 'Success';
       } catch (err) {
         console.error('Run failed:', err);
         errorsPane.textContent = `Error: ${err.message}`;

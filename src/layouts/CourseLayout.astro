@@ -105,6 +105,9 @@ const { title = "Course Page", description = "" } = Astro.props;
         <div class="main-wrapper">
           <header class="top-header">
             <div class="header-spacer"></div>
+            <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" title="Toggle theme" aria-label="Toggle theme">
+              <span id="theme-icon">🌙</span>
+            </button>
             <div class="auth-header">
               <!-- Logged out state -->
               <button data-auth="login" type="button" class="btn-primary auth-signin">Sign in</button>
@@ -132,7 +135,7 @@ const { title = "Course Page", description = "" } = Astro.props;
       </div>
     </div>
 
-    <!-- Sidebar collapse behavior -->
+    <!-- Theme management -->
     <script is:inline>
       (() => {
         const themeKey = "cis118m:theme";
@@ -142,13 +145,32 @@ const { title = "Course Page", description = "" } = Astro.props;
           return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         };
         
-        const theme = storedTheme || getSystemTheme();
-        document.body.setAttribute("data-theme", theme);
+        let currentTheme = storedTheme || getSystemTheme();
+        
+        const applyTheme = (theme) => {
+          currentTheme = theme;
+          document.body.setAttribute("data-theme", theme);
+          localStorage.setItem(themeKey, theme);
+          const icon = document.getElementById("theme-icon");
+          if (icon) {
+            icon.textContent = theme === "dark" ? "☀️" : "🌙";
+          }
+        };
+        
+        applyTheme(currentTheme);
+        
+        // Theme toggle button
+        const themeToggleBtn = document.getElementById("theme-toggle-btn");
+        if (themeToggleBtn) {
+          themeToggleBtn.addEventListener("click", () => {
+            applyTheme(currentTheme === "dark" ? "light" : "dark");
+          });
+        }
         
         // Listen for system theme changes if user hasn't set preference
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
           if (!localStorage.getItem(themeKey)) {
-            document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
+            applyTheme(e.matches ? "dark" : "light");
           }
         });
       })();
