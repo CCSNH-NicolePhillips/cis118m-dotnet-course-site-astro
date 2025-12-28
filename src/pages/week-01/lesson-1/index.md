@@ -3,7 +3,7 @@ layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 1"
 description: "Week 1 Lesson 1: .NET vs C# (and what a “console app” is)"
 ---
-import EditorButton from '../../../components/EditorButton.astro';
+
 # Week 1 Lesson 1: .NET vs C# (and what a “console app” is)
 
 ## Goal
