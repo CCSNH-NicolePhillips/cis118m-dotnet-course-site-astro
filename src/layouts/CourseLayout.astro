@@ -479,6 +479,12 @@ const { title = "Course Page", description = "" } = Astro.props;
       }
 
       (async () => {
+        if (window.__authScriptRunning) {
+          console.log('[Auth] Script already running, skipping');
+          return;
+        }
+        window.__authScriptRunning = true;
+        
         console.log('[Auth] Script starting');
         
         const btnLogin = qs("[data-auth='login']");
@@ -507,18 +513,28 @@ const { title = "Course Page", description = "" } = Astro.props;
         let user = null;
         
         try {
-          authed = await isAuthed();
+          const authPromise = isAuthed();
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('isAuthed timeout')), 5000)
+          );
+          authed = await Promise.race([authPromise, timeoutPromise]);
           console.log('[Auth] isAuthenticated:', authed);
         } catch (err) {
           console.error('[Auth] isAuthed() error:', err);
         }
         
         try {
-          user = await getUser();
+          const userPromise = getUser();
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('getUser timeout')), 5000)
+          );
+          user = await Promise.race([userPromise, timeoutPromise]);
           console.log('[Auth] getUser:', user);
         } catch (err) {
           console.error('[Auth] getUser() error:', err);
         }
+        
+        console.log('[Auth] Continuing after auth checks...');
         
         // Debug logging
         console.log('[Auth] isAuthenticated:', authed);
