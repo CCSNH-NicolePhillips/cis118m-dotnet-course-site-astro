@@ -564,7 +564,11 @@ const { title = "Course Page", description = "" } = Astro.props;
           
           // Logout button
           if (btnLogout) {
-            btnLogout.addEventListener("click", () => logout());
+            btnLogout.addEventListener("click", () => {
+              // Save current location before logout
+              sessionStorage.setItem('cis118m:returnTo', window.location.pathname + window.location.search);
+              logout();
+            });
           }
         } else {
           // Not logged in - force login
