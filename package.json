@@ -14,6 +14,7 @@
     "@astrojs/react": "^4.1.0",
     "@auth0/auth0-spa-js": "^2.11.0",
     "@monaco-editor/react": "^4.6.0",
+    "@upstash/redis": "^1.36.0",
     "astro": "^4.16.0",
     "monaco-editor": "^0.52.2",
     "react": "^18.3.1",
