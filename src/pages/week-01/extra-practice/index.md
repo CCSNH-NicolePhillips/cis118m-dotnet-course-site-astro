@@ -16,4 +16,4 @@ Pick **1–2** items (optional).
   - 3) Quit
 
 ## Open in Editor
-- Use: `/editor/?week=01&starter=week-01-extra-practice`
+- [Open the code editor](/editor/?week=01&starter=week-01-extra-practice)
