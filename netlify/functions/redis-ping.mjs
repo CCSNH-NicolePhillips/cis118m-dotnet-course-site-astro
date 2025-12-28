@@ -47,7 +47,3 @@ export default async function handler(request, context) {
     );
   }
 }
-
-export const config = {
-  path: "/api/redis-ping",
-};
