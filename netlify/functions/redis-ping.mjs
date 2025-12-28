@@ -1,4 +1,4 @@
-import { getRedis } from "../../src/lib/redis.ts";
+import { getRedis } from "../lib/redis.mjs";
 
 /**
  * Netlify Function: Redis Ping
