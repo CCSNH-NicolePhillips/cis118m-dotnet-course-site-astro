@@ -27,6 +27,8 @@ async function getClient() {
     clientId: import.meta.env.PUBLIC_AUTH0_CLIENT_ID,
     authorizationParams: {
       redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI,
+      audience: import.meta.env.PUBLIC_AUTH0_AUDIENCE,
+      scope: "openid profile email",
     },
     cacheLocation: "localstorage",
     useRefreshTokens: true,
@@ -39,7 +41,11 @@ async function getClient() {
 export async function login(returnTo = "/") {
   const c = await getClient();
   await c.loginWithRedirect({
-    authorizationParams: { redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI },
+    authorizationParams: { 
+      redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI,
+      audience: import.meta.env.PUBLIC_AUTH0_AUDIENCE,
+      scope: "openid profile email",
+    },
     appState: { returnTo },
   });
 }
@@ -73,7 +79,11 @@ export async function getAccessToken() {
   const authed = await c.isAuthenticated();
   if (!authed) return null;
   try {
-    const token = await c.getTokenSilently();
+    const token = await c.getTokenSilently({
+      authorizationParams: {
+        audience: import.meta.env.PUBLIC_AUTH0_AUDIENCE,
+      },
+    });
     return token;
   } catch (err) {
     console.error("Failed to get access token:", err);

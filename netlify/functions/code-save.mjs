@@ -1,5 +1,7 @@
-import { requireAuth } from "../lib/auth.mjs";
-import { getRedis } from "../lib/redis.mjs";
+import { requireAuth } from "./_lib/auth0-verify.mjs";
+import { getRedis } from "./_lib/redis.mjs";
+
+const MAX_CODE_LENGTH = 100000; // 100k chars max
 
 /**
  * Netlify Function: Save code for a starter
@@ -41,9 +43,10 @@ export default async function handler(request, context) {
 
     const { starterId, code } = body;
 
-    if (!starterId || typeof code !== "string") {
+    // Validate starterId
+    if (!starterId || typeof starterId !== "string" || starterId.trim().length === 0) {
       return new Response(
-        JSON.stringify({ error: "Missing or invalid starterId or code" }),
+        JSON.stringify({ error: "Missing or invalid starterId" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -51,7 +54,29 @@ export default async function handler(request, context) {
       );
     }
 
-    // Save code to Redis
+    // Validate code
+    if (typeof code !== "string") {
+      return new Response(
+        JSON.stringify({ error: "Invalid code type" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Check code length
+    if (code.length > MAX_CODE_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Code exceeds maximum length of ${MAX_CODE_LENGTH} characters` }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Save code to Redis (no expiration - permanent storage)
     const redis = getRedis();
     const key = `code:${user.sub}:${starterId}`;
     await redis.set(key, code);

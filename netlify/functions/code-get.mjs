@@ -1,5 +1,5 @@
-import { requireAuth } from "../lib/auth.mjs";
-import { getRedis } from "../lib/redis.mjs";
+import { requireAuth } from "./_lib/auth0-verify.mjs";
+import { getRedis } from "./_lib/redis.mjs";
 
 /**
  * Netlify Function: Get saved code for a starter

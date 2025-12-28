@@ -2,6 +2,7 @@
 const redirectUrl = import.meta.env.PUBLIC_AUTH0_REDIRECT_URI;
 const domain = import.meta.env.PUBLIC_AUTH0_DOMAIN;
 const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
+const audience = import.meta.env.PUBLIC_AUTH0_AUDIENCE;
 ---
 <html lang="en">
   <head>
@@ -10,7 +11,7 @@ const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
   </head>
   <body>
     <div id="status">Redirecting...</div>
-    <script is:inline define:vars={{ redirectUrl, domain, clientId }}>
+    <script is:inline define:vars={{ redirectUrl, domain, clientId, audience }}>
       (async () => {
         try {
           console.log("Starting callback...");
@@ -27,7 +28,11 @@ const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
           const client = await window.auth0.createAuth0Client({
             domain: domain,
             clientId: clientId,
-            authorizationParams: { redirect_uri: redirectUrl },
+            authorizationParams: { 
+              redirect_uri: redirectUrl,
+              audience: audience,
+              scope: "openid profile email",
+            },
             cacheLocation: "localstorage",
             useRefreshTokens: true,
           });
