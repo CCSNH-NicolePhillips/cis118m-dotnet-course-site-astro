@@ -149,7 +149,7 @@ a:hover { text-decoration: underline; }
   position: sticky;
   left: 0;
   top: 0;
-  bottom: 0;
+  height: 100vh;
 }
 
 .sidebar.collapsed:not(.pinned) {
