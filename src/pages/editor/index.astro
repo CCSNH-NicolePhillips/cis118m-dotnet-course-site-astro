@@ -509,11 +509,25 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           }
         };
         
+        // Check if Monaco module is already defined in RequireJS
+        if (r.defined && r.defined('vs/editor/editor.main')) {
+          console.log('[Monaco] Module already defined, initializing editor directly');
+          initializeEditor();
+          return;
+        }
+        
         r.config({ paths: { vs: '/monaco/vs' } });
 
+        console.log('[Monaco] Loading Monaco modules');
         r(["vs/editor/editor.main"], () => {
-          // Define custom light theme with matching background
-          monaco.editor.defineTheme("vs-soft", {
+          console.log('[Monaco] Monaco modules loaded, initializing editor');
+          initializeEditor();
+        });
+      };
+
+      const initializeEditor = () => {
+        // Define custom light theme with matching background
+        monaco.editor.defineTheme("vs-soft", {
             base: "vs",
             inherit: true,
             rules: [],
