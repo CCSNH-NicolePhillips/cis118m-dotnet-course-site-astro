@@ -4,12 +4,23 @@
 let client: any = null;
 
 async function getClient() {
-  if (client) return client;
+  if (client) {
+    console.log('[Auth SDK] Returning cached client');
+    return client;
+  }
   
-  // Wait for auth0 to be available (loaded from CDN)
+  console.log('[Auth SDK] Waiting for Auth0 CDN to load...');
+  
+  // Wait for auth0 to be available (loaded from CDN) with timeout
+  let attempts = 0;
   while (!(window as any).auth0) {
+    if (attempts++ > 100) { // 10 seconds max
+      throw new Error('Auth0 CDN failed to load after 10 seconds');
+    }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
+  
+  console.log('[Auth SDK] Auth0 CDN loaded, creating client...');
   
   client = await (window as any).auth0.createAuth0Client({
     domain: import.meta.env.PUBLIC_AUTH0_DOMAIN,
@@ -20,6 +31,8 @@ async function getClient() {
     cacheLocation: "localstorage",
     useRefreshTokens: true,
   });
+  
+  console.log('[Auth SDK] Client created successfully');
   return client;
 }
 

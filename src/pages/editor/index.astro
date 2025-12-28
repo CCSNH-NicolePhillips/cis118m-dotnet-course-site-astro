@@ -499,6 +499,23 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
         console.log('[Monaco] Starting bootstrap');
 
+        // Suppress RequireJS duplicate definition errors
+        const originalDefine = window.define;
+        if (originalDefine) {
+          window.define = function(...args) {
+            try {
+              return originalDefine.apply(this, args);
+            } catch (e) {
+              if (e.message && e.message.includes('Duplicate definition')) {
+                console.log('[Monaco] Suppressed duplicate definition error');
+                return;
+              }
+              throw e;
+            }
+          };
+          Object.assign(window.define, originalDefine);
+        }
+
         // Configure Monaco to use local assets
         window.MonacoEnvironment = {
           getWorkerUrl: function (workerId, label) {
