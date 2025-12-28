@@ -484,6 +484,9 @@ const { title = "Course Page", description = "" } = Astro.props;
         const dropdownMenu = qs("[data-auth='dropdown-menu']");
         const btnLogout = qs("[data-auth='logout']");
 
+        // Wait a bit for Auth0 to check existing session
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const user = await getUser();
 
         if (user && user.email) {
@@ -536,18 +539,19 @@ const { title = "Course Page", description = "" } = Astro.props;
             btnLogout.addEventListener("click", () => logout());
           }
         } else {
-          // Logged out state
-          if (btnLogin) {
-            btnLogin.style.display = "inline-flex";
-            btnLogin.addEventListener("click", () => login(window.location.pathname + window.location.search));
+          // Not logged in - check if we should force login
+          const authed = await isAuthed();
+          if (!authed) {
+            // Force login
+            await login(window.location.pathname + window.location.search);
+          } else {
+            // Logged out state UI
+            if (btnLogin) {
+              btnLogin.style.display = "inline-flex";
+              btnLogin.addEventListener("click", () => login(window.location.pathname + window.location.search));
+            }
+            if (userChip) userChip.style.display = "none";
           }
-          if (userChip) userChip.style.display = "none";
-        }
-
-        // Force login on first visit
-        const authed = await isAuthed();
-        if (!authed) {
-          await login(window.location.pathname + window.location.search);
         }
       })();
     </script>
