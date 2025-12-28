@@ -102,7 +102,6 @@ a:hover { text-decoration: underline; }
   gap: 0;
   position: relative;
   min-height: 100vh;
-  transition: padding-left 0.3s ease;
 }
 
 .shell:has(.sidebar:not(.pinned):not(.collapsed)) {
@@ -142,7 +141,6 @@ a:hover { text-decoration: underline; }
   background: var(--panel);
   border-right: 2px solid var(--border);
   z-index: 100;
-  transition: width 0.3s ease;
   width: 340px;
   overflow: hidden;
 }
