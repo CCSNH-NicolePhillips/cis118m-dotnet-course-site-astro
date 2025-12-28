@@ -470,7 +470,7 @@ const { title = "Course Page", description = "" } = Astro.props;
       })();
     </script>
     <script>
-      import { login, logout, getUser, isAuthed } from "../lib/auth";
+      import { login, logout, getUser, isAuthed, handleCallback } from "../lib/auth";
 
       // Auth UI management
       function qs(sel) {
@@ -484,10 +484,32 @@ const { title = "Course Page", description = "" } = Astro.props;
         const dropdownMenu = qs("[data-auth='dropdown-menu']");
         const btnLogout = qs("[data-auth='logout']");
 
+        // Check if we're returning from Auth0 callback
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('code') && urlParams.has('state')) {
+          console.log('[Auth] Detected callback with code/state, redirecting to /auth/callback');
+          window.location.href = '/auth/callback' + window.location.search;
+          return;
+        }
+
         // Wait a bit for Auth0 to check existing session
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
+        const authed = await isAuthed();
         const user = await getUser();
+        
+        // Debug logging (only in dev)
+        if (import.meta.env.DEV) {
+          console.log('[Auth] isAuthenticated:', authed);
+          console.log('[Auth] getUser:', user);
+          try {
+            localStorage.setItem('_test', '1');
+            localStorage.removeItem('_test');
+            console.log('[Auth] localStorage: writable');
+          } catch (e) {
+            console.error('[Auth] localStorage: blocked!', e);
+          }
+        }
 
         if (user && user.email) {
           // Logged in state
@@ -539,13 +561,12 @@ const { title = "Course Page", description = "" } = Astro.props;
             btnLogout.addEventListener("click", () => logout());
           }
         } else {
-          // Not logged in - check if we should force login
-          const authed = await isAuthed();
+          // Not logged in - force login
           if (!authed) {
-            // Force login
+            console.log('[Auth] Not authenticated, redirecting to login');
             await login(window.location.pathname + window.location.search);
           } else {
-            // Logged out state UI
+            // Edge case: authed but no user - show login button
             if (btnLogin) {
               btnLogin.style.display = "inline-flex";
               btnLogin.addEventListener("click", () => login(window.location.pathname + window.location.search));

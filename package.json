@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/copy-monaco.mjs && astro build",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest watch"
@@ -15,7 +15,7 @@
     "@auth0/auth0-spa-js": "^2.11.0",
     "@monaco-editor/react": "^4.6.0",
     "astro": "^4.16.0",
-    "monaco-editor": "^0.52.0",
+    "monaco-editor": "^0.52.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
