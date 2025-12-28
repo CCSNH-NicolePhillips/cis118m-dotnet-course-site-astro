@@ -566,48 +566,52 @@ pre {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  background: var(--panel2);
-  border: 1px solid var(--border);
+  padding: 6px 12px 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   font-size: 14px;
-  transition: background 0.2s;
+  font-weight: 500;
+  color: var(--text);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .user-chip:hover {
-  background: var(--panel);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.user-chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.user-icon,
+.chevron-icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+.user-chip:hover .user-icon,
+.user-chip:hover .chevron-icon {
+  color: var(--text);
 }
 
 .user-email {
   color: var(--text);
-  max-width: 200px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.dropdown-toggle {
-  background: none;
-  border: none;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.dropdown-toggle:hover {
-  color: var(--text);
+  font-weight: 500;
 }
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 4px);
   right: 0;
-  margin-top: 4px;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -639,13 +643,14 @@ pre {
   padding: 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 520px) {
   .user-email {
-    display: none;
+    max-width: 0;
+    overflow: hidden;
   }
   
-  .user-chip::before {
+  .user-email::before {
     content: "Account";
-    color: var(--text);
+    max-width: none;
   }
 }
