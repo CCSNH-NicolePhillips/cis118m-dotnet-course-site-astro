@@ -642,6 +642,18 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       const runnerRequest = async (path, payload, kind) => {
         const statusMsg = kind === "run" ? "Running..." : kind === "check" ? "Running checks..." : "Compiling...";
         setBusy(true, statusMsg);
+        openDrawer(); // Open drawer immediately to show progress
+        
+        // Clear previous output
+        stdoutBlock.textContent = '(running...)';
+        stderrBlock.textContent = '';
+        diagnosticsList.innerHTML = '';
+        diagnosticsEmpty.style.display = 'block';
+        if (kind === 'check') {
+          checksResults.innerHTML = '';
+          checksEmpty.style.display = 'block';
+        }
+        
         try {
           const res = await fetch(makeRunnerUrl(path), {
             method: "POST",
