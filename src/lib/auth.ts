@@ -11,14 +11,24 @@ async function getClient() {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   
+  // Try localStorage first, fall back to memory if blocked by tracking prevention
+  let cacheLocation: 'localstorage' | 'memory' = 'localstorage';
+  try {
+    localStorage.setItem('_auth_test', '1');
+    localStorage.removeItem('_auth_test');
+  } catch (e) {
+    console.warn('localStorage blocked, using memory cache (session will not persist)');
+    cacheLocation = 'memory';
+  }
+  
   client = await (window as any).auth0.createAuth0Client({
     domain: import.meta.env.PUBLIC_AUTH0_DOMAIN,
     clientId: import.meta.env.PUBLIC_AUTH0_CLIENT_ID,
     authorizationParams: {
       redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI,
     },
-    cacheLocation: "localstorage",
-    useRefreshTokens: true,
+    cacheLocation,
+    useRefreshTokens: cacheLocation === 'localstorage',
   });
   return client;
 }
