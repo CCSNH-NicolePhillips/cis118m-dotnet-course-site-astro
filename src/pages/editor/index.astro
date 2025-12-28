@@ -499,23 +499,6 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
         console.log('[Monaco] Starting bootstrap');
 
-        // Suppress RequireJS duplicate definition errors
-        const originalDefine = window.define;
-        if (originalDefine) {
-          window.define = function(...args) {
-            try {
-              return originalDefine.apply(this, args);
-            } catch (e) {
-              if (e.message && e.message.includes('Duplicate definition')) {
-                console.log('[Monaco] Suppressed duplicate definition error');
-                return;
-              }
-              throw e;
-            }
-          };
-          Object.assign(window.define, originalDefine);
-        }
-
         // Configure Monaco to use local assets
         window.MonacoEnvironment = {
           getWorkerUrl: function (workerId, label) {
@@ -529,19 +512,14 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         };
         
         // Check if Monaco is already loaded globally
-        console.log('[Monaco] Checking if monaco exists:', !!window.monaco);
-        
         if (window.monaco && window.monaco.editor) {
-          console.log('[Monaco] Monaco already loaded globally, initializing editor directly');
           initializeEditor();
           return;
         }
         
         r.config({ paths: { vs: '/monaco/vs' } });
 
-        console.log('[Monaco] Loading Monaco modules');
         r(["vs/editor/editor.main"], () => {
-          console.log('[Monaco] Monaco modules loaded, initializing editor');
           initializeEditor();
         });
       };
