@@ -27,6 +27,20 @@
   status = 200
   force = true
 
+# Route /api/code-get to the code-get function
+[[redirects]]
+  from = "/api/code-get"
+  to = "/.netlify/functions/code-get"
+  status = 200
+  force = true
+
+# Route /api/code-save to the code-save function
+[[redirects]]
+  from = "/api/code-save"
+  to = "/.netlify/functions/code-save"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

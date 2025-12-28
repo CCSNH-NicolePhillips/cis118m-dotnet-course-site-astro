@@ -284,12 +284,92 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         return template;
       };
 
+      const loadFromCloud = async () => {
+        try {
+          // Import auth functions
+          const { isAuthed, getAccessToken } = await import("../../lib/auth");
+          
+          const authed = await isAuthed();
+          if (!authed) {
+            return loadFromStorage(); // Fall back to local storage
+          }
+
+          const token = await getAccessToken();
+          if (!token) {
+            return loadFromStorage();
+          }
+
+          // Fetch from cloud
+          const response = await fetch(`/api/code-get?starterId=${encodeURIComponent(starterId)}`, {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.code) {
+              setStatus("Loaded from cloud");
+              return data.code;
+            }
+          }
+          
+          // Fall back to local storage if cloud load fails
+          return loadFromStorage();
+        } catch (err) {
+          console.error("Cloud load failed:", err);
+          return loadFromStorage();
+        }
+      };
+
       const saveToStorage = (value) => {
         try {
           localStorage.setItem(storageKey, value);
           setStatus("Saved");
         } catch (err) {
           setStatus("Save failed");
+        }
+      };
+
+      const saveToCloud = async (value) => {
+        try {
+          // Save to local storage first
+          saveToStorage(value);
+
+          // Import auth functions
+          const { isAuthed, getAccessToken } = await import("../../lib/auth");
+          
+          const authed = await isAuthed();
+          if (!authed) {
+            return; // Local save only
+          }
+
+          const token = await getAccessToken();
+          if (!token) {
+            return;
+          }
+
+          // Save to cloud
+          const response = await fetch("/api/code-save", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              starterId,
+              code: value,
+            }),
+          });
+
+          if (response.ok) {
+            setStatus("Saved to cloud ☁️");
+          } else {
+            setStatus("Saved locally");
+          }
+        } catch (err) {
+          console.error("Cloud save failed:", err);
+          setStatus("Saved locally");
         }
       };
 
@@ -538,7 +618,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
             }
           });
           
-          const initialValue = loadFromStorage();
+          const initialValue = await loadFromCloud();
           editorInstance = monaco.editor.create(editorHost, {
             value: initialValue,
             language: "csharp",
@@ -551,15 +631,15 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           let timer;
           editorInstance.onDidChangeModelContent(() => {
             clearTimeout(timer);
-            timer = setTimeout(() => saveToStorage(editorInstance.getValue()), 450);
+            timer = setTimeout(() => saveToCloud(editorInstance.getValue()), 450);
           });
 
-          saveBtn.addEventListener("click", () => saveToStorage(editorInstance.getValue()));
+          saveBtn.addEventListener("click", () => saveToCloud(editorInstance.getValue()));
 
           resetBtn.addEventListener("click", () => {
             const template = starterTemplates[starterId] || genericTemplate(starterId);
             editorInstance.setValue(template);
-            saveToStorage(template);
+            saveToCloud(template);
             applyMarkers([]);
             renderDiagnostics([]);
             setStatus("Reset to starter");

@@ -67,3 +67,16 @@ export async function isAuthed() {
   const c = await getClient();
   return await c.isAuthenticated();
 }
+
+export async function getAccessToken() {
+  const c = await getClient();
+  const authed = await c.isAuthenticated();
+  if (!authed) return null;
+  try {
+    const token = await c.getTokenSilently();
+    return token;
+  } catch (err) {
+    console.error("Failed to get access token:", err);
+    return null;
+  }
+}
