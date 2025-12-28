@@ -502,8 +502,23 @@ const { title = "Course Page", description = "" } = Astro.props;
         await new Promise(resolve => setTimeout(resolve, 300));
         
         console.log('[Auth] Checking auth status...');
-        const authed = await isAuthed();
-        const user = await getUser();
+        
+        let authed = false;
+        let user = null;
+        
+        try {
+          authed = await isAuthed();
+          console.log('[Auth] isAuthenticated:', authed);
+        } catch (err) {
+          console.error('[Auth] isAuthed() error:', err);
+        }
+        
+        try {
+          user = await getUser();
+          console.log('[Auth] getUser:', user);
+        } catch (err) {
+          console.error('[Auth] getUser() error:', err);
+        }
         
         // Debug logging
         console.log('[Auth] isAuthenticated:', authed);

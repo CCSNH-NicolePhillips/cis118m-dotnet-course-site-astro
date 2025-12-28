@@ -511,14 +511,11 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           }
         };
         
-        // Check if Monaco module is already defined in RequireJS
-        console.log('[Monaco] Checking if module defined:', {
-          hasDefined: !!r.defined,
-          isDefined: r.defined ? r.defined('vs/editor/editor.main') : 'N/A'
-        });
+        // Check if Monaco is already loaded globally
+        console.log('[Monaco] Checking if monaco exists:', !!window.monaco);
         
-        if (r.defined && r.defined('vs/editor/editor.main')) {
-          console.log('[Monaco] Module already defined, initializing editor directly');
+        if (window.monaco && window.monaco.editor) {
+          console.log('[Monaco] Monaco already loaded globally, initializing editor directly');
           initializeEditor();
           return;
         }
