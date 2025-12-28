@@ -339,29 +339,46 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
       const loadFromCloud = async () => {
         try {
+          console.log('[Cloud] Checking authentication...');
           const authed = await isUserAuthenticated();
+          console.log('[Cloud] Authenticated:', authed);
+          
           if (!authed) {
+            console.log('[Cloud] Not authenticated, loading from local storage');
             return loadFromStorage(); // Fall back to local storage
           }
 
+          console.log('[Cloud] Getting access token...');
           const token = await getUserAccessToken();
+          console.log('[Cloud] Token received:', token ? 'yes' : 'no');
+          
           if (!token) {
+            console.log('[Cloud] No token, loading from local storage');
             return loadFromStorage();
           }
 
           // Fetch from cloud
+          console.log('[Cloud] Fetching from /api/code-get for starterId:', starterId);
           const response = await fetch(`/api/code-get?starterId=${encodeURIComponent(starterId)}`, {
             headers: {
               "Authorization": `Bearer ${token}`,
             },
           });
 
+          console.log('[Cloud] Response status:', response.status);
+          
           if (response.ok) {
             const data = await response.json();
+            console.log('[Cloud] Response data:', data);
+            
             if (data.code) {
               setStatus("Loaded from cloud");
               return data.code;
+            } else {
+              console.log('[Cloud] No code in response, loading from local storage');
             }
+          } else {
+            console.error('[Cloud] Response not ok:', await response.text());
           }
           
           // Fall back to local storage if cloud load fails
@@ -386,17 +403,26 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           // Save to local storage first
           saveToStorage(value);
 
+          console.log('[Cloud Save] Checking authentication...');
           const authed = await isUserAuthenticated();
+          console.log('[Cloud Save] Authenticated:', authed);
+          
           if (!authed) {
+            console.log('[Cloud Save] Not authenticated, local save only');
             return; // Local save only
           }
 
+          console.log('[Cloud Save] Getting access token...');
           const token = await getUserAccessToken();
+          console.log('[Cloud Save] Token received:', token ? 'yes' : 'no');
+          
           if (!token) {
+            console.log('[Cloud Save] No token, local save only');
             return;
           }
 
           // Save to cloud
+          console.log('[Cloud Save] Saving to /api/code-save for starterId:', starterId);
           const response = await fetch("/api/code-save", {
             method: "POST",
             headers: {
@@ -409,9 +435,13 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
             }),
           });
 
+          console.log('[Cloud Save] Response status:', response.status);
+          
           if (response.ok) {
+            console.log('[Cloud Save] Success!');
             setStatus("Saved to cloud ☁️");
           } else {
+            console.error('[Cloud Save] Failed:', await response.text());
             setStatus("Saved locally");
           }
         } catch (err) {
