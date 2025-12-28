@@ -201,6 +201,10 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       const runBtn = document.getElementById("run-btn");
       const checkBtn = document.getElementById("check-btn");
       const themeToggle = document.getElementById("theme-toggle");
+      
+      if (!checkBtn) {
+        console.error('[Editor] check-btn element not found');
+      }
       const stdinInput = document.getElementById("stdin-input");
       const editorHost = document.getElementById("editor");
       const stdoutBlock = document.getElementById("stdout");
@@ -771,8 +775,14 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           });
           
           checkBtn.addEventListener("click", () => {
-            if (!editorInstance) return;
+            console.log('[Check] Button clicked');
+            if (!editorInstance) {
+              console.error('[Check] No editor instance');
+              return;
+            }
+            console.log('[Check] Building payload for starterId:', starterId);
             const payload = buildRunnerPayload(starterId, editorInstance.getValue(), "");
+            console.log('[Check] Sending request to /api/check');
             runnerRequest("/api/check", payload, "check");
           });
           
