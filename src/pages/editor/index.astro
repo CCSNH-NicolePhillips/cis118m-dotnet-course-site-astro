@@ -479,6 +479,8 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       };
 
       const bootstrap = () => {
+        console.log('[Monaco] Bootstrap called, flag status:', window.__monacoBootstrapped);
+        
         // Set flag immediately to prevent any duplicate initialization
         if (window.__monacoBootstrapped) {
           console.log('[Monaco] Already bootstrapped, skipping');
@@ -510,6 +512,11 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         };
         
         // Check if Monaco module is already defined in RequireJS
+        console.log('[Monaco] Checking if module defined:', {
+          hasDefined: !!r.defined,
+          isDefined: r.defined ? r.defined('vs/editor/editor.main') : 'N/A'
+        });
+        
         if (r.defined && r.defined('vs/editor/editor.main')) {
           console.log('[Monaco] Module already defined, initializing editor directly');
           initializeEditor();

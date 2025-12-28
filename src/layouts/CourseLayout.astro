@@ -479,11 +479,15 @@ const { title = "Course Page", description = "" } = Astro.props;
       }
 
       (async () => {
+        console.log('[Auth] Script starting');
+        
         const btnLogin = qs("[data-auth='login']");
         const userChip = qs("[data-auth='user-chip']");
         const userEmail = qs("[data-auth='user-email']");
         const dropdownMenu = qs("[data-auth='dropdown-menu']");
         const btnLogout = qs("[data-auth='logout']");
+
+        console.log('[Auth] Elements found:', { btnLogin, userChip, userEmail });
 
         // Check if we're returning from Auth0 callback
         const urlParams = new URLSearchParams(window.location.search);
@@ -493,9 +497,11 @@ const { title = "Course Page", description = "" } = Astro.props;
           return;
         }
 
+        console.log('[Auth] Waiting for Auth0 session check...');
         // Wait a bit for Auth0 to check existing session
         await new Promise(resolve => setTimeout(resolve, 300));
         
+        console.log('[Auth] Checking auth status...');
         const authed = await isAuthed();
         const user = await getUser();
         
