@@ -499,17 +499,15 @@ const { title = "Course Page", description = "" } = Astro.props;
         const authed = await isAuthed();
         const user = await getUser();
         
-        // Debug logging (only in dev)
-        if (import.meta.env.DEV) {
-          console.log('[Auth] isAuthenticated:', authed);
-          console.log('[Auth] getUser:', user);
-          try {
-            localStorage.setItem('_test', '1');
-            localStorage.removeItem('_test');
-            console.log('[Auth] localStorage: writable');
-          } catch (e) {
-            console.error('[Auth] localStorage: blocked!', e);
-          }
+        // Debug logging
+        console.log('[Auth] isAuthenticated:', authed);
+        console.log('[Auth] getUser:', user);
+        try {
+          localStorage.setItem('_test', '1');
+          localStorage.removeItem('_test');
+          console.log('[Auth] localStorage: writable');
+        } catch (e) {
+          console.error('[Auth] localStorage: blocked!', e);
         }
 
         if (user && user.email) {
