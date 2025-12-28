@@ -573,7 +573,14 @@ const { title = "Course Page", description = "" } = Astro.props;
         } else {
           // Not logged in - force login
           if (!authed) {
-            await login(window.location.pathname + window.location.search);
+            // Check if we have a saved return location
+            const savedReturnTo = sessionStorage.getItem('cis118m:returnTo');
+            if (savedReturnTo) {
+              sessionStorage.removeItem('cis118m:returnTo');
+              await login(savedReturnTo);
+            } else {
+              await login(window.location.pathname + window.location.search);
+            }
           } else {
             // Edge case: authed but no user - show login button
             if (btnLogin) {

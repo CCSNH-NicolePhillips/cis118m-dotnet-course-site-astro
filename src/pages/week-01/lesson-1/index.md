@@ -3,7 +3,7 @@ layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 1"
 description: "Week 1 Lesson 1: .NET vs C# (and what a “console app” is)"
 ---
-
+import RunnableSnippet from '../../../components/RunnableSnippet.astro';
 # Week 1 Lesson 1: .NET vs C# (and what a “console app” is)
 
 ## Goal
@@ -30,9 +30,29 @@ Console.WriteLine("Comments are helpful!");
 ```
 
 ## Try it
+
+Try editing and running this code right here:
+
+<RunnableSnippet
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, .NET!");
+        Console.WriteLine("If you can read this, your program ran.");
+    }
+}`}
+  starterId="week-01-lesson-1"
+  height={200}
+/>
+
+**Challenge:**
 - Change the text inside `WriteLine` to your own message.
 - Add a second `Console.WriteLine` that prints your name (or a nickname).
 - Add a comment above your first line that explains what it does.
+- Click **Run** to see the output!
 
 ## Common mistakes
 - Forgetting the quotes around text.
