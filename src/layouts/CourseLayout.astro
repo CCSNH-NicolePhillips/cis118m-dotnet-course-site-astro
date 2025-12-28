@@ -169,8 +169,9 @@ const { title = "Course Page", description = "" } = Astro.props;
           return;
         }
         
+        // Default: expanded and pinned unless explicitly changed by user
         let isExpanded = localStorage.getItem(sidebarKey) !== "false";
-        let isPinned = localStorage.getItem(pinKey) === "true";
+        let isPinned = localStorage.getItem(pinKey) !== "false";
         
         const applySidebarState = () => {
           sidebar.classList.toggle("collapsed", !isExpanded);
