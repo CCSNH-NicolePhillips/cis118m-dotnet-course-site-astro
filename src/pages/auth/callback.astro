@@ -6,11 +6,11 @@ const clientId = import.meta.env.PUBLIC_AUTH0_CLIENT_ID;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script is:inline src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
   </head>
   <body>
     <div id="status">Redirecting...</div>
-    <script define:vars={{ redirectUrl, domain, clientId }}>
+    <script is:inline define:vars={{ redirectUrl, domain, clientId }}>
       (async () => {
         try {
           console.log("Starting callback...");
