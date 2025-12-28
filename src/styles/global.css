@@ -213,7 +213,6 @@ a:hover { text-decoration: underline; }
   justify-content: center;
   cursor: pointer;
   color: var(--muted);
-  transition: all 0.2s;
   flex-shrink: 0;
   opacity: 0.5;
 }

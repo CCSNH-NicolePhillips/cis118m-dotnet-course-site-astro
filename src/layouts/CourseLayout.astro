@@ -198,12 +198,14 @@ const { title = "Course Page", description = "" } = Astro.props;
         const applySidebarState = () => {
           sidebar.classList.toggle("collapsed", !isExpanded);
           sidebar.classList.toggle("pinned", isPinned);
-          pinBtn.style.opacity = isPinned ? "1" : "0.5";
           
-          // Trigger window resize event to update Monaco editor layout
-          setTimeout(() => {
-            window.dispatchEvent(new Event('resize'));
-          }, 100);
+          // Update pin button appearance
+          const pinPath = pinBtn.querySelector('path:first-child');
+          if (pinPath) {
+            pinPath.setAttribute('fill', isPinned ? 'currentColor' : 'none');
+          }
+          pinBtn.style.opacity = isPinned ? "1" : "0.5";
+          pinBtn.style.color = isPinned ? "var(--accent)" : "var(--muted)";
         };
         
         applySidebarState();
