@@ -226,6 +226,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       const setBusy = (busy, msg) => {
         compileBtn.disabled = busy;
         runBtn.disabled = busy;
+        checkBtn.disabled = busy;
         if (busy && msg) setStatus(msg);
       };
 
@@ -635,7 +636,8 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       };
 
       const runnerRequest = async (path, payload, kind) => {
-        setBusy(true, kind === "run" ? "Running..." : "Compiling...");
+        const statusMsg = kind === "run" ? "Running..." : kind === "check" ? "Running checks..." : "Compiling...";
+        setBusy(true, statusMsg);
         try {
           const res = await fetch(makeRunnerUrl(path), {
             method: "POST",
