@@ -91,7 +91,12 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     let authClient = null;
     
     const getAuthClient = async () => {
-      if (authClient) return authClient;
+      if (authClient) {
+        console.log('[Auth Client] Returning cached client');
+        return authClient;
+      }
+      
+      console.log('[Auth Client] Creating new client...');
       
       // Wait for Auth0 CDN to load (from layout)
       let attempts = 0;
@@ -99,6 +104,8 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         if (attempts++ > 100) throw new Error('Auth0 not available');
         await new Promise(resolve => setTimeout(resolve, 100));
       }
+      
+      console.log('[Auth Client] Auth0 SDK available, creating client...');
       
       authClient = await window.auth0.createAuth0Client({
         domain: "${import.meta.env.PUBLIC_AUTH0_DOMAIN}",
@@ -112,14 +119,26 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         useRefreshTokens: true,
       });
       
+      console.log('[Auth Client] Client created');
+      
+      // Give client a moment to read from cache
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      const isAuth = await authClient.isAuthenticated();
+      console.log('[Auth Client] Authenticated after creation:', isAuth);
+      
       return authClient;
     };
     
     const isUserAuthenticated = async () => {
       try {
+        console.log('[isUserAuthenticated] Getting client...');
         const client = await getAuthClient();
-        return await client.isAuthenticated();
-      } catch {
+        const result = await client.isAuthenticated();
+        console.log('[isUserAuthenticated] Result:', result);
+        return result;
+      } catch (err) {
+        console.error('[isUserAuthenticated] Error:', err);
         return false;
       }
     };
@@ -128,12 +147,15 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       try {
         const client = await getAuthClient();
         const authed = await client.isAuthenticated();
+        console.log('[getUserAccessToken] Is authenticated:', authed);
         if (!authed) return null;
-        return await client.getTokenSilently({
+        const token = await client.getTokenSilently({
           authorizationParams: {
             audience: "${import.meta.env.PUBLIC_AUTH0_AUDIENCE}",
           },
         });
+        console.log('[getUserAccessToken] Token length:', token?.length || 0);
+        return token;
       } catch (err) {
         console.error("Failed to get access token:", err);
         return null;
