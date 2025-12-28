@@ -504,6 +504,13 @@ const { title = "Course Page", description = "" } = Astro.props;
         }
 
         console.log('[Auth] Waiting for Auth0 session check...');
+        
+        // Check if Auth0 CDN loaded
+        console.log('[Auth] window.auth0 available?', !!window.auth0);
+        if (!window.auth0) {
+          console.error('[Auth] Auth0 CDN script did not load! Check network tab.');
+        }
+        
         // Wait a bit for Auth0 to check existing session
         await new Promise(resolve => setTimeout(resolve, 300));
         
