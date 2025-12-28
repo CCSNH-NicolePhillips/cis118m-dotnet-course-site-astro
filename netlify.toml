@@ -41,6 +41,20 @@
   status = 200
   force = true
 
+# Route /api/progress-get to the progress-get function
+[[redirects]]
+  from = "/api/progress-get"
+  to = "/.netlify/functions/progress-get"
+  status = 200
+  force = true
+
+# Route /api/progress-update to the progress-update function
+[[redirects]]
+  from = "/api/progress-update"
+  to = "/.netlify/functions/progress-update"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

@@ -347,8 +347,41 @@ const { title = "Course Page", description = "" } = Astro.props;
     <script is:inline>
       (() => {
         const PROGRESS_KEY = "cis118m:progress";
+        let cloudProgress = null;
+        
+        // Fetch cloud progress if logged in
+        const fetchCloudProgress = async () => {
+          if (!window.__auth) return;
+          
+          try {
+            const authed = await window.__auth.isAuthed();
+            if (!authed) return;
+            
+            const token = await window.__auth.getAccessToken();
+            if (!token) return;
+            
+            const response = await fetch('/api/progress-get', {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              cloudProgress = data.progress || {};
+              updateStatusBadges();
+            }
+          } catch (err) {
+            console.error('[Progress] Failed to fetch cloud progress:', err);
+          }
+        };
         
         const getProgress = () => {
+          // Use cloud progress if available, otherwise fall back to localStorage
+          if (cloudProgress) {
+            return cloudProgress;
+          }
+          
           try {
             const data = localStorage.getItem(PROGRESS_KEY);
             return data ? JSON.parse(data) : {};
@@ -363,7 +396,8 @@ const { title = "Course Page", description = "" } = Astro.props;
           
           statusElements.forEach(el => {
             const starterId = el.getAttribute("data-starter");
-            const status = progress[starterId] || "not-started";
+            const entry = progress[starterId];
+            const status = entry?.status || "not_started";
             
             // Clear previous content
             el.textContent = "";
@@ -372,18 +406,27 @@ const { title = "Course Page", description = "" } = Astro.props;
             if (status === "completed") {
               el.textContent = "✓";
               el.classList.add("completed");
-            } else if (status === "in-progress") {
+            } else if (status === "in_progress") {
               el.classList.add("in-progress");
             }
           });
         };
         
-        // Update on load
+        // Expose for editor to trigger updates
+        window.__updateProgress = (updatedProgress) => {
+          cloudProgress = updatedProgress;
+          updateStatusBadges();
+        };
+        
+        // Fetch cloud progress on load
+        fetchCloudProgress();
+        
+        // Update on load (for local fallback)
         updateStatusBadges();
         
         // Listen for progress updates from editor
         window.addEventListener("progressUpdated", () => {
-          updateStatusBadges();
+          fetchCloudProgress();
         });
       })();
     </script>

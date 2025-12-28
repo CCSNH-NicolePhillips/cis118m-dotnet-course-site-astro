@@ -425,6 +425,9 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           if (response.ok) {
             console.log('[Cloud Save] Success!');
             setStatus("Saved to cloud ☁️");
+            
+            // Update progress
+            await updateProgress('saved');
           } else {
             console.error('[Cloud Save] Failed:', await response.text());
             setStatus("Saved locally");
@@ -432,6 +435,35 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         } catch (err) {
           console.error("Cloud save failed:", err);
           setStatus("Saved locally");
+        }
+      };
+
+      const updateProgress = async (event) => {
+        try {
+          const authed = await isUserAuthenticated();
+          if (!authed) return;
+          
+          const token = await getUserAccessToken();
+          if (!token) return;
+
+          const response = await fetch("/api/progress-update", {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              starterId,
+              event,
+            }),
+          });
+
+          if (response.ok) {
+            // Trigger sidebar update
+            window.dispatchEvent(new Event('progressUpdated'));
+          }
+        } catch (err) {
+          console.error('[Progress] Update failed:', err);
         }
       };
 
@@ -556,12 +588,18 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
             // Mark lesson as completed if all checks pass
             if (allPassed) {
               ProgressTracker.markCompleted(starterId);
+              updateProgress('passed');
             }
             
             outputStatus.textContent = allPassed ? "All checks passed!" : "Some checks need attention";
             setStatus(allPassed ? "All checks passed!" : "Some checks need attention");
           }
           return;
+        }
+        
+        // Update progress on run
+        if (kind === "run") {
+          updateProgress('ran');
         }
         
         // Auto-open drawer if there's output or errors
