@@ -499,6 +499,13 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         bootstrapped = true;
         console.log('[Monaco] Starting bootstrap');
 
+        // Clear any existing module definitions to prevent duplicates
+        if (r.defined && r.defined('vs/editor/editor.main')) {
+          console.log('[Monaco] Clearing existing module cache');
+          delete r.s.contexts._.defined['vs/editor/editor.main'];
+          delete r.s.contexts._.registry['vs/editor/editor.main'];
+        }
+
         // Configure Monaco to use local assets
         window.MonacoEnvironment = {
           getWorkerUrl: function (workerId, label) {
