@@ -34,12 +34,6 @@ const { title = "Course Page", description = "" } = Astro.props;
             </button>
           </div>
           
-          <div class="auth-bar" style="margin-bottom:12px; padding:8px; background:var(--panel); border-radius:6px; font-size:13px;">
-            <span data-auth="who" style="display:block; margin-bottom:6px; color:var(--text-secondary);"></span>
-            <button data-auth="login" type="button" style="font-size:13px; padding:4px 12px;">Sign in</button>
-            <button data-auth="logout" type="button" style="display:none; font-size:13px; padding:4px 12px;">Sign out</button>
-          </div>
-          
           <p class="hint" style="margin:10px 0 0;">
             {COURSE.term} • CRN {COURSE.crn}<br/>
             Contact: <a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a>
@@ -107,9 +101,32 @@ const { title = "Course Page", description = "" } = Astro.props;
           </button>
         </aside>
 
-        <main class="card main">
-          <slot />
-        </main>
+        <div class="main-wrapper">
+          <header class="top-header">
+            <div class="header-spacer"></div>
+            <div class="auth-header">
+              <!-- Logged out state -->
+              <button data-auth="login" type="button" class="btn-primary auth-signin">Sign in</button>
+              
+              <!-- Logged in state -->
+              <div data-auth="user-chip" class="user-chip" style="display:none;">
+                <span data-auth="user-email" class="user-email"></span>
+                <button data-auth="dropdown-toggle" class="dropdown-toggle" aria-label="Account menu">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+                <div data-auth="dropdown-menu" class="dropdown-menu" style="display:none;">
+                  <button data-auth="logout" type="button" class="dropdown-item">Sign out</button>
+                </div>
+              </div>
+            </div>
+          </header>
+          
+          <main class="card main">
+            <slot />
+          </main>
+        </div>
       </div>
     </div>
 
@@ -460,24 +477,46 @@ const { title = "Course Page", description = "" } = Astro.props;
       }
 
       (async () => {
-        const btnIn = qs("[data-auth='login']");
-        const btnOut = qs("[data-auth='logout']");
-        const who = qs("[data-auth='who']");
+        const btnLogin = qs("[data-auth='login']");
+        const userChip = qs("[data-auth='user-chip']");
+        const userEmail = qs("[data-auth='user-email']");
+        const dropdownToggle = qs("[data-auth='dropdown-toggle']");
+        const dropdownMenu = qs("[data-auth='dropdown-menu']");
+        const btnLogout = qs("[data-auth='logout']");
 
         const user = await getUser();
 
-        if (btnIn) {
-          btnIn.style.display = user ? "none" : "inline-flex";
-          btnIn.addEventListener("click", () => login(window.location.pathname + window.location.search));
-        }
-
-        if (btnOut) {
-          btnOut.style.display = user ? "inline-flex" : "none";
-          btnOut.addEventListener("click", () => logout());
-        }
-
-        if (who) {
-          who.textContent = user?.email ? `Signed in: ${user.email}` : "";
+        if (user && user.email) {
+          // Logged in state
+          if (btnLogin) btnLogin.style.display = "none";
+          if (userChip) userChip.style.display = "flex";
+          if (userEmail) userEmail.textContent = user.email;
+          
+          // Dropdown toggle
+          if (dropdownToggle && dropdownMenu) {
+            dropdownToggle.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const isVisible = dropdownMenu.style.display === "block";
+              dropdownMenu.style.display = isVisible ? "none" : "block";
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener("click", () => {
+              dropdownMenu.style.display = "none";
+            });
+          }
+          
+          // Logout button
+          if (btnLogout) {
+            btnLogout.addEventListener("click", () => logout());
+          }
+        } else {
+          // Logged out state
+          if (btnLogin) {
+            btnLogin.style.display = "inline-flex";
+            btnLogin.addEventListener("click", () => login(window.location.pathname + window.location.search));
+          }
+          if (userChip) userChip.style.display = "none";
         }
 
         // Force login on first visit
