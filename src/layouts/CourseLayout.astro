@@ -472,7 +472,16 @@ const { title = "Course Page", description = "" } = Astro.props;
       })();
     </script>
     <script>
-      import { login, logout, getUser, isAuthed, handleCallback } from "../lib/auth";
+      import { login, logout, getUser, isAuthed, handleCallback, getAccessToken } from "../lib/auth";
+
+      // Expose auth functions globally for use in editor
+      window.__auth = {
+        login,
+        logout,
+        getUser,
+        isAuthed,
+        getAccessToken,
+      };
 
       // Auth UI management
       function qs(sel) {

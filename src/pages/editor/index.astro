@@ -87,54 +87,22 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       stdin: stdin ?? "",
     });
 
-    // Auth utilities for cloud save/load
-    let authClient = null;
-    
-    const getAuthClient = async () => {
-      if (authClient) {
-        console.log('[Auth Client] Returning cached client');
-        return authClient;
-      }
-      
-      console.log('[Auth Client] Creating new client...');
-      
-      // Wait for Auth0 CDN to load (from layout)
+    // Auth utilities for cloud save/load - use global functions from layout
+    const waitForAuth = async () => {
       let attempts = 0;
-      while (!window.auth0) {
-        if (attempts++ > 100) throw new Error('Auth0 not available');
+      while (!window.__auth) {
+        if (attempts++ > 100) throw new Error('Auth not available');
         await new Promise(resolve => setTimeout(resolve, 100));
       }
-      
-      console.log('[Auth Client] Auth0 SDK available, creating client...');
-      
-      authClient = await window.auth0.createAuth0Client({
-        domain: "${import.meta.env.PUBLIC_AUTH0_DOMAIN}",
-        clientId: "${import.meta.env.PUBLIC_AUTH0_CLIENT_ID}",
-        authorizationParams: {
-          redirect_uri: "${import.meta.env.PUBLIC_AUTH0_REDIRECT_URI}",
-          audience: "${import.meta.env.PUBLIC_AUTH0_AUDIENCE}",
-          scope: "openid profile email",
-        },
-        cacheLocation: "localstorage",
-        useRefreshTokens: true,
-      });
-      
-      console.log('[Auth Client] Client created');
-      
-      // Give client a moment to read from cache
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      const isAuth = await authClient.isAuthenticated();
-      console.log('[Auth Client] Authenticated after creation:', isAuth);
-      
-      return authClient;
+      return window.__auth;
     };
     
     const isUserAuthenticated = async () => {
       try {
-        console.log('[isUserAuthenticated] Getting client...');
-        const client = await getAuthClient();
-        const result = await client.isAuthenticated();
+        console.log('[isUserAuthenticated] Waiting for auth...');
+        const auth = await waitForAuth();
+        console.log('[isUserAuthenticated] Got auth, checking...');
+        const result = await auth.isAuthed();
         console.log('[isUserAuthenticated] Result:', result);
         return result;
       } catch (err) {
@@ -145,15 +113,10 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     
     const getUserAccessToken = async () => {
       try {
-        const client = await getAuthClient();
-        const authed = await client.isAuthenticated();
-        console.log('[getUserAccessToken] Is authenticated:', authed);
-        if (!authed) return null;
-        const token = await client.getTokenSilently({
-          authorizationParams: {
-            audience: "${import.meta.env.PUBLIC_AUTH0_AUDIENCE}",
-          },
-        });
+        console.log('[getUserAccessToken] Waiting for auth...');
+        const auth = await waitForAuth();
+        console.log('[getUserAccessToken] Got auth, getting token...');
+        const token = await auth.getAccessToken();
         console.log('[getUserAccessToken] Token length:', token?.length || 0);
         return token;
       } catch (err) {
