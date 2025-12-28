@@ -482,7 +482,11 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       let bootstrapped = false;
       
       const bootstrap = () => {
-        if (bootstrapped) return;
+        // Global check to prevent any duplicate initialization
+        if (window.__monacoBootstrapped || bootstrapped) {
+          console.log('[Monaco] Already bootstrapped, skipping');
+          return;
+        }
         
         const r = window.require;
         if (!r || !r.config) {
@@ -491,7 +495,9 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           return;
         }
 
+        window.__monacoBootstrapped = true;
         bootstrapped = true;
+        console.log('[Monaco] Starting bootstrap');
 
         // Configure Monaco to use local assets
         window.MonacoEnvironment = {
@@ -595,6 +601,10 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       };
 
       const startWhenReady = () => {
+        if (window.__monacoBootstrapped) {
+          console.log('[Monaco] Already bootstrapped globally, skipping');
+          return;
+        }
         if (document.readyState === "complete") {
           bootstrap();
         } else {
