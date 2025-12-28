@@ -600,14 +600,14 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
       const startWhenReady = () => {
         if (window.__monacoBootstrapped) {
-          console.log('[Monaco] Already bootstrapped globally, skipping');
+          console.log('[Monaco] Startup skipped - already bootstrapped');
           return;
         }
-        if (document.readyState === "complete") {
-          bootstrap();
-        } else {
-          window.addEventListener("load", bootstrap, { once: true });
-        }
+        
+        console.log('[Monaco] Starting initialization, readyState:', document.readyState);
+        
+        // Just call bootstrap - it will poll until require is ready
+        bootstrap();
       };
 
       startWhenReady();
