@@ -87,6 +87,59 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       stdin: stdin ?? "",
     });
 
+    // Auth utilities for cloud save/load
+    let authClient = null;
+    
+    const getAuthClient = async () => {
+      if (authClient) return authClient;
+      
+      // Wait for Auth0 CDN to load (from layout)
+      let attempts = 0;
+      while (!window.auth0) {
+        if (attempts++ > 100) throw new Error('Auth0 not available');
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      
+      authClient = await window.auth0.createAuth0Client({
+        domain: "${import.meta.env.PUBLIC_AUTH0_DOMAIN}",
+        clientId: "${import.meta.env.PUBLIC_AUTH0_CLIENT_ID}",
+        authorizationParams: {
+          redirect_uri: "${import.meta.env.PUBLIC_AUTH0_REDIRECT_URI}",
+          audience: "${import.meta.env.PUBLIC_AUTH0_AUDIENCE}",
+          scope: "openid profile email",
+        },
+        cacheLocation: "localstorage",
+        useRefreshTokens: true,
+      });
+      
+      return authClient;
+    };
+    
+    const isUserAuthenticated = async () => {
+      try {
+        const client = await getAuthClient();
+        return await client.isAuthenticated();
+      } catch {
+        return false;
+      }
+    };
+    
+    const getUserAccessToken = async () => {
+      try {
+        const client = await getAuthClient();
+        const authed = await client.isAuthenticated();
+        if (!authed) return null;
+        return await client.getTokenSilently({
+          authorizationParams: {
+            audience: "${import.meta.env.PUBLIC_AUTH0_AUDIENCE}",
+          },
+        });
+      } catch (err) {
+        console.error("Failed to get access token:", err);
+        return null;
+      }
+    };
+
     // Progress tracking utilities
     const ProgressTracker = {
       STORAGE_KEY: "cis118m:progress",
@@ -286,15 +339,12 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
       const loadFromCloud = async () => {
         try {
-          // Import auth functions
-          const { isAuthed, getAccessToken } = await import("../../lib/auth");
-          
-          const authed = await isAuthed();
+          const authed = await isUserAuthenticated();
           if (!authed) {
             return loadFromStorage(); // Fall back to local storage
           }
 
-          const token = await getAccessToken();
+          const token = await getUserAccessToken();
           if (!token) {
             return loadFromStorage();
           }
@@ -336,15 +386,12 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           // Save to local storage first
           saveToStorage(value);
 
-          // Import auth functions
-          const { isAuthed, getAccessToken } = await import("../../lib/auth");
-          
-          const authed = await isAuthed();
+          const authed = await isUserAuthenticated();
           if (!authed) {
             return; // Local save only
           }
 
-          const token = await getAccessToken();
+          const token = await getUserAccessToken();
           if (!token) {
             return;
           }
