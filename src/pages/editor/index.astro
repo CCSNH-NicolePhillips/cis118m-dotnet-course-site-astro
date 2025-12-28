@@ -604,7 +604,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
         });
       };
 
-      const initializeEditor = () => {
+      const initializeEditor = async () => {
         // Define custom light theme with matching background
         monaco.editor.defineTheme("vs-soft", {
             base: "vs",
