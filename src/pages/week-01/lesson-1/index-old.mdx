@@ -1,0 +1,242 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 01 • Lesson 1"
+description: "Week 1 Lesson 1: What is .NET vs C# + Hello World"
+---
+
+import RunnableSnippet from '../../../components/RunnableSnippet.astro';
+import TryMeNow from '../../../components/TryMeNow.astro';
+
+# Week 1 Lesson 1: What is .NET vs C# + Hello World
+
+**Time: 35 minutes**
+
+## Goal
+- Know what **.NET** is (the platform) and what **C#** is (the language)
+- Understand what a **console app** does
+- Write your first "Hello World" program
+- Be able to explain this to a friend in 30 seconds
+
+## Key Concepts
+
+### C# (The Language)
+
+**C#** (pronounced "see sharp") is the **programming language** you write. It's like English or Spanish — a way to communicate instructions.
+
+Think of it like: **C# is the recipe you write.**
+
+### .NET (The Platform)
+
+**.NET** (pronounced "dot net") is the **platform that runs your C# code**. It includes:
+- Tools to compile (translate) your code
+- Libraries (pre-written code you can use)
+- A runtime (the engine that executes your program)
+
+Think of it like: **.NET is the kitchen and appliances that execute your recipe.**
+
+### Console App
+
+A **console app** is a program that runs in a text-based terminal. It:
+- Prints text output to the screen
+- Can accept text input from the user
+- Is perfect for learning programming basics
+
+Later you'll learn to make apps with windows, buttons, and graphics — but console apps teach the fundamentals.
+
+## Your First Program: Hello World
+
+Every programmer's first program prints "Hello World" to the screen. Let's try it!
+
+<RunnableSnippet
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, .NET!");
+        Console.WriteLine("If you can read this, your program ran.");
+    }
+}`}
+  starterId="week-01-lesson-1"
+  height={200}
+/>
+
+**What's happening here?**
+
+- `Console.WriteLine("text")` — Prints text to the console
+- `"Hello, .NET!"` — The text to print (must be in quotes)
+- `;` — Every statement ends with a semicolon
+
+Don't worry about the other lines (`using System`, `class Program`, etc.) yet. We'll explain those later. For now, just focus on the `Console.WriteLine` lines.
+
+## Try Me Now Tasks
+
+Complete these three tasks to practice:
+
+### Task 1: Run Hello World
+
+<TryMeNow
+  starterId="week-01-lesson-1"
+  tasks={[
+    "Click the 'Run' button",
+    "Look at the console output (bottom panel)",
+    "You should see two lines of text"
+  ]}
+  expectedOutput="Hello, .NET!\nIf you can read this, your program ran."
+  tip="The output appears in the Console tab at the bottom. If nothing shows, check for error messages."
+/>
+
+### Task 2: Change the output to print 3 lines
+
+<TryMeNow
+  starterId="week-01-lesson-1"
+  tasks={[
+    "Change the first message to print your name",
+    "Add a third Console.WriteLine that prints your favorite color",
+    "Run the program again"
+  ]}
+  expectedOutput="Your Name\nIf you can read this, your program ran.\nMy favorite color is blue"
+  tip="Copy one of the existing Console.WriteLine lines, paste it below, and change the text inside the quotes."
+/>
+
+### Task 3: Print a quote with quotation marks
+
+**Challenge:** Print this exact message: `She said, "Hello!"`
+
+The tricky part: The message itself has quotes inside it. How do you print quotes?
+
+**Answer:** Use the **escape sequence** `\"`
+
+<TryMeNow
+  starterId="week-01-lesson-1"
+  tasks={[
+    "Add a new Console.WriteLine",
+    "Use backslash-quote to put quotes inside your string",
+    "Example: Console.WriteLine(\"She said, \\\"Hello!\\\"\");"
+  ]}
+  expectedOutput='She said, "Hello!"'
+  tip="The backslash tells C# to treat the next character literally, not as code."
+/>
+
+## Common Mistakes
+
+❌ **Missing quotes around text:**
+```csharp
+Console.WriteLine(Hello);  // ERROR
+```
+
+✅ **Correct:**
+```csharp
+Console.WriteLine("Hello");  // WORKS
+```
+
+---
+
+❌ **Missing semicolon:**
+```csharp
+Console.WriteLine("Hello")  // ERROR
+```
+
+✅ **Correct:**
+```csharp
+Console.WriteLine("Hello");  // WORKS
+```
+
+---
+
+❌ **Typo in Console.WriteLine:**
+```csharp
+Console.WriteLin("Hello");  // ERROR (missing 'e')
+```
+
+✅ **Correct:**
+```csharp
+Console.WriteLine("Hello");  // WORKS
+```
+
+## Mini-Check: Test Your Understanding
+
+**1) Is .NET a programming language?**
+
+<details>
+<summary>Show answer</summary>
+
+**No.** C# is the language. .NET is the platform that runs C# programs.
+
+</details>
+
+**2) What does Console.WriteLine do?**
+
+<details>
+<summary>Show answer</summary>
+
+It prints a line of text (output) to the console.
+
+</details>
+
+**3) What's wrong with this code?**
+
+```csharp
+Console.WriteLine("Hello)
+```
+
+<details>
+<summary>Show answer</summary>
+
+Two problems:
+1. Missing closing quote after "Hello
+2. Missing semicolon at the end
+
+**Correct:**
+```csharp
+Console.WriteLine("Hello");
+```
+
+</details>
+
+## Comments (Notes for Humans)
+
+You can add **comments** to explain what your code does. The computer ignores comments.
+
+```csharp
+// This is a single-line comment
+Console.WriteLine("Hello");  // This prints Hello
+
+/*
+This is a multi-line comment.
+You can write multiple lines here.
+*/
+```
+
+**When to use comments:**
+- Explain WHY you're doing something (not what — the code shows what)
+- Mark sections of code
+- Temporarily disable code (for testing)
+
+**Pro tip:** Good code doesn't need many comments because the code itself is clear. Use comments for tricky parts.
+
+## Key Takeaways
+
+✅ **C#** is the programming language you write
+
+✅ **.NET** is the platform that runs your C# code
+
+✅ **Console apps** print text output to the terminal
+
+✅ `Console.WriteLine("text")` prints a line
+
+✅ Every statement ends with a **semicolon** `;`
+
+✅ Text must be in **quotes** `"like this"`
+
+✅ Use `\"` to print quotes inside a string
+
+## Next Steps
+
+Great job! You've written your first C# program. Now let's learn about:
+
+- [Lesson 2: Console output + variables + strings](../lesson-2/)
+- [Back to Week 1 Overview](../)
+
+

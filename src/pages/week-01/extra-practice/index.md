@@ -1,189 +1,198 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Extra Practice"
-description: "Week 1 Extra Practice: Mini drills to reinforce variables and output"
+description: "Week 1 Extra Practice: Micro coding drills"
 ---
 
-import TryMeNow from '../../../components/TryMeNow.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
-# Week 1 Extra Practice: Mini Drills
+# Week 1 Extra Practice
 
-**Time: 20 minutes**
+**Time: 25 minutes**
 
-These are quick drills to reinforce what you learned in Lessons 1 and 2. Complete as many as you can — they're all in the same editor.
+These are quick micro-drills to reinforce what you learned in Lessons 1 and 2. Each one should take 2-4 minutes.
 
-## Instructions
+---
 
-Work through these prompts one at a time in the editor. After completing each one, test it to make sure it works!
+## Drill 1: Change the Text
 
-<TryMeNow
-  starterId="week-01-extra-practice"
-  tasks={[
-    "Complete the 10 practice drills below",
-    "Test each one as you go",
-    "All drills are in the same starter"
-  ]}
-  tip="Don't rush! The goal is to build muscle memory by typing the code yourself."
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, world!");
+    }
+}`}
+  starterId="week-01-extra-01"
+  height={180}
+  instructions="Change the message to print your favorite quote or song lyric."
 />
 
-## Drill 1: Print Your Name 3 Times
+---
 
-Print your name (or a nickname) three times, each on a separate line.
+## Drill 2: Add a Third Line
 
-**Expected output:**
-```
-Alice
-Alice
-Alice
-```
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Line 1");
+        Console.WriteLine("Line 2");
+    }
+}`}
+  starterId="week-01-extra-02"
+  height={200}
+  instructions="Add a third Console.WriteLine to print 'Line 3'."
+/>
 
 ---
 
-## Drill 2: Print a Simple Border
+## Drill 3: Fix the Missing Quotes
 
-Print a line of equals signs (`=`) to make a border:
+This code has an error. Fix it!
 
-**Expected output:**
-```
-====================
-```
+<TryItNowRunner
+  code={`using System;
 
-**Tip:** You can put it all in one `Console.WriteLine`
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine(Hello);
+    }
+}`}
+  starterId="week-01-extra-03"
+  height={180}
+  instructions="Add quotes around Hello so the code runs without errors."
+/>
 
----
-
-## Drill 3: Create and Print a String Variable
-
-Create a string variable called `favoriteColor` and print it with a label.
-
-**Expected output:**
-```
-My favorite color is blue
-```
-
----
-
-## Drill 4: Create and Print an Int Variable
-
-Create an int variable called `luckyNumber` (use any number) and print it with a label.
-
-**Expected output:**
-```
-My lucky number is 7
-```
+**Hint:** Text must always be in quotes!
 
 ---
 
-## Drill 5: Do Simple Math
+## Drill 4: Fix the Missing Semicolon
 
-Create a variable `score` set to 85. Print the score plus 10.
+This code has an error. Fix it!
 
-**Expected output:**
-```
-Score + 10 = 95
-```
+<TryItNowRunner
+  code={`using System;
 
-**Tip:** Use `{score + 10}` inside string interpolation
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello")
+        Console.WriteLine("World")
+    }
+}`}
+  starterId="week-01-extra-04"
+  height={200}
+  instructions="Add semicolons at the end of each Console.WriteLine statement."
+/>
 
----
-
-## Drill 6: Print Multiple Variables
-
-Create two variables: `firstName` and `lastName`. Print them together as a full name.
-
-**Expected output:**
-```
-Full Name: Alice Johnson
-```
-
----
-
-## Drill 7: Print a Blank Line
-
-Print three lines with a blank line in the middle:
-
-**Expected output:**
-```
-Line 1
-
-Line 3
-```
-
-**Tip:** Use `Console.WriteLine();` with nothing inside for the blank line
+**Hint:** Every statement needs a semicolon at the end!
 
 ---
 
-## Drill 8: Fix the Bug
+## Drill 5: Add a Comment
 
-This code has an error. Find and fix it:
+<TryItNowRunner
+  code={`using System;
 
-```csharp
-string name = Alice;
-Console.WriteLine(name);
-```
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("This code needs a comment!");
+    }
+}`}
+  starterId="week-01-extra-05"
+  height={200}
+  instructions="Add a comment above the Console.WriteLine explaining what it does."
+/>
 
-**What's wrong?** (Hint: strings need quotes)
-
----
-
-## Drill 9: Change Concatenation to Interpolation
-
-Rewrite this using string interpolation (`$""`):
-
-```csharp
-string city = "Boston";
-Console.WriteLine("I live in " + city);
-```
-
-**Answer:**
-```csharp
-string city = "Boston";
-Console.WriteLine($"I live in {city}");
-```
+**Example comment:** `// Print a greeting to the user`
 
 ---
 
-## Drill 10: Create a Mini Profile Card
+## Drill 6: Use a Variable
 
-Print a formatted profile using 4+ variables:
+<TryItNowRunner
+  code={`using System;
 
-**Expected output:**
-```
-=== My Profile ===
-Name: Alice Johnson
-Age: 20
-City: Boston
-Hobby: Reading
-```
-
-**Requirements:**
-- Use at least 4 variables
-- Use string interpolation
-- Include the header line with ===
-
----
-
-## Challenge (Optional)
-
-If you finish all 10 drills, try this:
-
-**Create a simple menu:**
-
-```
-=== Main Menu ===
-1) Start Game
-2) View High Scores
-3) Settings
-4) Quit
-```
-
-**Requirement:** Use variables for the menu items (not just hard-coded text)
+class Program
+{
+    static void Main()
+    {
+        string name = "Nikki";
+        Console.WriteLine(name);
+    }
+}`}
+  starterId="week-01-extra-06"
+  height={200}
+  instructions="Change the name variable to your own name, then run."
+/>
 
 ---
 
-## What's Next?
+## Drill 7: String Interpolation Practice
 
-Great practice! You're building the foundation for more complex programs. Now it's time to test your understanding:
+<TryItNowRunner
+  code={`using System;
 
-- [Checkpoint Quiz](../checkpoint-quiz/) — Auto-graded quiz (20 min)
+class Program
+{
+    static void Main()
+    {
+        string food = "pizza";
+        Console.WriteLine($"My favorite food is {food}.");
+    }
+}`}
+  starterId="week-01-extra-07"
+  height={200}
+  instructions="Change 'food' to your favorite food, then add a second variable for your favorite color and print it."
+/>
+
+---
+
+## Drill 8: Newline Practice
+
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("First\nSecond");
+    }
+}`}
+  starterId="week-01-extra-08"
+  height={180}
+  instructions="Add a third line using \n in the same Console.WriteLine statement."
+/>
+
+**Challenge:** Try using `\t` (tab) instead of `\n` and see what happens!
+
+---
+
+## Great Job!
+
+You've completed all the extra practice drills. If you're comfortable with these concepts, move on to the Checkpoint Quiz.
+
+If you want more practice:
+- Go back through Lessons 1 and 2
+- Try the "Your Turn" challenges
+- Experiment with the inline runners
+
+**Next Steps:**
+
+- [Checkpoint Quiz →](../checkpoint-quiz/)
+- [Lab 1: Welcome Program →](../lab-1/)
 - [Back to Week 1 Overview](../)

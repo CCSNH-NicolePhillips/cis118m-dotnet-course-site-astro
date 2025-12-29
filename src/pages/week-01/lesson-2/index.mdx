@@ -1,358 +1,401 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 2"
-description: "Week 1 Lesson 2: Console output + variables + strings"
+description: "Week 1 Lesson 2: Variables and Output"
 ---
 
-import TryMeNow from '../../../components/TryMeNow.astro';
-import RunnableSnippet from '../../../components/RunnableSnippet.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
-# Week 1 Lesson 2: Console output + variables + strings
+# Week 1 Lesson 2: Variables and Output
 
-**Time: 35 minutes**
+**Time: 45 minutes**
 
-## Goal
-- Create and use **variables** (strings and numbers)
-- Print **formatted output** with labels
-- Use **string concatenation** and **interpolation**
-- Understand the difference between text (strings) and numbers
+## What You'll Learn
+
+- What **variables** are and why we use them
+- How to **declare** and **assign** values
+- Different ways to output text (concatenation vs interpolation)
+- Special characters like `\n` for newlines
+
+---
 
 ## What Are Variables?
 
-A **variable** is a container that holds a value. Think of it like a labeled box:
+A **variable** is a named container that stores data.
 
-- The **name** is the label on the box
-- The **value** is what's inside the box
-- The **type** tells you what KIND of thing can go in the box
+Think of it like a labeled box:
+- The **label** is the variable name
+- The **contents** is the value stored inside
+
+### Why Use Variables?
+
+Instead of writing the same value over and over, you:
+1. Store it once in a variable
+2. Use the variable name whenever you need that value
+3. If the value changes, you only update it in one place
+
+---
+
+## Declaring and Assigning Variables
+
+### Syntax
 
 ```csharp
-string name = "Alice";  // name holds "Alice"
-int age = 20;           // age holds 20
+string name = "Nikki";
 ```
 
-## String Variables
+Breaking it down:
+- `string` — The **type** (what kind of data: text)
+- `name` — The **variable name** (you choose this)
+- `=` — The **assignment operator** (stores the value)
+- `"Nikki"` — The **value** (the data being stored)
+- `;` — Statement terminator
 
-A **string** is text (letters, numbers, symbols). Strings must be in quotes.
+### Common Data Types (for now)
+
+| Type     | What It Stores           | Example                    |
+|----------|--------------------------|----------------------------|
+| `string` | Text                     | `"Hello"`, `"Nikki"`       |
+| `int`    | Whole numbers            | `42`, `-7`, `0`            |
+| `double` | Decimal numbers          | `3.14`, `-0.5`, `2.0`      |
+| `bool`   | True or False            | `true`, `false`            |
+
+We'll focus on `string` this week. More types next week!
+
+---
+
+## Using Variables in Output
+
+Once you've stored a value in a variable, you can use it anywhere:
 
 ```csharp
-string city = "Boston";
-string favoriteFood = "pizza";
-string greeting = "Hello!";
+string name = "Nikki";
+Console.WriteLine(name);  // Prints: Nikki
 ```
 
-<RunnableSnippet
+Notice: **No quotes** around `name` when using it. Quotes mean literal text, no quotes means use the variable.
+
+### Try It Now #4: Name + Favorite Food
+
+<TryItNowRunner
   code={`using System;
 
 class Program
 {
     static void Main()
     {
-        string name = "Alice";
-        string city = "Boston";
-        
-        Console.WriteLine(name);
-        Console.WriteLine(city);
+        Console.WriteLine("Name: Nikki");
+        Console.WriteLine("Favorite food: ___");
     }
 }`}
-  starterId="week-01-lesson-2"
-  height={220}
+  starterId="week-01-lesson-2-name-food"
+  height={200}
+  instructions="Fill in the blank with your favorite food, then run!"
 />
 
-## Integer Variables (Numbers)
+**Your challenges:**
+1. Fill in the `___` with your favorite food
+2. Add a third line: `"Favorite color: ___"`
+3. **Bonus:** Convert these to use variables instead of hardcoding the values
 
-An **int** (integer) holds whole numbers (no decimals).
+---
 
-```csharp
-int age = 20;
-int year = 2024;
-int score = 100;
-```
+## Special Characters: Newlines
 
-You can do math with numbers:
+Sometimes you need to print multiple lines from one `Console.WriteLine` statement.
 
-```csharp
-int age = 20;
-int nextYearAge = age + 1;  // 21
-```
-
-## Printing with Labels (Formatted Output)
-
-Make your output readable by adding labels:
+Use `\n` for a **newline** (line break):
 
 ```csharp
-Console.WriteLine("Name: Alice");
-Console.WriteLine("City: Boston");
+Console.WriteLine("First line\nSecond line");
 ```
 
-Output:
+**Output:**
 ```
-Name: Alice
-City: Boston
+First line
+Second line
 ```
 
-This is much better than just printing "Alice" and "Boston" without context!
+### Try It Now #5: Newlines
 
-## Try Me Now Tasks
+<TryItNowRunner
+  code={`using System;
 
-### Task 1: Create variables and print labeled lines
-
-<TryMeNow
-  starterId="week-01-lesson-2"
-  tasks={[
-    "Create three string variables: name, city, favoriteFood",
-    "Print each one with a label",
-    "Example: Console.WriteLine(\"Name: \" + name);"
-  ]}
-  expectedOutput="Name: Your Name\nCity: Your City\nFavorite Food: Your Food"
-  tip="Use + to combine text and variables. Don't forget quotes around the label part!"
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("First line\nSecond line\nThird line");
+    }
+}`}
+  starterId="week-01-lesson-2-newlines"
+  height={180}
+  instructions="Run this code. Notice how \n creates line breaks."
 />
 
-### Task 2: Create age and print next year's age
+**Your challenges:**
+1. Add a fourth line using `\n`
+2. Try `\t` for a tab character
+3. What happens if you use `\\n` (double backslash)?
 
-<TryMeNow
-  starterId="week-01-lesson-2"
-  tasks={[
-    "Create an int variable called age (use any number)",
-    "Calculate next year's age: int nextYear = age + 1;",
-    "Print both with labels"
-  ]}
-  expectedOutput="Age: 20\nNext year: 21"
-  tip="You can do math with int variables. Use + for addition."
-/>
+---
 
-### Task 3: String concatenation vs interpolation
+## Combining Text: Concatenation
 
-There are **two ways** to combine text and variables:
-
-**1) Concatenation** (using `+`):
-```csharp
-string name = "Alice";
-Console.WriteLine("Hello, " + name + "!");
-```
-
-**2) Interpolation** (using `$` and `{}`):
-```csharp
-string name = "Alice";
-Console.WriteLine($"Hello, {name}!");
-```
-
-Both produce: `Hello, Alice!`
-
-**Interpolation is usually easier to read** — that's what we recommend!
-
-<TryMeNow
-  starterId="week-01-lesson-2"
-  tasks={[
-    "Create variables: name, city, age",
-    "Use string interpolation ($\"\") to print: 'Hi, I'm {name} from {city}. I'm {age} years old.'",
-    "Run and verify the output looks right"
-  ]}
-  expectedOutput="Hi, I'm Alice from Boston. I'm 20 years old."
-  tip="Put $ before the quote, then use {variableName} to insert variables."
-/>
-
-### Task 4: Predict output
-
-**Before running, predict what this code will print:**
+**Concatenation** means joining strings together using the `+` operator.
 
 ```csharp
-string firstName = "Bob";
+string firstName = "Nikki";
 string lastName = "Smith";
-int age = 25;
-
-Console.WriteLine($"{firstName} {lastName}");
-Console.WriteLine($"Age: {age}");
-Console.WriteLine($"In 5 years: {age + 5}");
+Console.WriteLine("Hello, " + firstName + " " + lastName);
+// Output: Hello, Nikki Smith
 ```
 
-<details>
-<summary>Show answer</summary>
+**Rules:**
+- Use `+` to join strings
+- Include spaces manually: `" "` between words
+- Can mix variables and literal text
 
+**Example:**
+
+```csharp
+string city = "Portland";
+Console.WriteLine("I live in " + city + ".");
+// Output: I live in Portland.
 ```
-Bob Smith
-Age: 25
-In 5 years: 30
+
+---
+
+## Combining Text: String Interpolation
+
+**String interpolation** is a cleaner way to combine text and variables.
+
+Syntax: `$"Text {variable} more text"`
+
+```csharp
+string name = "Nikki";
+Console.WriteLine($"Hello, {name}!");
+// Output: Hello, Nikki!
 ```
 
-You can do math **inside** the curly braces!
+**Rules:**
+- Put `$` before the opening quote
+- Wrap variables in curly braces: `{variableName}`
+- Much more readable than concatenation!
 
-</details>
+### Try It Now #6: Interpolation
 
-<TryMeNow
-  starterId="week-01-lesson-2"
-  tasks={[
-    "Type the code above (or paste it)",
-    "Run it to confirm your prediction",
-    "Try changing the math: {age + 10} or {age * 2}"
-  ]}
-  tip="You can put simple expressions (like age + 5) inside the {} braces."
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string name = "Nikki";
+        Console.WriteLine($"Hello, {name}!");
+    }
+}`}
+  starterId="week-01-lesson-2-interpolation"
+  height={200}
+  instructions="Change the name variable to your own name and run!"
 />
+
+**Your challenges:**
+1. Change `name` to your name
+2. Add a second variable `favoriteFood` and print: `"My favorite food is {favoriteFood}"`
+3. Add a third variable `age` (use `int age = 20;`) and print: `"I am {age} years old"`
+
+---
+
+## Concatenation vs. Interpolation
+
+Both do the same thing, but interpolation is usually easier to read.
+
+### Concatenation (old way)
+
+```csharp
+string name = "Nikki";
+string city = "Portland";
+Console.WriteLine("Hi, I'm " + name + " from " + city + ".");
+```
+
+### Interpolation (modern way)
+
+```csharp
+string name = "Nikki";
+string city = "Portland";
+Console.WriteLine($"Hi, I'm {name} from {city}.");
+```
+
+**When to use each:**
+- **Interpolation:** Most of the time (cleaner, easier to read)
+- **Concatenation:** When you're learning or when building strings piece by piece
+
+---
 
 ## Common Mistakes
 
-❌ **Forgetting quotes around strings:**
+### Forgetting the `$` in Interpolation
+
+❌ **Wrong:**
 ```csharp
-string name = Alice;  // ERROR - need quotes
+string name = "Nikki";
+Console.WriteLine("Hello, {name}");  // Prints: Hello, {name}
 ```
 
 ✅ **Correct:**
 ```csharp
-string name = "Alice";  // WORKS
+string name = "Nikki";
+Console.WriteLine($"Hello, {name}");  // Prints: Hello, Nikki
 ```
 
 ---
 
-❌ **Using int for text:**
+### Using Quotes Around Variables
+
+❌ **Wrong:**
 ```csharp
-int name = "Alice";  // ERROR - strings aren't ints
+string name = "Nikki";
+Console.WriteLine("name");  // Prints: name (literal text)
 ```
 
 ✅ **Correct:**
 ```csharp
-string name = "Alice";  // WORKS
+string name = "Nikki";
+Console.WriteLine(name);  // Prints: Nikki (variable value)
 ```
 
 ---
 
-❌ **Forgetting $ before interpolated strings:**
+### Forgetting Spaces in Concatenation
+
+❌ **Wrong:**
 ```csharp
-string name = "Alice";
-Console.WriteLine("{name}");  // Prints {name} literally
+Console.WriteLine("Hello" + name);  // Prints: HelloNikki
 ```
 
 ✅ **Correct:**
 ```csharp
-string name = "Alice";
-Console.WriteLine($"{name}");  // Prints Alice
+Console.WriteLine("Hello " + name);  // Prints: Hello Nikki
+```
+
+Or use interpolation:
+```csharp
+Console.WriteLine($"Hello {name}");  // Prints: Hello Nikki
 ```
 
 ---
-
-❌ **Using + instead of , in variable declaration:**
-```csharp
-string first = "Bob", last = "Smith";  // WORKS but confusing
-```
-
-✅ **Better:**
-```csharp
-string first = "Bob";
-string last = "Smith";  // Clearer
-```
 
 ## Variable Naming Rules
 
-✅ **Good names:**
-- `firstName` (camelCase - lowercase first word, uppercase others)
-- `age`
-- `totalScore`
+**Rules (must follow):**
+- Start with a letter or underscore: `name`, `_count`
+- Can contain letters, numbers, underscores: `name2`, `first_name`
+- Cannot contain spaces or special characters: `my-name` ❌
+- Cannot be a C# keyword: `class`, `int`, `string` ❌
 
-❌ **Bad names (won't compile):**
-- `first name` (no spaces)
-- `2ndPlace` (can't start with number)
-- `class` (reserved keyword)
+**Conventions (should follow):**
+- Use **camelCase** for local variables: `firstName`, `totalCount`
+- Use meaningful names: `name` not `x`, `age` not `a`
+- Don't abbreviate excessively: `userName` not `usrNm`
 
-❌ **Bad names (compile but confusing):**
-- `x`, `y`, `z` (not descriptive)
-- `asdf` (meaningless)
-- `thing1`, `thing2` (vague)
+### Examples
 
-**Pro tip:** Use names that explain what the variable holds. Future you will thank you!
-
-## Blank Lines
-
-You can print a blank line with no text:
-
+✅ **Good:**
 ```csharp
-Console.WriteLine();  // Prints empty line
+string firstName = "Nikki";
+int age = 20;
+double gradePointAverage = 3.8;
 ```
 
-This is useful for spacing out your output:
-
+❌ **Bad:**
 ```csharp
-Console.WriteLine("=== Profile ===");
-Console.WriteLine();
-Console.WriteLine($"Name: {name}");
-Console.WriteLine($"Age: {age}");
+string n = "Nikki";         // Too short
+int a = 20;                 // Unclear
+double gpa2023 = 3.8;       // Unnecessary detail
 ```
 
-## Mini-Check: Test Your Understanding
-
-**1) What's the difference between string and int?**
-
-<details>
-<summary>Show answer</summary>
-
-- **string**: Holds text (must be in quotes). Example: `"Alice"`
-- **int**: Holds whole numbers (no quotes, can do math). Example: `25`
-
-</details>
-
-**2) What will this print?**
-
-```csharp
-int x = 5;
-int y = 10;
-Console.WriteLine(x + y);
-```
-
-<details>
-<summary>Show answer</summary>
-
-`15` (it does the math and prints the result)
-
-</details>
-
-**3) What will this print?**
-
-```csharp
-string x = "5";
-string y = "10";
-Console.WriteLine(x + y);
-```
-
-<details>
-<summary>Show answer</summary>
-
-`510` (it concatenates the strings, doesn't do math)
-
-When you use `+` with strings, it glues them together!
-
-</details>
-
-**4) Which is correct for interpolation?**
-
-A) `Console.WriteLine("Hello, {name}!");`  
-B) `Console.WriteLine($"Hello, {name}!");`
-
-<details>
-<summary>Show answer</summary>
-
-**B** is correct. You need the `$` before the quote for interpolation to work.
-
-</details>
+---
 
 ## Key Takeaways
 
-✅ **Variables** store values (like labeled boxes)
+✅ **Variables** store data in named containers
 
-✅ **string** holds text (in quotes): `"Hello"`
+✅ Syntax: `type name = value;` (e.g., `string name = "Nikki";`)
 
-✅ **int** holds whole numbers (no quotes): `42`
+✅ Common types: `string` (text), `int` (whole numbers), `double` (decimals), `bool` (true/false)
 
-✅ Use `+` to concatenate: `"Hello, " + name`
+✅ Use `\n` for newlines, `\t` for tabs
 
-✅ Use `$""` and `{}` to interpolate: `$"Hello, {name}"`
+✅ **Concatenation:** Join strings with `+`
 
-✅ **Interpolation is easier to read** (recommended!)
+✅ **Interpolation:** Use `$"text {variable}"` (cleaner!)
 
-✅ Label your output so it makes sense: `Console.WriteLine($"Name: {name}");`
+✅ Variable names: start with letter, use camelCase, be descriptive
 
-✅ Use descriptive variable names (not `x`, `y`, `z`)
+---
+
+## Check Your Understanding
+
+**1) What's wrong with this variable declaration?**
+
+```csharp
+string first name = "Nikki";
+```
+
+<details>
+<summary>Show answer</summary>
+
+Variable names cannot contain spaces. Use `firstName` or `first_name`.
+
+</details>
+
+**2) What does this print?**
+
+```csharp
+string city = "Portland";
+Console.WriteLine("I live in city.");
+```
+
+<details>
+<summary>Show answer</summary>
+
+It prints: **I live in city.**
+
+Why? Because `"city"` in quotes is literal text, not the variable. To use the variable:
+```csharp
+Console.WriteLine($"I live in {city}.");
+```
+
+</details>
+
+**3) Rewrite this using interpolation:**
+
+```csharp
+string name = "Nikki";
+int age = 20;
+Console.WriteLine("My name is " + name + " and I am " + age + " years old.");
+```
+
+<details>
+<summary>Show answer</summary>
+
+```csharp
+string name = "Nikki";
+int age = 20;
+Console.WriteLine($"My name is {name} and I am {age} years old.");
+```
+
+</details>
+
+---
 
 ## Next Steps
 
-Excellent work! You now know how to use variables and format output. Time to practice:
+You now know how to store and output data! Next up: practice drills and your first graded assignment.
 
-- [Extra Practice: Mini drills](../extra-practice/) — Reinforce what you learned (20 min)
-- [Checkpoint Quiz](../checkpoint-quiz/) — Test your understanding (20 min)
+- [Extra Practice Drills →](../extra-practice/)
+- [Checkpoint Quiz →](../checkpoint-quiz/)
+- [Lab 1: Welcome Program →](../lab-1/)
 - [Back to Week 1 Overview](../)

@@ -1,127 +1,211 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 1"
-description: "Week 1 Lesson 1: What is .NET vs C# + Hello World"
+description: "Week 1 Lesson 1: .NET vs C# + Console Apps"
 ---
 
-import RunnableSnippet from '../../../components/RunnableSnippet.astro';
-import TryMeNow from '../../../components/TryMeNow.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
-# Week 1 Lesson 1: What is .NET vs C# + Hello World
+# Week 1 Lesson 1: .NET vs C# + Console Apps
 
-**Time: 35 minutes**
+**Time: 50 minutes**
 
-## Goal
-- Know what **.NET** is (the platform) and what **C#** is (the language)
-- Understand what a **console app** does
+## What You'll Learn
+
+- What **.NET** is (the platform) and what **C#** is (the language)
+- How C# code gets executed
+- What a **console app** does
 - Write your first "Hello World" program
-- Be able to explain this to a friend in 30 seconds
 
-## Key Concepts
+---
 
-### C# (The Language)
+## Understanding C#, .NET, and How They Work Together
 
-**C#** (pronounced "see sharp") is the **programming language** you write. It's like English or Spanish — a way to communicate instructions.
+<DeepDiveTabs
+  tabs={[
+    {
+      id: "core-roles",
+      label: "Core Roles",
+      content: `
+        <p><strong>C#</strong> (pronounced "see sharp") is the <strong>programming language</strong> you write. It's the syntax and grammar you use to express instructions.</p>
+        <p><strong>.NET</strong> (pronounced "dot net") is the <strong>platform</strong> that runs your C# code. It provides the tools, libraries, and runtime environment.</p>
+        <h5>The Blueprint vs. Construction Site Analogy</h5>
+        <p>Think of it this way:</p>
+        <ul>
+          <li><strong>C# is the blueprint</strong> — The detailed plan (your source code) that describes what to build</li>
+          <li><strong>.NET is the construction site</strong> — The tools, materials, and workers (compiler, libraries, runtime) that execute your plan</li>
+        </ul>
+        <p>You can't build a house with just a blueprint, and you can't run C# code without .NET. They work together.</p>
+      `,
+      keyPoints: [
+        "C# = the language you write (syntax, grammar, instructions)",
+        ".NET = the platform that runs your code (tools + libraries + runtime)",
+        "You write C# code, .NET executes it",
+        "Can't have one without the other (for our purposes)"
+      ],
+      media: "/img/week1/csharp-dotnet-diagram.jpg"
+    },
+    {
+      id: "execution-flow",
+      label: "Execution Flow",
+      content: `
+        <p>When you click "Run", here's what happens behind the scenes:</p>
+        <ol>
+          <li><strong>Source Code</strong> — Your C# code (what you write)</li>
+          <li><strong>Compiler</strong> — Translates C# to Intermediate Language (IL)</li>
+          <li><strong>Assembly</strong> — IL code packaged into a .dll or .exe file</li>
+          <li><strong>CLR (Common Language Runtime)</strong> — Loads the assembly</li>
+          <li><strong>JIT (Just-In-Time) Compiler</strong> — Translates IL to machine code</li>
+          <li><strong>Execution</strong> — Your program runs and produces output</li>
+        </ol>
+        <p>This might sound complex, but it all happens in milliseconds. You just write code and click Run!</p>
+      `,
+      keyPoints: [
+        "Source code → Compiler → IL (Intermediate Language)",
+        "IL → CLR + JIT → Machine code",
+        "Machine code executes and produces output",
+        "All of this happens automatically when you click Run"
+      ]
+    },
+    {
+      id: "framework-components",
+      label: "Framework Components",
+      content: `
+        <p>.NET is made up of several key components that work together:</p>
+        <h5>CLR (Common Language Runtime)</h5>
+        <p>The engine that runs your code. Handles memory, security, and execution.</p>
+        <h5>BCL (Base Class Library)</h5>
+        <p>Pre-written code you can use. Think of it as a huge toolbox of ready-made functions (like Console.WriteLine!).</p>
+        <h5>SDK (Software Development Kit)</h5>
+        <p>The tools you use to build, compile, and run your programs. Includes the compiler and debugger.</p>
+        <h5>Runtime</h5>
+        <p>The environment where your code actually executes. Different runtimes exist for different platforms (Windows, Linux, macOS).</p>
+      `,
+      keyPoints: [
+        "CLR = Engine that runs your code",
+        "BCL = Library of pre-written functions you can use",
+        "SDK = Tools to build and compile",
+        "Runtime = Environment where code executes"
+      ]
+    }
+  ]}
+/>
 
-Think of it like: **C# is the recipe you write.**
+---
 
-### .NET (The Platform)
+## Console Applications
 
-**.NET** (pronounced "dot net") is the **platform that runs your C# code**. It includes:
-- Tools to compile (translate) your code
-- Libraries (pre-written code you can use)
-- A runtime (the engine that executes your program)
-
-Think of it like: **.NET is the kitchen and appliances that execute your recipe.**
-
-### Console App
-
-A **console app** is a program that runs in a text-based terminal. It:
+A **console app** is a text-based program that runs in a terminal window. It:
 - Prints text output to the screen
 - Can accept text input from the user
-- Is perfect for learning programming basics
+- Has no graphical interface (no buttons, windows, etc.)
 
-Later you'll learn to make apps with windows, buttons, and graphics — but console apps teach the fundamentals.
+**Why start with console apps?**
+
+They're the simplest way to learn programming fundamentals. Later you'll learn to build apps with graphics, but console apps let you focus on logic first.
+
+---
 
 ## Your First Program: Hello World
 
-Every programmer's first program prints "Hello World" to the screen. Let's try it!
+Every programmer's first program prints "Hello, World!" to the screen. This tradition dates back to the 1970s. Let's continue it!
 
-<RunnableSnippet
+### Try It Now #1: Hello
+
+<TryItNowRunner
   code={`using System;
 
 class Program
 {
     static void Main()
     {
-        Console.WriteLine("Hello, .NET!");
-        Console.WriteLine("If you can read this, your program ran.");
+        Console.WriteLine("Hello, world!");
     }
 }`}
-  starterId="week-01-lesson-1"
-  height={200}
+  starterId="week-01-lesson-1-hello"
+  height={180}
+  instructions="Click Run to execute your first C# program!"
 />
 
 **What's happening here?**
 
 - `Console.WriteLine("text")` — Prints text to the console
-- `"Hello, .NET!"` — The text to print (must be in quotes)
+- `"Hello, world!"` — The text to print (must be in quotes)
 - `;` — Every statement ends with a semicolon
 
-Don't worry about the other lines (`using System`, `class Program`, etc.) yet. We'll explain those later. For now, just focus on the `Console.WriteLine` lines.
+Don't worry about the other lines (`using System`, `class Program`, etc.) yet. We'll explain those later. For now, focus on the `Console.WriteLine` line.
 
-## Try Me Now Tasks
+---
 
-Complete these three tasks to practice:
+## Adding Comments
 
-### Task 1: Run Hello World
+**Comments** are notes for humans. The computer ignores them completely.
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Click the 'Run' button",
-    "Look at the console output (bottom panel)",
-    "You should see two lines of text"
-  ]}
-  expectedOutput="Hello, .NET!\nIf you can read this, your program ran."
-  tip="The output appears in the Console tab at the bottom. If nothing shows, check for error messages."
+### Try It Now #2: Two Lines + Comment
+
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // This is a comment (humans read it, computer ignores it)
+        Console.WriteLine("Line 1");
+        Console.WriteLine("Line 2");
+    }
+}`}
+  starterId="week-01-lesson-1-comments"
+  height={200}
+  instructions="Run this code. Notice the comment line doesn't appear in the output."
 />
 
-### Task 2: Change the output to print 3 lines
+**Comment syntax:**
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Change the first message to print your name",
-    "Add a third Console.WriteLine that prints your favorite color",
-    "Run the program again"
-  ]}
-  expectedOutput="Your Name\nIf you can read this, your program ran.\nMy favorite color is blue"
-  tip="Copy one of the existing Console.WriteLine lines, paste it below, and change the text inside the quotes."
+- `// Single line comment` — Everything after `//` on that line is ignored
+- `/* Multi-line comment */` — Everything between `/*` and `*/` is ignored
+
+**When to use comments:**
+- Explain WHY you're doing something (not what—the code shows what)
+- Mark sections of code
+- Temporarily disable code for testing
+
+---
+
+## Your Turn: Customize It!
+
+Now it's your turn to make changes.
+
+### Try It Now #3: Change the Message
+
+<TryItNowRunner
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Change this message to your own words!");
+    }
+}`}
+  starterId="week-01-lesson-1-customize"
+  height={180}
+  instructions="Change the message to print your name or a fun fact about you. Then click Run!"
 />
 
-### Task 3: Print a quote with quotation marks
+**Challenges to try:**
+1. Change the message to print your name
+2. Add a second `Console.WriteLine` to print two lines
+3. Add a comment above your code explaining what it does
 
-**Challenge:** Print this exact message: `She said, "Hello!"`
+---
 
-The tricky part: The message itself has quotes inside it. How do you print quotes?
+## Common Mistakes (and how to fix them)
 
-**Answer:** Use the **escape sequence** `\"`
+### Missing Quotes
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Add a new Console.WriteLine",
-    "Use backslash-quote to put quotes inside your string",
-    "Example: Console.WriteLine(\"She said, \\\"Hello!\\\"\");"
-  ]}
-  expectedOutput='She said, "Hello!"'
-  tip="The backslash tells C# to treat the next character literally, not as code."
-/>
-
-## Common Mistakes
-
-❌ **Missing quotes around text:**
+❌ **Wrong:**
 ```csharp
 Console.WriteLine(Hello);  // ERROR
 ```
@@ -131,9 +215,13 @@ Console.WriteLine(Hello);  // ERROR
 Console.WriteLine("Hello");  // WORKS
 ```
 
+Text must always be in quotes!
+
 ---
 
-❌ **Missing semicolon:**
+### Missing Semicolon
+
+❌ **Wrong:**
 ```csharp
 Console.WriteLine("Hello")  // ERROR
 ```
@@ -143,9 +231,13 @@ Console.WriteLine("Hello")  // ERROR
 Console.WriteLine("Hello");  // WORKS
 ```
 
+Every statement ends with a semicolon.
+
 ---
 
-❌ **Typo in Console.WriteLine:**
+### Typos in Keywords
+
+❌ **Wrong:**
 ```csharp
 Console.WriteLin("Hello");  // ERROR (missing 'e')
 ```
@@ -155,7 +247,29 @@ Console.WriteLin("Hello");  // ERROR (missing 'e')
 Console.WriteLine("Hello");  // WORKS
 ```
 
-## Mini-Check: Test Your Understanding
+Spelling matters! C# is case-sensitive.
+
+---
+
+## Key Takeaways
+
+✅ **C#** is the programming language you write
+
+✅ **.NET** is the platform that runs your C# code
+
+✅ **Console apps** print text output to the terminal
+
+✅ `Console.WriteLine("text")` prints a line
+
+✅ Every statement ends with a **semicolon** `;`
+
+✅ Text must be in **quotes** `"like this"`
+
+✅ Comments start with `//` and are ignored by the computer
+
+---
+
+## Check Your Understanding
 
 **1) Is .NET a programming language?**
 
@@ -195,48 +309,11 @@ Console.WriteLine("Hello");
 
 </details>
 
-## Comments (Notes for Humans)
-
-You can add **comments** to explain what your code does. The computer ignores comments.
-
-```csharp
-// This is a single-line comment
-Console.WriteLine("Hello");  // This prints Hello
-
-/*
-This is a multi-line comment.
-You can write multiple lines here.
-*/
-```
-
-**When to use comments:**
-- Explain WHY you're doing something (not what — the code shows what)
-- Mark sections of code
-- Temporarily disable code (for testing)
-
-**Pro tip:** Good code doesn't need many comments because the code itself is clear. Use comments for tricky parts.
-
-## Key Takeaways
-
-✅ **C#** is the programming language you write
-
-✅ **.NET** is the platform that runs your C# code
-
-✅ **Console apps** print text output to the terminal
-
-✅ `Console.WriteLine("text")` prints a line
-
-✅ Every statement ends with a **semicolon** `;`
-
-✅ Text must be in **quotes** `"like this"`
-
-✅ Use `\"` to print quotes inside a string
+---
 
 ## Next Steps
 
-Great job! You've written your first C# program. Now let's learn about:
+Great job! You've written your first C# programs. Now let's learn about variables and output formatting:
 
-- [Lesson 2: Console output + variables + strings](../lesson-2/)
+- [Lesson 2: Your First Console Program →](../lesson-2/)
 - [Back to Week 1 Overview](../)
-
-

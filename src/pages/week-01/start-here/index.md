@@ -1,156 +1,249 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Start Here + Site Tour"
-description: "Learn how to use the course site and get started"
+title: "Week 01 • Start Here"
+description: "Welcome to Week 1 - Everything you need to get started"
 ---
-import TryMeNow from '../../../components/TryMeNow.astro';
 
-# Start Here + Site Tour
+# Week 1: Start Here
 
-**Time: 30 minutes**
+**Total Time: ~60 minutes**
 
-Welcome to CIS 118M! This page will show you how everything works so you can succeed in this course.
+Welcome to CIS 118M: Introduction to C# Programming! This page will get you oriented and ready to succeed in this course.
 
-## How This Course Works
+---
 
-This is a **fully online, self-paced course**. Everything happens right here on this site — no external tools required (except Canvas for grades).
+## Welcome + How This Course Works (10 min)
 
-### What You'll Do Each Week
+This is a **fully online, self-paced course**. Everything happens right here on this site — no external tools required (except Canvas for final grades).
 
-1. **Read lessons** — Short, focused explanations with examples
-2. **Try code in the browser** — Write and run C# code without installing anything
-3. **Complete practice exercises** — Reinforce what you learned
-4. **Take quizzes** — Auto-graded, instant feedback
-5. **Submit labs** — Graded assignments that test your skills
+### What Makes This Course Different
 
-### How You're Graded
+- **Code runs in your browser** — No software to install
+- **Instant feedback** — Try code and see results immediately  
+- **Self-contained modules** — Each week is complete with lessons, practice, and assignments
+- **Real-time progress tracking** — See what you've completed at a glance
 
-Your grade comes from these categories:
+### Weekly Structure
 
-- **Quizzes (30%)** — Weekly checkpoint quizzes (auto-graded, can retake)
-- **Labs (50%)** — Hands-on coding assignments (graded for correctness + requirements)
-- **Final Project (20%)** — Capstone project at the end of the semester
+Each week follows the same pattern:
 
-**Passing grade:** 70% or higher
+1. **Lessons** — Learn new concepts with examples
+2. **Try It Now** — Write and run code inline (no leaving the page!)
+3. **Extra Practice** — Reinforce what you learned
+4. **Checkpoint Quiz** — Test your understanding (auto-graded)
+5. **Lab** — Build something (graded assignment)
+6. **Homework** — Small reflection or extension
 
-## Finding Your Way Around
+---
 
-### Weekly Modules
+## Tour of the Course Site Features (10 min)
 
-Each week has its own module in the left sidebar. Click a week to see:
+### Navigation
 
-- **Overview** — Checklist of what to do (with time estimates)
-- **Lessons** — Core content to read and try
-- **Extra Practice** — Optional drills (highly recommended!)
-- **Checkpoint Quiz** — Test your understanding
-- **Lab** — Graded assignment
+**Left Sidebar** shows all weeks and lessons. Click any week to expand it.
 
-### Progress Tracking
-
-You'll see checkmarks and dots next to items in the sidebar:
-
+**Progress Indicators** show your status:
 - **✓** = Completed
-- **•** = In progress (you've started but not finished)
-- **Nothing** = Not started yet
+- **•** = In progress
+- **(blank)** = Not started
 
-Progress is saved automatically when you're logged in.
+### Interactive Code
 
-## Using the Code Editor (IDE)
+**Try It Now runners** let you write and run C# code directly in the lesson:
+- Click **Run** to execute your code
+- See output instantly below the editor
+- Click **Reset** to restore the original code
+- Optional: **Open in full editor** for more space
 
-The **IDE** (Integrated Development Environment) is where you write and run C# code. It runs entirely in your browser — no installation needed!
+### Saving Your Work
 
-### Editor Features
+When you're logged in:
+- Your code saves automatically
+- Your progress syncs across devices
+- Submissions are timestamped and stored
 
-- **Run** — Compile and execute your code
-- **Save** — Save your work to the cloud (requires login)
-- **Reset** — Restore the original starter code
-- **Download** — Download your code as a .cs file
-- **Checks** — Run automated tests (for labs)
+Not logged in? Your work saves locally in your browser.
 
-### Try It Now!
+---
 
-Let's practice using the editor. Complete these three micro-actions:
+## Syllabus (10 min)
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Click the 'Run' button to see the output",
-    "Look at the console output at the bottom of the screen"
-  ]}
-  expectedOutput="Hello, .NET!\nIf you can read this, your program ran."
-  tip="The output appears in the panel at the bottom. If you don't see it, click 'Console' tab."
-/>
+### Course Overview
 
-**Action 2: Change the code and rerun**
+**CIS 118M** teaches you to program in C# using the .NET platform. You'll start with simple console programs and progress to working with objects, methods, and data structures.
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Change one of the messages inside the quotes",
-    "Click 'Run' again to see your change"
-  ]}
-  tip="Only change the text inside the quotes, not the whole line!"
-/>
+**Prerequisites:** None — we start from zero
 
-**Action 3: Break the code (then fix it!)**
+### Grading Breakdown
 
-<TryMeNow
-  starterId="week-01-lesson-1"
-  tasks={[
-    "Remove a semicolon (;) from the end of a line",
-    "Click 'Run' and read the error message",
-    "Put the semicolon back and run again — it should work now"
-  ]}
-  tip="Error messages tell you what's wrong and which line has the problem. Read the first line of the error first!"
-/>
+| Category | Weight | Description |
+|----------|--------|-------------|
+| **Quizzes** | 30% | Weekly checkpoint quizzes (auto-graded, can retake) |
+| **Labs** | 50% | Hands-on coding assignments (graded for correctness + requirements) |
+| **Final Project** | 20% | Capstone project at end of semester |
 
-## How to Get Help
+**Passing grade:** 70% (C or higher)
 
-You **will** get stuck. That's normal and part of learning! Here's how to get help:
+### Late Work Policy
+
+- **Quizzes:** No late submissions (but you can retake until the due date)
+- **Labs:** 10% penalty per day late (up to 3 days max)
+- **Final Project:** No late submissions
+
+### Academic Integrity
+
+You **must** write your own code. You may:
+- Use course materials and examples
+- Ask for help in office hours
+- Collaborate on understanding concepts
+
+You **may not**:
+- Copy code from other students
+- Use AI tools to write code (ChatGPT, Copilot, etc.)
+- Submit work you didn't write
+
+Violations = zero on assignment and possible course failure.
+
+[Full Syllabus →](../syllabus/)
+
+---
+
+## How to Get Help + Expectations (10 min)
+
+### You WILL Get Stuck — That's Normal!
+
+Programming is hard at first. Everyone gets stuck. Here's how to get unstuck:
 
 ### What to Include When Asking for Help
 
 Always provide:
 
-1. **Screenshot** — Show the error or problem
-2. **Starter ID** — Tell us which exercise (e.g., "week-01-lesson-1")
-3. **What you tried** — Explain what you did and what happened
-4. **The error message** — Copy/paste the exact error text
+1. **Screenshot** of your code and error
+2. **Starter ID** (e.g., "week-01-lesson-1")
+3. **What you tried** and what happened
+4. **The exact error message** (copy/paste it)
 
-**Good example:**
+**Good help request:**
+> "I'm working on week-01-lesson-2 and getting error 'CS1002: ; expected' on line 8. I added a semicolon but still getting the error. [Screenshot attached]"
 
-> "I'm working on week-01-lesson-2 and getting this error: 'CS1002: ; expected'. I tried adding a semicolon at the end but it still doesn't work. Screenshot attached."
-
-**Bad example:**
-
+**Bad help request:**
 > "My code doesn't work. Help!"
 
 ### Where to Ask
 
-- **Canvas Discussion Board** — Best for course questions
-- **Email instructor** — For personal/grade questions
-- **Office hours** — Check syllabus for times
+- **Canvas Discussion Board** — Best for course questions (I check daily)
+- **Office Hours** — See Canvas for times
+- **Email** — For personal/grade questions only
 
-## Tips for Success
+### Response Time
 
-✅ **Do the work in order** — Each lesson builds on the last
+- Discussion posts: Within 24 hours (usually faster)
+- Email: Within 48 hours
+- Emergency? Call/text (see Canvas for number)
 
-✅ **Type the code yourself** — Don't copy/paste. Typing helps you learn.
+---
 
-✅ **Read error messages carefully** — They tell you exactly what's wrong
+## How Grading Works (10 min)
 
-✅ **Use Extra Practice** — More practice = better understanding
+### What Gets Graded
 
-✅ **Ask questions early** — Don't wait until you're completely lost
+**1. Checkpoint Quizzes (30%)**
+- One per week
+- Auto-graded (instant feedback)
+- Can retake unlimited times until due date
+- Best score counts
 
-✅ **Save your work often** — Click "Save" in the editor (requires login)
+**2. Labs (50%)**
+- One per week
+- Graded on correctness + requirements + readability
+- Must run without errors
+- Partial credit available
+- You can run checks before submitting
+
+**3. Final Project (20%)**
+- Cumulative project due at end of semester
+- Combines everything you learned
+- Graded with detailed rubric
+
+### How Labs Are Graded
+
+Labs use this rubric:
+
+| Component | Points | What It Means |
+|-----------|--------|---------------|
+| **Correctness** | 60% | Does it run? Does it produce the right output? |
+| **Requirements** | 20% | Did you meet all stated requirements? |
+| **Readability** | 10% | Is code well-formatted with good variable names? |
+| **Submission** | 10% | Did you submit correctly and on time? |
+
+**Pro tip:** Run the **Checks** button before submitting labs — it tells you if you're missing requirements.
+
+### Grading Timeline
+
+- **Quizzes:** Instant (auto-graded)
+- **Labs:** Within 1 week of submission
+- **Final Project:** Within 2 weeks of semester end
+
+---
+
+## What You Submit Each Week (10 min)
+
+### Your Weekly Checklist
+
+Here's what you'll submit each week (Week 1 example):
+
+✅ **Checkpoint Quiz** — Test your understanding (auto-graded)  
+✅ **Lab** — Hands-on coding assignment (instructor graded)  
+✅ **Homework** — Short reflection or code extension (instructor graded)
+
+**Everything else** (lessons, practice, try-it-now) is **not graded** — it's for your learning.
+
+### How to Submit
+
+**Quizzes:**
+1. Answer all questions
+2. Click "Submit Quiz"
+3. See your score instantly
+4. Can retake if needed
+
+**Labs & Homework:**
+1. Complete the assignment in the editor
+2. Click **Run** to test
+3. Click **Submit Lab** button on the assignment page
+4. You'll see a confirmation with timestamp
+5. Your code is automatically saved
+
+**Resubmissions:** You can resubmit labs/homework — only your latest submission counts.
+
+### What If I Miss a Deadline?
+
+- **Quizzes:** Must be done by due date (no late submissions)
+- **Labs/Homework:** Late penalty applies (10% per day, max 3 days)
+- **Extensions:** Email BEFORE the due date if you have a documented emergency
+
+### Checking Your Grades
+
+All grades post to **Canvas**. Check there to see:
+- Your current grade
+- What's been graded
+- What's still pending
+
+---
 
 ## Ready to Start?
 
-Great! Head to the [Syllabus](../syllabus/) to learn about course policies, then complete the [Syllabus Acknowledgement](../syllabus-ack/) quiz.
+You're all set! Here's your Week 1 path:
 
-## Quick Links
+1. ✅ **You are here** — Start Here (done!)
+2. → [Lesson 1: .NET vs C# + Hello World](../lesson-1/) (50 min)
+3. → [Lesson 2: Your First Console Program](../lesson-2/) (45 min)
+4. → [Extra Practice](../extra-practice/) (25 min)
+5. → [Lab: Welcome Program](../lab/) (45 min)
+6. → [Homework: Reflection](../homework/) (15 min)
+7. → [Required Submission Quiz](../required-quiz/) (5 min)
 
-- [Week 1 Overview](../) — Your checklist for this week
-- [Syllabus](../syllabus/) — Course policies and grading
-- [Lesson 1](../lesson-1/) — Start learning C#!
+**Total Week 1 Time:** ~3.5 hours
+
+---
+
+[Back to Week 1 Overview](../) | [Start Lesson 1 →](../lesson-1/)
