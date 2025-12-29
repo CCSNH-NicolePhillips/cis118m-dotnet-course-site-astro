@@ -55,6 +55,13 @@
   status = 200
   force = true
 
+# Route /api/instructor-progress to the instructor-progress function
+[[redirects]]
+  from = "/api/instructor-progress"
+  to = "/.netlify/functions/instructor-progress"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

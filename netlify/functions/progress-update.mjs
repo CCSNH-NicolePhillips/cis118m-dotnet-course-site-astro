@@ -109,6 +109,14 @@ export default async function handler(request, context) {
     // Save back to Redis
     await redis.set(key, progress);
 
+    // Track student in index for instructor dashboard
+    await redis.sadd("cis118m:students", user.sub);
+    
+    // Store student email for instructor dashboard
+    if (user.email) {
+      await redis.set(`cis118m:studentEmail:${user.sub}`, user.email);
+    }
+
     return new Response(
       JSON.stringify({ ok: true }),
       {
