@@ -78,16 +78,7 @@ Notice: **No quotes** around `name` when using it. Quotes mean literal text, no 
 ### Try It Now #4: Name + Favorite Food
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Name: Nikki");
-        Console.WriteLine("Favorite food: ___");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Name: Nikki\");\n        Console.WriteLine(\"Favorite food: ___\");\n    }\n}"}
   starterId="week-01-lesson-2-name-food"
   height={200}
   instructions="Fill in the blank with your favorite food, then run!"
@@ -119,15 +110,7 @@ Second line
 ### Try It Now #5: Newlines
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("First line\nSecond line\nThird line");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"First line\\nSecond line\\nThird line\");\n    }\n}"}
   starterId="week-01-lesson-2-newlines"
   height={180}
   instructions="Run this code. Notice how \n creates line breaks."
@@ -186,16 +169,7 @@ Console.WriteLine($"Hello, {name}!");
 ### Try It Now #6: Interpolation
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        string name = "Nikki";
-        Console.WriteLine($"Hello, {name}!");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        string name = \"Nikki\";\n        Console.WriteLine($\"Hello, {name}!\");\n    }\n}"}
   starterId="week-01-lesson-2-interpolation"
   height={200}
   instructions="Change the name variable to your own name and run!"

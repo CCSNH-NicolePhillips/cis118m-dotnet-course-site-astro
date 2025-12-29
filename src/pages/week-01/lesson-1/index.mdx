@@ -114,15 +114,7 @@ Every programmer's first program prints "Hello, World!" to the screen. This trad
 ### Try It Now #1: Hello
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Hello, world!");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Hello, world!\");\n    }\n}"}
   starterId="week-01-lesson-1-hello"
   height={180}
   instructions="Click Run to execute your first C# program!"
@@ -145,17 +137,7 @@ Don't worry about the other lines (`using System`, `class Program`, etc.) yet. W
 ### Try It Now #2: Two Lines + Comment
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        // This is a comment (humans read it, computer ignores it)
-        Console.WriteLine("Line 1");
-        Console.WriteLine("Line 2");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // This is a comment (humans read it, computer ignores it)\n        Console.WriteLine(\"Line 1\");\n        Console.WriteLine(\"Line 2\");\n    }\n}"}
   starterId="week-01-lesson-1-comments"
   height={200}
   instructions="Run this code. Notice the comment line doesn't appear in the output."
@@ -180,15 +162,7 @@ Now it's your turn to make changes.
 ### Try It Now #3: Change the Message
 
 <TryItNowRunner
-  code={`using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("Change this message to your own words!");
-    }
-}`}
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Change this message to your own words!\");\n    }\n}"}
   starterId="week-01-lesson-1-customize"
   height={180}
   instructions="Change the message to print your name or a fun fact about you. Then click Run!"
