@@ -78,24 +78,12 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
       <h3>See it in action</h3>
       <p>This educational guide explains the core differences and how they work together, providing a solid foundation for new .NET developers.</p>
       <div class="video-container">
-        {videoThumbnail ? (
-          <div class="video-thumbnail" data-video-url={videoUrl}>
-            <img src={videoThumbnail} alt="Video thumbnail" />
-            <button class="play-button" aria-label="Play video">
-              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="40" r="40" fill="rgba(0,0,0,0.7)"/>
-                <path d="M32 25L55 40L32 55V25Z" fill="white"/>
-              </svg>
-            </button>
-          </div>
-        ) : (
-          <iframe
-            src={videoUrl}
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        )}
+        <iframe
+          src={videoUrl}
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
   )}
@@ -108,21 +96,6 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     
     const tabButtons = container.querySelectorAll('.tab-button');
     const tabPanels = container.querySelectorAll('.tab-panel');
-    
-    // Video thumbnail click handler
-    const videoThumbnail = container.querySelector('.video-thumbnail');
-    if (videoThumbnail) {
-      videoThumbnail.addEventListener('click', () => {
-        const videoUrl = videoThumbnail.dataset.videoUrl;
-        const iframe = document.createElement('iframe');
-        iframe.src = videoUrl + '?autoplay=1';
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
-        iframe.setAttribute('allowfullscreen', '');
-        videoThumbnail.parentElement.innerHTML = '';
-        videoThumbnail.parentElement.appendChild(iframe);
-      });
-    }
     
     // Enhanced tab switching with animation
     function switchTab(targetId) {
