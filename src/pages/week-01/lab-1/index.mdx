@@ -4,6 +4,8 @@ title: "Week 01 • Lab 1"
 description: "Week 1 Lab: Welcome Program"
 ---
 
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
 # Lab 1: Welcome Program
 
 **Time: 45 minutes**  
@@ -46,9 +48,28 @@ Your output can be different, but it should follow the same structure.
 
 ## Starter Code
 
-Use the full editor to complete this lab:
+<div id="lab-editor"></div>
 
-[Open Lab 1 in Full Editor →](/editor?starter=week-01-lab-1)
+<TryItNowRunner
+  code={`using System;
+
+// Lab 1: Welcome Program
+// Name: Your Name Here
+
+class Program
+{
+    static void Main()
+    {
+        // TODO: Create variables for your name, course, goal, and fun fact
+        
+        // TODO: Print 4 lines using Console.WriteLine
+        
+    }
+}`}
+  starterId="week-01-lab-1"
+  height={300}
+  instructions="Complete the TODOs above. Run your code to test it. When you're happy with your program, click Submit Lab below."
+/>
 
 ---
 
@@ -100,7 +121,84 @@ Use the full editor to complete this lab:
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
-> **Note:** Submission functionality will be added in a future update. For now, submit your work via Canvas.
+<script is:inline>
+  // Wait for page load
+  document.addEventListener('DOMContentLoaded', async () => {
+    const submitBtn = document.getElementById('submit-lab-btn');
+    const statusDiv = document.getElementById('submit-status');
+    const lastSubmittedDiv = document.getElementById('last-submitted');
+    
+    // Check for existing submission
+    try {
+      const response = await fetch('/api/get-submission?week=01&type=lab');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.submission) {
+          const date = new Date(data.submission.submittedAt);
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
+        }
+      }
+    } catch (err) {
+      console.log('No previous submission found');
+    }
+    
+    submitBtn.addEventListener('click', async () => {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      statusDiv.textContent = '';
+      
+      try {
+        // Get code from Monaco editor
+        const editorContainer = document.querySelector('.monaco-editor-container');
+        if (!editorContainer) {
+          throw new Error('Editor not found');
+        }
+        
+        // Access the Monaco editor instance
+        const editor = window.monacoEditorInstances?.['week-01-lab-1'];
+        if (!editor) {
+          throw new Error('Editor instance not found');
+        }
+        
+        const code = editor.getValue();
+        
+        // Submit to API
+        const response = await fetch('/api/submit-lab', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            starterId: 'week-01-lab-1',
+            code,
+            stdin: '',
+            stdout: '',
+            stderr: '',
+            diagnostics: []
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          statusDiv.style.color = '#4CAF50';
+          statusDiv.textContent = '✓ Lab submitted successfully!';
+          const date = new Date(data.submittedAt);
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
+        } else {
+          throw new Error(data.error || 'Submission failed');
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        statusDiv.style.color = '#f44336';
+        statusDiv.textContent = '✗ Error: ' + error.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Lab';
+      }
+    });
+  });
+</script>
 
 ---
 

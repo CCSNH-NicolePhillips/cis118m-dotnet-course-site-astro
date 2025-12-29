@@ -4,6 +4,8 @@ title: "Week 01 • Homework"
 description: "Week 1 Homework: Lab Reflection"
 ---
 
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
 # Homework: Lab Reflection + Code Change
 
 **Time: 15 minutes**  
@@ -42,11 +44,27 @@ Take your Lab 1 code and make **one meaningful change**:
 1. Add a 5th line with a new variable
 2. Change from interpolation to concatenation (or vice versa)
 3. Add 2 more variables and use them in your output
-4. Add newlines (backslash-n) to format your output differently
+4. Add newlines (`\n`) to format your output differently
 
-**Use the full editor or your local IDE to complete this assignment.**
+<TryItNowRunner
+  code={`using System;
 
-[Open in Full Editor →](/editor?starter=week-01-homework)
+// Homework: Lab 1 Modified
+// Name: Your Name Here
+
+class Program
+{
+    static void Main()
+    {
+        // Paste your Lab 1 code here
+        // Then make ONE meaningful change
+        
+    }
+}`}
+  starterId="week-01-homework"
+  height={300}
+  instructions="Paste your Lab 1 code, then make one meaningful change. Test it, then submit below."
+/>
 
 ---
 
@@ -79,7 +97,97 @@ Take your Lab 1 code and make **one meaningful change**:
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
-> **Note:** Submission functionality will be added in a future update. For now, submit your work via Canvas.
+<script is:inline>
+  // Wait for page load
+  document.addEventListener('DOMContentLoaded', async () => {
+    const submitBtn = document.getElementById('submit-homework-btn');
+    const statusDiv = document.getElementById('submit-status');
+    const lastSubmittedDiv = document.getElementById('last-submitted');
+    const reflectionInput = document.getElementById('reflection-input');
+    
+    // Check for existing submission
+    try {
+      const response = await fetch('/api/get-submission?week=01&type=homework');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.submission) {
+          const date = new Date(data.submission.submittedAt);
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
+          if (data.submission.reflection) {
+            reflectionInput.value = data.submission.reflection;
+          }
+        }
+      }
+    } catch (err) {
+      console.log('No previous submission found');
+    }
+    
+    submitBtn.addEventListener('click', async () => {
+      const reflection = reflectionInput.value.trim();
+      
+      if (!reflection) {
+        statusDiv.style.color = '#f44336';
+        statusDiv.textContent = '✗ Please write your reflection before submitting.';
+        return;
+      }
+      
+      if (reflection.length < 50) {
+        statusDiv.style.color = '#f44336';
+        statusDiv.textContent = '✗ Please write at least 3-5 sentences for your reflection.';
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      statusDiv.textContent = '';
+      
+      try {
+        // Get code from Monaco editor
+        const editor = window.monacoEditorInstances?.['week-01-homework'];
+        if (!editor) {
+          throw new Error('Editor instance not found');
+        }
+        
+        const code = editor.getValue();
+        
+        // Submit to API
+        const response = await fetch('/api/submit-homework', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            starterId: 'week-01-homework',
+            code,
+            reflection,
+            stdin: '',
+            stdout: '',
+            stderr: '',
+            diagnostics: []
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          statusDiv.style.color = '#4CAF50';
+          statusDiv.textContent = '✓ Homework submitted successfully!';
+          const date = new Date(data.submittedAt);
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
+        } else {
+          throw new Error(data.error || 'Submission failed');
+        }
+      } catch (error) {
+        console.error('Submission error:', error);
+        statusDiv.style.color = '#f44336';
+        statusDiv.textContent = '✗ Error: ' + error.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Homework';
+      }
+    });
+  });
+</script>
 
 ---
 
