@@ -1,5 +1,5 @@
 import { requireAuth } from './_lib/auth0-verify.mjs';
-import { getRedisClient } from './_lib/redis.mjs';
+import { getRedis } from './_lib/redis.mjs';
 
 /**
  * POST /api/completion-update
@@ -35,7 +35,7 @@ export default async (req, context) => {
     }
     
     // Get Redis client
-    const redis = getRedisClient();
+    const redis = getRedis();
     
     // Store completion data
     const completionKey = `completion:${user.sub}:${id}`;
