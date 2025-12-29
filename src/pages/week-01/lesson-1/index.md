@@ -3,7 +3,6 @@ layout: ../../../layouts/CourseLayout.astro
 title: "Week 01 • Lesson 1"
 description: "Week 1 Lesson 1: What is .NET vs C# + Hello World"
 ---
-
 import RunnableSnippet from '../../../components/RunnableSnippet.astro';
 import TryMeNow from '../../../components/TryMeNow.astro';
 
@@ -112,11 +111,11 @@ The tricky part: The message itself has quotes inside it. How do you print quote
   starterId="week-01-lesson-1"
   tasks={[
     "Add a new Console.WriteLine",
-    "Use backslash-quote to put quotes inside your string",
+    "Use \\\" to put quotes inside your string",
     "Example: Console.WriteLine(\"She said, \\\"Hello!\\\"\");"
   ]}
-  expectedOutput='She said, "Hello!"'
-  tip="The backslash tells C# to treat the next character literally, not as code."
+  expectedOutput="She said, \"Hello!\""
+  tip="The backslash (\\) tells C# 'treat the next character literally, not as code'."
 />
 
 ## Common Mistakes
@@ -238,5 +237,3 @@ Great job! You've written your first C# program. Now let's learn about:
 
 - [Lesson 2: Console output + variables + strings](../lesson-2/)
 - [Back to Week 1 Overview](../)
-
-

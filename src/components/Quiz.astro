@@ -1,0 +1,448 @@
+---
+interface QuizQuestion {
+  id: string;
+  type: 'multiple-choice' | 'true-false' | 'checkbox';
+  question: string;
+  options?: string[];
+  correctAnswer: string | string[];
+  explanation?: string;
+}
+
+interface Props {
+  quizId: string;
+  title: string;
+  questions: QuizQuestion[];
+  passingScore?: number;
+}
+
+const { quizId, title, questions, passingScore = 70 } = Astro.props;
+---
+
+<div class="quiz-container" data-quiz-id={quizId}>
+  <div class="quiz-header">
+    <h2>{title}</h2>
+    <p class="quiz-info">Passing score: {passingScore}%</p>
+  </div>
+  
+  <form class="quiz-form" id={`quiz-form-${quizId}`}>
+    {questions.map((q, index) => (
+      <div class="quiz-question" data-question-id={q.id}>
+        <div class="question-number">Question {index + 1}</div>
+        <p class="question-text">{q.question}</p>
+        
+        {q.type === 'multiple-choice' && q.options && (
+          <div class="options">
+            {q.options.map((option, optIndex) => (
+              <label class="option-label">
+                <input 
+                  type="radio" 
+                  name={`q-${q.id}`} 
+                  value={option}
+                  required
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+        )}
+        
+        {q.type === 'true-false' && (
+          <div class="options">
+            <label class="option-label">
+              <input type="radio" name={`q-${q.id}`} value="True" required />
+              <span>True</span>
+            </label>
+            <label class="option-label">
+              <input type="radio" name={`q-${q.id}`} value="False" required />
+              <span>False</span>
+            </label>
+          </div>
+        )}
+        
+        {q.type === 'checkbox' && q.options && (
+          <div class="options">
+            {q.options.map((option) => (
+              <label class="option-label">
+                <input type="checkbox" name={`q-${q.id}`} value={option} />
+                <span>{option}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+    
+    <button type="submit" class="submit-button">Submit Quiz</button>
+  </form>
+  
+  <div class="quiz-results" id={`results-${quizId}`} style="display: none;">
+    <div class="results-header">
+      <h3>Results</h3>
+      <div class="score-display" id={`score-${quizId}`}></div>
+    </div>
+    <div class="results-details" id={`details-${quizId}`}></div>
+    <button class="retake-button" id={`retake-${quizId}`}>Retake Quiz</button>
+  </div>
+</div>
+
+<script define:vars={{ quizId, questions, passingScore }}>
+  (async () => {
+    const form = document.getElementById(`quiz-form-${quizId}`);
+    const resultsDiv = document.getElementById(`results-${quizId}`);
+    const scoreDiv = document.getElementById(`score-${quizId}`);
+    const detailsDiv = document.getElementById(`details-${quizId}`);
+    const retakeBtn = document.getElementById(`retake-${quizId}`);
+    
+    // Wait for auth
+    const waitForAuth = async () => {
+      let attempts = 0;
+      while (!window.__auth) {
+        if (attempts++ > 100) return false;
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      return true;
+    };
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const answers = {};
+      
+      // Collect answers
+      questions.forEach((q) => {
+        if (q.type === 'checkbox') {
+          answers[q.id] = formData.getAll(`q-${q.id}`);
+        } else {
+          answers[q.id] = formData.get(`q-${q.id}`);
+        }
+      });
+      
+      // Grade quiz
+      let correct = 0;
+      const details = [];
+      
+      questions.forEach((q, index) => {
+        const userAnswer = answers[q.id];
+        let isCorrect = false;
+        
+        if (q.type === 'checkbox') {
+          const correctAnswers = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer];
+          const userAnswers = Array.isArray(userAnswer) ? userAnswer : [userAnswer];
+          isCorrect = correctAnswers.length === userAnswers.length && 
+                      correctAnswers.every(a => userAnswers.includes(a));
+        } else {
+          isCorrect = userAnswer === q.correctAnswer;
+        }
+        
+        if (isCorrect) correct++;
+        
+        details.push({
+          questionNumber: index + 1,
+          question: q.question,
+          userAnswer,
+          correctAnswer: q.correctAnswer,
+          isCorrect,
+          explanation: q.explanation
+        });
+      });
+      
+      const score = Math.round((correct / questions.length) * 100);
+      const passed = score >= passingScore;
+      
+      // Display results
+      form.style.display = 'none';
+      resultsDiv.style.display = 'block';
+      
+      scoreDiv.innerHTML = `
+        <div class="score ${passed ? 'passed' : 'failed'}">
+          <div class="score-number">${score}%</div>
+          <div class="score-label">${correct} / ${questions.length} correct</div>
+          <div class="pass-status">${passed ? '✓ Passed' : '✗ Did not pass'}</div>
+        </div>
+      `;
+      
+      detailsDiv.innerHTML = details.map(d => `
+        <div class="result-item ${d.isCorrect ? 'correct' : 'incorrect'}">
+          <div class="result-header">
+            <span class="result-icon">${d.isCorrect ? '✓' : '✗'}</span>
+            <strong>Question ${d.questionNumber}</strong>
+          </div>
+          <p class="result-question">${d.question}</p>
+          <p class="result-answer">
+            <strong>Your answer:</strong> ${Array.isArray(d.userAnswer) ? d.userAnswer.join(', ') : d.userAnswer || '(no answer)'}
+          </p>
+          ${!d.isCorrect ? `
+            <p class="result-correct">
+              <strong>Correct answer:</strong> ${Array.isArray(d.correctAnswer) ? d.correctAnswer.join(', ') : d.correctAnswer}
+            </p>
+          ` : ''}
+          ${d.explanation ? `<p class="result-explanation">${d.explanation}</p>` : ''}
+        </div>
+      `).join('');
+      
+      // Save result
+      const result = {
+        quizId,
+        score,
+        passed,
+        correct,
+        total: questions.length,
+        answers,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem(`quiz-result-${quizId}`, JSON.stringify(result));
+      
+      // Save to Upstash if logged in
+      const authAvailable = await waitForAuth();
+      if (authAvailable) {
+        const authed = await window.__auth.isAuthed();
+        if (authed) {
+          try {
+            const token = await window.__auth.getAccessToken();
+            await fetch('/api/completion-update', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                type: 'quiz',
+                id: quizId,
+                score,
+                passed,
+                answers
+              }),
+            });
+          } catch (err) {
+            console.error('[Quiz] Save to cloud failed:', err);
+          }
+        }
+      }
+    });
+    
+    retakeBtn.addEventListener('click', () => {
+      form.reset();
+      form.style.display = 'block';
+      resultsDiv.style.display = 'none';
+    });
+  })();
+</script>
+
+<style>
+  .quiz-container {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .quiz-header h2 {
+    margin: 0 0 8px 0;
+    color: var(--text);
+  }
+  
+  .quiz-info {
+    color: var(--text-muted);
+    margin: 0 0 24px 0;
+  }
+  
+  .quiz-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .quiz-question {
+    background: var(--panel2);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  
+  .question-number {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .question-text {
+    color: var(--text);
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  
+  .option-label:hover {
+    border-color: var(--accent);
+    background: var(--navitem-hover);
+  }
+  
+  .option-label input {
+    cursor: pointer;
+  }
+  
+  .submit-button, .retake-button {
+    background: var(--accent);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .submit-button:hover, .retake-button:hover {
+    background: var(--accent-hover);
+  }
+  
+  .quiz-results {
+    text-align: left;
+  }
+  
+  .results-header {
+    margin-bottom: 24px;
+  }
+  
+  .results-header h3 {
+    margin: 0 0 16px 0;
+    color: var(--text);
+  }
+  
+  .score {
+    background: var(--panel2);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .score-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .score.passed {
+    border: 2px solid #10b981;
+  }
+  
+  .score.passed .score-number {
+    color: #10b981;
+  }
+  
+  .score.failed {
+    border: 2px solid #ef4444;
+  }
+  
+  .score.failed .score-number {
+    color: #ef4444;
+  }
+  
+  .score-label {
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  
+  .pass-status {
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 8px;
+  }
+  
+  .score.passed .pass-status {
+    color: #10b981;
+  }
+  
+  .score.failed .pass-status {
+    color: #ef4444;
+  }
+  
+  .results-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .result-item {
+    background: var(--panel2);
+    border-radius: 6px;
+    padding: 16px;
+    border-left: 4px solid var(--border);
+  }
+  
+  .result-item.correct {
+    border-left-color: #10b981;
+  }
+  
+  .result-item.incorrect {
+    border-left-color: #ef4444;
+  }
+  
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .result-icon {
+    font-size: 18px;
+  }
+  
+  .result-item.correct .result-icon {
+    color: #10b981;
+  }
+  
+  .result-item.incorrect .result-icon {
+    color: #ef4444;
+  }
+  
+  .result-question {
+    color: var(--text);
+    margin: 8px 0;
+  }
+  
+  .result-answer, .result-correct {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin: 4px 0;
+  }
+  
+  .result-explanation {
+    color: var(--text);
+    font-size: 14px;
+    margin-top: 8px;
+    padding: 8px;
+    background: var(--panel);
+    border-radius: 4px;
+  }
+  
+  .retake-button {
+    width: 100%;
+  }
+</style>

@@ -62,6 +62,13 @@
   status = 200
   force = true
 
+# Route /api/completion-update to the completion-update function
+[[redirects]]
+  from = "/api/completion-update"
+  to = "/.netlify/functions/completion-update"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

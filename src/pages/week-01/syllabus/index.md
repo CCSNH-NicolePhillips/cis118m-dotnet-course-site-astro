@@ -1,0 +1,194 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Syllabus"
+description: "CIS 118M Course Syllabus"
+---
+
+# CIS 118M: Introduction to C# Programming
+
+## Course Information
+
+**Course Number:** CIS 118M  
+**Credits:** 3  
+**Prerequisites:** None  
+**Format:** Fully online, self-paced
+
+## Course Description
+
+This course introduces students to programming using the C# language and the .NET platform. Students will learn fundamental programming concepts including variables, data types, control structures, methods, arrays, and object-oriented programming basics. All coursework is completed through an integrated online platform with no software installation required.
+
+## Instructor Information
+
+**Instructor:** [To be updated by faculty]  
+**Email:** [To be updated by faculty]  
+**Office Hours:** [To be updated by faculty]
+
+## Course Objectives
+
+By the end of this course, you will be able to:
+
+1. Write, compile, and run C# console applications
+2. Use variables, data types, and operators correctly
+3. Implement control structures (if/else, loops, switch)
+4. Create and call methods with parameters and return values
+5. Work with arrays and collections
+6. Apply basic object-oriented programming concepts (classes, objects, properties)
+7. Debug code and interpret error messages
+8. Write clean, readable, well-commented code
+
+## Required Materials
+
+**No textbook or software purchases required!**
+
+All course materials are provided on this website, and the code editor runs in your browser.
+
+**Required:**
+- Computer with reliable internet connection
+- Modern web browser (Chrome, Firefox, Edge, or Safari)
+- Canvas account (for grades and announcements)
+
+## Course Structure
+
+This course is organized into **16 weekly modules**, each containing:
+
+- **Lessons** — Core content with examples and interactive code
+- **Extra Practice** — Optional drills (highly recommended)
+- **Checkpoint Quiz** — Auto-graded quiz testing your understanding
+- **Lab** — Hands-on coding assignment
+
+**Expected time commitment:** 3-4 hours per week
+
+## Grading
+
+Your final grade is calculated as follows:
+
+| Category | Weight | Details |
+|----------|--------|---------|
+| **Quizzes** | 30% | Weekly checkpoint quizzes (auto-graded, can retake) |
+| **Labs** | 50% | Hands-on coding assignments (graded for correctness + requirements) |
+| **Final Project** | 20% | Capstone project demonstrating course concepts |
+
+### Grading Scale
+
+| Letter Grade | Percentage |
+|--------------|------------|
+| A | 90-100% |
+| B | 80-89% |
+| C | 70-79% |
+| D | 60-69% |
+| F | Below 60% |
+
+**Passing grade:** C or higher (70%)
+
+## Course Policies
+
+### Attendance & Participation
+
+This is a self-paced online course with **no required meeting times**. However, you must:
+
+- Complete all assignments by their due dates
+- Respond to instructor emails within 24-48 hours
+- Check Canvas announcements weekly
+
+### Late Work
+
+- **Quizzes:** Can be retaken until the due date (no late submissions)
+- **Labs:** 10% penalty per day late (up to 3 days; after that, 0 points)
+- **Final Project:** No late submissions accepted
+
+**Extensions:** Contact the instructor BEFORE the due date if you need an extension due to documented emergency or illness.
+
+### Academic Integrity
+
+All work submitted must be your own. You may:
+
+- Use course materials and examples
+- Ask for help in office hours or discussion boards
+- Collaborate on understanding concepts
+
+You may NOT:
+
+- Copy code from other students
+- Use AI tools to write your code (ChatGPT, Copilot, etc.)
+- Submit work that you did not write yourself
+
+**Violations will result in a zero on the assignment and may lead to course failure or disciplinary action.**
+
+### Accessibility
+
+If you have a documented disability and need accommodations, please contact the college's Disability Services office and provide documentation to the instructor as early as possible.
+
+### Technical Support
+
+**Course website issues:** Contact instructor  
+**Canvas issues:** Contact Canvas support  
+**Computer/internet issues:** Visit campus computer lab or library
+
+## Weekly Schedule
+
+Each week follows this pattern:
+
+| Day | What to Do |
+|-----|------------|
+| **Monday** | New module opens — read overview and start lessons |
+| **Tuesday-Thursday** | Complete lessons, extra practice, and checkpoint quiz |
+| **Friday-Sunday** | Work on lab assignment |
+| **Sunday 11:59 PM** | Quiz and lab due |
+
+## How Labs Are Graded
+
+Labs are graded using **automated checks** plus instructor review:
+
+- **60% Correctness** — Does it run without errors? Does it produce the correct output?
+- **20% Requirements** — Does it meet all stated requirements (variables, methods, etc.)?
+- **10% Readability** — Is the code well-formatted with meaningful variable names?
+- **10% Submission** — Did you submit it correctly and on time?
+
+You can run checks in the editor BEFORE submitting to see if your code passes the automated tests.
+
+## Tips for Success
+
+✅ **Start early** — Don't wait until Sunday night!
+
+✅ **Do the extra practice** — More practice = better understanding
+
+✅ **Ask questions** — Use office hours and discussion boards
+
+✅ **Type code yourself** — Don't copy/paste
+
+✅ **Read error messages** — They tell you exactly what's wrong
+
+✅ **Save often** — Use the "Save" button in the editor
+
+## Important Dates
+
+[To be updated by faculty based on semester]
+
+- **Week 1:** Course introduction and C# basics
+- **Week 8:** Midterm checkpoint (no exam, just progress review)
+- **Week 16:** Final project due
+
+## Getting Help
+
+**Course Content Questions:**
+- Post in Canvas discussion board (fastest response)
+- Attend office hours
+- Email instructor
+
+**Technical Issues:**
+- Email instructor with screenshots and error messages
+- Include: starter ID, what you tried, exact error message
+
+**Personal/Grade Questions:**
+- Email instructor directly
+
+## Next Steps
+
+After reading this syllabus:
+
+1. Complete the [Syllabus Acknowledgement](../syllabus-ack/) quiz
+2. Start [Lesson 1](../lesson-1/)
+
+---
+
+**Welcome to CIS 118M! Let's learn to code! 🚀**
