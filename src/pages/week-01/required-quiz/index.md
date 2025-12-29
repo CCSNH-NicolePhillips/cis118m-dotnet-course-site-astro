@@ -154,7 +154,7 @@ This is a **completion quiz**. There are no wrong answers. Just answer honestly 
         const data = await response.json();
         if (data.submission) {
           const date = new Date(data.submission.submittedAt);
-          lastSubmittedDiv.textContent = `Last submitted: ${date.toLocaleString()}`;
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
         }
       }
     } catch (err) {
@@ -204,14 +204,14 @@ This is a **completion quiz**. There are no wrong answers. Just answer honestly 
           statusDiv.style.color = '#4CAF50';
           statusDiv.textContent = '✓ Quiz submitted successfully! Week 1 complete!';
           const date = new Date(data.submittedAt);
-          lastSubmittedDiv.textContent = `Last submitted: ${date.toLocaleString()}`;
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
         } else {
           throw new Error(data.error || 'Submission failed');
         }
       } catch (error) {
         console.error('Submission error:', error);
         statusDiv.style.color = '#f44336';
-        statusDiv.textContent = `✗ Error: ${error.message}`;
+        statusDiv.textContent = '✗ Error: ' + error.message;
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Quiz';

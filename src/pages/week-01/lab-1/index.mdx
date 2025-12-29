@@ -135,7 +135,7 @@ class Program
         const data = await response.json();
         if (data.submission) {
           const date = new Date(data.submission.submittedAt);
-          lastSubmittedDiv.textContent = `Last submitted: ${date.toLocaleString()}`;
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
         }
       }
     } catch (err) {
@@ -184,14 +184,14 @@ class Program
           statusDiv.style.color = '#4CAF50';
           statusDiv.textContent = '✓ Lab submitted successfully!';
           const date = new Date(data.submittedAt);
-          lastSubmittedDiv.textContent = `Last submitted: ${date.toLocaleString()}`;
+          lastSubmittedDiv.textContent = 'Last submitted: ' + date.toLocaleString();
         } else {
           throw new Error(data.error || 'Submission failed');
         }
       } catch (error) {
         console.error('Submission error:', error);
         statusDiv.style.color = '#f44336';
-        statusDiv.textContent = `✗ Error: ${error.message}`;
+        statusDiv.textContent = '✗ Error: ' + error.message;
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Submit Lab';
