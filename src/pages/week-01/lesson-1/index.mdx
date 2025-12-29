@@ -20,74 +20,78 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
 ---
 
-## Understanding C#, .NET, and How They Work Together
+## Deep dive for the classroom
 
 <DeepDiveTabs
+  title="Deep dive for the classroom"
+  videoUrl="https://www.youtube.com/embed/your-video-id"
+  videoThumbnail="/media/Week 1/lesson 1/Verse.png"
   tabs={[
     {
       id: "core-roles",
       label: "Core Roles",
       content: `
-        <p><strong>C#</strong> (pronounced "see sharp") is the <strong>programming language</strong> you write. It's the syntax and grammar you use to express instructions.</p>
-        <p><strong>.NET</strong> (pronounced "dot net") is the <strong>platform</strong> that runs your C# code. It provides the tools, libraries, and runtime environment.</p>
-        <h5>The Blueprint vs. Construction Site Analogy</h5>
-        <p>Think of it this way:</p>
-        <ul>
-          <li><strong>C# is the blueprint</strong> — The detailed plan (your source code) that describes what to build</li>
-          <li><strong>.NET is the construction site</strong> — The tools, materials, and workers (compiler, libraries, runtime) that execute your plan</li>
-        </ul>
-        <p>You can't build a house with just a blueprint, and you can't run C# code without .NET. They work together.</p>
+        <h3>Defining the relationship</h3>
+        <p>C# was designed specifically to take advantage of the .NET ecosystem. While you can technically use other languages like F# or VB.NET on the platform, C# is the primary vehicle for .NET development.</p>
+        
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>C# (The Language)</th>
+              <th>.NET (The Platform)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Nature</strong></td>
+              <td>Programming Language</td>
+              <td>Development Platform / Framework</td>
+            </tr>
+          </tbody>
+        </table>
       `,
-      keyPoints: [
-        "C# = the language you write (syntax, grammar, instructions)",
-        ".NET = the platform that runs your code (tools + libraries + runtime)",
-        "You write C# code, .NET executes it",
-        "Can't have one without the other (for our purposes)"
-      ],
-      media: "/img/week1/csharp-dotnet-diagram.jpg"
+      keyPoints: []
     },
     {
       id: "execution-flow",
       label: "Execution Flow",
       content: `
-        <p>When you click "Run", here's what happens behind the scenes:</p>
+        <h3>From Source Code to Machine Code</h3>
+        <p>When a student writes C#, it doesn't run directly on the hardware. It goes through a two-step compilation process that ensures portability across different operating systems (Windows, Linux, macOS).</p>
+        
+        <h4>The .NET Compilation Pipeline</h4>
         <ol>
-          <li><strong>Source Code</strong> — Your C# code (what you write)</li>
-          <li><strong>Compiler</strong> — Translates C# to Intermediate Language (IL)</li>
-          <li><strong>Assembly</strong> — IL code packaged into a .dll or .exe file</li>
-          <li><strong>CLR (Common Language Runtime)</strong> — Loads the assembly</li>
-          <li><strong>JIT (Just-In-Time) Compiler</strong> — Translates IL to machine code</li>
-          <li><strong>Execution</strong> — Your program runs and produces output</li>
+          <li><strong>Source Code (.cs):</strong> The professor/student writes C# code.</li>
+          <li><strong>Compiler (csc):</strong> Translates C# into <strong>Intermediate Language (IL)</strong> and generates metadata.</li>
+          <li><strong>Assembly (.dll/.exe):</strong> A portable file containing the IL.</li>
+          <li><strong>CLR (JIT Compiler):</strong> The runtime converts IL into <strong>Native Code</strong> for the specific CPU right before execution.</li>
         </ol>
-        <p>This might sound complex, but it all happens in milliseconds. You just write code and click Run!</p>
       `,
-      keyPoints: [
-        "Source code → Compiler → IL (Intermediate Language)",
-        "IL → CLR + JIT → Machine code",
-        "Machine code executes and produces output",
-        "All of this happens automatically when you click Run"
-      ]
+      keyPoints: []
     },
     {
       id: "framework-components",
       label: "Framework Components",
       content: `
-        <p>.NET is made up of several key components that work together:</p>
-        <h5>CLR (Common Language Runtime)</h5>
-        <p>The engine that runs your code. Handles memory, security, and execution.</p>
-        <h5>BCL (Base Class Library)</h5>
-        <p>Pre-written code you can use. Think of it as a huge toolbox of ready-made functions (like Console.WriteLine!).</p>
-        <h5>SDK (Software Development Kit)</h5>
-        <p>The tools you use to build, compile, and run your programs. Includes the compiler and debugger.</p>
-        <h5>Runtime</h5>
-        <p>The environment where your code actually executes. Different runtimes exist for different platforms (Windows, Linux, macOS).</p>
+        <h3>The 'Big Two' of .NET</h3>
+        <p>The .NET platform is primarily composed of the <strong>Common Language Runtime (CLR)</strong> and the <strong>Base Class Library (BCL)</strong>. Understanding these is key to mastering the environment.</p>
+        
+        <h4>Key platform components</h4>
+        
+        <div class="component-cards">
+          <div class="component-card">
+            <h5>CLR (The Engine)</h5>
+            <p>Manages memory (Garbage Collection), handles security, and executes your code via JIT.</p>
+          </div>
+          
+          <div class="component-card">
+            <h5>BCL (The Toolbox)</h5>
+            <p>Thousands of pre-built classes for File I/O, Networking, Data, and Collections.</p>
+          </div>
+        </div>
       `,
-      keyPoints: [
-        "CLR = Engine that runs your code",
-        "BCL = Library of pre-written functions you can use",
-        "SDK = Tools to build and compile",
-        "Runtime = Environment where code executes"
-      ]
+      keyPoints: []
     }
   ]}
 />

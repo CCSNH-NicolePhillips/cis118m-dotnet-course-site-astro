@@ -3,77 +3,126 @@ interface Tab {
   id: string;
   label: string;
   content: string;
-  keyPoints: string[];
+  keyPoints?: string[];
   media?: string;
 }
 
 interface Props {
   tabs: Tab[];
   defaultTab?: string;
+  title?: string;
+  videoUrl?: string;
+  videoThumbnail?: string;
 }
 
-const { tabs, defaultTab = tabs[0]?.id } = Astro.props;
+const { tabs, defaultTab = tabs[0]?.id, title, videoUrl, videoThumbnail } = Astro.props;
 const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="deep-dive-tabs" data-component-id={componentId}>
-  <div role="tablist" class="tab-list">
-    {tabs.map((tab, index) => (
-      <button
-        role="tab"
-        aria-selected={tab.id === defaultTab ? "true" : "false"}
-        aria-controls={`panel-${componentId}-${tab.id}`}
-        id={`tab-${componentId}-${tab.id}`}
-        class="tab-button"
-        data-tab-id={tab.id}
-      >
-        {tab.label}
-      </button>
-    ))}
+<div class="deep-dive-container">
+  {title && <h2 class="deep-dive-title">{title}</h2>}
+  
+  <div class="deep-dive-tabs" data-component-id={componentId}>
+    <div role="tablist" class="tab-list">
+      {tabs.map((tab, index) => (
+        <button
+          role="tab"
+          aria-selected={tab.id === defaultTab ? "true" : "false"}
+          aria-controls={`panel-${componentId}-${tab.id}`}
+          id={`tab-${componentId}-${tab.id}`}
+          class="tab-button"
+          data-tab-id={tab.id}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+    
+    <div class="tab-panels">
+      {tabs.map((tab) => (
+        <div
+          role="tabpanel"
+          id={`panel-${componentId}-${tab.id}`}
+          aria-labelledby={`tab-${componentId}-${tab.id}`}
+          class="tab-panel"
+          data-tab-id={tab.id}
+          hidden={tab.id !== defaultTab}
+        >
+          <div class="panel-content">
+            <div class="explanation" set:html={tab.content} />
+            
+            {tab.keyPoints && tab.keyPoints.length > 0 && (
+              <div class="key-points">
+                <h4>Key Points</h4>
+                <ul>
+                  {tab.keyPoints.map((point) => (
+                    <li>{point}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {tab.media && (
+              <div class="media-slot">
+                <img src={tab.media} alt={`Diagram for ${tab.label}`} />
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
   </div>
   
-  <div class="tab-panels">
-    {tabs.map((tab) => (
-      <div
-        role="tabpanel"
-        id={`panel-${componentId}-${tab.id}`}
-        aria-labelledby={`tab-${componentId}-${tab.id}`}
-        class="tab-panel"
-        data-tab-id={tab.id}
-        hidden={tab.id !== defaultTab}
-      >
-        <div class="panel-content">
-          <div class="explanation" set:html={tab.content} />
-          
-          {tab.keyPoints && tab.keyPoints.length > 0 && (
-            <div class="key-points">
-              <h4>Key Points</h4>
-              <ul>
-                {tab.keyPoints.map((point) => (
-                  <li>{point}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          
-          {tab.media && (
-            <div class="media-slot">
-              <img src={tab.media} alt={`Diagram for ${tab.label}`} />
-            </div>
-          )}
-        </div>
+  {videoUrl && (
+    <div class="see-it-in-action">
+      <h3>See it in action</h3>
+      <p>This educational guide explains the core differences and how they work together, providing a solid foundation for new .NET developers.</p>
+      <div class="video-container">
+        {videoThumbnail ? (
+          <div class="video-thumbnail" data-video-url={videoUrl}>
+            <img src={videoThumbnail} alt="Video thumbnail" />
+            <button class="play-button" aria-label="Play video">
+              <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="40" fill="rgba(0,0,0,0.7)"/>
+                <path d="M32 25L55 40L32 55V25Z" fill="white"/>
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <iframe
+            src={videoUrl}
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+          ></iframe>
+        )}
       </div>
-    ))}
-  </div>
+    </div>
+  )}
 </div>
 
 <script define:vars={{ componentId }}>
   (() => {
-    const container = document.querySelector(`[data-component-id="${componentId}"]`);
+    const container = document.querySelector(`[data-component-id="${componentId}"]`)?.closest('.deep-dive-container');
     if (!container) return;
     
     const tabButtons = container.querySelectorAll('.tab-button');
     const tabPanels = container.querySelectorAll('.tab-panel');
+    
+    // Video thumbnail click handler
+    const videoThumbnail = container.querySelector('.video-thumbnail');
+    if (videoThumbnail) {
+      videoThumbnail.addEventListener('click', () => {
+        const videoUrl = videoThumbnail.dataset.videoUrl;
+        const iframe = document.createElement('iframe');
+        iframe.src = videoUrl + '?autoplay=1';
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        videoThumbnail.parentElement.innerHTML = '';
+        videoThumbnail.parentElement.appendChild(iframe);
+      });
+    }
     
     // Enhanced tab switching with animation
     function switchTab(targetId) {
@@ -104,59 +153,74 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     });
     
     // Keyboard navigation
-    container.querySelector('.tab-list').addEventListener('keydown', (e) => {
-      const currentIndex = Array.from(tabButtons).findIndex(btn => 
-        btn.getAttribute('aria-selected') === 'true'
-      );
-      
-      let nextIndex = currentIndex;
-      
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        nextIndex = (currentIndex + 1) % tabButtons.length;
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        nextIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
-      } else if (e.key === 'Home') {
-        e.preventDefault();
-        nextIndex = 0;
-      } else if (e.key === 'End') {
-        e.preventDefault();
-        nextIndex = tabButtons.length - 1;
-      }
-      
-      if (nextIndex !== currentIndex) {
-        tabButtons[nextIndex].focus();
-        switchTab(tabButtons[nextIndex].dataset.tabId);
-      }
-    });
+    const tabList = container.querySelector('.tab-list');
+    if (tabList) {
+      tabList.addEventListener('keydown', (e) => {
+        const currentIndex = Array.from(tabButtons).findIndex(btn => 
+          btn.getAttribute('aria-selected') === 'true'
+        );
+        
+        let nextIndex = currentIndex;
+        
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          nextIndex = (currentIndex + 1) % tabButtons.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          nextIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          nextIndex = 0;
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          nextIndex = tabButtons.length - 1;
+        }
+        
+        if (nextIndex !== currentIndex) {
+          tabButtons[nextIndex].focus();
+          switchTab(tabButtons[nextIndex].dataset.tabId);
+        }
+      });
+    }
   })();
 </script>
 
 <style>
+  .deep-dive-container {
+    margin: 32px 0;
+  }
+  
+  .deep-dive-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+  
   .deep-dive-tabs {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    background: rgba(42, 42, 46, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     overflow: hidden;
-    margin: 24px 0;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
   
   .tab-list {
     display: flex;
-    background: var(--panel2);
-    border-bottom: 2px solid var(--border);
+    background: rgba(30, 30, 34, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     overflow-x: auto;
   }
   
   .tab-button {
     flex: 1;
     min-width: fit-content;
-    padding: 14px 20px;
+    padding: 16px 24px;
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.6);
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
@@ -165,20 +229,20 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .tab-button:hover {
-    background: var(--navitem-hover);
-    color: var(--text);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.9);
   }
   
   .tab-button:focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid #8ab4f8;
     outline-offset: -2px;
   }
   
   .tab-button[aria-selected="true"],
   .tab-button.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    background: var(--panel);
+    color: #8ab4f8;
+    border-bottom-color: #8ab4f8;
+    background: rgba(138, 180, 248, 0.1);
   }
   
   .tab-panels {
@@ -186,7 +250,8 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .tab-panel {
-    padding: 24px;
+    padding: 32px;
+    min-height: 300px;
   }
   
   .tab-panel[hidden] {
@@ -209,22 +274,191 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation {
-    color: var(--text);
-    line-height: 1.6;
-    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.7;
+  }
+  
+  .explanation h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  
+  .explanation h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+  
+  .explanation h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 20px;
+    margin-bottom: 10px;
   }
   
   .explanation p {
     margin: 12px 0;
+    color: rgba(255, 255, 255, 0.85);
   }
   
   .explanation strong {
-    color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .explanation ol,
+  .explanation ul {
+    margin: 16px 0;
+    padding-left: 24px;
+  }
+  
+  .explanation li {
+    margin: 8px 0;
+  }
+  
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    background: rgba(30, 30, 34, 0.6);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .comparison-table thead th {
+    background: rgba(138, 180, 248, 0.15);
+    color: #8ab4f8;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .comparison-table tbody td {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .component-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+  }
+  
+  .component-card {
+    background: rgba(30, 30, 34, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .component-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(138, 180, 248, 0.2);
+  }
+  
+  .component-card h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #8ab4f8;
+    margin: 0 0 12px 0;
+  }
+  
+  .component-card p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .see-it-in-action {
+    margin-top: 32px;
+  }
+  
+  .see-it-in-action h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  
+  .see-it-in-action p {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+  }
+  
+  .video-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  .video-thumbnail {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  
+  .video-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .video-thumbnail:hover img {
+    transform: scale(1.05);
+  }
+  
+  .play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .play-button:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  
+  .play-button svg circle {
+    transition: fill 0.2s ease;
+  }
+  
+  .play-button:hover svg circle {
+    fill: rgba(0, 0, 0, 0.85);
   }
   
   .key-points {
-    background: var(--panel2);
-    border-left: 4px solid var(--accent);
+    background: rgba(138, 180, 248, 0.1);
+    border-left: 4px solid #8ab4f8;
     padding: 16px 20px;
     border-radius: 4px;
     margin: 20px 0;
@@ -232,7 +466,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .key-points h4 {
     margin: 0 0 12px 0;
-    color: var(--accent);
+    color: #8ab4f8;
     font-size: 16px;
     font-weight: 600;
   }
@@ -240,11 +474,11 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .key-points ul {
     margin: 0;
     padding-left: 20px;
-    color: var(--text);
   }
   
   .key-points li {
     margin: 8px 0;
+    color: rgba(255, 255, 255, 0.85);
     line-height: 1.5;
   }
   
@@ -256,17 +490,39 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .media-slot img {
     max-width: 100%;
     height: auto;
-    border-radius: 6px;
-    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   
   /* Responsive */
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
+    .tab-list {
+      flex-direction: column;
+    }
+    
     .tab-button {
+      border-bottom: none;
+      border-left: 3px solid transparent;
       padding: 12px 16px;
       font-size: 14px;
     }
     
+    .tab-button[aria-selected="true"],
+    .tab-button.active {
+      border-bottom: none;
+      border-left-color: #8ab4f8;
+    }
+    
+    .tab-panel {
+      padding: 20px;
+    }
+    
+    .component-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 640px) {
     .tab-panel {
       padding: 16px;
     }
