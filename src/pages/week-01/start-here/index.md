@@ -47,10 +47,10 @@ Each week has its own module in the left sidebar. Click a week to see:
 
 ### Progress Tracking
 
-You'll see checkmarks (✓) and dots (•) next to items in the sidebar:
+You'll see checkmarks and dots next to items in the sidebar:
 
-- **✓ Green checkmark** = Completed
-- **• Orange dot** = In progress (you've started but not finished)
+- **✓** = Completed
+- **•** = In progress (you've started but not finished)
 - **Nothing** = Not started yet
 
 Progress is saved automatically when you're logged in.
