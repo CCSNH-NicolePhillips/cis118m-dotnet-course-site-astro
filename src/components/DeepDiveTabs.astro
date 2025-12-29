@@ -1,0 +1,274 @@
+---
+interface Tab {
+  id: string;
+  label: string;
+  content: string;
+  keyPoints: string[];
+  media?: string;
+}
+
+interface Props {
+  tabs: Tab[];
+  defaultTab?: string;
+}
+
+const { tabs, defaultTab = tabs[0]?.id } = Astro.props;
+const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="deep-dive-tabs" data-component-id={componentId}>
+  <div role="tablist" class="tab-list">
+    {tabs.map((tab, index) => (
+      <button
+        role="tab"
+        aria-selected={tab.id === defaultTab ? "true" : "false"}
+        aria-controls={`panel-${componentId}-${tab.id}`}
+        id={`tab-${componentId}-${tab.id}`}
+        class="tab-button"
+        data-tab-id={tab.id}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+  
+  <div class="tab-panels">
+    {tabs.map((tab) => (
+      <div
+        role="tabpanel"
+        id={`panel-${componentId}-${tab.id}`}
+        aria-labelledby={`tab-${componentId}-${tab.id}`}
+        class="tab-panel"
+        data-tab-id={tab.id}
+        hidden={tab.id !== defaultTab}
+      >
+        <div class="panel-content">
+          <div class="explanation" set:html={tab.content} />
+          
+          {tab.keyPoints && tab.keyPoints.length > 0 && (
+            <div class="key-points">
+              <h4>Key Points</h4>
+              <ul>
+                {tab.keyPoints.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {tab.media && (
+            <div class="media-slot">
+              <img src={tab.media} alt={`Diagram for ${tab.label}`} />
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script define:vars={{ componentId }}>
+  (() => {
+    const container = document.querySelector(`[data-component-id="${componentId}"]`);
+    if (!container) return;
+    
+    const tabButtons = container.querySelectorAll('.tab-button');
+    const tabPanels = container.querySelectorAll('.tab-panel');
+    
+    // Enhanced tab switching with animation
+    function switchTab(targetId) {
+      tabButtons.forEach(btn => {
+        const isActive = btn.dataset.tabId === targetId;
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        btn.classList.toggle('active', isActive);
+      });
+      
+      tabPanels.forEach(panel => {
+        const isActive = panel.dataset.tabId === targetId;
+        
+        if (isActive) {
+          // Show with animation
+          panel.hidden = false;
+          panel.style.animation = 'fadeSlideIn 350ms ease-out';
+        } else {
+          panel.hidden = true;
+        }
+      });
+    }
+    
+    // Click handlers
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchTab(btn.dataset.tabId);
+      });
+    });
+    
+    // Keyboard navigation
+    container.querySelector('.tab-list').addEventListener('keydown', (e) => {
+      const currentIndex = Array.from(tabButtons).findIndex(btn => 
+        btn.getAttribute('aria-selected') === 'true'
+      );
+      
+      let nextIndex = currentIndex;
+      
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        nextIndex = (currentIndex + 1) % tabButtons.length;
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        nextIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        nextIndex = 0;
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        nextIndex = tabButtons.length - 1;
+      }
+      
+      if (nextIndex !== currentIndex) {
+        tabButtons[nextIndex].focus();
+        switchTab(tabButtons[nextIndex].dataset.tabId);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .deep-dive-tabs {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+  
+  .tab-list {
+    display: flex;
+    background: var(--panel2);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  
+  .tab-button {
+    flex: 1;
+    min-width: fit-content;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  
+  .tab-button:hover {
+    background: var(--navitem-hover);
+    color: var(--text);
+  }
+  
+  .tab-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  
+  .tab-button[aria-selected="true"],
+  .tab-button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--panel);
+  }
+  
+  .tab-panels {
+    position: relative;
+  }
+  
+  .tab-panel {
+    padding: 24px;
+  }
+  
+  .tab-panel[hidden] {
+    display: none;
+  }
+  
+  .panel-content {
+    animation: fadeSlideIn 350ms ease-out;
+  }
+  
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .explanation {
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .explanation p {
+    margin: 12px 0;
+  }
+  
+  .explanation strong {
+    color: var(--accent);
+  }
+  
+  .key-points {
+    background: var(--panel2);
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+  
+  .key-points h4 {
+    margin: 0 0 12px 0;
+    color: var(--accent);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .key-points ul {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--text);
+  }
+  
+  .key-points li {
+    margin: 8px 0;
+    line-height: 1.5;
+  }
+  
+  .media-slot {
+    margin: 24px 0;
+    text-align: center;
+  }
+  
+  .media-slot img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .tab-button {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+    
+    .tab-panel {
+      padding: 16px;
+    }
+  }
+</style>

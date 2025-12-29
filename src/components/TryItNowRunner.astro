@@ -1,0 +1,448 @@
+---
+interface Props {
+  code: string;
+  starterId: string;
+  height?: number;
+  instructions?: string;
+  showFullEditorLink?: boolean;
+}
+
+const { 
+  code, 
+  starterId, 
+  height = 200,
+  instructions,
+  showFullEditorLink = true 
+} = Astro.props;
+
+const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="try-it-now-runner" data-runner-id={runnerId}>
+  {instructions && (
+    <div class="instructions">
+      <span class="icon">▶️</span>
+      <span>{instructions}</span>
+    </div>
+  )}
+  
+  <div class="editor-container">
+    <div class="editor-wrapper" style={`height: ${height}px`}>
+      <div id={`editor-${runnerId}`} class="monaco-editor-container"></div>
+    </div>
+    
+    <div class="toolbar">
+      <button class="btn btn-run" data-action="run">
+        <span class="icon">▶</span>
+        Run
+      </button>
+      <button class="btn btn-reset" data-action="reset">
+        <span class="icon">↺</span>
+        Reset
+      </button>
+      {showFullEditorLink && (
+        <a href={`/editor/?week=01&starter=${starterId}`} class="link-full-editor" target="_blank">
+          Open in full editor ↗
+        </a>
+      )}
+    </div>
+  </div>
+  
+  <div class="output-container" data-collapsed="true">
+    <div class="output-header" data-action="toggle-output">
+      <span class="icon">▼</span>
+      <span class="title">Output</span>
+      <span class="status"></span>
+    </div>
+    <div class="output-content">
+      <div class="output-tabs">
+        <button class="output-tab active" data-tab="console">Console</button>
+        <button class="output-tab" data-tab="errors">Errors</button>
+      </div>
+      <div class="output-panel" data-panel="console">
+        <pre class="output-text"></pre>
+      </div>
+      <div class="output-panel hidden" data-panel="errors">
+        <pre class="error-text"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ runnerId, code, starterId }}>
+  (async () => {
+    const container = document.querySelector(`[data-runner-id="${runnerId}"]`);
+    if (!container) return;
+    
+    const editorDiv = container.querySelector(`#editor-${runnerId}`);
+    const runBtn = container.querySelector('[data-action="run"]');
+    const resetBtn = container.querySelector('[data-action="reset"]');
+    const outputContainer = container.querySelector('.output-container');
+    const outputHeader = container.querySelector('[data-action="toggle-output"]');
+    const statusSpan = container.querySelector('.status');
+    const consoleOutput = container.querySelector('[data-panel="console"] .output-text');
+    const errorOutput = container.querySelector('[data-panel="errors"] .error-text');
+    const outputTabs = container.querySelectorAll('.output-tab');
+    const outputPanels = container.querySelectorAll('.output-panel');
+    
+    let editor = null;
+    const originalCode = code;
+    
+    // Wait for Monaco to load
+    const waitForMonaco = async () => {
+      let attempts = 0;
+      while (!window.monaco) {
+        if (attempts++ > 50) throw new Error('Monaco failed to load');
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    };
+    
+    try {
+      await waitForMonaco();
+      
+      // Initialize Monaco editor
+      editor = monaco.editor.create(editorDiv, {
+        value: originalCode,
+        language: 'csharp',
+        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'vs-dark' : 'vs',
+        minimap: { enabled: false },
+        fontSize: 14,
+        lineNumbers: 'on',
+        scrollBeyondLastLine: false,
+        automaticLayout: true,
+        tabSize: 4,
+      });
+      
+      // Theme sync
+      const observer = new MutationObserver(() => {
+        const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'vs-dark' : 'vs';
+        monaco.editor.setTheme(theme);
+      });
+      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      
+    } catch (err) {
+      console.error('[TryItNowRunner] Monaco init failed:', err);
+      editorDiv.innerHTML = `<textarea style="width:100%;height:100%;font-family:monospace;padding:8px;">${originalCode}</textarea>`;
+    }
+    
+    // Expand/collapse output
+    function toggleOutput(forceExpand = false) {
+      const isCollapsed = outputContainer.dataset.collapsed === 'true';
+      if (forceExpand || isCollapsed) {
+        outputContainer.dataset.collapsed = 'false';
+        outputHeader.querySelector('.icon').textContent = '▲';
+        // Scroll into view
+        setTimeout(() => {
+          outputContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      } else {
+        outputContainer.dataset.collapsed = 'true';
+        outputHeader.querySelector('.icon').textContent = '▼';
+      }
+    }
+    
+    outputHeader.addEventListener('click', () => toggleOutput());
+    
+    // Output tab switching
+    outputTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetPanel = tab.dataset.tab;
+        outputTabs.forEach(t => t.classList.toggle('active', t === tab));
+        outputPanels.forEach(p => {
+          p.classList.toggle('hidden', p.dataset.panel !== targetPanel);
+        });
+      });
+    });
+    
+    // Run code
+    async function runCode() {
+      const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
+      
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span class="icon">⏳</span> Running...';
+      statusSpan.textContent = '⏳ Running...';
+      
+      // Expand output and clear
+      toggleOutput(true);
+      consoleOutput.textContent = '(running...)';
+      errorOutput.textContent = '';
+      
+      try {
+        const response = await fetch('/api/compile-and-run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: currentCode,
+            starterId: starterId,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Display output
+        consoleOutput.textContent = result.stdout || '(no output)';
+        
+        // Display errors
+        const hasErrors = result.stderr || (result.diagnostics && result.diagnostics.some(d => d.severity === 'Error'));
+        if (hasErrors) {
+          let errorText = '';
+          if (result.stderr) {
+            errorText += result.stderr + '\n\n';
+          }
+          if (result.diagnostics) {
+            result.diagnostics.forEach(d => {
+              if (d.severity === 'Error') {
+                errorText += `Line ${d.line}: ${d.message}\n`;
+              }
+            });
+          }
+          errorOutput.textContent = errorText;
+          statusSpan.textContent = '⚠️ Completed with errors';
+          statusSpan.style.color = '#ef4444';
+          
+          // Auto-switch to errors tab
+          outputTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'errors'));
+          outputPanels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== 'errors'));
+        } else {
+          statusSpan.textContent = '✓ Success';
+          statusSpan.style.color = '#10b981';
+        }
+        
+      } catch (err) {
+        console.error('[TryItNowRunner] Run failed:', err);
+        errorOutput.textContent = `Failed to run code: ${err.message}`;
+        statusSpan.textContent = '✗ Error';
+        statusSpan.style.color = '#ef4444';
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="icon">▶</span> Run';
+      }
+    }
+    
+    // Reset code
+    function resetCode() {
+      if (editor) {
+        editor.setValue(originalCode);
+      } else {
+        const textarea = editorDiv.querySelector('textarea');
+        if (textarea) textarea.value = originalCode;
+      }
+      consoleOutput.textContent = '';
+      errorOutput.textContent = '';
+      statusSpan.textContent = '';
+      outputContainer.dataset.collapsed = 'true';
+      outputHeader.querySelector('.icon').textContent = '▼';
+    }
+    
+    runBtn.addEventListener('click', runCode);
+    resetBtn.addEventListener('click', resetCode);
+    
+    // Keyboard shortcut: Ctrl+Enter to run
+    if (editor) {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
+    }
+    
+  })();
+</script>
+
+<style>
+  .try-it-now-runner {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  
+  .instructions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .instructions .icon {
+    font-size: 16px;
+  }
+  
+  .editor-container {
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .editor-wrapper {
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .monaco-editor-container {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--panel2);
+  }
+  
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+  
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .btn-reset {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .btn-reset:hover:not(:disabled) {
+    background: var(--navitem-hover);
+  }
+  
+  .link-full-editor {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .link-full-editor:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  
+  .output-container {
+    border-top: 1px solid var(--border);
+  }
+  
+  .output-container[data-collapsed="true"] .output-content {
+    display: none;
+  }
+  
+  .output-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--panel2);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  
+  .output-header:hover {
+    background: var(--navitem-hover);
+  }
+  
+  .output-header .icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+  
+  .output-header .title {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+  }
+  
+  .output-header .status {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  
+  .output-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel2);
+  }
+  
+  .output-tab {
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .output-tab:hover {
+    color: var(--text);
+    background: var(--navitem-hover);
+  }
+  
+  .output-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  
+  .output-panel {
+    padding: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .output-panel.hidden {
+    display: none;
+  }
+  
+  .output-text,
+  .error-text {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  
+  .error-text {
+    color: #ef4444;
+  }
+  
+  @media (max-width: 640px) {
+    .toolbar {
+      flex-wrap: wrap;
+    }
+    
+    .link-full-editor {
+      width: 100%;
+      margin-left: 0;
+      margin-top: 8px;
+    }
+  }
+</style>
