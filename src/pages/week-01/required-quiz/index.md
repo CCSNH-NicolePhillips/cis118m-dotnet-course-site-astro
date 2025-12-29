@@ -140,7 +140,7 @@ This is a **completion quiz**. There are no wrong answers. Just answer honestly 
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
-<script>
+<script is:inline>
   // Wait for page load
   document.addEventListener('DOMContentLoaded', async () => {
     const submitBtn = document.getElementById('submit-quiz-btn');
