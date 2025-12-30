@@ -624,7 +624,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     margin-top: 24px;
     background: #1e2128;
     border-radius: 12px;
-    padding: 24px;
+    padding: 20px 24px;
     animation: fadeIn 0.3s ease;
   }
   
@@ -639,8 +639,8 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.detail-content) {
     display: flex;
-    gap: 32px;
-    align-items: flex-start;
+    gap: 24px;
+    align-items: center;
     overflow: hidden;
   }
   
@@ -650,9 +650,9 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.detail-text) h4 {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
-    margin: 0 0 16px;
+    margin: 0 0 10px;
     color: #fff;
   }
   
@@ -662,8 +662,8 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.detail-text) p {
     margin: 0;
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: 14px;
+    line-height: 1.6;
     color: rgba(255, 255, 255, 0.85);
   }
   
@@ -673,16 +673,14 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.detail-image) {
     flex-shrink: 0;
-    width: 220px;
-    max-width: 220px;
+    width: 140px;
   }
   
   .explanation :global(.detail-image) img {
-    width: 100%;
-    max-width: 220px;
+    width: 140px;
     height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     object-fit: contain;
   }
   
@@ -693,7 +691,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     
     .explanation :global(.detail-image) {
       width: 100%;
-      max-width: 300px;
+      max-width: 200px;
     }
   }
 
