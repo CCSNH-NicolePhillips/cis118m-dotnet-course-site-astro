@@ -86,17 +86,51 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
         
         <h4>Key platform components</h4>
         
-        <div class="component-cards">
-          <div class="component-card">
-            <h5>CLR (The Engine)</h5>
-            <p>Manages memory (Garbage Collection), handles security, and executes your code via JIT.</p>
-          </div>
-          
-          <div class="component-card">
-            <h5>BCL (The Toolbox)</h5>
-            <p>Thousands of pre-built classes for File I/O, Networking, Data, and Collections.</p>
+        <div class="toggle-buttons">
+          <button class="toggle-btn" data-target="clr-detail" onclick="toggleDetail(this, 'clr-detail')">CLR (The Engine)</button>
+          <button class="toggle-btn" data-target="bcl-detail" onclick="toggleDetail(this, 'bcl-detail')">BCL (The Toolbox)</button>
+        </div>
+        
+        <div id="clr-detail" class="detail-panel" style="display:none;">
+          <div class="detail-content">
+            <div class="detail-text">
+              <h4>The CLR: The Heart of Managed Execution</h4>
+              <p>The Common Language Runtime (CLR) is the <strong>virtual machine engine</strong> that runs your C# code. It provides a 'managed' environment, meaning it handles complex tasks like memory management, security, and error handling so you can focus strictly on writing logic.</p>
+            </div>
+            <div class="detail-image">
+              <img src="/media/week-1/lesson-1/cloud-computing.png" alt="Cloud Computing Diagram" />
+            </div>
           </div>
         </div>
+        
+        <div id="bcl-detail" class="detail-panel" style="display:none;">
+          <div class="detail-content">
+            <div class="detail-text">
+              <h4>The BCL: Your Pre-Built Toolbox</h4>
+              <p>The Base Class Library (BCL) provides <strong>thousands of pre-built classes</strong> for common tasks like File I/O, Networking, Data structures, and Collections. Instead of building everything from scratch, you leverage these tools.</p>
+            </div>
+            <div class="detail-image">
+              <img src="/media/week-1/lesson-1/bcl-diagram.png" alt="BCL Diagram" />
+            </div>
+          </div>
+        </div>
+        
+        <script>
+          function toggleDetail(btn, targetId) {
+            const panels = document.querySelectorAll('.detail-panel');
+            const buttons = document.querySelectorAll('.toggle-btn');
+            const target = document.getElementById(targetId);
+            const isVisible = target.style.display !== 'none';
+            
+            panels.forEach(p => p.style.display = 'none');
+            buttons.forEach(b => b.classList.remove('active'));
+            
+            if (!isVisible) {
+              target.style.display = 'block';
+              btn.classList.add('active');
+            }
+          }
+        </script>
       `,
       keyPoints: []
     }
