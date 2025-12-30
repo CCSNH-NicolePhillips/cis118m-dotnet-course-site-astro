@@ -336,7 +336,40 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation li {
     margin: 8px 0;
   }
+
+  /* === SIMPLE TABLE WITH HORIZONTAL LINES ONLY === */
+  .explanation :global(.simple-rows) {
+    width: 100%;
+    border-collapse: collapse;
+  }
   
+  .explanation :global(.simple-rows) tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  
+  .explanation :global(.simple-rows) tr:first-child {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  }
+  
+  .explanation :global(.simple-rows) td {
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #fff;
+    text-align: left;
+  }
+  
+  body[data-theme="light"] .explanation :global(.simple-rows) tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  
+  body[data-theme="light"] .explanation :global(.simple-rows) tr:first-child {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+  }
+  
+  body[data-theme="light"] .explanation :global(.simple-rows) td {
+    color: #000;
+  }
+
   /* === Clean row-only table (no column lines) === */
   .explanation :global(.table-card) {
     margin-top: 24px;
