@@ -679,3 +679,70 @@ pre {
     max-width: none;
   }
 }
+
+/* C# vs .NET Header Section */
+.cs-vs-dotnet-header {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin: 2rem 0;
+  border: 1px solid var(--border);
+}
+
+body[data-theme="dark"] .cs-vs-dotnet-header {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.7) 100%);
+}
+
+.header-content {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 2rem;
+  align-items: center;
+}
+
+.header-text h2 {
+  margin-top: 0;
+  font-size: 1.75rem;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.header-text p {
+  margin-bottom: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.header-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body[data-theme="dark"] .header-image img {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .header-image {
+    order: -1;
+  }
+  
+  .header-image img {
+    max-width: 300px;
+  }
+}
