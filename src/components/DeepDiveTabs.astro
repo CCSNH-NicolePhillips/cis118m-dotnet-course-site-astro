@@ -19,37 +19,35 @@ const { tabs, defaultTab = tabs[0]?.id, title, videoUrl, videoThumbnail } = Astr
 const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="deep-dive-container">
+<section class="deep-dive-section">
   {title && <h2 class="deep-dive-title">{title}</h2>}
   
-  <div class="deep-dive-tabs" data-component-id={componentId}>
-    <div role="tablist" class="tab-list">
-      {tabs.map((tab, index) => (
-        <button
-          role="tab"
-          aria-selected={tab.id === defaultTab ? "true" : "false"}
-          aria-controls={`panel-${componentId}-${tab.id}`}
-          id={`tab-${componentId}-${tab.id}`}
-          class="tab-button"
-          data-tab-id={tab.id}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </div>
-    
-    <div class="tab-panels">
+  <div class="tabs-bar" role="tablist" data-component-id={componentId}>
+    {tabs.map((tab, index) => (
+      <button
+        role="tab"
+        aria-selected={tab.id === defaultTab ? "true" : "false"}
+        aria-controls={`panel-${componentId}-${tab.id}`}
+        id={`tab-${componentId}-${tab.id}`}
+        class:list={["tab-btn", { "tab-btn-active": tab.id === defaultTab }]}
+        data-tab-id={tab.id}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+  
+  <div class="tab-content-area">
       {tabs.map((tab) => (
         <div
           role="tabpanel"
           id={`panel-${componentId}-${tab.id}`}
           aria-labelledby={`tab-${componentId}-${tab.id}`}
-          class="tab-panel"
+          class="tab-content"
           data-tab-id={tab.id}
           hidden={tab.id !== defaultTab}
         >
-          <div class="panel-content">
-            <div class="explanation" set:html={tab.content} />
+          <div class="explanation" set:html={tab.content} />
             
             {tab.keyPoints && tab.keyPoints.length > 0 && (
               <div class="key-points">
@@ -71,10 +69,10 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
         </div>
       ))}
     </div>
-  </div>
+  </section>
   
   {videoUrl && (
-    <div class="see-it-in-action">
+    <section class="see-it-in-action">
       <h3>See it in action</h3>
       <p>This educational guide explains the core differences and how they work together, providing a solid foundation for new .NET developers.</p>
       <div class="video-container">
@@ -85,24 +83,27 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
           allowfullscreen
         ></iframe>
       </div>
-    </div>
+    </section>
   )}
 </div>
 
 <script define:vars={{ componentId }}>
   (() => {
-    const container = document.querySelector(`[data-component-id="${componentId}"]`)?.closest('.deep-dive-container');
+    const tabsBar = document.querySelector(`[data-component-id="${componentId}"]`);
+    if (!tabsBar) return;
+    
+    const container = tabsBar.closest('.deep-dive-section');
     if (!container) return;
     
-    const tabButtons = container.querySelectorAll('.tab-button');
-    const tabPanels = container.querySelectorAll('.tab-panel');
+    const tabButtons = tabsBar.querySelectorAll('.tab-btn');
+    const tabPanels = container.querySelectorAll('.tab-content');
     
     // Enhanced tab switching with animation
     function switchTab(targetId) {
       tabButtons.forEach(btn => {
         const isActive = btn.dataset.tabId === targetId;
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        btn.classList.toggle('active', isActive);
+        btn.classList.toggle('tab-btn-active', isActive);
       });
       
       tabPanels.forEach(panel => {
@@ -111,7 +112,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
         if (isActive) {
           // Show with animation
           panel.hidden = false;
-          panel.style.animation = 'fadeSlideIn 350ms ease-out';
+          panel.style.animation = 'fadeSlideIn 180ms ease-out';
         } else {
           panel.hidden = true;
         }
@@ -126,12 +127,10 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     });
     
     // Keyboard navigation
-    const tabList = container.querySelector('.tab-list');
-    if (tabList) {
-      tabList.addEventListener('keydown', (e) => {
-        const currentIndex = Array.from(tabButtons).findIndex(btn => 
-          btn.getAttribute('aria-selected') === 'true'
-        );
+    tabsBar.addEventListener('keydown', (e) => {
+      const currentIndex = Array.from(tabButtons).findIndex(btn => 
+        btn.getAttribute('aria-selected') === 'true'
+      );
         
         let nextIndex = currentIndex;
         
@@ -154,97 +153,101 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
           switchTab(tabButtons[nextIndex].dataset.tabId);
         }
       });
-    }
   })();
 </script>
 
 <style>
-  .deep-dive-container {
+  .deep-dive-section {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 32px 16px;
+    padding: 24px 20px 40px;
   }
   
   .deep-dive-title {
-    font-size: 28px;
-    font-weight: 600;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
     color: var(--text);
-    margin-bottom: 20px;
     text-align: left;
   }
   
-  .deep-dive-tabs {
-    /* No background, no border, no card */
-  }
-  
-  .tab-list {
+  .tabs-bar {
     display: flex;
-    justify-content: center;
-    gap: 40px;
+    gap: 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    margin-bottom: 32px;
+    margin-bottom: 18px;
   }
   
-  body[data-theme="light"] .tab-list {
+  body[data-theme="light"] .tabs-bar {
     border-bottom: 1px solid rgba(0, 0, 0, 0.14);
   }
   
-  .tab-button {
+  .tab-btn {
+    appearance: none;
     background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 14px 0;
-    color: rgba(255, 255, 255, 0.70);
-    font-size: 15px;
-    font-weight: 500;
+    border: 0;
+    color: rgba(255, 255, 255, 0.78);
+    padding: 14px 2px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+    position: relative;
+    transition: color 0.2s ease;
   }
   
-  body[data-theme="light"] .tab-button {
-    color: rgba(0, 0, 0, 0.70);
+  body[data-theme="light"] .tab-btn {
+    color: rgba(0, 0, 0, 0.78);
   }
   
-  .tab-button:hover {
-    color: rgba(255, 255, 255, 0.9);
+  .tab-btn:hover {
+    color: rgba(255, 255, 255, 0.92);
   }
   
-  body[data-theme="light"] .tab-button:hover {
-    color: rgba(0, 0, 0, 0.9);
+  body[data-theme="light"] .tab-btn:hover {
+    color: rgba(0, 0, 0, 0.92);
   }
   
-  .tab-button:focus-visible {
+  .tab-btn:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 4px;
+    border-radius: 2px;
   }
   
-  .tab-button[aria-selected="true"],
-  .tab-button.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
+  .tab-btn-active {
+    color: rgba(255, 255, 255, 0.92);
   }
   
-  .tab-panels {
+  body[data-theme="light"] .tab-btn-active {
+    color: rgba(0, 0, 0, 0.92);
+  }
+  
+  .tab-btn-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: rgba(170, 200, 255, 0.9);
+  }
+  
+  .tab-content-area {
     position: relative;
   }
   
-  .tab-panel {
-    padding: 0;
+  .tab-content {
+    padding-top: 10px;
   }
   
-  .tab-panel[hidden] {
+  .tab-content[hidden] {
     display: none;
-  }
-  
-  .panel-content {
-    animation: fadeSlideIn 300ms ease-out;
   }
   
   @keyframes fadeSlideIn {
     from {
       opacity: 0;
-      transform: translateY(-6px);
+      transform: translateY(6px);
     }
     to {
       opacity: 1;
@@ -264,19 +267,26 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation h3 {
     font-size: 32px;
     font-weight: 700;
+    margin: 0 0 10px;
     color: #fff;
-    margin: 0 0 16px 0;
-    max-width: 70ch;
   }
   
   body[data-theme="light"] .explanation h3 {
     color: #000;
   }
   
-  .explanation > p {
-    max-width: 70ch;
-    margin-bottom: 32px;
-    line-height: 1.7;
+  .explanation > p,
+  .explanation p {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 16px;
+    line-height: 1.65;
+    max-width: 980px;
+    margin: 0 0 18px;
+  }
+  
+  body[data-theme="light"] .explanation > p,
+  body[data-theme="light"] .explanation p {
+    color: rgba(0, 0, 0, 0.86);
   }
   
   .explanation h4 {
@@ -294,13 +304,11 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     font-size: 16px;
     font-weight: 600;
     color: #fff;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin: 20px 0 10px 0;
   }
   
-  .explanation p {
-    margin: 12px 0;
-    color: rgba(255, 255, 255, 0.85);
+  body[data-theme="light"] .explanation h5 {
+    color: #000;
   }
   
   .explanation strong {
@@ -308,98 +316,139 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     font-weight: 600;
   }
   
+  body[data-theme="light"] .explanation strong {
+    color: #000;
+  }
+  
   .explanation ol,
   .explanation ul {
     margin: 16px 0;
     padding-left: 24px;
+    color: rgba(255, 255, 255, 0.86);
+  }
+  
+  body[data-theme="light"] .explanation ol,
+  body[data-theme="light"] .explanation ul {
+    color: rgba(0, 0, 0, 0.86);
   }
   
   .explanation li {
     margin: 8px 0;
   }
   
+  /* The "Gemini" table card */
   .explanation :global(.table-card) {
-    background: #1b1f24;
-    border-radius: 22px;
-    padding: 30px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
-    margin: 40px auto 0;
-    max-width: 100%;
-    overflow-x: auto;
+    margin-top: 18px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
   }
   
   body[data-theme="light"] .explanation :global(.table-card) {
-    background: #f8f9fa;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
   }
   
+  .explanation :global(.compare-table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .explanation :global(.compare-table) th,
+  .explanation :global(.compare-table) td {
+    text-align: left;
+    padding: 22px 26px;
+    vertical-align: top;
+  }
+  
+  .explanation :global(.compare-table) thead th {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  
+  body[data-theme="light"] .explanation :global(.compare-table) thead th {
+    color: rgba(0, 0, 0, 0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+  }
+  
+  .explanation :global(.compare-table) tbody td {
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  }
+  
+  body[data-theme="light"] .explanation :global(.compare-table) tbody td {
+    color: rgba(0, 0, 0, 0.84);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+  }
+  
+  .explanation :global(.compare-table) tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  
+  .explanation :global(.compare-table) tbody td:first-child {
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    width: 22%;
+  }
+  
+  body[data-theme="light"] .explanation :global(.compare-table) tbody td:first-child {
+    color: rgba(0, 0, 0, 0.92);
+  }
+  
+  /* Support old class name for backwards compat */
   .explanation :global(.comparison-table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 0;
-    font-size: 15px;
   }
   
   .explanation :global(.comparison-table) th,
   .explanation :global(.comparison-table) td {
-    padding: 20px 18px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  
-  body[data-theme="light"] .explanation :global(.comparison-table) th,
-  body[data-theme="light"] .explanation :global(.comparison-table) td {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+    padding: 22px 26px;
+    vertical-align: top;
   }
   
   .explanation :global(.comparison-table) thead th {
-    background: rgba(255, 255, 255, 0.06);
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.2px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) thead th {
-    background: rgba(0, 0, 0, 0.06);
-    color: #000000;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
   }
   
   .explanation :global(.comparison-table) tbody td {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td {
-    color: rgba(0, 0, 0, 0.9);
-  }
-  
-  .explanation :global(.comparison-table) tbody td:first-child {
-    font-weight: 600;
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.04);
-    width: 140px;
-  }
-  
-  body[data-theme="light"] .explanation :global(.comparison-table) tbody td:first-child {
-    color: #000000;
-    background: rgba(0, 0, 0, 0.04);
+    color: rgba(0, 0, 0, 0.84);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
   }
   
   .explanation :global(.comparison-table) tbody tr:last-child td {
-    border-bottom: none;
+    border-bottom: 0;
   }
   
-  .explanation :global(.comparison-table) tbody tr:hover {
-    background: rgba(255, 255, 255, 0.03);
+  .explanation :global(.comparison-table) tbody td:first-child {
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    width: 22%;
   }
   
-  body[data-theme="light"] .explanation :global(.comparison-table) tbody tr:hover {
-    background: rgba(0, 0, 0, 0.03);
+  body[data-theme="light"] .explanation :global(.comparison-table) tbody td:first-child {
+    color: rgba(0, 0, 0, 0.92);
   }
   
   .explanation :global(.component-cards) {
@@ -550,19 +599,22 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   /* Responsive */
   @media (max-width: 768px) {
-    .deep-dive-container {
-      padding: 24px 16px;
+    .deep-dive-section {
+      padding: 20px 16px 32px;
     }
     
-    .tab-list {
+    .deep-dive-title {
+      font-size: 36px;
+    }
+    
+    .tabs-bar {
       flex-wrap: wrap;
-      gap: 24px;
+      gap: 20px;
     }
     
-    .tab-button {
-      flex: 0 0 auto;
-      padding: 12px 0;
-      font-size: 14px;
+    .tab-btn {
+      font-size: 13px;
+      padding: 12px 2px;
     }
     
     .explanation h3 {
@@ -570,12 +622,15 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     }
     
     .explanation :global(.table-card) {
-      padding: 20px;
-      border-radius: 18px;
-      margin: 32px auto 0;
+      margin-top: 16px;
+      border-radius: 16px;
     }
     
-    .explanation :global(.comparison-table) {
+    .explanation :global(.compare-table) th,
+    .explanation :global(.compare-table) td,
+    .explanation :global(.comparison-table) th,
+    .explanation :global(.comparison-table) td {
+      padding: 18px 20px;
       font-size: 14px;
     }
     
@@ -586,22 +641,22 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   @media (max-width: 640px) {
     .deep-dive-title {
-      font-size: 24px;
+      font-size: 32px;
+    }
+    
+    .tabs-bar {
+      gap: 16px;
     }
     
     .explanation h3 {
       font-size: 24px;
     }
     
-    .explanation :global(.table-card) {
-      padding: 16px;
-      border-radius: 16px;
-      margin: 24px auto 0;
-    }
-    
+    .explanation :global(.compare-table) th,
+    .explanation :global(.compare-table) td,
     .explanation :global(.comparison-table) th,
     .explanation :global(.comparison-table) td {
-      padding: 16px 12px;
+      padding: 16px 18px;
       font-size: 13px;
     }
   }
