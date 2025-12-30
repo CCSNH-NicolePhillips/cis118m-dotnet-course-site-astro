@@ -86,9 +86,16 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
         
         <h4>Key platform components</h4>
         
-        <div class="toggle-buttons">
-          <button class="toggle-btn" data-target="clr-detail" onclick="toggleDetail(this, 'clr-detail')">CLR (The Engine)</button>
-          <button class="toggle-btn" data-target="bcl-detail" onclick="toggleDetail(this, 'bcl-detail')">BCL (The Toolbox)</button>
+        <div class="component-cards">
+          <div class="component-card clickable" onclick="toggleDetail('clr-detail', this)">
+            <h5>CLR (The Engine)</h5>
+            <p>Manages memory (Garbage Collection), handles security, and executes your code via JIT.</p>
+          </div>
+          
+          <div class="component-card clickable" onclick="toggleDetail('bcl-detail', this)">
+            <h5>BCL (The Toolbox)</h5>
+            <p>Thousands of pre-built classes for File I/O, Networking, Data, and Collections.</p>
+          </div>
         </div>
         
         <div id="clr-detail" class="detail-panel" style="display:none;">
@@ -116,18 +123,18 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
         </div>
         
         <script>
-          function toggleDetail(btn, targetId) {
+          function toggleDetail(targetId, clickedCard) {
             const panels = document.querySelectorAll('.detail-panel');
-            const buttons = document.querySelectorAll('.toggle-btn');
+            const cards = document.querySelectorAll('.component-card');
             const target = document.getElementById(targetId);
             const isVisible = target.style.display !== 'none';
             
             panels.forEach(p => p.style.display = 'none');
-            buttons.forEach(b => b.classList.remove('active'));
+            cards.forEach(c => c.classList.remove('active'));
             
             if (!isVisible) {
               target.style.display = 'block';
-              btn.classList.add('active');
+              clickedCard.classList.add('active');
             }
           }
         </script>

@@ -541,12 +541,21 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .explanation :global(.component-card.clickable) {
+    cursor: pointer;
   }
   
   .explanation :global(.component-card):hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(138, 180, 248, 0.2);
+  }
+  
+  .explanation :global(.component-card.active) {
+    border-color: #8ab4f8;
+    box-shadow: 0 4px 12px rgba(138, 180, 248, 0.3);
   }
   
   .explanation :global(.component-card) h5 {
