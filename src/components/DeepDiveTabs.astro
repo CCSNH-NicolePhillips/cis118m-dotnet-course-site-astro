@@ -164,33 +164,33 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .deep-dive-title {
-    font-size: 42px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    margin: 0 0 18px;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 24px;
     color: var(--text);
     text-align: left;
   }
   
   .tabs-bar {
     display: flex;
-    gap: 28px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    margin-bottom: 18px;
+    gap: 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 32px;
   }
   
   body[data-theme="light"] .tabs-bar {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   }
   
   .tab-btn {
     appearance: none;
     background: transparent;
     border: 0;
-    color: rgba(255, 255, 255, 0.78);
-    padding: 14px 2px;
-    font-size: 14px;
-    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    padding: 12px 0;
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
     position: relative;
     transition: color 0.2s ease;
@@ -215,11 +215,11 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .tab-btn-active {
-    color: rgba(255, 255, 255, 0.92);
+    color: rgba(255, 255, 255, 0.98);
   }
   
   body[data-theme="light"] .tab-btn-active {
-    color: rgba(0, 0, 0, 0.92);
+    color: rgba(0, 0, 0, 0.98);
   }
   
   .tab-btn-active::after {
@@ -227,9 +227,13 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -1px;
+    bottom: 0;
     height: 2px;
-    background: rgba(170, 200, 255, 0.9);
+    background: #fff;
+  }
+  
+  body[data-theme="light"] .tab-btn-active::after {
+    background: #000;
   }
   
   .tab-content-area {
@@ -237,7 +241,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .tab-content {
-    padding-top: 10px;
+    padding-top: 0;
   }
   
   .tab-content[hidden] {
@@ -265,9 +269,9 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation h3 {
-    font-size: 32px;
+    font-size: 22px;
     font-weight: 700;
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     color: #fff;
   }
   
@@ -277,16 +281,16 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation > p,
   .explanation p {
-    color: rgba(255, 255, 255, 0.86);
-    font-size: 16px;
-    line-height: 1.65;
-    max-width: 980px;
-    margin: 0 0 18px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 100%;
+    margin: 0 0 24px;
   }
   
   body[data-theme="light"] .explanation > p,
   body[data-theme="light"] .explanation p {
-    color: rgba(0, 0, 0, 0.86);
+    color: rgba(0, 0, 0, 0.85);
   }
   
   .explanation h4 {
@@ -338,18 +342,19 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   /* The "Gemini" table card */
   .explanation :global(.table-card) {
-    margin-top: 24px;
-    background: #1a1d23;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    margin-top: 0;
+    background: #1e2228;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
   }
   
   body[data-theme="light"] .explanation :global(.table-card) {
     background: #f5f5f5;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   }
   
   .explanation :global(.compare-table) {
@@ -360,33 +365,34 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation :global(.compare-table) th,
   .explanation :global(.compare-table) td {
     text-align: left;
-    padding: 18px 24px;
+    padding: 16px 20px;
     vertical-align: top;
   }
   
   .explanation :global(.compare-table) thead th {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    padding-bottom: 16px;
+    text-transform: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) thead th {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    color: rgba(0, 0, 0, 0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.03);
   }
   
   .explanation :global(.compare-table) tbody td {
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody td {
-    color: rgba(0, 0, 0, 0.88);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   
   .explanation :global(.compare-table) tbody tr:last-child td {
@@ -394,13 +400,13 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.compare-table) tbody td:first-child {
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    width: 180px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    width: 160px;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody td:first-child {
-    color: rgba(0, 0, 0, 0.95);
+    color: rgba(0, 0, 0, 0.92);
   }
   
   /* Support old class name for backwards compat */
@@ -412,33 +418,34 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation :global(.comparison-table) th,
   .explanation :global(.comparison-table) td {
     text-align: left;
-    padding: 18px 24px;
+    padding: 16px 20px;
     vertical-align: top;
   }
   
   .explanation :global(.comparison-table) thead th {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 14px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    padding-bottom: 16px;
+    text-transform: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.03);
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) thead th {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    color: rgba(0, 0, 0, 0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.03);
   }
   
   .explanation :global(.comparison-table) tbody td {
-    color: rgba(255, 255, 255, 0.88);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td {
-    color: rgba(0, 0, 0, 0.88);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   
   .explanation :global(.comparison-table) tbody tr:last-child td {
@@ -446,13 +453,13 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.comparison-table) tbody td:first-child {
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    width: 180px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    width: 160px;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td:first-child {
-    color: rgba(0, 0, 0, 0.95);
+    color: rgba(0, 0, 0, 0.92);
   }
   
   .explanation :global(.component-cards) {
