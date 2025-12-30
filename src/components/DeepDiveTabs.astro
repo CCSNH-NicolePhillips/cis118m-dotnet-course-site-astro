@@ -641,10 +641,12 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     display: flex;
     gap: 32px;
     align-items: flex-start;
+    overflow: hidden;
   }
   
   .explanation :global(.detail-text) {
     flex: 1;
+    min-width: 0;
   }
   
   .explanation :global(.detail-text) h4 {
@@ -671,14 +673,17 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.detail-image) {
     flex-shrink: 0;
-    width: 280px;
+    width: 220px;
+    max-width: 220px;
   }
   
   .explanation :global(.detail-image) img {
     width: 100%;
+    max-width: 220px;
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    object-fit: contain;
   }
   
   @media (max-width: 768px) {
