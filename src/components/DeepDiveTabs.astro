@@ -340,15 +340,15 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   /* === Gemini-style comparison card === */
   .explanation :global(.table-card) {
     margin-top: 24px;
-    background: #1a1d24;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
+    background: #1e2128;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
     overflow: hidden;
   }
   
   body[data-theme="light"] .explanation :global(.table-card) {
     background: #f3f3f3;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.12);
   }
   
   .explanation :global(.compare-table) {
@@ -357,17 +357,17 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.compare-table) thead th {
-    padding: 20px 28px;
-    font-size: 15px;
+    padding: 28px 32px;
+    font-size: 18px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     text-align: left;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) thead th {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    color: #000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   }
   
   .explanation :global(.compare-table) thead th:first-child {
@@ -375,31 +375,31 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.compare-table) tbody th[scope="row"] {
-    padding: 20px 28px;
+    padding: 28px 32px;
     font-size: 14px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     vertical-align: top;
-    text-align: right;
+    text-align: left;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody th[scope="row"] {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    color: #000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.compare-table) tbody td {
-    padding: 20px 28px;
+    padding: 28px 32px;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     vertical-align: top;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody td {
     color: rgba(0, 0, 0, 0.85);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.compare-table) tbody tr:last-child th,
@@ -414,17 +414,17 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.comparison-table) thead th {
-    padding: 20px 28px;
-    font-size: 15px;
+    padding: 28px 32px;
+    font-size: 18px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     text-align: left;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) thead th {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    color: #000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   }
   
   .explanation :global(.comparison-table) thead th:first-child {
@@ -432,31 +432,31 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   }
   
   .explanation :global(.comparison-table) tbody th[scope="row"] {
-    padding: 20px 28px;
+    padding: 28px 32px;
     font-size: 14px;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     vertical-align: top;
-    text-align: right;
+    text-align: left;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody th[scope="row"] {
-    color: rgba(0, 0, 0, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    color: #000;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.comparison-table) tbody td {
-    padding: 20px 28px;
+    padding: 28px 32px;
     font-size: 14px;
     color: rgba(255, 255, 255, 0.85);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     vertical-align: top;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td {
     color: rgba(0, 0, 0, 0.85);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.comparison-table) tbody tr:last-child th,
