@@ -294,7 +294,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     margin: 8px 0;
   }
   
-  .comparison-table {
+  .explanation :global(.comparison-table) {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -305,8 +305,8 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   
-  .comparison-table th,
-  .comparison-table td {
+  .explanation :global(.comparison-table) th,
+  .explanation :global(.comparison-table) td {
     padding: 18px 24px;
     text-align: left;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -314,7 +314,7 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     line-height: 1.5;
   }
   
-  .comparison-table thead th {
+  .explanation :global(.comparison-table) thead th {
     background: rgba(50, 50, 54, 0.9);
     color: #ffffff;
     font-weight: 600;
@@ -323,33 +323,33 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
   
-  .comparison-table tbody td {
+  .explanation :global(.comparison-table) tbody td {
     color: rgba(255, 255, 255, 0.9);
     font-size: 15px;
   }
   
-  .comparison-table tbody td:first-child {
+  .explanation :global(.comparison-table) tbody td:first-child {
     font-weight: 600;
     color: #ffffff;
     background: rgba(255, 255, 255, 0.04);
   }
   
-  .comparison-table tbody tr:last-child td {
+  .explanation :global(.comparison-table) tbody tr:last-child td {
     border-bottom: none;
   }
   
-  .comparison-table tbody tr:hover {
+  .explanation :global(.comparison-table) tbody tr:hover {
     background: rgba(255, 255, 255, 0.03);
   }
   
-  .component-cards {
+  .explanation :global(.component-cards) {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px;
     margin: 24px 0;
   }
   
-  .component-card {
+  .explanation :global(.component-card) {
     background: rgba(30, 30, 34, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
@@ -357,19 +357,19 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
-  .component-card:hover {
+  .explanation :global(.component-card):hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(138, 180, 248, 0.2);
   }
   
-  .component-card h5 {
+  .explanation :global(.component-card) h5 {
     font-size: 18px;
     font-weight: 600;
     color: #8ab4f8;
     margin: 0 0 12px 0;
   }
   
-  .component-card p {
+  .explanation :global(.component-card) p {
     margin: 0;
     color: rgba(255, 255, 255, 0.8);
     font-size: 14px;
