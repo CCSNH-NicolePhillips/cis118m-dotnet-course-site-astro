@@ -296,39 +296,50 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .comparison-table {
     width: 100%;
-    border-collapse: collapse;
-    margin: 24px 0;
-    background: rgba(30, 30, 34, 0.6);
-    border-radius: 8px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    background: rgba(42, 42, 46, 0.8);
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
   
   .comparison-table th,
   .comparison-table td {
-    padding: 16px;
+    padding: 18px 24px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 15px;
+    line-height: 1.5;
   }
   
   .comparison-table thead th {
-    background: rgba(138, 180, 248, 0.15);
-    color: #8ab4f8;
+    background: rgba(50, 50, 54, 0.9);
+    color: #ffffff;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
   
   .comparison-table tbody td {
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 15px;
   }
   
   .comparison-table tbody td:first-child {
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  
+  .comparison-table tbody tr:last-child td {
+    border-bottom: none;
   }
   
   .comparison-table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
   }
   
   .component-cards {
