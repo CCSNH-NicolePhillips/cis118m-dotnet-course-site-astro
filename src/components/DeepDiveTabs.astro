@@ -338,18 +338,18 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   /* The "Gemini" table card */
   .explanation :global(.table-card) {
-    margin-top: 18px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    margin-top: 24px;
+    background: #1a1d23;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   }
   
   body[data-theme="light"] .explanation :global(.table-card) {
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.10);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+    background: #f5f5f5;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   }
   
   .explanation :global(.compare-table) {
@@ -360,31 +360,33 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation :global(.compare-table) th,
   .explanation :global(.compare-table) td {
     text-align: left;
-    padding: 22px 26px;
+    padding: 18px 24px;
     vertical-align: top;
   }
   
   .explanation :global(.compare-table) thead th {
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 15px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 16px;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) thead th {
-    color: rgba(0, 0, 0, 0.92);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+    color: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.compare-table) tbody td {
-    color: rgba(255, 255, 255, 0.84);
-    font-size: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 18px 24px;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody td {
-    color: rgba(0, 0, 0, 0.84);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+    color: rgba(0, 0, 0, 0.88);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
   
   .explanation :global(.compare-table) tbody tr:last-child td {
@@ -393,12 +395,12 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.compare-table) tbody td:first-child {
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.92);
-    width: 22%;
+    color: rgba(255, 255, 255, 0.95);
+    width: 180px;
   }
   
   body[data-theme="light"] .explanation :global(.compare-table) tbody td:first-child {
-    color: rgba(0, 0, 0, 0.92);
+    color: rgba(0, 0, 0, 0.95);
   }
   
   /* Support old class name for backwards compat */
@@ -410,31 +412,33 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   .explanation :global(.comparison-table) th,
   .explanation :global(.comparison-table) td {
     text-align: left;
-    padding: 22px 26px;
+    padding: 18px 24px;
     vertical-align: top;
   }
   
   .explanation :global(.comparison-table) thead th {
-    color: rgba(255, 255, 255, 0.92);
-    font-size: 15px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
     font-weight: 700;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 16px;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) thead th {
-    color: rgba(0, 0, 0, 0.92);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+    color: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
   
   .explanation :global(.comparison-table) tbody td {
-    color: rgba(255, 255, 255, 0.84);
-    font-size: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 18px 24px;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td {
-    color: rgba(0, 0, 0, 0.84);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+    color: rgba(0, 0, 0, 0.88);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   }
   
   .explanation :global(.comparison-table) tbody tr:last-child td {
@@ -443,12 +447,12 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
   
   .explanation :global(.comparison-table) tbody td:first-child {
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.92);
-    width: 22%;
+    color: rgba(255, 255, 255, 0.95);
+    width: 180px;
   }
   
   body[data-theme="light"] .explanation :global(.comparison-table) tbody td:first-child {
-    color: rgba(0, 0, 0, 0.92);
+    color: rgba(0, 0, 0, 0.95);
   }
   
   .explanation :global(.component-cards) {
