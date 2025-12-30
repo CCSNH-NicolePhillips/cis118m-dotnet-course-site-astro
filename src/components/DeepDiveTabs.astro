@@ -321,6 +321,16 @@ const componentId = `tabs-${Math.random().toString(36).substr(2, 9)}`;
     color: rgba(255, 255, 255, 0.85);
   }
   
+  .comparison-table tbody td:first-child {
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.03);
+  }
+  
+  .comparison-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
   .component-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
