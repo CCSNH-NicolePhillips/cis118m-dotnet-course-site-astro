@@ -29,8 +29,8 @@ Complete this quiz to confirm you've read and understood the course syllabus. Th
       id: "q2",
       type: "checkbox",
       question: "How my grade is calculated",
-      options: ["I know that grades come from quizzes (30%), labs (50%), and final project (20%)"],
-      correctAnswer: ["I know that grades come from quizzes (30%), labs (50%), and final project (20%)"]
+      options: ["I know that grades come from HW (20%), Labs (30%), Quizzes (20%), Final (20%), and Participation (10%)"],
+      correctAnswer: ["I know that grades come from HW (20%), Labs (30%), Quizzes (20%), Final (20%), and Participation (10%)"]
     },
     {
       id: "q3",
@@ -57,8 +57,8 @@ Complete this quiz to confirm you've read and understood the course syllabus. Th
       id: "q6",
       type: "checkbox",
       question: "Academic integrity policy",
-      options: ["I know I must write my own code and cannot use AI tools or copy from others"],
-      correctAnswer: ["I know I must write my own code and cannot use AI tools or copy from others"]
+      options: ["I know I cannot use AI tools like ChatGPT to write my code"],
+      correctAnswer: ["I know I cannot use AI tools like ChatGPT to write my code"]
     },
     {
       id: "q7",

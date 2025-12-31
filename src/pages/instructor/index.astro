@@ -1,5 +1,6 @@
 ---
 import CourseLayout from "../../layouts/CourseLayout.astro";
+import { COURSE } from "../../config/site";
 
 const title = "Instructor Dashboard";
 const description = "View student progress and activity";
@@ -109,7 +110,7 @@ const description = "View student progress and activity";
         }
 
         const user = await window.__auth.getUser();
-        if (!user || !user.email || !user.email.endsWith('@ccsnh.edu')) {
+        if (!user || !user.email || user.email !== COURSE.instructorEmail) {
           authCheck.innerHTML = '<p style="color: #ef4444;">Not authorized. Faculty access only.</p>';
           return;
         }

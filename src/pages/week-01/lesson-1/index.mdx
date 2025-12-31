@@ -62,16 +62,20 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
       id: "execution-flow",
       label: "Execution Flow",
       content: `
-        <h3>From Source Code to Machine Code</h3>
-        <p>When a student writes C#, it doesn't run directly on the hardware. It goes through a two-step compilation process that ensures portability across different operating systems (Windows, Linux, macOS).</p>
-        
-        <h4>The .NET Compilation Pipeline</h4>
-        <ol>
-          <li><strong>Source Code (.cs):</strong> The professor/student writes C# code.</li>
-          <li><strong>Compiler (csc):</strong> Translates C# into <strong>Intermediate Language (IL)</strong> and generates metadata.</li>
-          <li><strong>Assembly (.dll/.exe):</strong> A portable file containing the IL.</li>
-          <li><strong>CLR (JIT Compiler):</strong> The runtime converts IL into <strong>Native Code</strong> for the specific CPU right before execution.</li>
-        </ol>
+        <h3>🔎 The .NET X-Ray: C# vs. IL</h3>
+        <p>C# is for humans. <strong>Intermediate Language (IL)</strong> is for the .NET Engine. Look at how the engine 'sees' a simple Hello World:</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+          <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; border-top: 4px solid #4ec9b0;">
+            <p style="color: #4ec9b0; margin-top: 0; font-weight: bold;">Step 1: Your C# Blueprint</p>
+            <pre style="font-size: 0.8rem; margin: 0;"><code>Console.WriteLine("Hello!");</code></pre>
+          </div>
+          <div style="background: #1e1e1e; padding: 15px; border-radius: 8px; border-top: 4px solid #ce9178;">
+            <p style="color: #ce9178; margin-top: 0; font-weight: bold;">Step 2: The .NET 'Engine' Code (IL)</p>
+            <pre style="font-size: 0.8rem; margin: 0;"><code>IL_0001: ldstr "Hello!"
+IL_0006: call Console::WriteLine</code></pre>
+          </div>
+        </div>
+        <p style="margin-top: 20px;">Notice how the .NET Engine (the <strong>CLR</strong>) turns your one line into specific instructions like <code>ldstr</code> (Load String) and <code>call</code>. This is why .NET can run your code on Windows, Mac, or Linux—it just needs the engine to translate these IL steps!</p>
       `,
       keyPoints: []
     },
@@ -140,6 +144,13 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
       keyPoints: []
     }
   ]}
+/>
+
+<TryItNowRunner 
+  code={"using System;\\n\\nclass Program\\n{\\n    static void Main()\\n    {\\n        // TODO: Print 'Engine Online'\\n        Console.WriteLine(\\\"Hello!\\\");\\n    }\\n}"} 
+  starterId="week-01-lesson-1-il-spy" 
+  height={200} 
+  instructions="Change 'Hello!' to 'Engine Online' and click Run. You just generated new IL code!" 
 />
 
 ---
@@ -337,7 +348,8 @@ Console.WriteLine("Hello");
 
 ## Next Steps
 
-Great job! You've written your first C# programs. Now let's learn about variables and output formatting:
+Great job! You've written your first C# programs. Now let's review the course syllabus:
 
-- [Lesson 2: Your First Console Program →](../lesson-2/)
+- [Course Syllabus →](../syllabus/)
 - [Back to Week 1 Overview](../)
+

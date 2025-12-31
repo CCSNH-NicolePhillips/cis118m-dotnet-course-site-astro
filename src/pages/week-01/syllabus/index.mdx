@@ -3,6 +3,8 @@ layout: ../../../layouts/CourseLayout.astro
 title: "Syllabus"
 description: "CIS 118M Course Syllabus"
 ---
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
 
 # CIS 118M: Introduction to C# Programming
 
@@ -60,13 +62,18 @@ This course is organized into **16 weekly modules**, each containing:
 
 ## Grading
 
-Your final grade is calculated as follows:
-
-| Category | Weight | Details |
-|----------|--------|---------|
-| **Quizzes** | 30% | Weekly checkpoint quizzes (auto-graded, can retake) |
-| **Labs** | 50% | Hands-on coding assignments (graded for correctness + requirements) |
-| **Final Project** | 20% | Capstone project demonstrating course concepts |
+<DeepDiveTabs title="Grade Breakdown" tabs={[
+  { 
+    id: 'weights', 
+    label: '⚖️ Weights', 
+    content: "<h3>⚖️ The Weighted Rubric</h3><table class='simple-rows'><tr><td><strong>Homework (Auto-Checks)</strong></td><td style='text-align: right;'>20%</td></tr><tr><td><strong>Labs (Applied Skills)</strong></td><td style='text-align: right;'>30%</td></tr><tr><td><strong>Checkpoint Quizzes</strong></td><td style='text-align: right;'>20%</td></tr><tr><td><strong>Final Capstone Project</strong></td><td style='text-align: right;'>20%</td></tr><tr><td><strong>Participation (Activity)</strong></td><td style='text-align: right;'>10%</td></tr></table><p style='margin-top: 15px;'><em>Note: Every single item is graded out of 100 points, then averaged within its category.</em></p>" 
+  }, 
+  { 
+    id: 'participation', 
+    label: '🕹️ Participation', 
+    content: "<h3>🕹️ Your Activity Heartbeat</h3><p>We don't just track if you show up—we track if you're <strong>building</strong>. You earn participation points automatically by:</p><ul><li>Successfully running <strong>Try It Now</strong> code boxes.</li><li>Exploring <strong>Deep Dive</strong> tabs.</li><li>Completing the interactive missions in each lesson.</li></ul><p>The .NET Engine records your progress the moment you hit 'Run'!</p>" 
+  }
+]} />
 
 ### Grading Scale
 
@@ -192,3 +199,5 @@ After reading this syllabus:
 ---
 
 **Welcome to CIS 118M! Let's learn to code! 🚀**
+
+<MarkCompleteButton client:load />

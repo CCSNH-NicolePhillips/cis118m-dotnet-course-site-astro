@@ -1,4 +1,67 @@
 /* Start Here Page Styles */
+
+/* Quest Map Styles */
+.quest-map {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.quest-phase {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 20px 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quest-phase:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+body[data-theme="light"] .quest-phase {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.quest-phase h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+body[data-theme="light"] .quest-phase h3 {
+  color: #000;
+}
+
+.quest-phase ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.quest-phase li {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  line-height: 1.8;
+  margin: 8px 0;
+}
+
+body[data-theme="light"] .quest-phase li {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.quest-phase li strong {
+  font-weight: 600;
+  color: #fff;
+}
+
+body[data-theme="light"] .quest-phase li strong {
+  color: #000;
+}
+
+/* Old Roadmap Styles (keeping for backwards compatibility) */
 .roadmap-container {
   display: flex;
   flex-direction: column;

@@ -210,6 +210,27 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         } else {
           statusSpan.textContent = '✓ Success';
           statusSpan.style.color = '#10b981';
+          
+          // Participation Heartbeat
+          try {
+            const token = await window.__auth.getAccessToken();
+            if (token) {
+              await fetch('/api/progress-update', {
+                method: 'POST',
+                headers: { 
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({
+                  slug: window.location.pathname,
+                  activityId: runnerId,
+                  status: 'completed'
+                }),
+              });
+            }
+          } catch (heartbeatErr) {
+            console.warn('[Heartbeat] Could not save progress:', heartbeatErr);
+          }
         }
         
       } catch (err) {
