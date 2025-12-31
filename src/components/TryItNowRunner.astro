@@ -158,6 +158,14 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     async function runCode() {
       const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
       
+      console.log(`[TryItNowRunner ${runnerId}] Running code for starterId: ${starterId}`);
+      console.log(`[TryItNowRunner ${runnerId}] Code preview:`, currentCode.substring(0, 100));
+      console.log(`[TryItNowRunner ${runnerId}] Output elements:`, { 
+        consoleOutput: consoleOutput?.tagName,
+        errorOutput: errorOutput?.tagName,
+        statusSpan: statusSpan?.tagName
+      });
+      
       runBtn.disabled = true;
       runBtn.innerHTML = '<span class="icon">⏳</span> Running...';
       statusSpan.textContent = '⏳ Running...';
