@@ -1,0 +1,144 @@
+---
+// Lab Tour Component - Spotlight walkthrough for lab assignments
+---
+
+<div class="tour-container">
+  <button id="start-lab-tour-btn" class="start-tour-btn" onclick="startTour()">
+    🎯 Start Lab Tour
+  </button>
+</div>
+
+<div class="tour-overlay">
+  <div class="spotlight"></div>
+  <div class="tour-label"></div>
+  <button class="tour-next-btn" onclick="nextStep()">Next →</button>
+</div>
+
+<style>
+  .tour-container {
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  .start-tour-btn {
+    padding: 12px 24px;
+    background: linear-gradient(120deg, rgba(78, 201, 176, 0.2), rgba(78, 201, 176, 0.3));
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    color: #4ec9b0;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .start-tour-btn:hover {
+    background: linear-gradient(120deg, rgba(78, 201, 176, 0.3), rgba(78, 201, 176, 0.4));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 201, 176, 0.3);
+  }
+
+  .tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: none;
+    pointer-events: auto;
+  }
+
+  .spotlight {
+    position: absolute;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+    border: 3px solid #4ec9b0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  .tour-label {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 20px 30px;
+    max-width: 600px;
+    color: var(--text);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .tour-next-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 32px;
+    background: rgba(78, 201, 176, 0.2);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    color: #4ec9b0;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tour-next-btn:hover {
+    background: rgba(78, 201, 176, 0.3);
+    transform: translateX(-50%) translateY(-2px);
+  }
+</style>
+
+<script>
+  let currentStep = 0;
+  const targets = [
+    { selector: '.cm-editor', text: '✍️ Step 1: This is your Editor. Type your C# blueprint here!' },
+    { selector: 'button[onclick*="runCode"]', text: '🚀 Step 2: Click this button to ignite the .NET Engine!' },
+    { selector: '.status-display', text: '📟 Step 3: Watch this terminal for your "Access Granted" signal.' }
+  ];
+
+  function startTour() {
+    const overlay = document.querySelector('.tour-overlay');
+    overlay.style.display = 'block';
+    moveSpotlight();
+  }
+
+  function moveSpotlight() {
+    const step = targets[currentStep];
+    const element = document.querySelector(step.selector);
+    const spotlight = document.querySelector('.spotlight');
+    const label = document.querySelector('.tour-label');
+    
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      spotlight.style.width = `${rect.width + 10}px`;
+      spotlight.style.height = `${rect.height + 10}px`;
+      spotlight.style.top = `${rect.top + window.scrollY - 5}px`;
+      spotlight.style.left = `${rect.left + window.scrollX - 5}px`;
+      label.textContent = step.text;
+    }
+  }
+
+  function nextStep() {
+    currentStep++;
+    if (currentStep < targets.length) {
+      moveSpotlight();
+    } else {
+      document.querySelector('.tour-overlay').style.display = 'none';
+      currentStep = 0;
+    }
+  }
+
+  // Make functions available to the buttons
+  window.startTour = startTour;
+  window.nextStep = nextStep;
+</script>

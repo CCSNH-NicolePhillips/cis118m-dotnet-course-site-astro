@@ -1,0 +1,73 @@
+---
+---
+<div id="start-tour-focus-overlay" class="focus-overlay">
+  <div class="arrow-container">
+    <span class="bouncing-arrow">⬇️</span>
+  </div>
+</div>
+
+<style>
+  .focus-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 9998; /* Just under the tour overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* Let clicks pass through to the button */
+  }
+  .arrow-container {
+    position: absolute;
+    /* Position will be set by JS to be above the button */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%); /* Center horizontally, move up by its own height */
+    z-index: 9999;
+  }
+  .bouncing-arrow {
+    font-size: 3rem;
+    display: block;
+    animation: bounce 1s infinite alternate;
+  }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+  }
+  /* This class will be added to the button itself */
+  :global(.pulsing-glow) {
+    position: relative;
+    z-index: 9999; /* Bring button above the overlay */
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(236, 72, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+  }
+</style>
+
+<script>
+  // Find the elements
+  const overlay = document.getElementById('start-tour-focus-overlay');
+  const arrowContainer = overlay.querySelector('.arrow-container');
+  // We need to find the Start Lab Tour button. We'll assume it has a specific ID.
+  const startButton = document.getElementById('start-lab-tour-btn');
+  
+  if (startButton && overlay && arrowContainer) {
+    // 1. Position the arrow above the button
+    const rect = startButton.getBoundingClientRect();
+    arrowContainer.style.top = `${rect.top + window.scrollY}px`;
+    arrowContainer.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+    
+    // 2. Add the glowing class to the button
+    startButton.classList.add('pulsing-glow');
+    
+    // 3. Hide the effect when the button is clicked
+    startButton.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      startButton.classList.remove('pulsing-glow');
+    });
+  }
+</script>

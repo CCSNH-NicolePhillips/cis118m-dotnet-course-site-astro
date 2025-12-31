@@ -746,3 +746,54 @@ body[data-theme="dark"] .header-image img {
     max-width: 300px;
   }
 }
+
+/* Diagnostic Panel Card Styles */
+.diagnostic-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.diagnostic-card:hover {
+  filter: brightness(1.2);
+  transform: scale(1.02);
+}
+
+/* Mark Complete Button Styles */
+.mark-complete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mark-complete-button:hover {
+  background: var(--navitem-hover);
+  border-color: var(--link);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mark-complete-button.completed {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.mark-complete-button.completed:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+}
+
+body[data-theme="dark"] .mark-complete-button.completed {
+  color: #6ee7b7;
+  border-color: #6ee7b7;
+}

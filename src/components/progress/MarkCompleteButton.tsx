@@ -21,8 +21,12 @@ const MarkCompleteButton = ({ week, slug }: Props) => {
   };
 
   return (
-    <button className={done ? "button-solid" : "button-ghost"} onClick={toggle} aria-pressed={done}>
-      {done ? "Marked complete" : "Mark complete"}
+    <button 
+      className={`mark-complete-button ${done ? 'completed' : ''}`}
+      onClick={toggle} 
+      aria-pressed={done}
+    >
+      {done ? "✓ Marked complete" : "Mark complete"}
     </button>
   );
 };

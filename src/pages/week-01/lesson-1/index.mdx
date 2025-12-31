@@ -6,6 +6,7 @@ description: "Week 1 Lesson 1: .NET vs C# + Console Apps"
 
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import Quiz from '../../../components/Quiz.astro';
 
 # Week 1 Lesson 1: .NET vs C# + Console Apps
 
@@ -155,201 +156,102 @@ IL_0006: call Console::WriteLine</code></pre>
 
 ---
 
-## Console Applications
+## 📟 The Terminal Dashboard
 
-A **console app** is a text-based program that runs in a terminal window. It:
-- Prints text output to the screen
-- Can accept text input from the user
-- Has no graphical interface (no buttons, windows, etc.)
+<p>Before we start the engine, we need to understand our interface. A <strong>Console Application</strong> is your direct line to the .NET Engine. No windows, no buttons—just pure logic.</p>
 
-**Why start with console apps?**
-
-They're the simplest way to learn programming fundamentals. Later you'll learn to build apps with graphics, but console apps let you focus on logic first.
+<div class="component-cards">
+  <div class="component-card">
+    <h5>⚡ Low Overhead</h5>
+    <p>Console apps use almost zero 'fuel' (RAM), making them lightning fast for the engine to run.</p>
+  </div>
+  <div class="component-card">
+    <h5>🏗️ Logic First</h5>
+    <p>Without a UI to worry about, you can focus 100% on mastering the C# blueprint.</p>
+  </div>
+  <div class="component-card">
+    <h5>💠 Engine Direct</h5>
+    <p>You are talking directly to the .NET CLR without any extra 'middle-man' software.</p>
+  </div>
+</div>
 
 ---
 
-## Your First Program: Hello World
+## 🚀 Mission: First Ignition
 
-Every programmer's first program prints "Hello, World!" to the screen. This tradition dates back to the 1970s. Let's continue it!
+<div style="background: rgba(107, 159, 255, 0.1); border-left: 4px solid #6b9fff; padding: 20px; border-radius: 8px; margin: 24px 0;">
+  <h4 style="margin-top: 0; color: #6b9fff;">📝 Mission Briefing</h4>
+  <p>Your goal is to send a signal through the .NET Engine to the console. This 'Hello World' signal proves the engine is properly connected to your C# blueprint.</p>
+</div>
 
-### Try It Now #1: Hello
-
-<TryItNowRunner
-  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Hello, world!\");\n    }\n}"}
-  starterId="week-01-lesson-1-hello"
-  height={180}
-  instructions="Click Run to execute your first C# program!"
+<TryItNowRunner 
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Hello, World!\");\n    }\n}"} 
+  starterId="week-01-lesson-1-hello" 
+  height={180} 
+  instructions="Click Run to ignite the engine and send the signal!" 
 />
 
-**What's happening here?**
+---
 
-- `Console.WriteLine("text")` — Prints text to the console
-- `"Hello, world!"` — The text to print (must be in quotes)
-- `;` — Every statement ends with a semicolon
+## ⚠️ Diagnostic Panel: Warning Lights
 
-Don't worry about the other lines (`using System`, `class Program`, etc.) yet. We'll explain those later. For now, focus on the `Console.WriteLine` line.
+<p>Even expert engineers see warning lights. Here is how to 'patch' the most common errors in the Engine Room:</p>
+
+<div class="component-cards">
+  <div class="component-card" style="border-top: 3px solid #ef4444;">
+    <h5 style="color: #ef4444;">💬 Missing Quotes</h5>
+    <p><strong>Error:</strong> <code>Console.WriteLine(Hello);</code></p>
+    <div style="background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 6px; border: 1px solid #10b981; margin-top: 12px;">
+      <p style="margin: 0; color: #10b981; font-weight: bold;">🔎 ✅ SYSTEM PATCH:</p>
+      <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #fff;">Text must be inside <strong>"Double Quotes"</strong> or the engine won't recognize it as data!</p>
+    </div>
+  </div>
+  <div class="component-card" style="border-top: 3px solid #ef4444;">
+    <h5 style="color: #ef4444;">🛑 Missing Semicolon</h5>
+    <p><strong>Error:</strong> <code>Console.WriteLine("Hi")</code></p>
+    <div style="background: rgba(16, 185, 129, 0.15); padding: 10px; border-radius: 6px; border: 1px solid #10b981; margin-top: 12px;">
+      <p style="margin: 0; color: #10b981; font-weight: bold;">🔎 ✅ SYSTEM PATCH:</p>
+      <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #fff;">Add a <strong>semicolon <code>;</code></strong> at the end of the line to signal the command is finished.</p>
+    </div>
+  </div>
+</div>
 
 ---
 
-## Adding Comments
+## 🚦 Final Diagnostic Check
 
-**Comments** are notes for humans. The computer ignores them completely.
+<p>Before you leave the Engine Room, let's verify your systems. You need a 100% score to clear this checkpoint!</p>
 
-### Try It Now #2: Two Lines + Comment
-
-<TryItNowRunner
-  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // This is a comment (humans read it, computer ignores it)\n        Console.WriteLine(\"Line 1\");\n        Console.WriteLine(\"Line 2\");\n    }\n}"}
-  starterId="week-01-lesson-1-comments"
-  height={200}
-  instructions="Run this code. Notice the comment line doesn't appear in the output."
+<Quiz
+  quizId="week-01-lesson-1-diagnostic"
+  title="Lesson 1 System Check"
+  passingScore={100}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "You write a 'blueprint' for a program. Is that 'C#' or '.NET'?",
+      options: ["C# (The Language)", ".NET (The Platform)"],
+      correctAnswer: "C# (The Language)"
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "Which component handles things like security while the code is running?",
+      options: ["The BCL (The Toolbox)", "The CLR (The Engine)"],
+      correctAnswer: "The CLR (The Engine)"
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What is wrong with this command: Console.WriteLine(Ignition);",
+      options: ["Missing a semicolon", "Missing double quotes around Ignition", "The word Ignition must be capitalized"],
+      correctAnswer: "Missing double quotes around Ignition"
+    }
+  ]}
 />
 
-**Comment syntax:**
-
-- `// Single line comment` — Everything after `//` on that line is ignored
-- `/* Multi-line comment */` — Everything between `/*` and `*/` is ignored
-
-**When to use comments:**
-- Explain WHY you're doing something (not what—the code shows what)
-- Mark sections of code
-- Temporarily disable code for testing
-
 ---
 
-## Your Turn: Customize It!
-
-Now it's your turn to make changes.
-
-### Try It Now #3: Change the Message
-
-<TryItNowRunner
-  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Change this message to your own words!\");\n    }\n}"}
-  starterId="week-01-lesson-1-customize"
-  height={180}
-  instructions="Change the message to print your name or a fun fact about you. Then click Run!"
-/>
-
-**Challenges to try:**
-1. Change the message to print your name
-2. Add a second `Console.WriteLine` to print two lines
-3. Add a comment above your code explaining what it does
-
----
-
-## Common Mistakes (and how to fix them)
-
-### Missing Quotes
-
-❌ **Wrong:**
-```csharp
-Console.WriteLine(Hello);  // ERROR
-```
-
-✅ **Correct:**
-```csharp
-Console.WriteLine("Hello");  // WORKS
-```
-
-Text must always be in quotes!
-
----
-
-### Missing Semicolon
-
-❌ **Wrong:**
-```csharp
-Console.WriteLine("Hello")  // ERROR
-```
-
-✅ **Correct:**
-```csharp
-Console.WriteLine("Hello");  // WORKS
-```
-
-Every statement ends with a semicolon.
-
----
-
-### Typos in Keywords
-
-❌ **Wrong:**
-```csharp
-Console.WriteLin("Hello");  // ERROR (missing 'e')
-```
-
-✅ **Correct:**
-```csharp
-Console.WriteLine("Hello");  // WORKS
-```
-
-Spelling matters! C# is case-sensitive.
-
----
-
-## Key Takeaways
-
-✅ **C#** is the programming language you write
-
-✅ **.NET** is the platform that runs your C# code
-
-✅ **Console apps** print text output to the terminal
-
-✅ `Console.WriteLine("text")` prints a line
-
-✅ Every statement ends with a **semicolon** `;`
-
-✅ Text must be in **quotes** `"like this"`
-
-✅ Comments start with `//` and are ignored by the computer
-
----
-
-## Check Your Understanding
-
-**1) Is .NET a programming language?**
-
-<details>
-<summary>Show answer</summary>
-
-**No.** C# is the language. .NET is the platform that runs C# programs.
-
-</details>
-
-**2) What does Console.WriteLine do?**
-
-<details>
-<summary>Show answer</summary>
-
-It prints a line of text (output) to the console.
-
-</details>
-
-**3) What's wrong with this code?**
-
-```csharp
-Console.WriteLine("Hello)
-```
-
-<details>
-<summary>Show answer</summary>
-
-Two problems:
-1. Missing closing quote after "Hello
-2. Missing semicolon at the end
-
-**Correct:**
-```csharp
-Console.WriteLine("Hello");
-```
-
-</details>
-
----
-
-## Next Steps
-
-Great job! You've written your first C# programs. Now let's review the course syllabus:
-
-- [Course Syllabus →](../syllabus/)
-- [Back to Week 1 Overview](../)
+[🚀 Proceed to Lab 01 →](../lab-01/)
 

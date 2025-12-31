@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.9",
+    "@astrojs/netlify": "^5.5.4",
     "@astrojs/react": "^4.1.0",
     "@auth0/auth0-spa-js": "^2.11.0",
     "@monaco-editor/react": "^4.6.0",
