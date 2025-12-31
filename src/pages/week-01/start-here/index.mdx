@@ -1,0 +1,114 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Start Here • Your 16-Week Journey"
+description: "Welcome! This roadmap shows your complete journey from zero to building real C# applications."
+---
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
+import '../../../styles/start-here.css';
+
+# Start Here • Your 16-Week Journey
+
+Welcome to **CIS118M: Introduction to .NET Development**! Over the next 16 weeks, you'll go from complete beginner to building real applications with C# and .NET.
+
+This roadmap breaks your learning into **four clear phases**. Each phase builds on the last, taking you from fundamentals to a fully working final project.
+
+---
+
+<div class="roadmap-container">
+  <div class="phase-block" style="border-left: 5px solid #4ec9b0;">
+    <div class="phase-header">
+      <span class="phase-icon">🧱</span>
+      <h3>Phase 1: Foundations (Weeks 1-3)</h3>
+    </div>
+    <p class="phase-description">
+      Master the fundamentals. Learn what .NET and C# are, how to write basic programs, work with variables, perform math operations, and get user input.
+    </p>
+    <ul class="phase-topics">
+      <li>Understanding .NET vs C#</li>
+      <li>Console Applications</li>
+      <li>Variables & Data Types</li>
+      <li>Math Operations & Input</li>
+    </ul>
+  </div>
+
+  <div class="phase-block" style="border-left: 5px solid #9cdcfe;">
+    <div class="phase-header">
+      <span class="phase-icon">🧠</span>
+      <h3>Phase 2: Logic & Control (Weeks 4-8)</h3>
+    </div>
+    <p class="phase-description">
+      Add decision-making and repetition to your programs. Learn to use if/else statements, loops, methods, arrays, and lists to build smarter applications.
+    </p>
+    <ul class="phase-topics">
+      <li>If/Else & Switch Statements</li>
+      <li>Loops (For, While, Foreach)</li>
+      <li>Methods & Parameters</li>
+      <li>Arrays & Lists</li>
+    </ul>
+  </div>
+
+  <div class="phase-block" style="border-left: 5px solid #ce9178;">
+    <div class="phase-header">
+      <span class="phase-icon">🏗️</span>
+      <h3>Phase 3: Object-Oriented Programming (Weeks 9-11)</h3>
+    </div>
+    <p class="phase-description">
+      Build real-world applications with classes and objects. Learn constructors, encapsulation, exception handling, and debugging techniques.
+    </p>
+    <ul class="phase-topics">
+      <li>Classes & Objects</li>
+      <li>Constructors & Properties</li>
+      <li>Exception Handling</li>
+      <li>Debugging Strategies</li>
+    </ul>
+  </div>
+
+  <div class="phase-block" style="border-left: 5px solid #c586c0;">
+    <div class="phase-header">
+      <span class="phase-icon">🚀</span>
+      <h3>Phase 4: Real-World Skills (Weeks 12-16)</h3>
+    </div>
+    <p class="phase-description">
+      Put everything together. Learn file I/O, explore the .NET ecosystem, and build your capstone final project from scratch.
+    </p>
+    <ul class="phase-topics">
+      <li>File Reading & Writing</li>
+      <li>JSON & Data Persistence</li>
+      <li>.NET Ecosystem & Libraries</li>
+      <li>Final Project Build</li>
+    </ul>
+  </div>
+</div>
+
+---
+
+## Mission #1: Test the Tools
+
+## 🕹️ Interactive System Check
+
+Your first mission is to 'hack' this program. The system expects a secret code.
+
+<TryItNowRunner 
+  starterId="start-here-hack" 
+  height={200} 
+  code={`using System;
+
+class Program
+{
+  static void Main()
+  {
+    string secret = "Change Me";
+    Console.WriteLine($"System Status: {secret}");
+  }
+}`}
+  instructions="Find the 'Change Me' text and replace it with 'ACCESS GRANTED'. Then click Run!" 
+/>
+
+<DeepDiveTabs title="Stuck? Use the Debugger" tabs={[{ id: 'hint', label: '🔍 Reveal Secret', content: 'You need to type exactly ACCESS GRANTED inside the quotes.' }]} />
+
+<MarkCompleteButton client:load />
+
+[🚀 I am ready for Lesson 1!](../lesson-1/)
+

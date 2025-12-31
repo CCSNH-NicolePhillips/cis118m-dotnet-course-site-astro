@@ -61,6 +61,13 @@ const { title = "Course Page", description = "" } = Astro.props;
                   </button>
                   <div class="week-content" id={`week-${w.slug}-content`}>
                     <ul class="week-links">
+                      {w.slug === '01' && (
+                        <li>
+                          <a href={`/week-${w.slug}/start-here/`} data-page={`/week-${w.slug}/start-here/`}>
+                            <span class="lesson-text">0. Start Here</span>
+                          </a>
+                        </li>
+                      )}
                       <li>
                         <a href={w.lesson1} data-page={w.lesson1} data-starter={`week-${w.slug}-lesson-1`}>
                           <span class="lesson-text">Lesson 1</span>

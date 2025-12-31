@@ -28,3 +28,4 @@ const MarkCompleteButton = ({ week, slug }: Props) => {
 };
 
 export default MarkCompleteButton;
+export { MarkCompleteButton };
