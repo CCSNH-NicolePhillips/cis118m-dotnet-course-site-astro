@@ -31,12 +31,12 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       <div id={`editor-${runnerId}`} class="monaco-editor-container"></div>
     </div>
     
-    <div class="toolbar">
-      <button class="btn btn-run" data-action="run">
+    <div class="toolbar" id="lab-toolbar">
+      <button class="btn btn-run" id="lab-run-button" data-action="run">
         <span class="icon">▶</span>
         Run
       </button>
-      <button class="btn btn-reset" data-action="reset">
+      <button class="btn btn-reset" id="lab-reset-button" data-action="reset">
         <span class="icon">↺</span>
         Reset
       </button>
@@ -48,7 +48,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     </div>
   </div>
   
-  <div class="output-container" data-collapsed="true">
+  <div class="output-container" id="lab-output" data-collapsed="true">
     <div class="output-header" data-action="toggle-output">
       <span class="icon">▼</span>
       <span class="title">Output</span>

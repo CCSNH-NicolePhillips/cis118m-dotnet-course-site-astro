@@ -44,7 +44,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background: transparent;
     z-index: 9999;
     display: none;
     pointer-events: auto;
@@ -52,18 +52,19 @@
 
   .spotlight {
     position: fixed;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85);
     border: 3px solid #4ec9b0;
     border-radius: 8px;
     transition: all 0.3s ease;
     pointer-events: none;
+    background: transparent;
   }
 
   .tour-label {
     position: fixed;
-    bottom: 100px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     background: var(--panel);
     border: 2px solid #4ec9b0;
     border-radius: 12px;
@@ -74,6 +75,7 @@
     font-weight: 600;
     text-align: center;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
   }
 
   .tour-next-btn {
@@ -82,7 +84,7 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 12px 32px;
-    background: rgba(78, 201, 176, 0.2);
+    background: #1a1a1a;
     border: 2px solid #4ec9b0;
     border-radius: 12px;
     color: #4ec9b0;
@@ -90,10 +92,14 @@
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    text-decoration: none !important;
+    display: inline-block;
+    line-height: 1;
+    z-index: 10000;
   }
 
   .tour-next-btn:hover {
-    background: rgba(78, 201, 176, 0.3);
+    background: #2a2a2a;
     transform: translateX(-50%) translateY(-2px);
   }
 </style>
@@ -102,8 +108,8 @@
   let currentStep = 0;
   const targets = [
     { selector: '.monaco-editor-container', text: '✍️ Step 1: This is your Editor. Type your C# blueprint here!' },
-    { selector: 'button[onclick*="runCode"]', text: '🚀 Step 2: Click this button to ignite the .NET Engine!' },
-    { selector: '.status-display', text: '📟 Step 3: Watch this terminal for your "Access Granted" signal.' }
+    { selector: '.toolbar .btn-run', text: '🚀 Step 2: Click this button to ignite the .NET Engine!' },
+    { selector: '.output-container', text: '📟 Step 3: Watch this terminal for your "Access Granted" signal.' }
   ];
 
   function startTour() {
@@ -119,12 +125,26 @@
     const label = document.querySelector('.tour-label');
     
     if (element) {
-      const rect = element.getBoundingClientRect();
-      spotlight.style.width = `${rect.width + 10}px`;
-      spotlight.style.height = `${rect.height + 10}px`;
-      spotlight.style.top = `${rect.top - 10}px`;
-      spotlight.style.left = `${rect.left - 10}px`;
+      // Temporarily allow scrolling to bring element into view
+      document.body.style.overflow = '';
+      
+      // Scroll element into view
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Wait for scroll, then lock and position spotlight
+      setTimeout(() => {
+        document.body.style.overflow = 'hidden';
+        const rect = element.getBoundingClientRect();
+        spotlight.style.width = `${rect.width + 20}px`;
+        spotlight.style.height = `${rect.height + 20}px`;
+        spotlight.style.top = `${rect.top - 10}px`;
+        spotlight.style.left = `${rect.left - 10}px`;
+        spotlight.style.display = 'block';
+        label.textContent = step.text;
+      }, 600);
+    } else {
+      // If element not found, just show the label without spotlight
+      spotlight.style.display = 'none';
       label.textContent = step.text;
     }
   }
@@ -135,6 +155,7 @@
       moveSpotlight();
     } else {
       document.querySelector('.tour-overlay').style.display = 'none';
+      document.body.style.overflow = '';
       currentStep = 0;
     }
   }

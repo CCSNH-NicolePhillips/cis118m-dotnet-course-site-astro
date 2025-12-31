@@ -18,11 +18,9 @@
     pointer-events: none; /* Let clicks pass through to the button */
   }
   .arrow-container {
-    position: absolute;
+    position: fixed;
     /* Position will be set by JS to be above the button */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -100%); /* Center horizontally, move up by its own height */
+    transform: translate(-50%, 0); /* Center horizontally */
     z-index: 9999;
   }
   .bouncing-arrow {
@@ -56,18 +54,29 @@
   const startButton = document.getElementById('start-lab-tour-btn');
   
   if (startButton && overlay && arrowContainer) {
-    // 1. Position the arrow above the button
-    const rect = startButton.getBoundingClientRect();
-    arrowContainer.style.top = `${rect.top + window.scrollY}px`;
-    arrowContainer.style.left = `${rect.left + window.scrollX + rect.width / 2}px`;
+    // Function to update arrow position
+    function updateArrowPosition() {
+      const rect = startButton.getBoundingClientRect();
+      arrowContainer.style.top = `${rect.top - 70}px`;
+      arrowContainer.style.left = `${rect.left + rect.width / 2}px`;
+    }
     
-    // 2. Add the glowing class to the button
+    // 1. Initial position
+    updateArrowPosition();
+    
+    // 2. Update on scroll and resize to keep arrow locked to button
+    window.addEventListener('scroll', updateArrowPosition);
+    window.addEventListener('resize', updateArrowPosition);
+    
+    // 3. Add the glowing class to the button
     startButton.classList.add('pulsing-glow');
     
-    // 3. Hide the effect when the button is clicked
+    // 4. Hide the effect when the button is clicked
     startButton.addEventListener('click', () => {
       overlay.style.display = 'none';
       startButton.classList.remove('pulsing-glow');
+      window.removeEventListener('scroll', updateArrowPosition);
+      window.removeEventListener('resize', updateArrowPosition);
     });
   }
 </script>
