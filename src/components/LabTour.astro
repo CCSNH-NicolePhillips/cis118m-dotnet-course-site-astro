@@ -51,7 +51,7 @@
   }
 
   .spotlight {
-    position: absolute;
+    position: fixed;
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8);
     border: 3px solid #4ec9b0;
     border-radius: 8px;
@@ -101,7 +101,7 @@
 <script>
   let currentStep = 0;
   const targets = [
-    { selector: '.cm-editor', text: '✍️ Step 1: This is your Editor. Type your C# blueprint here!' },
+    { selector: '.monaco-editor-container', text: '✍️ Step 1: This is your Editor. Type your C# blueprint here!' },
     { selector: 'button[onclick*="runCode"]', text: '🚀 Step 2: Click this button to ignite the .NET Engine!' },
     { selector: '.status-display', text: '📟 Step 3: Watch this terminal for your "Access Granted" signal.' }
   ];
@@ -122,8 +122,9 @@
       const rect = element.getBoundingClientRect();
       spotlight.style.width = `${rect.width + 10}px`;
       spotlight.style.height = `${rect.height + 10}px`;
-      spotlight.style.top = `${rect.top + window.scrollY - 5}px`;
-      spotlight.style.left = `${rect.left + window.scrollX - 5}px`;
+      spotlight.style.top = `${rect.top - 10}px`;
+      spotlight.style.left = `${rect.left - 10}px`;
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       label.textContent = step.text;
     }
   }
