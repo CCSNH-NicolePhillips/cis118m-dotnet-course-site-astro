@@ -72,18 +72,23 @@ const { title = "Course Page", description = "" } = Astro.props;
                         <>
                           <li>
                             <a href={`/week-${w.slug}/start-here/`} data-page={`/week-${w.slug}/start-here/`}>
-                              <span class="lesson-text">0. Start Here & Syllabus</span>
+                              <span class="lesson-text">01. Start Here & Syllabus</span>
                             </a>
                           </li>
                           <li>
                             <a href={w.lesson1} data-page={w.lesson1} data-starter={`week-${w.slug}-lesson-1`}>
-                              <span class="lesson-text">Lesson 1: The Spark</span>
+                              <span class="lesson-text">02. Lesson: The Spark</span>
                               <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
-                              <span class="lesson-text">Lab 01: Welcome Protocol</span>
+                              <span class="lesson-text">03. Lab: Welcome Protocol</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
+                              <span class="lesson-text">04. Homework: Reflection</span>
                             </a>
                           </li>
                         </>

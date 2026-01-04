@@ -5,6 +5,7 @@ interface Props {
   height?: number;
   instructions?: string;
   showFullEditorLink?: boolean;
+  validationRegex?: string;
 }
 
 const { 
@@ -12,13 +13,14 @@ const {
   starterId, 
   height = 200,
   instructions,
-  showFullEditorLink = true 
+  showFullEditorLink = true,
+  validationRegex
 } = Astro.props;
 
 const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex}>
   {instructions && (
     <div class="instructions">
       <span class="icon">▶️</span>
@@ -190,6 +192,18 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         }
         
         const result = await response.json();
+        
+        // Check validation regex
+        const validationRegexStr = container.getAttribute('data-validation-regex');
+        if (result.stdout && validationRegexStr) {
+          const regexParts = validationRegexStr.match(/\/(.*)\/(.*)/);  
+          if (regexParts) {
+            const regex = new RegExp(regexParts[1], regexParts[2]);
+            if (regex.test(result.stdout)) {
+              statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">🏆 Mission Successful!</span>';
+            }
+          }
+        }
         
         // Display output
         consoleOutput.textContent = result.stdout || '(no output)';

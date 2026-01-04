@@ -69,6 +69,13 @@
   status = 200
   force = true
 
+# Route /api/compile-and-run to the compile-and-run function
+[[redirects]]
+  from = "/api/compile-and-run"
+  to = "/.netlify/functions/compile-and-run"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

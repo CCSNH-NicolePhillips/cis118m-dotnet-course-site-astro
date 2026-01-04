@@ -1,107 +1,30 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 01 • Homework"
-description: "Week 1 Homework: Lab Reflection"
+title: "04. Homework: Reflection - (GRADED)"
+description: "Reflect on your first .NET build."
 ---
 
-import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
 
-# Homework: Lab Reflection + Code Change
+# Homework 01: Reflection - (GRADED)
 
-**Time: 15 minutes**  
-**Points: 50**
+## 📝 Homework 01: The Reflection Patch
 
-## Objective
+<p>Now that you have ignited the engine in Lab 1, it is time to prove you understand the mechanics.</p>
 
-Reflect on what you learned in Lab 1, then make a small change to your code.
-
----
-
-## Part 1: Reflection (5 minutes)
-
-Answer this question in the text box below:
-
-**"What was the most challenging part of Lab 1, and how did you solve it?"**
-
-<div style="margin: 1rem 0;">
-  <textarea id="reflection-input" rows="6" style="
-    width: 100%;
-    padding: 12px;
-    font-size: 14px;
-    border: 2px solid #ccc;
-    border-radius: 6px;
-    font-family: inherit;
-  " placeholder="Type your reflection here (3-5 sentences)..."></textarea>
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🔍 Mission Reflection</h5>
+    <p>In 2-3 sentences, describe how the <strong>CLR (Engine)</strong> handled your <strong>C# Blueprint</strong>. What happens if you forget a semicolon?</p>
+  </div>
+  <div class="component-card">
+    <h5>🛠️ Code Update</h5>
+    <p>Modify your Lab 1 code to print a third line: <code>"Telemetry System Active."</code></p>
+  </div>
 </div>
 
 ---
 
-## Part 2: Code Change (10 minutes)
+<MarkCompleteButton client:load />
 
-Take your Lab 1 code and make **one meaningful change**:
-
-**Options:**
-1. Add a 5th line with a new variable
-2. Change from interpolation to concatenation (or vice versa)
-3. Add 2 more variables and use them in your output
-4. Add newlines (`\n`) to format your output differently
-
-<TryItNowRunner
-  code={"using System;\n\n// Homework: Lab 1 Modified\n// Name: Your Name Here\n\nclass Program\n{\n    static void Main()\n    {\n        // Paste your Lab 1 code here\n        // Then make ONE meaningful change\n        \n    }\n}"}
-  starterId="week-01-homework"
-  height={300}
-  instructions="Paste your Lab 1 code, then make one meaningful change. Test it, then submit below."
-/>
-
----
-
-## Submit Your Homework
-
-<div id="submit-section" style="margin-top: 2rem; padding: 1.5rem; border: 2px solid #2196F3; border-radius: 8px; background: rgba(33, 150, 243, 0.05);">
-  <h3 style="margin-top: 0;">Ready to Submit?</h3>
-  <p>Make sure you've:</p>
-  <ul>
-    <li>✓ Written your reflection (Part 1)</li>
-    <li>✓ Modified your code (Part 2)</li>
-    <li>✓ Tested your code (click Run)</li>
-  </ul>
-  
-  <button id="submit-homework-btn" style="
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 10px;
-  ">
-    Submit Homework
-  </button>
-  
-  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
-  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
-</div>
-
-<script src="/scripts/submit-homework.js"></script>
-
----
-
-## Grading Rubric
-
-| Criteria | Points |
-|----------|--------|
-| **Reflection** (thoughtful, 3-5 sentences) | 25 pts |
-| **Code Change** (meaningful modification) | 20 pts |
-| **Code Runs** (no errors) | 5 pts |
-| **Total** | **50 pts** |
-
----
-
-## Next Steps
-
-After submitting your homework:
-
-- [Required Submission Quiz →](../required-quiz/)
-- [Back to Week 1 Overview](../)
+[→ Continue to Week 2](/week-02/lesson-1/)

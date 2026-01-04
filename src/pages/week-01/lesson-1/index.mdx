@@ -148,7 +148,16 @@ IL_0006: call Console::WriteLine</code></pre>
 />
 
 <TryItNowRunner 
-  code={'using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Try changing the message below!\n        Console.WriteLine("Engine Online");\n    }\n}'} 
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Try changing the message below!
+        Console.WriteLine("Engine Online");
+    }
+}`} 
   starterId="week-01-lesson-1-il-spy" 
   height={200} 
   instructions="Change the message to your name and click Run. You just generated new IL code!" 
@@ -185,7 +194,15 @@ IL_0006: call Console::WriteLine</code></pre>
 </div>
 
 <TryItNowRunner 
-  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine(\"Hello, World!\");\n    }\n}"} 
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("Hello, World!");
+    }
+}`} 
   starterId="week-01-lesson-1-hello" 
   height={180} 
   instructions="Click Run to ignite the engine and send the signal!" 
@@ -218,13 +235,11 @@ IL_0006: call Console::WriteLine</code></pre>
 
 ---
 
-## 🚦 Final Diagnostic Check
-
-<p>Before you leave the Engine Room, let's verify your systems. You need a 100% score to clear this checkpoint!</p>
+## 🚦 Lesson 1 & Course Policy Check - (GRADED)
 
 <Quiz
   quizId="week-01-lesson-1-diagnostic"
-  title="Lesson 1 System Check"
+  title="Lesson 1 & Course Policy Check - (GRADED)"
   passingScore={100}
   questions={[
     {
@@ -247,6 +262,27 @@ IL_0006: call Console::WriteLine</code></pre>
       question: "What is wrong with this command: Console.WriteLine(Ignition);",
       options: ["Missing a semicolon", "Missing double quotes around Ignition", "The word Ignition must be capitalized"],
       correctAnswer: "Missing double quotes around Ignition"
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Which email should you use for technical help?",
+      options: ["MCCCISOnline1@ccsnh.edu", "instructor@school.edu", "help@dotnet.com"],
+      correctAnswer: "MCCCISOnline1@ccsnh.edu"
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "When is the hard deadline for weekly missions?",
+      options: ["Sunday at 11:59 PM", "Friday at 5:00 PM", "Monday at 11:59 PM"],
+      correctAnswer: "Sunday at 11:59 PM"
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "True or False: Using AI to write your lab code is permitted.",
+      options: ["True", "False"],
+      correctAnswer: "False"
     }
   ]}
 />

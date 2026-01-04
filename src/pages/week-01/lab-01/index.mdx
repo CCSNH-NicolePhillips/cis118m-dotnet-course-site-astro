@@ -17,10 +17,8 @@ import StartTourFocus from '../../../components/StartTourFocus.astro';
 <div style="background: rgba(78, 201, 176, 0.1); border: 2px solid #4ec9b0; padding: 20px; border-radius: 8px;">
   <h4 style="margin-top: 0; color: #4ec9b0;">📋 Mission Objectives</h4>
   <ul>
-    <li>Print the message: <code>"Initialize Authorization..."</code></li>
-    <li>Ask the user: <code>"Please enter Engineer Name:"</code></li>
-    <li>Use <code>Console.ReadLine()</code> to save their name.</li>
-    <li>Print: <code>"Access Granted: [Name]"</code></li>
+    <li>Announce your connection by printing: <code>"System Online"</code></li>
+    <li>Identify yourself by printing: <code>"Engineer [Your Name] Connected"</code></li>
   </ul>
 </div>
 
@@ -32,7 +30,8 @@ import StartTourFocus from '../../../components/StartTourFocus.astro';
   code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Type your code here!\n    }\n}"} 
   starterId="lab-01-auth" 
   height={300} 
-  instructions="Complete the protocol and hit Run." 
+  instructions="Complete the protocol and hit Run."
+  validationRegex="/System Online.*Engineer.*Connected/s"
 />
 
 ---
