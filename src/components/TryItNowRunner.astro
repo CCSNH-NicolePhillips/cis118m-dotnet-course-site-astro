@@ -233,25 +233,27 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
           statusSpan.textContent = '✓ Success';
           statusSpan.style.color = '#10b981';
           
-          // Participation Heartbeat
+          // Participation Heartbeat (optional - only if logged in)
           try {
-            const token = await window.__auth.getAccessToken();
-            if (token) {
-              await fetch('/api/progress-update', {
-                method: 'POST',
-                headers: { 
-                  'Authorization': `Bearer ${token}`,
-                  'Content-Type': 'application/json' 
-                },
-                body: JSON.stringify({
-                  slug: window.location.pathname,
-                  activityId: runnerId,
-                  status: 'completed'
-                }),
-              });
+            if (window.__auth && typeof window.__auth.getAccessToken === 'function') {
+              const token = await window.__auth.getAccessToken().catch(() => null);
+              if (token) {
+                await fetch('/api/progress-update', {
+                  method: 'POST',
+                  headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                  },
+                  body: JSON.stringify({
+                    slug: window.location.pathname,
+                    activityId: runnerId,
+                    status: 'completed'
+                  }),
+                }).catch(() => {}); // Ignore progress update failures
+              }
             }
           } catch (heartbeatErr) {
-            console.warn('[Heartbeat] Could not save progress:', heartbeatErr);
+            // Silently ignore - participation tracking is optional
           }
         }
         
