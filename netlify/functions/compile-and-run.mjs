@@ -10,16 +10,12 @@ export async function handler(event, context) {
     };
   }
 
-  // Require authentication
+  // Auth is optional for code running - only required for saving to Redis
+  let userId = null;
   const authResult = await requireAuth(event);
-  if (!authResult.authorized) {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ error: authResult.error || 'Unauthorized' })
-    };
+  if (authResult.authorized) {
+    userId = authResult.user.sub;
   }
-
-  const { sub } = authResult.user;
 
   try {
     const body = JSON.parse(event.body || '{}');
@@ -57,11 +53,15 @@ export async function handler(event, context) {
 
     const result = await compileResponse.json();
 
-    // Optionally save code to Redis if starterId provided
-    if (starterId) {
-      const redis = getRedis();
-      const key = `code:${sub}:${starterId}`;
-      await redis.set(key, code);
+    // Save code to Redis only if user is logged in
+    if (userId && starterId) {
+      try {
+        const redis = getRedis();
+        const key = `code:${userId}:${starterId}`;
+        await redis.set(key, code);
+      } catch (redisErr) {
+        console.warn('Failed to save code to Redis:', redisErr);
+      }
     }
 
     return {
