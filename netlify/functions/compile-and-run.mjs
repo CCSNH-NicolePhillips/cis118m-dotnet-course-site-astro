@@ -81,11 +81,11 @@ export async function handler(event, context) {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        success: result.Ok || result.RunOk || false,
-        stdout: result.Stdout || '',
-        stderr: result.Stderr || '',
-        diagnostics: result.Diagnostics || [],
-        exitCode: result.Ok ? 0 : 1
+        success: result.ok || result.runOk || false,
+        stdout: result.stdout || '',
+        stderr: result.stderr || '',
+        diagnostics: result.diagnostics || [],
+        exitCode: result.ok ? 0 : 1
       })
     };
   } catch (error) {
