@@ -32,16 +32,22 @@ export async function handler(event, context) {
       };
     }
 
-    // Call the external C# compilation API
-    const compileResponse = await fetch('https://cis118m-api.netlify.app/compile', {
+    // Call the .NET runner on Render
+    const RUNNER_URL = process.env.RUNNER_URL || 'https://cis118m-dotnet-course-site-astro.onrender.com';
+    const RUNNER_KEY = process.env.RUNNER_KEY || '';
+    
+    const compileResponse = await fetch(`${RUNNER_URL}/run`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'X-Runner-Key': RUNNER_KEY
       },
       body: JSON.stringify({
-        code,
-        stdin,
-        timeout: 10
+        starterId: starterId,
+        files: {
+          'Program.cs': code
+        },
+        stdin: stdin
       })
     });
 
@@ -61,11 +67,11 @@ export async function handler(event, context) {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        success: result.success,
-        stdout: result.output || '',
-        stderr: result.error || '',
-        diagnostics: result.diagnostics || [],
-        exitCode: result.exitCode || 0
+        success: result.Ok || result.RunOk || false,
+        stdout: result.Stdout || '',
+        stderr: result.Stderr || '',
+        diagnostics: result.Diagnostics || [],
+        exitCode: result.Ok ? 0 : 1
       })
     };
   } catch (error) {
