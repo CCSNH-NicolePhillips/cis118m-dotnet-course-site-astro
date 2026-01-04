@@ -1,5 +1,5 @@
 import { getRedis } from './_lib/redis.mjs';
-import { requireAuth } from './_lib/auth0-verify.mjs';
+import { verifyAuth0Token } from './_lib/auth0-verify.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -13,13 +13,14 @@ export async function handler(event, context) {
   // Auth is optional for code running - only required for saving to Redis
   let userId = null;
   try {
-    const authResult = await requireAuth(event);
-    if (authResult && authResult.authorized) {
-      userId = authResult.user?.sub;
+    const authHeader = event.headers.authorization || event.headers.Authorization;
+    if (authHeader) {
+      const user = await verifyAuth0Token(authHeader);
+      userId = user?.sub;
     }
   } catch (authErr) {
     // Auth failed, continue without user - code running is allowed anonymously
-    console.log('Auth check failed (continuing anonymously):', authErr.message);
+    console.log('Auth check skipped (anonymous user)');
   }
 
   try {
