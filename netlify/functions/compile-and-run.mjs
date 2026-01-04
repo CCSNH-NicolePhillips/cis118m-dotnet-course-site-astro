@@ -12,9 +12,14 @@ export async function handler(event, context) {
 
   // Auth is optional for code running - only required for saving to Redis
   let userId = null;
-  const authResult = await requireAuth(event);
-  if (authResult.authorized) {
-    userId = authResult.user.sub;
+  try {
+    const authResult = await requireAuth(event);
+    if (authResult && authResult.authorized) {
+      userId = authResult.user?.sub;
+    }
+  } catch (authErr) {
+    // Auth failed, continue without user - code running is allowed anonymously
+    console.log('Auth check failed (continuing anonymously):', authErr.message);
   }
 
   try {
