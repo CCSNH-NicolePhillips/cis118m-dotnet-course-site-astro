@@ -187,11 +187,16 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
           }),
         });
         
+        console.log(`[TryItNowRunner ${runnerId}] Response status:`, response.status);
+        
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
+          const errorBody = await response.text();
+          console.error(`[TryItNowRunner ${runnerId}] Error response body:`, errorBody);
+          throw new Error(`HTTP ${response.status}: ${errorBody}`);
         }
         
         const result = await response.json();
+        console.log(`[TryItNowRunner ${runnerId}] Result:`, result);
         
         // Check validation regex
         const validationRegexStr = container.getAttribute('data-validation-regex');
