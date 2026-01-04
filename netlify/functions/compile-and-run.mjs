@@ -37,6 +37,9 @@ export async function handler(event, context) {
     const RUNNER_URL = process.env.RUNNER_URL || 'https://cis118m-dotnet-course-site-astro.onrender.com';
     const RUNNER_KEY = process.env.RUNNER_KEY || '';
     
+    console.log('[compile-and-run] Calling runner:', RUNNER_URL);
+    console.log('[compile-and-run] Code length:', code?.length, 'starterId:', starterId);
+    
     const compileResponse = await fetch(`${RUNNER_URL}/run`, {
       method: 'POST',
       headers: {
@@ -52,11 +55,16 @@ export async function handler(event, context) {
       })
     });
 
+    console.log('[compile-and-run] Runner response status:', compileResponse.status);
+    
     if (!compileResponse.ok) {
-      throw new Error('Compilation service unavailable');
+      const errorText = await compileResponse.text();
+      console.error('[compile-and-run] Runner error:', errorText);
+      throw new Error(`Compilation service error: ${compileResponse.status}`);
     }
 
     const result = await compileResponse.json();
+    console.log('[compile-and-run] Runner result:', JSON.stringify(result));
 
     // Save code to Redis only if user is logged in
     if (userId && starterId) {
