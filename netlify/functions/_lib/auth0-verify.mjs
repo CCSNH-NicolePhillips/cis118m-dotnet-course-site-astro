@@ -40,9 +40,14 @@ export async function verifyAuth0Token(token) {
       algorithms: ["RS256"],
     });
 
+    console.log('[auth0-verify] Token payload keys:', Object.keys(payload));
+    
+    // Email might be in different places depending on Auth0 config
+    const email = payload.email || payload["https://ccsnh.edu/email"] || null;
+
     return {
       sub: payload.sub,
-      email: payload.email,
+      email: email,
     };
   } catch (error) {
     throw new Error(`Token verification failed: ${error.message}`);
