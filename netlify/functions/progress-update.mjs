@@ -39,7 +39,35 @@ export default async function handler(request, context) {
       );
     }
 
-    const { starterId, event } = body;
+    const { starterId, event, pageId, status, score, feedback } = body;
+
+    // Handle new pageId/status/score/feedback format (from EngineeringLogEditor)
+    if (pageId && status) {
+      const redis = getRedis();
+      const userId = user.sub;
+      
+      await redis.hset(`user:progress:data:${userId}`, 
+        `${pageId}:status`, status, 
+        `${pageId}:score`, score || 0,
+        `${pageId}:feedback`, feedback || ""
+      );
+
+      // Track student in index for instructor dashboard
+      await redis.sadd("cis118m:students", userId);
+      
+      // Store student email for instructor dashboard
+      if (user.email) {
+        await redis.set(`cis118m:studentEmail:${userId}`, user.email);
+      }
+
+      return new Response(
+        JSON.stringify({ ok: true }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
 
     // Validate starterId
     if (!starterId || typeof starterId !== "string" || starterId.trim().length === 0) {

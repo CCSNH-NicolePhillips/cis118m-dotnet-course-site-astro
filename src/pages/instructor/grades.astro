@@ -1,0 +1,132 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Instructor - Grade Review"
+description: "Review AI grading records and rubric breakdowns"
+---
+
+# 📋 Grade Review Dashboard
+
+<div id="grade-dashboard">
+  <div style="margin-bottom: 20px;">
+    <label for="assignment-select" style="color: #4ec9b0;">Assignment:</label>
+    <select id="assignment-select" style="background: #1e1e1e; color: #fff; border: 1px solid #4ec9b0; padding: 8px; border-radius: 4px; margin-left: 10px;">
+      <option value="">Loading...</option>
+    </select>
+    <button id="load-grades" style="background: #4ec9b0; color: #000; border: none; padding: 8px 16px; margin-left: 10px; border-radius: 4px; cursor: pointer;">
+      Load Grades
+    </button>
+  </div>
+
+  <div id="grades-list" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+  function getAuthToken() {
+    return localStorage.getItem('access_token');
+  }
+
+  function getAuthHeaders() {
+    const token = getAuthToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  }
+
+  async function loadAssignments() {
+    const select = document.getElementById('assignment-select');
+    const token = getAuthToken();
+    
+    if (!token) {
+      select.innerHTML = '<option value="">Please log in first</option>';
+      document.getElementById('grades-list').innerHTML = 
+        '<p style="color: #ce9178;">⚠️ You must be logged in as an instructor (@ccsnh.edu) to view grades.</p>';
+      return;
+    }
+
+    try {
+      const res = await fetch('/.netlify/functions/instructor-grades', {
+        headers: getAuthHeaders()
+      });
+      
+      if (res.status === 403) {
+        select.innerHTML = '<option value="">Access denied</option>';
+        document.getElementById('grades-list').innerHTML = 
+          '<p style="color: #ce9178;">⚠️ Instructor access only. Your account must use an @ccsnh.edu email (not @students.ccsnh.edu).</p>';
+        return;
+      }
+      
+      if (!res.ok) throw new Error('Failed to load');
+      
+      const data = await res.json();
+      select.innerHTML = data.assignments.map(a => 
+        `<option value="${a.assignmentId}">${a.assignmentId} (${a.submissionCount} submissions)</option>`
+      ).join('') || '<option value="">No assignments found</option>';
+    } catch (err) {
+      select.innerHTML = '<option value="">Error loading</option>';
+    }
+  }
+
+  async function loadGrades() {
+    const assignmentId = document.getElementById('assignment-select').value;
+    const container = document.getElementById('grades-list');
+    
+    if (!assignmentId) {
+      container.innerHTML = '<p>Select an assignment first</p>';
+      return;
+    }
+
+    container.innerHTML = '<p>Loading...</p>';
+    
+    try {
+      const res = await fetch(`/.netlify/functions/instructor-grades?assignmentId=${assignmentId}`, {
+        headers: getAuthHeaders()
+      });
+      
+      if (!res.ok) throw new Error('Failed to load grades');
+      
+      const data = await res.json();
+      
+      if (!data.grades.length) {
+        container.innerHTML = '<p>No submissions yet</p>';
+        return;
+      }
+
+      container.innerHTML = data.grades.map(g => `
+        <div style="background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #4ec9b0; font-weight: bold;">Score: ${g.score}/100</span>
+            <span style="color: #888; font-size: 0.9em;">${new Date(g.timestamp).toLocaleString()}</span>
+          </div>
+          
+          <details style="margin-bottom: 10px;">
+            <summary style="cursor: pointer; color: #ddd;">Student Response</summary>
+            <pre style="background: #2d2d2d; padding: 10px; border-radius: 4px; white-space: pre-wrap; margin-top: 8px;">${g.studentResponse}</pre>
+          </details>
+          
+          <div style="margin-bottom: 10px;">
+            <strong style="color: #ce9178;">Feedback to Student:</strong>
+            <p style="margin: 5px 0; color: #ddd;">${g.feedback}</p>
+          </div>
+          
+          ${g.rubric ? `
+          <details>
+            <summary style="cursor: pointer; color: #ddd;">📋 Rubric Breakdown</summary>
+            <div style="background: #2d2d2d; padding: 10px; border-radius: 4px; margin-top: 8px;">
+              ${Object.entries(g.rubric).map(([key, val]) => `
+                <div style="margin-bottom: 8px;">
+                  <span style="color: #4ec9b0;">${key}:</span>
+                  <span style="color: #fff;">${val.points} pts</span>
+                  <span style="color: #888;"> - ${val.rationale}</span>
+                </div>
+              `).join('')}
+            </div>
+          </details>
+          ` : ''}
+        </div>
+      `).join('');
+    } catch (err) {
+      container.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+    }
+  }
+
+  document.getElementById('load-grades').addEventListener('click', loadGrades);
+  loadAssignments();
+</script>

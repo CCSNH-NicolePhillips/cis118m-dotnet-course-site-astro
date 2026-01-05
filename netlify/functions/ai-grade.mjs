@@ -1,0 +1,101 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getLessonContext } from "./_lib/lesson-contexts.mjs";
+import { redis } from "../lib/redis.mjs";
+
+export const handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
+  const { content, assignmentId, userId } = JSON.parse(event.body);
+  
+  // Get lesson context for this assignment
+  const context = getLessonContext(assignmentId);
+  if (!context) {
+    return { 
+      statusCode: 400, 
+      body: JSON.stringify({ error: `Unknown assignment: ${assignmentId}` }) 
+    };
+  }
+
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ 
+    model: "gemini-2.0-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+      maxOutputTokens: 250,
+    }
+  });
+
+  const prompt = `You are a friendly programming instructor grading a student reflection.
+
+LESSON CONTEXT - What we taught:
+${context.taughtConcepts}
+
+ASSIGNMENT: ${context.assignmentPrompt}
+
+STUDENT RESPONSE: "${content}"
+
+RUBRIC: ${context.rubric}
+
+Grade the response and provide:
+1. "score": total points (0-100)
+2. "feedback": ONE sentence of praise + ONE short tip (shown to student)
+3. "rubric": object with each rubric category, points awarded, and brief rationale (for instructor records only)
+
+Return JSON:
+{
+  "score": number,
+  "feedback": "friendly 2-sentence feedback for student",
+  "rubric": {
+    "clr": {"points": 0-40, "rationale": "why"},
+    "csharp": {"points": 0-30, "rationale": "why"},
+    "semicolon": {"points": 0-20, "rationale": "why"},
+    "clarity": {"points": 0-10, "rationale": "why"}
+  }
+}
+`;
+
+  const result = await model.generateContent(prompt);
+  
+  try {
+    const response = await result.response;
+    const text = response.text();
+    
+    // We want to make sure we only send back the JSON part
+    const jsonStart = text.indexOf('{');
+    const jsonEnd = text.lastIndexOf('}') + 1;
+    const jsonResponse = text.substring(jsonStart, jsonEnd);
+    const data = JSON.parse(jsonResponse);
+
+    // Save full grading record to Redis for instructor review
+    if (userId) {
+      const gradeRecord = {
+        timestamp: new Date().toISOString(),
+        assignmentId,
+        userId,
+        studentResponse: content,
+        score: data.score,
+        feedback: data.feedback,
+        rubric: data.rubric,
+      };
+      
+      // Store under instructor-accessible key
+      await redis.lpush(`grades:${assignmentId}`, JSON.stringify(gradeRecord));
+      // Also store under student's record
+      await redis.hset(`user:${userId}:grades`, assignmentId, JSON.stringify(gradeRecord));
+    }
+
+    // Only return score and feedback to student (not rubric breakdown)
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ score: data.score, feedback: data.feedback }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "AI Ignition Failed" }),
+    };
+  }
+};

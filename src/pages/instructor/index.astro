@@ -68,6 +68,7 @@ const description = "View student progress and activity";
             <th style="text-align: center; padding: 12px;">Completed</th>
             <th style="text-align: center; padding: 12px;">In Progress</th>
             <th style="text-align: left; padding: 12px;">Last Active</th>
+            <th style="text-align: center; padding: 12px;">HW Analysis</th>
           </tr>
         </thead>
         <tbody id="student-tbody">
@@ -203,6 +204,9 @@ const description = "View student progress and activity";
             ? new Date(student.lastActive).toLocaleString() 
             : 'Never';
           
+          const hwFeedback = student.progress?.['week-01-homework:feedback'] || 'No analysis recorded.';
+          const escapedFeedback = hwFeedback.replace(/`/g, "'").replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+          
           const row = document.createElement('tr');
           row.style.borderBottom = '1px solid var(--border)';
           row.innerHTML = `
@@ -210,6 +214,14 @@ const description = "View student progress and activity";
             <td style="padding: 12px; text-align: center;">${completedCount}</td>
             <td style="padding: 12px; text-align: center;">${inProgressCount}</td>
             <td style="padding: 12px;">${lastActive}</td>
+            <td style="padding: 12px; text-align: center;">
+              <button 
+                onclick="alert('AI ANALYSIS FOR ${student.email}:\\n\\n${escapedFeedback}')"
+                style="font-size: 0.75rem; color: #4ec9b0; background: none; border: none; cursor: pointer; text-decoration: underline;"
+              >
+                VIEW ANALYSIS
+              </button>
+            </td>
           `;
           tbody.appendChild(row);
         });

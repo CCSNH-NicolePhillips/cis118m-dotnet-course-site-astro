@@ -5,6 +5,7 @@ description: "Reflect on your first .NET build."
 ---
 
 import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
 
 # Homework 01: Reflection - (GRADED)
 
@@ -15,8 +16,17 @@ import { MarkCompleteButton } from '../../../components/progress/MarkCompleteBut
 <div class="component-cards">
   <div class="component-card">
     <h5>🔍 Mission Reflection</h5>
-    <p>In 2-3 sentences, describe how the <strong>CLR (Engine)</strong> handled your <strong>C# Blueprint</strong>. What happens if you forget a semicolon?</p>
+    <p>In 3-5 sentences, answer these two technical points:</p>
+    <ol>
+      <li>How does the <strong>CLR (Engine)</strong> interact with your <strong>C# Blueprint</strong> to make the code run?</li>
+      <li>Technically, why does a <strong>missing semicolon</strong> prevent the engine from starting?</li>
+    </ol>
   </div>
+</div>
+
+<EngineeringLogEditor client:load />
+
+<div class="component-cards">
   <div class="component-card">
     <h5>🛠️ Code Update</h5>
     <p>Modify your Lab 1 code to print a third line: <code>"Telemetry System Active."</code></p>

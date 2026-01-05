@@ -12,14 +12,14 @@ import StartTourFocus from '../../../components/StartTourFocus.astro';
 
 # Lab 01: Welcome Protocol
 
-## 🛡️ Mission: System Authorization
+## 🛡️ Mission: First Transmission
 
 <div style="background: rgba(78, 201, 176, 0.1); border: 2px solid #4ec9b0; padding: 20px; border-radius: 8px;">
-  <h4 style="margin-top: 0; color: #4ec9b0;">📋 Mission Objectives</h4>
-  <ul>
-    <li>Announce your connection by printing: <code>"System Online"</code></li>
-    <li>Identify yourself by printing: <code>"Engineer [Your Name] Connected"</code></li>
-  </ul>
+  <h4 style="margin-top: 0; color: #4ec9b0;">📋 Mission Objective</h4>
+  <p>Use <code>Console.WriteLine()</code> to send a message to the terminal. This is how C# programs communicate with the outside world.</p>
+  <p><strong>Your Task:</strong> Print these two lines:</p>
+  <pre style="background: #1e1e1e; padding: 10px; border-radius: 4px;">System Online
+Engineer Connected</pre>
 </div>
 
 <StartTourFocus />
@@ -27,10 +27,10 @@ import StartTourFocus from '../../../components/StartTourFocus.astro';
 <LabTour />
 
 <TryItNowRunner 
-  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Type your code here!\n    }\n}"} 
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Use Console.WriteLine() to print your messages\n        \n    }\n}"} 
   starterId="lab-01-auth" 
   height={300} 
-  instructions="Complete the protocol and hit Run."
+  instructions="Use Console.WriteLine() twice - once for each line."
   validationRegex="/System Online.*Engineer.*Connected/s"
 />
 
