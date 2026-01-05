@@ -21,8 +21,8 @@ export async function handler(event, context) {
   const { content, assignmentId, userId } = body;
   
   // Get lesson context for this assignment
-  const context = getLessonContext(assignmentId);
-  if (!context) {
+  const lessonContext = getLessonContext(assignmentId);
+  if (!lessonContext) {
     return { 
       statusCode: 400, 
       body: JSON.stringify({ error: `Unknown assignment: ${assignmentId}` }) 
@@ -41,13 +41,13 @@ export async function handler(event, context) {
   const prompt = `You are a friendly programming instructor grading a student reflection.
 
 LESSON CONTEXT - What we taught:
-${context.taughtConcepts}
+${lessonContext.taughtConcepts}
 
-ASSIGNMENT: ${context.assignmentPrompt}
+ASSIGNMENT: ${lessonContext.assignmentPrompt}
 
 STUDENT RESPONSE: "${content}"
 
-RUBRIC: ${context.rubric}
+RUBRIC: ${lessonContext.rubric}
 
 Grade the response and provide:
 1. "score": total points (0-100)
