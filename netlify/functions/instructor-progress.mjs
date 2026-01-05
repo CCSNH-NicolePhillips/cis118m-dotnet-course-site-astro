@@ -24,8 +24,9 @@ export default async function handler(request, context) {
     // Verify authentication
     const user = await requireAuth(request);
 
-    // Enforce faculty-only access
-    if (!user.email || !user.email.endsWith("@ccsnh.edu")) {
+    // Enforce faculty-only access: @ccsnh.edu but NOT @students.ccsnh.edu
+    const isInstructor = user.email?.endsWith("@ccsnh.edu") && !user.email?.includes("@students.");
+    if (!user.email || !isInstructor) {
       return new Response(
         JSON.stringify({ error: "Forbidden: Faculty only" }),
         {

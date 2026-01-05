@@ -1,5 +1,5 @@
-import { redis } from "../lib/redis.mjs";
-import { verifyAuth0Token } from "../lib/auth.mjs";
+import { getRedis } from "./_lib/redis.mjs";
+import { verifyAuth0Token } from "./_lib/auth0-verify.mjs";
 
 // Instructor domain (professors) - students use students.ccsnh.edu
 const INSTRUCTOR_DOMAIN = "ccsnh.edu";
@@ -45,6 +45,7 @@ export const handler = async (event) => {
   const { assignmentId, userId } = event.queryStringParameters || {};
 
   try {
+    const redis = getRedis();
     let grades = [];
 
     if (userId) {
