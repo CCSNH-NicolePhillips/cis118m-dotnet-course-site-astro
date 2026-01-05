@@ -123,6 +123,17 @@ const description = "View student progress and activity";
 
         // Fetch student data
         const token = await window.__auth.getAccessToken();
+        if (!token) {
+          authCheck.style.display = 'block';
+          authCheck.innerHTML = '<p style="color: #f59e0b;">Session expired. <a href="#" id="relogin-link" style="color:#4ec9b0;">Click here to sign in again</a></p>';
+          document.getElementById('relogin-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.__auth.login(window.location.pathname);
+          });
+          dashboardContent.style.display = 'none';
+          return;
+        }
+        
         const response = await fetch('/api/instructor-progress', {
           headers: {
             'Authorization': `Bearer ${token}`,
