@@ -27,9 +27,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        history: true, // undo/redo
-      }),
+      StarterKit,
       Underline,
       CharacterCount,
       Placeholder.configure({
