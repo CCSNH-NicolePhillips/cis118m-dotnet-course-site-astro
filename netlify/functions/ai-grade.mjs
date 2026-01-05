@@ -56,11 +56,22 @@ Return JSON:
 }
 `;
 
-  const result = await model.generateContent(prompt);
+  let result;
+  try {
+    result = await model.generateContent(prompt);
+  } catch (genError) {
+    console.error('[ai-grade] Gemini API error:', genError.message || genError);
+    return {
+      statusCode: 502,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "AI service unavailable", details: genError.message }),
+    };
+  }
   
   try {
     const response = await result.response;
     const text = response.text();
+    console.log('[ai-grade] Gemini response:', text.substring(0, 200));
     
     // We want to make sure we only send back the JSON part
     const jsonStart = text.indexOf('{');
@@ -93,9 +104,11 @@ Return JSON:
       body: JSON.stringify({ score: data.score, feedback: data.feedback }),
     };
   } catch (error) {
+    console.error('[ai-grade] Processing error:', error.message || error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "AI Ignition Failed" }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "AI Ignition Failed", details: error.message }),
     };
   }
 };

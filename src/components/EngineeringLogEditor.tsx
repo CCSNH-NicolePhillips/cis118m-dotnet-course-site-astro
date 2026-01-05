@@ -4,6 +4,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Underline from '@tiptap/extension-underline'
 import CharacterCount from '@tiptap/extension-character-count'
 import React, { useState, useEffect } from 'react'
+import { getAccessToken, getUser } from '../lib/auth'
 
 interface EngineeringLogEditorProps {
   assignmentId?: string;
@@ -15,15 +16,13 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
   const [isGrading, setIsGrading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
 
-  // Get userId from localStorage (set by auth)
+  // Get userId from Auth0
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const user = JSON.parse(storedUser);
+    getUser().then(user => {
+      if (user) {
         setUserId(user.sub || user.id || null);
-      } catch {}
-    }
+      }
+    });
   }, []);
 
   const editor = useEditor({
@@ -50,26 +49,47 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     setIsGrading(true);
     setFeedback('📡 Transmitting to AI Inspector...');
     
+    // Get access token from Auth0
+    const token = await getAccessToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
     try {
       const response = await fetch('/.netlify/functions/ai-grade', {
         method: 'POST',
+        headers,
         body: JSON.stringify({ content: editor.getText(), assignmentId, userId }),
       });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[AI Grade] Error:', response.status, errorText);
+        throw new Error(`AI grading failed: ${response.status}`);
+      }
+      
       const data = await response.json();
       setScore(data.score);
       setFeedback(data.feedback);
 
-      // Save the mission success to the database
-      await fetch('/.netlify/functions/progress-update', {
-        method: 'POST',
-        body: JSON.stringify({ 
-          pageId: assignmentId, 
-          status: 'completed',
-          score: data.score,
-          feedback: data.feedback
-        }),
-      });
+      // Save the mission success to the database (only if we have auth)
+      if (token) {
+        await fetch('/.netlify/functions/progress-update', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ 
+            pageId: assignmentId, 
+            status: 'completed',
+            score: data.score,
+            feedback: data.feedback
+          }),
+        });
+      }
     } catch (err) {
+      console.error('[AI Grade] Exception:', err);
       setFeedback('⚠️ SYSTEM ERROR: Unable to reach AI Inspector. Check your connection.');
     } finally {
       setIsGrading(false);
