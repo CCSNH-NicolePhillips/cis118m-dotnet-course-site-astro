@@ -21,7 +21,10 @@ async function fetchUserInfo(accessToken) {
     }
     const data = await response.json();
     console.log('[auth0-verify] userinfo response:', JSON.stringify(data));
-    return data;
+    return {
+      email: data.email,
+      name: data.name || data.nickname || null,
+    };
   } catch (err) {
     console.log('[auth0-verify] userinfo error:', err.message);
     return {};
@@ -72,15 +75,18 @@ export async function verifyAuth0Token(token) {
     let email = payload.email || payload["https://ccsnh.edu/email"] || null;
 
     // If no email in token, fetch from userinfo endpoint
+    let name = payload.name || null;
     if (!email) {
       console.log('[auth0-verify] No email in token, fetching from userinfo...');
       const userInfo = await fetchUserInfo(jwt);
       email = userInfo.email || null;
+      name = userInfo.name || name;
     }
 
     return {
       sub: payload.sub,
       email: email,
+      name: name,
     };
   } catch (error) {
     throw new Error(`Token verification failed: ${error.message}`);

@@ -53,13 +53,17 @@ export default async function handler(request, context) {
       );
     }
 
-    // Fetch progress and email for each student
+    // Fetch progress, email, and name for each student
     const students = [];
     
     for (const sub of studentSubs) {
       try {
         const email = await redis.get(`cis118m:studentEmail:${sub}`);
+        const name = await redis.get(`cis118m:studentName:${sub}`);
         const progress = await redis.get(`progress:${sub}`);
+        
+        // Also check the new progress data format
+        const progressData = await redis.hgetall(`user:progress:data:${sub}`);
         
         // Calculate last active from progress data
         let lastActive = null;
@@ -75,10 +79,14 @@ export default async function handler(request, context) {
           }
         }
         
+        // Merge old progress format with new progress data format
+        const mergedProgress = { ...(progress || {}), ...(progressData || {}) };
+        
         students.push({
           sub,
+          name: name || null,
           email: email || "Unknown",
-          progress: progress || {},
+          progress: mergedProgress,
           lastActive,
         });
       } catch (err) {

@@ -55,9 +55,12 @@ export default async function handler(request, context) {
       // Track student in index for instructor dashboard
       await redis.sadd("cis118m:students", userId);
       
-      // Store student email for instructor dashboard
+      // Store student email and name for instructor dashboard
       if (user.email) {
         await redis.set(`cis118m:studentEmail:${userId}`, user.email);
+      }
+      if (user.name) {
+        await redis.set(`cis118m:studentName:${userId}`, user.name);
       }
 
       return new Response(
@@ -140,9 +143,12 @@ export default async function handler(request, context) {
     // Track student in index for instructor dashboard
     await redis.sadd("cis118m:students", user.sub);
     
-    // Store student email for instructor dashboard
+    // Store student email and name for instructor dashboard
     if (user.email) {
       await redis.set(`cis118m:studentEmail:${user.sub}`, user.email);
+    }
+    if (user.name) {
+      await redis.set(`cis118m:studentName:${user.sub}`, user.name);
     }
 
     return new Response(
