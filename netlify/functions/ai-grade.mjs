@@ -1,13 +1,24 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getLessonContext } from "./_lib/lesson-contexts.mjs";
-import { redis } from "../lib/redis.mjs";
+import { getRedis } from "./_lib/redis.mjs";
 
-export const handler = async (event) => {
+export async function handler(event, context) {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const { content, assignmentId, userId } = JSON.parse(event.body);
+  let body;
+  try {
+    body = JSON.parse(event.body);
+  } catch (e) {
+    return { 
+      statusCode: 400, 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Invalid JSON body" }) 
+    };
+  }
+
+  const { content, assignmentId, userId } = body;
   
   // Get lesson context for this assignment
   const context = getLessonContext(assignmentId);
@@ -81,6 +92,7 @@ Return JSON:
 
     // Save full grading record to Redis for instructor review
     if (userId) {
+      const redis = getRedis();
       const gradeRecord = {
         timestamp: new Date().toISOString(),
         assignmentId,
