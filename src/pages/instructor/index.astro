@@ -216,8 +216,9 @@ const description = "View student progress and activity";
             ? new Date(student.lastActive).toLocaleString() 
             : 'Never';
           
+          const hwScore = student.progress?.['week-01-homework:score'] || '—';
           const hwFeedback = student.progress?.['week-01-homework:feedback'] || 'No analysis recorded.';
-          const escapedFeedback = hwFeedback.replace(/`/g, "'").replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+          const rowId = `analysis-${student.sub?.replace(/[^a-zA-Z0-9]/g, '_') || 'unknown'}`;
           
           const row = document.createElement('tr');
           row.style.borderBottom = '1px solid var(--border)';
@@ -228,7 +229,8 @@ const description = "View student progress and activity";
             <td style="padding: 12px;">${lastActive}</td>
             <td style="padding: 12px; text-align: center;">
               <button 
-                onclick="alert('AI ANALYSIS FOR ${student.email}:\\n\\n${escapedFeedback}')"
+                class="view-analysis-btn"
+                data-target="${rowId}"
                 style="font-size: 0.75rem; color: #4ec9b0; background: none; border: none; cursor: pointer; text-decoration: underline;"
               >
                 VIEW ANALYSIS
@@ -236,6 +238,34 @@ const description = "View student progress and activity";
             </td>
           `;
           tbody.appendChild(row);
+          
+          // Add expandable analysis row (hidden by default)
+          const analysisRow = document.createElement('tr');
+          analysisRow.id = rowId;
+          analysisRow.style.display = 'none';
+          analysisRow.innerHTML = `
+            <td colspan="5" style="padding: 16px; background: rgba(78, 201, 176, 0.1); border-left: 3px solid #4ec9b0;">
+              <div style="font-size: 0.9rem;">
+                <strong style="color: #4ec9b0;">AI Homework Analysis</strong>
+                ${hwScore !== '—' ? `<span style="margin-left: 12px; color: #fbbf24;">Score: ${hwScore}/100</span>` : ''}
+                <p style="margin: 8px 0 0 0; color: var(--text); white-space: pre-wrap;">${hwFeedback}</p>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(analysisRow);
+        });
+        
+        // Add click handlers for VIEW ANALYSIS buttons
+        document.querySelectorAll('.view-analysis-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const targetRow = document.getElementById(targetId);
+            if (targetRow) {
+              const isVisible = targetRow.style.display !== 'none';
+              targetRow.style.display = isVisible ? 'none' : 'table-row';
+              btn.textContent = isVisible ? 'VIEW ANALYSIS' : 'HIDE ANALYSIS';
+            }
+          });
         });
         
         totalStudentsSpan.textContent = filtered.length;
