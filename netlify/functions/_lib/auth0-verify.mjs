@@ -3,6 +3,32 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 let jwks = null;
 
 /**
+ * Fetch user info from Auth0's /userinfo endpoint
+ * @param {string} accessToken - The access token (without Bearer prefix)
+ * @returns {Promise<{email?: string, name?: string}>} User info
+ */
+async function fetchUserInfo(accessToken) {
+  const domain = process.env.AUTH0_DOMAIN || process.env.PUBLIC_AUTH0_DOMAIN;
+  try {
+    const response = await fetch(`https://${domain}/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) {
+      console.log('[auth0-verify] userinfo failed:', response.status);
+      return {};
+    }
+    const data = await response.json();
+    console.log('[auth0-verify] userinfo response:', JSON.stringify(data));
+    return data;
+  } catch (err) {
+    console.log('[auth0-verify] userinfo error:', err.message);
+    return {};
+  }
+}
+
+/**
  * Verify Auth0 JWT access token with audience validation
  * @param {string} token - The Bearer token from Authorization header
  * @returns {Promise<{sub: string, email?: string}>} User info from token
@@ -43,7 +69,14 @@ export async function verifyAuth0Token(token) {
     console.log('[auth0-verify] Token payload keys:', Object.keys(payload));
     
     // Email might be in different places depending on Auth0 config
-    const email = payload.email || payload["https://ccsnh.edu/email"] || null;
+    let email = payload.email || payload["https://ccsnh.edu/email"] || null;
+
+    // If no email in token, fetch from userinfo endpoint
+    if (!email) {
+      console.log('[auth0-verify] No email in token, fetching from userinfo...');
+      const userInfo = await fetchUserInfo(jwt);
+      email = userInfo.email || null;
+    }
 
     return {
       sub: payload.sub,
