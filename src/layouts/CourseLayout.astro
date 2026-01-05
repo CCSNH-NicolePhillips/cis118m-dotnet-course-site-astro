@@ -150,6 +150,12 @@ const { title = "Course Page", description = "" } = Astro.props;
           <div class="hint" style="margin-top:8px;">
             <span style="opacity:.9;">Progress is saved on this device.</span>
           </div>
+          
+          <!-- Instructor-only link (hidden by default, shown via JS for @ccsnh.edu users) -->
+          <div id="instructor-link" class="hint" style="margin-top:12px; display:none;">
+            <hr style="margin-bottom:12px; border-color:#4ec9b0;" />
+            <a href="/instructor/" style="color:#4ec9b0; font-weight:bold;">📊 Instructor Dashboard</a>
+          </div>
           </div>
           <button class="sidebar-expand-btn" id="sidebar-expand" type="button" aria-label="Expand sidebar" title="Expand sidebar">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -643,6 +649,13 @@ const { title = "Course Page", description = "" } = Astro.props;
         if (user && user.email) {
           // Logged in state
           if (btnLogin) btnLogin.style.display = "none";
+          
+          // Show instructor link only for @ccsnh.edu (not @students.ccsnh.edu)
+          const instructorLink = document.getElementById('instructor-link');
+          if (instructorLink && user.email.endsWith('@ccsnh.edu') && !user.email.includes('@students.')) {
+            instructorLink.style.display = 'block';
+          }
+          
           if (userChip) {
             userChip.style.display = "flex";
             if (userEmail) userEmail.textContent = user.email;
