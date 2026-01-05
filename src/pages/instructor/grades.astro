@@ -1,10 +1,12 @@
 ---
-layout: ../../layouts/CourseLayout.astro
-title: "Instructor - Grade Review"
-description: "Review AI grading records and rubric breakdowns"
+import CourseLayout from "../../layouts/CourseLayout.astro";
+const title = "Instructor - Grade Review";
+const description = "Review AI grading records and rubric breakdowns";
 ---
 
-# 📋 Grade Review Dashboard
+<CourseLayout title={title} description={description}>
+
+<h1>📋 Grade Review Dashboard</h1>
 
 <div id="grade-dashboard">
   <div style="margin-bottom: 20px;">
@@ -130,3 +132,5 @@ description: "Review AI grading records and rubric breakdowns"
   document.getElementById('load-grades').addEventListener('click', loadGrades);
   loadAssignments();
 </script>
+
+</CourseLayout>
