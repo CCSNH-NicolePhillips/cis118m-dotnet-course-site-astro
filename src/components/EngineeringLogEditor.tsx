@@ -1,5 +1,8 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import Placeholder from '@tiptap/extension-placeholder'
+import Underline from '@tiptap/extension-underline'
+import CharacterCount from '@tiptap/extension-character-count'
 import React, { useState, useEffect } from 'react'
 
 interface EngineeringLogEditorProps {
@@ -24,8 +27,22 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
   }, []);
 
   const editor = useEditor({
-    extensions: [StarterKit],
-    content: 'Describe how the CLR handled your blueprint here...',
+    extensions: [
+      StarterKit.configure({
+        history: true, // undo/redo
+      }),
+      Underline,
+      CharacterCount,
+      Placeholder.configure({
+        placeholder: 'Write your reflection here... (3-5 sentences explaining how the CLR runs your C# code and why semicolons matter)',
+      }),
+    ],
+    content: '',
+    editorProps: {
+      attributes: {
+        spellcheck: 'true',
+      },
+    },
   })
 
   const submitForInspection = async () => {
@@ -61,39 +78,64 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
 
   if (!editor) return null;
 
+  const ToolbarButton = ({ onClick, isActive, children, title }: { onClick: () => void, isActive?: boolean, children: React.ReactNode, title: string }) => (
+    <button
+      onClick={onClick}
+      title={title}
+      style={{
+        color: isActive ? '#4ec9b0' : '#fff',
+        background: isActive ? 'rgba(78, 201, 176, 0.2)' : 'none',
+        border: '1px solid #4ec9b0',
+        marginRight: '4px',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontWeight: isActive ? 'bold' : 'normal',
+        minWidth: '28px',
+      }}
+    >
+      {children}
+    </button>
+  );
+
+  const wordCount = editor.storage.characterCount.words();
+  const charCount = editor.storage.characterCount.characters();
+
   return (
     <div style={{ marginBottom: '20px' }}>
       <div style={{ border: '2px solid #4ec9b0', borderRadius: '8px', padding: '10px', background: '#1e1e1e' }}>
         {/* Toolbar */}
-        <div style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '5px', display: 'flex', justifyContent: 'space-between' }}>
-          <div>
-            <button
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              style={{
-                color: editor.isActive('bold') ? '#4ec9b0' : '#fff',
-                background: 'none',
-                border: '1px solid #4ec9b0',
-                marginRight: '5px',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              B
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              style={{
-                color: editor.isActive('italic') ? '#4ec9b0' : '#fff',
-                background: 'none',
-                border: '1px solid #4ec9b0',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              I
-            </button>
+        <div style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
+            {/* Undo/Redo */}
+            <ToolbarButton onClick={() => editor.chain().focus().undo().run()} title="Undo (Ctrl+Z)">↩</ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().redo().run()} title="Redo (Ctrl+Y)">↪</ToolbarButton>
+            
+            <span style={{ borderLeft: '1px solid #333', margin: '0 6px' }}></span>
+            
+            {/* Text formatting */}
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold (Ctrl+B)">
+              <strong>B</strong>
+            </ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} isActive={editor.isActive('italic')} title="Italic (Ctrl+I)">
+              <em>I</em>
+            </ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().toggleUnderline().run()} isActive={editor.isActive('underline')} title="Underline (Ctrl+U)">
+              <span style={{ textDecoration: 'underline' }}>U</span>
+            </ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} isActive={editor.isActive('strike')} title="Strikethrough">
+              <span style={{ textDecoration: 'line-through' }}>S</span>
+            </ToolbarButton>
+            
+            <span style={{ borderLeft: '1px solid #333', margin: '0 6px' }}></span>
+            
+            {/* Lists */}
+            <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} isActive={editor.isActive('bulletList')} title="Bullet List">
+              •≡
+            </ToolbarButton>
+            <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} isActive={editor.isActive('orderedList')} title="Numbered List">
+              1.
+            </ToolbarButton>
           </div>
           <button
             onClick={submitForInspection}
@@ -113,8 +155,16 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
         </div>
 
         {/* Editor */}
-        <div style={{ minHeight: '120px', color: '#d4d4d4', padding: '10px' }}>
+        <div style={{ minHeight: '150px', color: '#d4d4d4', padding: '10px' }}>
           <EditorContent editor={editor} />
+        </div>
+        
+        {/* Word count footer */}
+        <div style={{ borderTop: '1px solid #333', paddingTop: '8px', marginTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888' }}>
+          <span>{wordCount} words • {charCount} characters</span>
+          <span style={{ color: wordCount >= 30 && wordCount <= 100 ? '#4ec9b0' : '#ce9178' }}>
+            {wordCount < 30 ? '⚠️ Write a bit more (aim for 30-100 words)' : wordCount > 100 ? '📝 Good detail! Consider being more concise.' : '✓ Good length'}
+          </span>
         </div>
       </div>
 
@@ -126,6 +176,28 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
           <div style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{feedback}</div>
         </div>
       )}
+
+      {/* Placeholder styling */}
+      <style>{`
+        .tiptap p.is-editor-empty:first-child::before {
+          color: #666;
+          content: attr(data-placeholder);
+          float: left;
+          height: 0;
+          pointer-events: none;
+          font-style: italic;
+        }
+        .tiptap:focus {
+          outline: none;
+        }
+        .tiptap ul, .tiptap ol {
+          padding-left: 1.5em;
+          margin: 0.5em 0;
+        }
+        .tiptap li {
+          margin: 0.25em 0;
+        }
+      `}</style>
     </div>
   );
 };
