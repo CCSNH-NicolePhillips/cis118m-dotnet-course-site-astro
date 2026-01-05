@@ -48,13 +48,27 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     setFeedback('📡 Transmitting to AI Inspector...');
     
     // Get access token from Auth0
-    const token = await getAccessToken();
+    let token: string | null = null;
+    try {
+      token = await getAccessToken();
+    } catch (err) {
+      console.error('[AI Grade] Token error:', err);
+      // Token failed - prompt re-login
+      setFeedback('⚠️ Session expired. Please sign out and sign back in, then try again.');
+      setIsGrading(false);
+      return;
+    }
+    
+    if (!token) {
+      setFeedback('⚠️ Not signed in. Please sign in to submit your work.');
+      setIsGrading(false);
+      return;
+    }
+    
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
     
     try {
       const response = await fetch('/.netlify/functions/ai-grade', {
@@ -73,11 +87,10 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       setScore(data.score);
       setFeedback(data.feedback);
 
-      // Save the mission success to the database (only if we have auth)
-      if (token) {
-        await fetch('/.netlify/functions/progress-update', {
-          method: 'POST',
-          headers,
+      // Save the mission success to the database
+      await fetch('/.netlify/functions/progress-update', {
+        method: 'POST',
+        headers,
           body: JSON.stringify({ 
             pageId: assignmentId, 
             status: 'completed',
