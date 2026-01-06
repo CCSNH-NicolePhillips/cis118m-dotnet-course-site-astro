@@ -8,15 +8,14 @@ interface Message {
 
 const AITutor: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Engineer.' }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pageId, setPageId] = useState('');
+  const [studentName, setStudentName] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Get current page context
+  // Get current page context and student name
   useEffect(() => {
     const path = window.location.pathname;
     // Convert /week-01/lesson-1/ to week-01-lesson-1
@@ -27,6 +26,37 @@ const AITutor: React.FC = () => {
       .replace(/index$/, '')
       .replace(/-$/, '');
     setPageId(id);
+
+    // Get student name from Auth0
+    const getStudentName = async () => {
+      try {
+        if (window.__auth?.getUser) {
+          const user = await window.__auth.getUser();
+          if (user?.name) {
+            setStudentName(user.name);
+            const firstName = user.name.split(' ')[0];
+            setMessages([
+              { role: 'assistant', content: `📡 COMMS LINK ESTABLISHED. Senior Engineer online. Good to see you, ${firstName}. State your technical query.` }
+            ]);
+          } else {
+            setMessages([
+              { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+            ]);
+          }
+        } else {
+          setMessages([
+            { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+          ]);
+        }
+      } catch (err) {
+        setMessages([
+          { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+        ]);
+      }
+    };
+    
+    // Wait a bit for auth to be ready
+    setTimeout(getStudentName, 500);
   }, []);
 
   // Scroll to bottom when messages change
@@ -50,6 +80,7 @@ const AITutor: React.FC = () => {
           message: userMessage,
           pageId,
           lessonContext: getTutorContext(pageId),
+          studentName,
         }),
       });
 
