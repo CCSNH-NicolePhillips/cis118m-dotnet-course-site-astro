@@ -1,0 +1,111 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 01 • Required Quiz"
+---
+import Quiz from '../../../components/Quiz.astro';
+
+# 🏁 Final Evaluation: Week 01
+
+<div class="mission-brief">
+  <h2>📋 Mission Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> You are allowed <strong>2 attempts</strong> on this mission</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-01-required-quiz"
+  title="Week 01: .NET Fundamentals"
+  passingScore={70}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is C# in the .NET ecosystem?",
+      options: [
+        "The execution engine that runs your code",
+        "The programming language you write code in",
+        "A database management system",
+        "A web browser"
+      ],
+      correctAnswer: "The programming language you write code in",
+      explanation: "C# is the programming language — the 'blueprint' you write. The CLR is the 'engine' that executes it."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the CLR (Common Language Runtime) do?",
+      options: [
+        "Checks your code for typos",
+        "Executes your compiled code at runtime",
+        "Designs the user interface",
+        "Connects to the internet"
+      ],
+      correctAnswer: "Executes your compiled code at runtime",
+      explanation: "The CLR is the 'engine' that actually runs your compiled code. It manages memory, security, and execution."
+    },
+    {
+      id: "q3",
+      type: "true-false",
+      question: "A missing semicolon in C# will cause a compile-time error, preventing the CLR from ever running the code.",
+      correctAnswer: "True",
+      explanation: "Correct! The compiler catches syntax errors like missing semicolons BEFORE the CLR ever sees your code."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What is the purpose of Console.WriteLine()?",
+      options: [
+        "To read input from the user",
+        "To display output to the terminal/console",
+        "To save data to a file",
+        "To connect to a database"
+      ],
+      correctAnswer: "To display output to the terminal/console",
+      explanation: "Console.WriteLine() is your communication protocol — it sends messages to the terminal for the user to see."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "In the 'Blueprint vs Engine' analogy, what does the semicolon represent?",
+      options: [
+        "The engine's fuel",
+        "A signal that one instruction is complete",
+        "The blueprint's title",
+        "A comment in the code"
+      ],
+      correctAnswer: "A signal that one instruction is complete",
+      explanation: "The semicolon tells the compiler 'this statement is finished' — like a period at the end of a sentence."
+    }
+  ]}
+/>
+
+<style>
+  {`
+    .mission-brief {
+      background: var(--panel);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    
+    .mission-brief h2 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+    
+    .mission-brief ul {
+      margin-bottom: 0;
+    }
+    
+    .mission-brief li {
+      margin: 8px 0;
+    }
+  `}
+</style>

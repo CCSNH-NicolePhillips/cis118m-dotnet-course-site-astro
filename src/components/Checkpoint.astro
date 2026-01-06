@@ -1,0 +1,310 @@
+---
+/**
+ * Checkpoint Component - Low-Stakes Practice Quiz
+ * 
+ * Similar to Quiz but provides instant feedback without submitting to gradebook.
+ * Use this for practice/verification before the formal quiz.
+ */
+
+interface CheckpointQuestion {
+  id: string;
+  type: 'multiple-choice' | 'true-false' | 'checkbox';
+  question: string;
+  options?: string[];
+  correctAnswer: string | string[];
+  explanation?: string;
+}
+
+interface Props {
+  checkpointId: string;
+  title: string;
+  questions: CheckpointQuestion[];
+}
+
+const { checkpointId, title, questions } = Astro.props;
+---
+
+<div class="checkpoint-container" data-checkpoint-id={checkpointId}>
+  <div class="checkpoint-header">
+    <h3>🔧 {title}</h3>
+    <p class="checkpoint-info">Practice checkpoint — instant feedback, not graded</p>
+  </div>
+  
+  <div class="checkpoint-questions">
+    {questions.map((q, index) => (
+      <div class="checkpoint-question" data-question-id={q.id} data-correct={JSON.stringify(q.correctAnswer)}>
+        <div class="question-number">Checkpoint {index + 1}</div>
+        <p class="question-text">{q.question}</p>
+        
+        {q.type === 'multiple-choice' && q.options && (
+          <div class="options">
+            {q.options.map((option) => (
+              <label class="option-label" data-value={option}>
+                <input 
+                  type="radio" 
+                  name={`checkpoint-${q.id}`} 
+                  value={option}
+                />
+                <span>{option}</span>
+                <span class="feedback-icon"></span>
+              </label>
+            ))}
+          </div>
+        )}
+        
+        {q.type === 'true-false' && (
+          <div class="options">
+            <label class="option-label" data-value="True">
+              <input type="radio" name={`checkpoint-${q.id}`} value="True" />
+              <span>True</span>
+              <span class="feedback-icon"></span>
+            </label>
+            <label class="option-label" data-value="False">
+              <input type="radio" name={`checkpoint-${q.id}`} value="False" />
+              <span>False</span>
+              <span class="feedback-icon"></span>
+            </label>
+          </div>
+        )}
+        
+        {q.type === 'checkbox' && q.options && (
+          <div class="options checkbox-options" data-multi="true">
+            {q.options.map((option) => (
+              <label class="option-label" data-value={option}>
+                <input type="checkbox" name={`checkpoint-${q.id}`} value={option} />
+                <span>{option}</span>
+                <span class="feedback-icon"></span>
+              </label>
+            ))}
+            <button type="button" class="check-answer-btn">Check Answer</button>
+          </div>
+        )}
+        
+        <div class="explanation" style="display: none;">
+          {q.explanation && <p>{q.explanation}</p>}
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  <div class="checkpoint-footer">
+    <p class="checkpoint-note">✅ Use this checkpoint to verify your understanding before the final evaluation.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.checkpoint-question').forEach(questionDiv => {
+    const correctAnswer = JSON.parse(questionDiv.dataset.correct || '""');
+    const explanationDiv = questionDiv.querySelector('.explanation');
+    const isMulti = questionDiv.querySelector('[data-multi="true"]') !== null;
+    
+    if (isMulti) {
+      // Handle checkbox questions with "Check Answer" button
+      const checkBtn = questionDiv.querySelector('.check-answer-btn');
+      checkBtn?.addEventListener('click', () => {
+        const checked = Array.from(questionDiv.querySelectorAll('input:checked')).map(i => i.value);
+        const correctAnswers = Array.isArray(correctAnswer) ? correctAnswer : [correctAnswer];
+        const isCorrect = correctAnswers.length === checked.length && 
+                          correctAnswers.every(a => checked.includes(a));
+        
+        // Reset all
+        questionDiv.querySelectorAll('.option-label').forEach(label => {
+          label.classList.remove('correct', 'incorrect');
+          const icon = label.querySelector('.feedback-icon');
+          icon.textContent = '';
+        });
+        
+        // Mark correct/incorrect
+        questionDiv.querySelectorAll('.option-label').forEach(label => {
+          const val = label.dataset.value;
+          const shouldBeChecked = correctAnswers.includes(val);
+          const wasChecked = checked.includes(val);
+          
+          if (shouldBeChecked) {
+            label.classList.add('correct');
+            label.querySelector('.feedback-icon').textContent = '✓';
+          } else if (wasChecked && !shouldBeChecked) {
+            label.classList.add('incorrect');
+            label.querySelector('.feedback-icon').textContent = '✗';
+          }
+        });
+        
+        if (explanationDiv) {
+          explanationDiv.style.display = 'block';
+        }
+      });
+    } else {
+      // Handle radio button questions with instant feedback
+      questionDiv.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener('change', (e) => {
+          const selected = e.target.value;
+          const isCorrect = selected === correctAnswer;
+          
+          // Reset all options in this question
+          questionDiv.querySelectorAll('.option-label').forEach(label => {
+            label.classList.remove('correct', 'incorrect');
+            const icon = label.querySelector('.feedback-icon');
+            icon.textContent = '';
+          });
+          
+          // Mark selected option
+          const selectedLabel = e.target.closest('.option-label');
+          if (isCorrect) {
+            selectedLabel.classList.add('correct');
+            selectedLabel.querySelector('.feedback-icon').textContent = '✓ Correct!';
+          } else {
+            selectedLabel.classList.add('incorrect');
+            selectedLabel.querySelector('.feedback-icon').textContent = '✗ Try again';
+            
+            // Also highlight the correct answer
+            questionDiv.querySelectorAll('.option-label').forEach(label => {
+              if (label.dataset.value === correctAnswer) {
+                label.classList.add('correct');
+                label.querySelector('.feedback-icon').textContent = '✓';
+              }
+            });
+          }
+          
+          // Show explanation
+          if (explanationDiv) {
+            explanationDiv.style.display = 'block';
+          }
+        });
+      });
+    }
+  });
+</script>
+
+<style>
+  .checkpoint-container {
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .checkpoint-header h3 {
+    margin: 0 0 8px 0;
+    color: var(--accent);
+  }
+  
+  .checkpoint-info {
+    color: var(--text-muted);
+    margin: 0 0 20px 0;
+    font-size: 14px;
+  }
+  
+  .checkpoint-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .checkpoint-question {
+    background: var(--panel2);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  
+  .question-number {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  
+  .question-text {
+    color: var(--text);
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  
+  .option-label:hover {
+    border-color: var(--accent);
+    background: var(--navitem-hover);
+  }
+  
+  .option-label.correct {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+  }
+  
+  .option-label.incorrect {
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+  }
+  
+  .feedback-icon {
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  
+  .option-label.correct .feedback-icon {
+    color: #22c55e;
+  }
+  
+  .option-label.incorrect .feedback-icon {
+    color: #ef4444;
+  }
+  
+  .explanation {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  
+  .check-answer-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.2s;
+  }
+  
+  .check-answer-btn:hover {
+    opacity: 0.9;
+  }
+  
+  .checkpoint-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  
+  .checkpoint-note {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin: 0;
+  }
+</style>

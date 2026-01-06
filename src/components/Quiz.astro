@@ -72,8 +72,16 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
       </div>
     ))}
     
-    <button type="submit" class="submit-button">Submit Quiz</button>
+    <button type="submit" class="submit-button" id={`submit-${quizId}`}>Submit Quiz</button>
   </form>
+  
+  <div class="quiz-status" id={`status-${quizId}`} style="display: none;">
+    <div class="status-content">
+      <h3>📊 Previous Attempt</h3>
+      <div class="previous-score" id={`prev-score-${quizId}`}></div>
+      <div class="attempts-remaining" id={`attempts-${quizId}`}></div>
+    </div>
+  </div>
   
   <div class="quiz-results" id={`results-${quizId}`} style="display: none;">
     <div class="results-header">
@@ -81,7 +89,15 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
       <div class="score-display" id={`score-${quizId}`}></div>
     </div>
     <div class="results-details" id={`details-${quizId}`}></div>
-    <button class="retake-button" id={`retake-${quizId}`}>Retake Quiz</button>
+    <button class="retake-button" id={`retake-${quizId}`} style="display: none;">🔄 REQUEST RE-IGNITION (Attempt 2/2)</button>
+  </div>
+  
+  <div class="quiz-locked" id={`locked-${quizId}`} style="display: none;">
+    <div class="locked-content">
+      <h3>🔒 MISSION LOCKED</h3>
+      <p>Maximum attempts reached. Your highest score has been recorded.</p>
+      <div class="final-score" id={`final-score-${quizId}`}></div>
+    </div>
   </div>
 </div>
 
@@ -92,6 +108,12 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
     const scoreDiv = document.getElementById(`score-${quizId}`);
     const detailsDiv = document.getElementById(`details-${quizId}`);
     const retakeBtn = document.getElementById(`retake-${quizId}`);
+    const statusDiv = document.getElementById(`status-${quizId}`);
+    const lockedDiv = document.getElementById(`locked-${quizId}`);
+    const submitBtn = document.getElementById(`submit-${quizId}`);
+    
+    let currentAttempts = 0;
+    let bestScore = 0;
     
     // Wait for auth
     const waitForAuth = async () => {
@@ -103,8 +125,120 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
       return true;
     };
     
+    // Load previous progress on page load
+    const loadProgress = async () => {
+      const authAvailable = await waitForAuth();
+      if (!authAvailable) return;
+      
+      const authed = await window.__auth.isAuthed();
+      if (!authed) return;
+      
+      try {
+        const token = await window.__auth.getAccessToken();
+        const response = await fetch(`/api/progress-get?quizId=${quizId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          currentAttempts = data.attempts || 0;
+          bestScore = data.bestScore || 0;
+          
+          // If already attempted, show status
+          if (currentAttempts > 0) {
+            statusDiv.style.display = 'block';
+            document.getElementById(`prev-score-${quizId}`).innerHTML = `
+              <span class="score-label">Best Score:</span> 
+              <span class="score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
+            `;
+            document.getElementById(`attempts-${quizId}`).innerHTML = 
+              currentAttempts >= 2 
+                ? '🔒 No attempts remaining' 
+                : `✅ ${2 - currentAttempts} attempt(s) remaining`;
+          }
+          
+          // If max attempts reached, lock the quiz
+          if (currentAttempts >= 2) {
+            form.style.display = 'none';
+            lockedDiv.style.display = 'block';
+            document.getElementById(`final-score-${quizId}`).innerHTML = `
+              <span class="final-score-label">Final Score:</span>
+              <span class="final-score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
+            `;
+          }
+          
+          // Load draft answers if any
+          if (data.draft) {
+            Object.entries(data.draft).forEach(([qId, answer]) => {
+              if (Array.isArray(answer)) {
+                answer.forEach(val => {
+                  const input = form.querySelector(`input[name="q-${qId}"][value="${val}"]`);
+                  if (input) input.checked = true;
+                });
+              } else {
+                const input = form.querySelector(`input[name="q-${qId}"][value="${answer}"]`);
+                if (input) input.checked = true;
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.error('[Quiz] Failed to load progress:', err);
+      }
+    };
+    
+    // Save draft answers on change
+    const saveDraft = async (answers) => {
+      const authAvailable = await waitForAuth();
+      if (!authAvailable) return;
+      
+      const authed = await window.__auth.isAuthed();
+      if (!authed) return;
+      
+      try {
+        const token = await window.__auth.getAccessToken();
+        await fetch('/api/progress-update', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'quiz-draft',
+            id: quizId,
+            draft: answers
+          }),
+        });
+      } catch (err) {
+        console.error('[Quiz] Draft save failed:', err);
+      }
+    };
+    
+    // Save draft on any input change
+    form.addEventListener('change', () => {
+      const formData = new FormData(form);
+      const answers = {};
+      questions.forEach((q) => {
+        if (q.type === 'checkbox') {
+          answers[q.id] = formData.getAll(`q-${q.id}`);
+        } else {
+          answers[q.id] = formData.get(`q-${q.id}`);
+        }
+      });
+      saveDraft(answers);
+    });
+    
+    // Load progress on init
+    loadProgress();
+    
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Check if attempts exhausted
+      if (currentAttempts >= 2) {
+        alert('Maximum attempts reached. You cannot retake this quiz.');
+        return;
+      }
       
       const formData = new FormData(form);
       const answers = {};
@@ -216,17 +350,45 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
                 answers
               }),
             });
+            
+            // Increment attempt count locally
+            currentAttempts++;
+            
+            // Update best score if this one is higher
+            if (score > bestScore) {
+              bestScore = score;
+            }
+            
           } catch (err) {
             console.error('[Quiz] Save to cloud failed:', err);
           }
         }
       }
+      
+      // Show retake button only if attempts remain and didn't pass
+      if (currentAttempts < 2 && !passed) {
+        retakeBtn.style.display = 'block';
+        retakeBtn.textContent = `🔄 REQUEST RE-IGNITION (Attempt ${currentAttempts + 1}/2)`;
+      } else if (currentAttempts >= 2) {
+        retakeBtn.style.display = 'none';
+        // Show locked message
+        const lockedMsg = document.createElement('div');
+        lockedMsg.className = 'attempts-exhausted';
+        lockedMsg.innerHTML = '🔒 Maximum attempts reached. Your best score has been recorded.';
+        resultsDiv.appendChild(lockedMsg);
+      }
     });
     
     retakeBtn.addEventListener('click', () => {
+      if (currentAttempts >= 2) {
+        alert('Maximum attempts reached. You cannot retake this quiz.');
+        return;
+      }
       form.reset();
       form.style.display = 'block';
       resultsDiv.style.display = 'none';
+      retakeBtn.style.display = 'none';
+      statusDiv.style.display = 'none';
     });
   })();
 </script>
@@ -444,5 +606,94 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
   
   .retake-button {
     width: 100%;
+  }
+  
+  /* Status and locked states */
+  .quiz-status {
+    background: var(--panel2);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .quiz-status h3 {
+    margin: 0 0 12px 0;
+    color: var(--accent);
+    font-size: 16px;
+  }
+  
+  .previous-score {
+    margin-bottom: 8px;
+  }
+  
+  .score-label {
+    color: var(--text-muted);
+  }
+  
+  .score-value {
+    font-weight: 700;
+    font-size: 18px;
+    margin-left: 8px;
+  }
+  
+  .score-value.passed {
+    color: #10b981;
+  }
+  
+  .score-value.failed {
+    color: #ef4444;
+  }
+  
+  .attempts-remaining {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  
+  .quiz-locked {
+    background: var(--panel2);
+    border: 2px solid #ef4444;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .quiz-locked h3 {
+    margin: 0 0 12px 0;
+    color: #ef4444;
+  }
+  
+  .quiz-locked p {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  
+  .final-score-label {
+    color: var(--text-muted);
+  }
+  
+  .final-score-value {
+    font-weight: 700;
+    font-size: 24px;
+    margin-left: 8px;
+  }
+  
+  .final-score-value.passed {
+    color: #10b981;
+  }
+  
+  .final-score-value.failed {
+    color: #ef4444;
+  }
+  
+  .attempts-exhausted {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 6px;
+    color: #ef4444;
+    text-align: center;
+    font-size: 14px;
   }
 </style>

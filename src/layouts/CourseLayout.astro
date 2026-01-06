@@ -92,6 +92,11 @@ const { title = "Course Page", description = "" } = Astro.props;
                               <span class="lesson-text">04. Homework: Reflection</span>
                             </a>
                           </li>
+                          <li>
+                            <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
+                              <span class="lesson-text">05. Required Quiz (GRADED)</span>
+                            </a>
+                          </li>
                         </>
                       ) : w.slug === '02' ? (
                         <>

@@ -23,42 +23,79 @@ export async function handler(event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { answers } = body;
+    const { quizId, score, passed, answers } = body;
 
-    if (!answers || typeof answers !== 'object') {
+    if (!quizId || score === undefined || !answers) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'Missing required field: answers (object)' })
+        body: JSON.stringify({ error: 'Missing required fields: quizId, score, answers' })
       };
     }
 
     const redis = getRedis();
+    const pageId = quizId; // e.g., "week-01-required-quiz"
+    
+    // Check current attempt count
+    const currentProgress = await redis.hgetall(`user:progress:${sub}`);
+    const attempts = parseInt(currentProgress?.[`${pageId}:attempts`] || "0");
+    
+    // Enforce 2-attempt maximum
+    if (attempts >= 2) {
+      return {
+        statusCode: 403,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          error: 'MISSION LOCKED: Maximum attempts reached.',
+          attempts: attempts,
+          locked: true
+        })
+      };
+    }
+    
+    // Get best score so far
+    const previousBest = parseInt(currentProgress?.[`${pageId}:bestScore`] || "0");
+    const newBestScore = Math.max(previousBest, score);
+    
     const submittedAt = new Date().toISOString();
 
     // Create submission object
     const submission = {
       userId: sub,
       email,
-      week: '01',
-      type: 'required-quiz',
+      quizId,
+      score,
+      passed,
       answers,
-      completed: true,
+      attempt: attempts + 1,
       submittedAt
     };
 
-    // Store submission
-    const key = `submissions:${sub}:week01:quiz`;
-    await redis.set(key, JSON.stringify(submission));
+    // Store submission history
+    const historyKey = `submissions:${sub}:${quizId}`;
+    await redis.lpush(historyKey, JSON.stringify(submission));
+
+    // Update progress with new attempt count and best score
+    await redis.hset(`user:progress:${sub}`, {
+      [`${pageId}:attempts`]: attempts + 1,
+      [`${pageId}:bestScore`]: newBestScore,
+      [`${pageId}:lastScore`]: score,
+      [`${pageId}:passed`]: passed ? 1 : 0,
+      [`${pageId}:lastSubmit`]: submittedAt
+    });
 
     // Add to index for instructor view
-    await redis.sadd('submissions:index:week01', sub);
+    await redis.sadd(`submissions:index:${quizId}`, sub);
 
     return {
       statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
+        attempt: attempts + 1,
+        attemptsRemaining: 2 - (attempts + 1),
+        bestScore: newBestScore,
         submittedAt,
-        message: 'Quiz submission saved successfully'
+        message: passed ? '📡 MISSION OBJECTIVE CONFIRMED!' : 'Submission recorded.'
       })
     };
   } catch (error) {
