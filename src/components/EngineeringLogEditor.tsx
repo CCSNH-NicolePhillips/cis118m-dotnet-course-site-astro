@@ -91,14 +91,13 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       await fetch('/.netlify/functions/progress-update', {
         method: 'POST',
         headers,
-          body: JSON.stringify({ 
-            pageId: assignmentId, 
-            status: 'completed',
-            score: data.score,
-            feedback: data.feedback
-          }),
-        });
-      }
+        body: JSON.stringify({ 
+          pageId: assignmentId, 
+          status: 'completed',
+          score: data.score,
+          feedback: data.feedback
+        }),
+      });
     } catch (err) {
       console.error('[AI Grade] Exception:', err);
       setFeedback('⚠️ SYSTEM ERROR: Unable to reach AI Inspector. Check your connection.');
