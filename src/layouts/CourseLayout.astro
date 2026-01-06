@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { COURSE, WEEKS } from "../config/site";
+import AITutor from "../components/AITutor";
 const { title = "Course Page", description = "" } = Astro.props;
 ---
 <html lang="en">
@@ -728,5 +729,8 @@ const { title = "Course Page", description = "" } = Astro.props;
         }
       })();
     </script>
+    
+    <!-- AI Tutor floating chat -->
+    <AITutor client:only="react" />
   </body>
 </html>
