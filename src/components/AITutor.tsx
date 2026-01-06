@@ -8,7 +8,9 @@ interface Message {
 
 const AITutor: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Engineer.' }
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pageId, setPageId] = useState('');
@@ -103,9 +105,9 @@ const AITutor: React.FC = () => {
           e.currentTarget.style.transform = 'scale(1)';
           e.currentTarget.style.boxShadow = '0 4px 20px rgba(78, 201, 176, 0.4)';
         }}
-        title="Ask the Senior Engineer"
+        title="Open Comms Link"
       >
-        {isOpen ? '✕' : '🛠️'}
+        {isOpen ? '✕' : '💬'}
       </button>
 
       {/* Chat Panel */}
@@ -138,13 +140,13 @@ const AITutor: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '20px' }}>🛠️</span>
+              <span style={{ fontSize: '20px' }}>�</span>
               <div>
                 <div style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
-                  SENIOR ENGINEER
+                  COMMS_LINK_V1
                 </div>
                 <div style={{ color: '#888', fontSize: '11px' }}>
-                  Comms Link Active • {pageId || 'Ready'}
+                  Signal Active • {pageId || 'Ready'}
                 </div>
               </div>
             </div>
