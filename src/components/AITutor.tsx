@@ -32,9 +32,19 @@ const AITutor: React.FC = () => {
       try {
         if (window.__auth?.getUser) {
           const user = await window.__auth.getUser();
-          if (user?.name) {
-            setStudentName(user.name);
-            const firstName = user.name.split(' ')[0];
+          // Check for name first, but make sure it's not an email
+          let displayName: string | null = null;
+          if (user?.name && !user.name.includes('@')) {
+            displayName = user.name;
+          } else if (user?.nickname && !user.nickname.includes('@')) {
+            displayName = user.nickname;
+          } else if (user?.given_name) {
+            displayName = user.given_name;
+          }
+          
+          if (displayName) {
+            setStudentName(displayName);
+            const firstName = displayName.split(' ')[0];
             setMessages([
               { role: 'assistant', content: `📡 COMMS LINK ESTABLISHED. Senior Engineer online. Good to see you, ${firstName}. State your technical query.` }
             ]);
