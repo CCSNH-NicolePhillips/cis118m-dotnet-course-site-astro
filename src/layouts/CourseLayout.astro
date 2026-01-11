@@ -1,8 +1,24 @@
 ---
 import "../styles/global.css";
-import { COURSE, WEEKS } from "../config/site";
+import { COURSE, WEEKS, getWeekById, isWeekLocked } from "../config/site";
 import AITutor from "../components/AITutor";
 const { title = "Course Page", description = "" } = Astro.props;
+
+// Check if current page is in a locked week
+const { pathname } = Astro.url;
+const weekMatch = pathname.match(/\/week-(\d+)\//);
+const currentWeekId = weekMatch ? `week-${weekMatch[1]}` : null;
+const weekData = currentWeekId ? getWeekById(currentWeekId) : null;
+const isLocked = weekData ? isWeekLocked(currentWeekId!) : false;
+const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-US', { 
+  weekday: 'long', 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric',
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZoneName: 'short'
+}) : '';
 ---
 <html lang="en">
   <head>
@@ -197,7 +213,20 @@ const { title = "Course Page", description = "" } = Astro.props;
           </header>
           
           <main class="card main">
-            <slot />
+            {isLocked ? (
+              <div class="mission-locked">
+                <div class="lock-icon">🔐</div>
+                <h1>MISSION LOCKED</h1>
+                <p class="lock-message">System access restricted until technical ignition sequence.</p>
+                <div class="unlock-time">
+                  <span class="unlock-label">Scheduled Opening:</span>
+                  <span class="unlock-value">{unlockTime}</span>
+                </div>
+                <button onclick="window.history.back()" class="return-btn">← RETURN TO HQ</button>
+              </div>
+            ) : (
+              <slot />
+            )}
           </main>
         </div>
       </div>

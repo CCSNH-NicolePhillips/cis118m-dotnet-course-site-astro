@@ -797,3 +797,82 @@ body[data-theme="dark"] .mark-complete-button.completed {
   color: #6ee7b7;
   border-color: #6ee7b7;
 }
+
+/* Mission Locked Screen */
+.mission-locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.mission-locked .lock-icon {
+  font-size: 72px;
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.mission-locked h1 {
+  font-size: 32px;
+  color: #ef4444;
+  margin: 0 0 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.mission-locked .lock-message {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0 0 24px;
+  max-width: 400px;
+}
+
+.mission-locked .unlock-time {
+  background: var(--panel2);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 16px 24px;
+  margin-bottom: 32px;
+}
+
+.mission-locked .unlock-label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.mission-locked .unlock-value {
+  display: block;
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.mission-locked .return-btn {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mission-locked .return-btn:hover {
+  background: var(--navitem-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+}

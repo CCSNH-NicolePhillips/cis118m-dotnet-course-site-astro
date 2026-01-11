@@ -1,5 +1,6 @@
 import { requireAuth } from "./_lib/auth0-verify.mjs";
 import { getRedis } from "./_lib/redis.mjs";
+import { calculateLatePenalty } from "./_lib/weeks-config.mjs";
 
 /**
  * Netlify Function: Update user's progress
@@ -46,10 +47,20 @@ export default async function handler(request, context) {
       const redis = getRedis();
       const userId = user.sub;
       
+      // Calculate late penalty if applicable
+      const submissionTime = new Date();
+      const lateInfo = calculateLatePenalty(pageId, score || 0, submissionTime);
+      const finalScore = lateInfo.finalScore;
+      
       await redis.hset(`user:progress:data:${userId}`, 
         `${pageId}:status`, status, 
-        `${pageId}:score`, score || 0,
-        `${pageId}:feedback`, feedback || ""
+        `${pageId}:score`, finalScore,
+        `${pageId}:originalScore`, score || 0,
+        `${pageId}:feedback`, feedback || "",
+        `${pageId}:isLate`, lateInfo.isLate ? "true" : "false",
+        `${pageId}:daysLate`, lateInfo.daysLate || 0,
+        `${pageId}:penalty`, lateInfo.penalty || 0,
+        `${pageId}:submittedAt`, submissionTime.toISOString()
       );
 
       // Track student in index for instructor dashboard
@@ -64,7 +75,14 @@ export default async function handler(request, context) {
       }
 
       return new Response(
-        JSON.stringify({ ok: true }),
+        JSON.stringify({ 
+          ok: true,
+          score: finalScore,
+          originalScore: score || 0,
+          isLate: lateInfo.isLate,
+          daysLate: lateInfo.daysLate,
+          penalty: lateInfo.penalty
+        }),
         {
           status: 200,
           headers: { "Content-Type": "application/json" },
