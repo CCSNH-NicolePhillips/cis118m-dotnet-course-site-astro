@@ -5,23 +5,23 @@
 
 // 16-Week Course Schedule - Spring 2026 (starts Jan 19)
 export const WEEKS = [
-  { id: 'week-01', title: '01. Intro to Programming & C# (REQUIRED)', unlockDate: '2026-01-19T00:00:00Z', dueDate: '2026-01-25T23:59:59Z' },
-  { id: 'week-02', title: '02. First C# Program (REQUIRED)', unlockDate: '2026-01-26T00:00:00Z', dueDate: '2026-02-01T23:59:59Z' },
-  { id: 'week-03', title: '03. Variables & Data Types (REQUIRED)', unlockDate: '2026-02-02T00:00:00Z', dueDate: '2026-02-08T23:59:59Z' },
-  { id: 'week-04', title: '04. Strings & Text Processing (REQUIRED)', unlockDate: '2026-02-09T00:00:00Z', dueDate: '2026-02-15T23:59:59Z' },
-  { id: 'week-05', title: '05. User Input (REQUIRED)', unlockDate: '2026-02-16T00:00:00Z', dueDate: '2026-02-22T23:59:59Z' },
-  { id: 'week-06', title: '06. Decision Structures (REQUIRED)', unlockDate: '2026-02-23T00:00:00Z', dueDate: '2026-03-01T23:59:59Z' },
-  { id: 'week-07', title: '07. Logic & Conditions (REQUIRED)', unlockDate: '2026-03-02T00:00:00Z', dueDate: '2026-03-08T23:59:59Z' },
-  { id: 'week-08', title: '08. While Loops (REQUIRED)', unlockDate: '2026-03-09T00:00:00Z', dueDate: '2026-03-14T23:59:59Z' },
+  { id: 'week-01', title: '01. Intro to Programming & C#', unlockDate: '2026-01-19T00:00:00Z', dueDate: '2026-01-25T23:59:59Z' },
+  { id: 'week-02', title: '02. First C# Program', unlockDate: '2026-01-26T00:00:00Z', dueDate: '2026-02-01T23:59:59Z' },
+  { id: 'week-03', title: '03. Variables & Data Types', unlockDate: '2026-02-02T00:00:00Z', dueDate: '2026-02-08T23:59:59Z' },
+  { id: 'week-04', title: '04. Strings & Text Processing', unlockDate: '2026-02-09T00:00:00Z', dueDate: '2026-02-15T23:59:59Z' },
+  { id: 'week-05', title: '05. User Input', unlockDate: '2026-02-16T00:00:00Z', dueDate: '2026-02-22T23:59:59Z' },
+  { id: 'week-06', title: '06. Decision Structures', unlockDate: '2026-02-23T00:00:00Z', dueDate: '2026-03-01T23:59:59Z' },
+  { id: 'week-07', title: '07. Logic & Conditions', unlockDate: '2026-03-02T00:00:00Z', dueDate: '2026-03-08T23:59:59Z' },
+  { id: 'week-08', title: '08. While Loops', unlockDate: '2026-03-09T00:00:00Z', dueDate: '2026-03-14T23:59:59Z' },
   // Week 9 follows Spring Break (March 15-22)
-  { id: 'week-09', title: '09. For Loops (REQUIRED)', unlockDate: '2026-03-23T00:00:00Z', dueDate: '2026-03-29T23:59:59Z' },
-  { id: 'week-10', title: '10. Methods (REQUIRED)', unlockDate: '2026-03-30T00:00:00Z', dueDate: '2026-04-05T23:59:59Z' },
-  { id: 'week-11', title: '11. Returning Values (REQUIRED)', unlockDate: '2026-04-06T00:00:00Z', dueDate: '2026-04-12T23:59:59Z' },
-  { id: 'week-12', title: '12. Arrays (REQUIRED)', unlockDate: '2026-04-13T00:00:00Z', dueDate: '2026-04-19T23:59:59Z' },
-  { id: 'week-13', title: '13. Lists (REQUIRED)', unlockDate: '2026-04-20T00:00:00Z', dueDate: '2026-04-26T23:59:59Z' },
-  { id: 'week-14', title: '14. Program Integration (REQUIRED)', unlockDate: '2026-04-27T00:00:00Z', dueDate: '2026-05-03T23:59:59Z' },
-  { id: 'week-15', title: '15. Final Project Development (REQUIRED)', unlockDate: '2026-05-04T00:00:00Z', dueDate: '2026-05-10T23:59:59Z' },
-  { id: 'week-16', title: '16. Review & Reflection (REQUIRED)', unlockDate: '2026-05-11T00:00:00Z', dueDate: '2026-05-17T23:59:59Z' },
+  { id: 'week-09', title: '09. For Loops', unlockDate: '2026-03-23T00:00:00Z', dueDate: '2026-03-29T23:59:59Z' },
+  { id: 'week-10', title: '10. Methods', unlockDate: '2026-03-30T00:00:00Z', dueDate: '2026-04-05T23:59:59Z' },
+  { id: 'week-11', title: '11. Returning Values', unlockDate: '2026-04-06T00:00:00Z', dueDate: '2026-04-12T23:59:59Z' },
+  { id: 'week-12', title: '12. Arrays', unlockDate: '2026-04-13T00:00:00Z', dueDate: '2026-04-19T23:59:59Z' },
+  { id: 'week-13', title: '13. Lists', unlockDate: '2026-04-20T00:00:00Z', dueDate: '2026-04-26T23:59:59Z' },
+  { id: 'week-14', title: '14. Program Integration', unlockDate: '2026-04-27T00:00:00Z', dueDate: '2026-05-03T23:59:59Z' },
+  { id: 'week-15', title: '15. Final Project Development', unlockDate: '2026-05-04T00:00:00Z', dueDate: '2026-05-10T23:59:59Z' },
+  { id: 'week-16', title: '16. Review & Reflection', unlockDate: '2026-05-11T00:00:00Z', dueDate: '2026-05-17T23:59:59Z' },
 ];
 
 /**
