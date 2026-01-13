@@ -46,21 +46,21 @@ const AITutor: React.FC = () => {
             setStudentName(displayName);
             const firstName = displayName.split(' ')[0];
             setMessages([
-              { role: 'assistant', content: `Connection established. Hello ${firstName}, I'm your Lead Architect. How can I assist with your technical implementation?` }
+              { role: 'assistant', content: `Secure connection active. Senior Architect online. Hello ${firstName}, how can I assist with your technical implementation?` }
             ]);
           } else {
             setMessages([
-              { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
+              { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
             ]);
           }
         } else {
           setMessages([
-            { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
+            { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
           ]);
         }
       } catch (err) {
         setMessages([
-          { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
+          { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
         ]);
       }
     };

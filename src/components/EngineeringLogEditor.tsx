@@ -100,7 +100,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       });
     } catch (err) {
       console.error('[AI Grade] Exception:', err);
-      setFeedback('⚠️ SYSTEM ERROR: Unable to reach AI Inspector. Check your connection.');
+      setFeedback('SYSTEM ERROR: Unable to process review. Please check your connection and try again.');
     } finally {
       setIsGrading(false);
     }
@@ -198,10 +198,10 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
         </div>
       </div>
 
-      {/* AI Terminal Feedback */}
+      {/* Technical Review Feedback */}
       {(feedback || score !== null) && (
         <div style={{ marginTop: '15px', background: '#000', border: '1px solid #4ec9b0', padding: '15px', borderRadius: '4px', fontFamily: 'monospace', position: 'relative' }}>
-          <div style={{ color: '#4ec9b0', fontSize: '0.8rem', marginBottom: '10px' }}>📟 SYSTEM REPORT // AI_INSPECTOR_V1</div>
+          <div style={{ color: '#4ec9b0', fontSize: '0.8rem', marginBottom: '10px' }}>TECHNICAL REVIEW REPORT // ARCHITECT_V1</div>
           {score !== null && <div style={{ fontSize: '1.5rem', color: '#4ec9b0', marginBottom: '10px' }}>SCORE: {score}/100</div>}
           <div style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{feedback}</div>
         </div>
