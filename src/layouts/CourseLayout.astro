@@ -89,28 +89,28 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                         <>
                           <li>
                             <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
-                              <span class="lesson-text">01. Syllabus & Laws (REQUIRED)</span>
+                              <span class="lesson-text">01. Syllabus & Guidelines (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
                             <a href={w.lesson1} data-page={w.lesson1} data-starter={`week-${w.slug}-lesson-1`}>
-                              <span class="lesson-text">02. Lesson: The Spark</span>
+                              <span class="lesson-text">02. Lesson: Introduction to .NET</span>
                               <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
-                              <span class="lesson-text">03. Lab: Protocol (REQUIRED)</span>
+                              <span class="lesson-text">03. Lab: Console Logic (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
-                              <span class="lesson-text">04. Reflection (REQUIRED)</span>
+                              <span class="lesson-text">04. Technical Reflection (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
-                              <span class="lesson-text">05. Weekly Quiz (REQUIRED)</span>
+                              <span class="lesson-text">05. Weekly Assessment (REQUIRED)</span>
                             </a>
                           </li>
                         </>
@@ -176,7 +176,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           <!-- Instructor-only link (hidden by default, shown via JS for @ccsnh.edu users) -->
           <div id="instructor-link" class="hint" style="margin-top:12px; display:none;">
             <hr style="margin-bottom:12px; border-color:#4ec9b0;" />
-            <a href="/instructor/" style="color:#4ec9b0; font-weight:bold;">📊 Instructor Dashboard</a>
+            <a href="/instructor/" style="color:#4ec9b0; font-weight:bold;">Instructor Dashboard</a>
           </div>
           </div>
           <button class="sidebar-expand-btn" id="sidebar-expand" type="button" aria-label="Expand sidebar" title="Expand sidebar">

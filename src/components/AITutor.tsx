@@ -46,21 +46,21 @@ const AITutor: React.FC = () => {
             setStudentName(displayName);
             const firstName = displayName.split(' ')[0];
             setMessages([
-              { role: 'assistant', content: `📡 COMMS LINK ESTABLISHED. Senior Engineer online. Good to see you, ${firstName}. State your technical query.` }
+              { role: 'assistant', content: `Hello ${firstName}. I'm your Senior Architect mentor. How can I help you understand today's topic?` }
             ]);
           } else {
             setMessages([
-              { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+              { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
             ]);
           }
         } else {
           setMessages([
-            { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+            { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
           ]);
         }
       } catch (err) {
         setMessages([
-          { role: 'assistant', content: '📡 COMMS LINK ESTABLISHED. Senior Engineer online. State your technical query, Recruit.' }
+          { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
         ]);
       }
     };

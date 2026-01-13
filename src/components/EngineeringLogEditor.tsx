@@ -45,7 +45,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
   const submitForInspection = async () => {
     if (!editor) return;
     setIsGrading(true);
-    setFeedback('📡 Transmitting to AI Inspector...');
+    setFeedback('Submitting for review...');
     
     // Get access token from Auth0
     let token: string | null = null;
@@ -180,7 +180,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
               fontWeight: 'bold'
             }}
           >
-            {isGrading ? '⏳ Inspecting...' : '🚀 Submit for Inspection'}
+            {isGrading ? 'Processing...' : 'Submit for Review'}
           </button>
         </div>
 
@@ -193,7 +193,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
         <div style={{ borderTop: '1px solid #333', paddingTop: '8px', marginTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888' }}>
           <span>{wordCount} words • {charCount} characters</span>
           <span style={{ color: wordCount >= 30 && wordCount <= 100 ? '#4ec9b0' : '#ce9178' }}>
-            {wordCount < 30 ? '⚠️ Write a bit more (aim for 30-100 words)' : wordCount > 100 ? '📝 Good detail! Consider being more concise.' : '✓ Good length'}
+            {wordCount < 30 ? 'Write a bit more (aim for 30-100 words)' : wordCount > 100 ? 'Good detail! Consider being more concise.' : 'Good length'}
           </span>
         </div>
       </div>

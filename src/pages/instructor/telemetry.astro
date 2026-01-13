@@ -11,12 +11,12 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
 
 <CourseLayout title={title} description={description}>
 
-<h1>📡 Telemetry Master Dashboard</h1>
-<p style="color: #888; margin-bottom: 20px;">Real-time mission status for all operatives. Click any score to override.</p>
+<h1>Grade Telemetry Dashboard</h1>
+<p style="color: #888; margin-bottom: 20px;">Real-time student progress overview. Click any score to override.</p>
 
 <div id="telemetry-hud" style="overflow-x: auto;">
   <div id="loading-message" style="text-align: center; padding: 40px; color: #4ec9b0;">
-    🛰️ Establishing uplink to student data...
+    Loading student data...
   </div>
   
   <table id="grade-grid" style="display: none; width: 100%; border-collapse: collapse; font-size: 12px;">
@@ -51,7 +51,7 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
 
 <div id="override-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e1e1e; border: 2px solid #4ec9b0; border-radius: 8px; padding: 24px; min-width: 400px;">
-    <h3 style="margin-top: 0; color: #4ec9b0;">🔧 Manual Grade Override</h3>
+    <h3 style="margin-top: 0; color: #4ec9b0;">Manual Grade Override</h3>
     <p style="color: #888;"><span id="override-student"></span> - <span id="override-assignment"></span></p>
     
     <div style="margin: 16px 0;">
@@ -194,7 +194,7 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
       studentsData = data.students;
       
       if (!studentsData.length) {
-        loadingEl.innerHTML = '📭 No student data found yet.';
+        loadingEl.innerHTML = 'No student data found yet.';
         return;
       }
       
@@ -233,8 +233,8 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
           const display = score !== undefined && score !== null ? score : '—';
           const classes = getScoreClass(score, isLate, isOverride);
           const title = [
-            isLate ? '⏰ Late submission' : '',
-            isOverride ? `🔧 Override: ${grade?.overrideReason || 'Manual adjustment'}` : ''
+            isLate ? 'Late submission' : '',
+            isOverride ? `Override: ${grade?.overrideReason || 'Manual adjustment'}` : ''
           ].filter(Boolean).join('\n') || 'Click to override';
           
           return `<td class="${classes}" data-userid="${student.userId}" data-pageid="${pageId}" data-score="${score ?? ''}" title="${title}">${display}</td>`;

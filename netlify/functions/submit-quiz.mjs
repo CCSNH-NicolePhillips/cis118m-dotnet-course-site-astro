@@ -95,7 +95,7 @@ export async function handler(event, context) {
         attemptsRemaining: 2 - (attempts + 1),
         bestScore: newBestScore,
         submittedAt,
-        message: passed ? '📡 MISSION OBJECTIVE CONFIRMED!' : 'Submission recorded.'
+        message: passed ? 'Assessment completed successfully.' : 'Submission recorded.'
       })
     };
   } catch (error) {
