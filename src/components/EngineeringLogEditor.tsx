@@ -54,7 +54,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     } catch (err) {
       console.error('[AI Grade] Token error:', err);
       // Token failed - prompt re-login
-      setFeedback('⚠️ Session expired. Please sign out and sign back in, then try again.');
+      setFeedback('Session expired. Please sign out and sign back in, then try again.');
       setIsGrading(false);
       return;
     }

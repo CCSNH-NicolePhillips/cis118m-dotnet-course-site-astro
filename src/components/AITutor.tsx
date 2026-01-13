@@ -46,21 +46,21 @@ const AITutor: React.FC = () => {
             setStudentName(displayName);
             const firstName = displayName.split(' ')[0];
             setMessages([
-              { role: 'assistant', content: `Hello ${firstName}. I'm your Senior Architect mentor. How can I help you understand today's topic?` }
+              { role: 'assistant', content: `Connection established. Hello ${firstName}, I'm your Lead Architect. How can I assist with your technical implementation?` }
             ]);
           } else {
             setMessages([
-              { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
+              { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
             ]);
           }
         } else {
           setMessages([
-            { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
+            { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
           ]);
         }
       } catch (err) {
         setMessages([
-          { role: 'assistant', content: 'Hello Developer. I\'m your Senior Architect mentor. How can I help you understand today\'s topic?' }
+          { role: 'assistant', content: 'Connection established. I\'m your Lead Architect. How can I assist with your technical implementation?' }
         ]);
       }
     };
@@ -102,7 +102,7 @@ const AITutor: React.FC = () => {
         setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
       }
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: '⚠️ Comms link failed. Check your connection.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Connection failed. Please check your network and try again.' }]);
     } finally {
       setIsLoading(false);
     }
@@ -146,7 +146,7 @@ const AITutor: React.FC = () => {
           e.currentTarget.style.transform = 'scale(1)';
           e.currentTarget.style.boxShadow = '0 4px 20px rgba(78, 201, 176, 0.4)';
         }}
-        title="Open Comms Link"
+        title="Technical Support"
       >
         {isOpen ? '✕' : '💬'}
       </button>
@@ -181,13 +181,13 @@ const AITutor: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '20px' }}>�</span>
+              <span style={{ fontSize: '20px' }}>👨‍💻</span>
               <div>
                 <div style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
-                  COMMS_LINK_V1
+                  TECHNICAL SUPPORT
                 </div>
                 <div style={{ color: '#888', fontSize: '11px' }}>
-                  Signal Active • {pageId || 'Ready'}
+                  Lead Architect Online • {pageId || 'Ready'}
                 </div>
               </div>
             </div>
@@ -206,9 +206,9 @@ const AITutor: React.FC = () => {
           >
             {messages.length === 0 && (
               <div style={{ color: '#666', textAlign: 'center', marginTop: '40px', fontSize: '14px' }}>
-                <p style={{ marginBottom: '8px' }}>👋 Need guidance, Engineer?</p>
+                <p style={{ marginBottom: '8px' }}>Need technical guidance?</p>
                 <p style={{ fontSize: '12px', opacity: 0.8 }}>
-                  I won't give you the answer, but I'll help you find it.
+                  I won't give you the answer directly, but I'll help you understand the concept.
                 </p>
               </div>
             )}
