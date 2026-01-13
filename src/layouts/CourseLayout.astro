@@ -89,28 +89,28 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                         <>
                           <li>
                             <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
-                              <span class="lesson-text">01. Syllabus & Guidelines</span>
+                              <span class="lesson-text">01. Course Syllabus & Expectations</span>
+                            </a>
+                          </li>
+                          <li>
+                            <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
+                              <span class="lesson-text">02. Syllabus Assessment (Graded)</span>
                             </a>
                           </li>
                           <li>
                             <a href={w.lesson1} data-page={w.lesson1} data-starter={`week-${w.slug}-lesson-1`}>
-                              <span class="lesson-text">02. Lesson: Introduction to .NET</span>
+                              <span class="lesson-text">03. Lesson: The Spark</span>
                               <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
-                              <span class="lesson-text">03. Lab: Console Logic</span>
+                              <span class="lesson-text">04. Lab: Console Logic (Graded)</span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
-                              <span class="lesson-text">04. Technical Reflection</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
-                              <span class="lesson-text">05. Weekly Assessment</span>
+                              <span class="lesson-text">05. Technical Reflection (Graded)</span>
                             </a>
                           </li>
                         </>
@@ -213,6 +213,14 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           </header>
           
           <main class="card main">
+            <div id="prereq-lock" style="display:none;">
+              <div class="mission-locked">
+                <div class="lock-icon">📋</div>
+                <h1>Prerequisite Required</h1>
+                <p class="lock-message">Technical modules are restricted until the <strong>Syllabus Assessment</strong> is completed with a score of 70% or higher.</p>
+                <a href="/week-01/syllabus-quiz/" class="return-btn" style="text-decoration:none;display:inline-block;">Take Assessment →</a>
+              </div>
+            </div>
             <div id="module-lock" style={isLocked ? "display:block" : "display:none"}>
               <div class="mission-locked">
                 <div class="lock-icon">🔒</div>
@@ -690,15 +698,36 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           const isInstructor = user.email.endsWith('@ccsnh.edu') && !user.email.includes('@students.');
           console.log('[Auth] User:', user.email, 'isInstructor:', isInstructor);
           
+          const prereqLock = document.getElementById('prereq-lock');
+          const moduleLock = document.getElementById('module-lock');
+          const moduleContent = document.getElementById('module-content');
+          
           if (isInstructor) {
-            // Master Bypass: Show content even if it is "locked" by date
-            const moduleLock = document.getElementById('module-lock');
-            const moduleContent = document.getElementById('module-content');
-            if (moduleLock) {
-              moduleLock.style.setProperty('display', 'none', 'important');
-            }
-            if (moduleContent) {
-              moduleContent.style.setProperty('display', 'block', 'important');
+            // Master Bypass: Instructors see everything
+            if (prereqLock) prereqLock.style.setProperty('display', 'none', 'important');
+            if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
+            if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
+          } else {
+            // Student: Check syllabus quiz prerequisite
+            const progress = getProgress();
+            const syllabusQuiz = progress['week-01-syllabus-quiz'] || progress['week-01-required-quiz'];
+            const hasPassedSyllabus = (syllabusQuiz?.score || 0) >= 70;
+            
+            // Pages that don't require the prerequisite
+            const currentPath = window.location.pathname;
+            const isPublicPage = currentPath.includes('/syllabus') || 
+                                 currentPath.includes('/syllabus-quiz') || 
+                                 currentPath.includes('/required-quiz') ||
+                                 currentPath === '/' ||
+                                 currentPath.includes('/auth/');
+            
+            console.log('[Auth] hasPassedSyllabus:', hasPassedSyllabus, 'isPublicPage:', isPublicPage);
+            
+            if (!hasPassedSyllabus && !isPublicPage) {
+              // Lock content until syllabus quiz is passed
+              if (prereqLock) prereqLock.style.setProperty('display', 'block', 'important');
+              if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
+              if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
             }
           }
           
