@@ -876,3 +876,37 @@ body[data-theme="dark"] .mark-complete-button.completed {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* Table styles for markdown content */
+.main table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 15px;
+}
+
+.main table th,
+.main table td {
+  padding: 12px 16px;
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.main table th {
+  background: var(--panel2);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.main table td {
+  background: var(--panel);
+}
+
+.main table tr:hover td {
+  background: var(--navitem-hover);
+}
+
+.main table td:first-child {
+  white-space: nowrap;
+  font-weight: 500;
+}
