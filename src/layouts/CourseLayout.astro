@@ -88,8 +88,8 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                       {w.slug === '01' ? (
                         <>
                           <li>
-                            <a href={`/week-${w.slug}/start-here/`} data-page={`/week-${w.slug}/start-here/`}>
-                              <span class="lesson-text">01. Start Here & Syllabus</span>
+                            <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
+                              <span class="lesson-text">01. Syllabus & Laws (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
@@ -100,17 +100,17 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
-                              <span class="lesson-text">03. Lab: Welcome Protocol</span>
+                              <span class="lesson-text">03. Lab: Protocol (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
-                              <span class="lesson-text">04. Homework: Reflection</span>
+                              <span class="lesson-text">04. Reflection (REQUIRED)</span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
-                              <span class="lesson-text">05. Required Quiz (GRADED)</span>
+                              <span class="lesson-text">05. Weekly Quiz (REQUIRED)</span>
                             </a>
                           </li>
                         </>
