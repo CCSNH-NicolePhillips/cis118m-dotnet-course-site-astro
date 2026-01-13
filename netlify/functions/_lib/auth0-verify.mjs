@@ -108,3 +108,22 @@ export async function requireAuth(request) {
 
   return await verifyAuth0Token(authHeader);
 }
+
+/**
+ * Require instructor access (must be @ccsnh.edu but NOT @students.ccsnh.edu)
+ * @param {Request} request - The incoming request
+ * @returns {Promise<{sub: string, email: string}>} Instructor info
+ * @throws {Error} If not an instructor
+ */
+export async function requireInstructor(request) {
+  const user = await requireAuth(request);
+  
+  const email = user.email || "";
+  const isInstructor = email.endsWith("@ccsnh.edu") && !email.includes("@students.");
+  
+  if (!isInstructor) {
+    throw new Error("Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu).");
+  }
+  
+  return user;
+}

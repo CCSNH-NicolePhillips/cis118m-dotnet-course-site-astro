@@ -1,0 +1,354 @@
+---
+import CourseLayout from "../../layouts/CourseLayout.astro";
+import { WEEKS } from "../../config/site";
+
+const title = "Telemetry Master - Grade HUD";
+const description = "High-density instructor grading dashboard with override capability";
+
+// Assignment types to track per week
+const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
+---
+
+<CourseLayout title={title} description={description}>
+
+<h1>📡 Telemetry Master Dashboard</h1>
+<p style="color: #888; margin-bottom: 20px;">Real-time mission status for all operatives. Click any score to override.</p>
+
+<div id="telemetry-hud" style="overflow-x: auto;">
+  <div id="loading-message" style="text-align: center; padding: 40px; color: #4ec9b0;">
+    🛰️ Establishing uplink to student data...
+  </div>
+  
+  <table id="grade-grid" style="display: none; width: 100%; border-collapse: collapse; font-size: 12px;">
+    <thead id="grid-header">
+      <tr style="background: #252526;">
+        <th style="padding: 8px; border: 1px solid #333; position: sticky; left: 0; background: #252526; z-index: 2;">Student</th>
+        {WEEKS.slice(0, 16).map(week => (
+          <th colspan="4" style="padding: 8px; border: 1px solid #333; text-align: center; background: #1e1e1e;">
+            W{week.n}
+          </th>
+        ))}
+        <th style="padding: 8px; border: 1px solid #333; background: #252526;">Total</th>
+      </tr>
+      <tr style="background: #1e1e1e; font-size: 10px;">
+        <th style="padding: 4px; border: 1px solid #333; position: sticky; left: 0; background: #1e1e1e;"></th>
+        {WEEKS.slice(0, 16).map(_ => (
+          <>
+            <th style="padding: 4px; border: 1px solid #333; color: #569cd6;">CP</th>
+            <th style="padding: 4px; border: 1px solid #333; color: #4ec9b0;">Lab</th>
+            <th style="padding: 4px; border: 1px solid #333; color: #dcdcaa;">HW</th>
+            <th style="padding: 4px; border: 1px solid #333; color: #ce9178;">Qz</th>
+          </>
+        ))}
+        <th style="padding: 4px; border: 1px solid #333;"></th>
+      </tr>
+    </thead>
+    <tbody id="grid-body">
+      <!-- Populated by JavaScript -->
+    </tbody>
+  </table>
+</div>
+
+<div id="override-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e1e1e; border: 2px solid #4ec9b0; border-radius: 8px; padding: 24px; min-width: 400px;">
+    <h3 style="margin-top: 0; color: #4ec9b0;">🔧 Manual Grade Override</h3>
+    <p style="color: #888;"><span id="override-student"></span> - <span id="override-assignment"></span></p>
+    
+    <div style="margin: 16px 0;">
+      <label style="color: #ddd;">Current Score: <span id="override-current" style="color: #ce9178;"></span></label>
+    </div>
+    
+    <div style="margin: 16px 0;">
+      <label style="color: #ddd;">New Score:</label>
+      <input type="number" id="override-new-score" min="0" max="100" style="width: 80px; background: #2d2d2d; color: #fff; border: 1px solid #4ec9b0; padding: 8px; border-radius: 4px; margin-left: 10px;">
+    </div>
+    
+    <div style="margin: 16px 0;">
+      <label style="color: #ddd;">Reason:</label>
+      <input type="text" id="override-reason" placeholder="e.g., Extension granted, Resubmission" style="width: 100%; background: #2d2d2d; color: #fff; border: 1px solid #333; padding: 8px; border-radius: 4px; margin-top: 8px;">
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button id="override-save" style="flex: 1; background: #4ec9b0; color: #000; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">
+        ✓ Apply Override
+      </button>
+      <button id="override-cancel" style="flex: 1; background: #333; color: #fff; border: 1px solid #555; padding: 10px; border-radius: 4px; cursor: pointer;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  #grade-grid td {
+    padding: 4px 6px;
+    border: 1px solid #333;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  #grade-grid td:hover {
+    background: #3e3e42;
+  }
+  
+  #grade-grid td.score-high { color: #4ec9b0; }
+  #grade-grid td.score-mid { color: #dcdcaa; }
+  #grade-grid td.score-low { color: #ce9178; }
+  #grade-grid td.score-fail { color: #f14c4c; }
+  #grade-grid td.score-late { font-style: italic; }
+  #grade-grid td.score-override { background: #2d4a3e; }
+  #grade-grid td.score-empty { color: #555; }
+  
+  .student-name {
+    position: sticky;
+    left: 0;
+    background: #1e1e1e;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;
+    z-index: 1;
+  }
+  
+  .total-cell {
+    font-weight: bold;
+    background: #252526;
+  }
+</style>
+
+<script>
+  interface StudentProgress {
+    userId: string;
+    email: string;
+    name: string;
+    grades: Record<string, {
+      score: number;
+      originalScore?: number;
+      status: string;
+      isLate?: boolean;
+      isOverride?: boolean;
+      overrideReason?: string;
+    }>;
+    total: number;
+  }
+
+  let studentsData: StudentProgress[] = [];
+  let currentOverride: { userId: string; pageId: string; currentScore: number } | null = null;
+
+  function getAuthToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  function getAuthHeaders(): Record<string, string> {
+    const token = getAuthToken();
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  }
+
+  function getScoreClass(score: number | null, isLate?: boolean, isOverride?: boolean): string {
+    const classes: string[] = [];
+    
+    if (score === null || score === undefined) {
+      classes.push('score-empty');
+    } else if (score >= 90) {
+      classes.push('score-high');
+    } else if (score >= 70) {
+      classes.push('score-mid');
+    } else if (score >= 50) {
+      classes.push('score-low');
+    } else {
+      classes.push('score-fail');
+    }
+    
+    if (isLate) classes.push('score-late');
+    if (isOverride) classes.push('score-override');
+    
+    return classes.join(' ');
+  }
+
+  async function loadTelemetry() {
+    const loadingEl = document.getElementById('loading-message')!;
+    const gridEl = document.getElementById('grade-grid')!;
+    const bodyEl = document.getElementById('grid-body')!;
+    
+    const token = getAuthToken();
+    if (!token) {
+      loadingEl.innerHTML = '⚠️ Authentication required. Please log in with an @ccsnh.edu instructor account.';
+      loadingEl.style.color = '#ce9178';
+      return;
+    }
+
+    try {
+      const res = await fetch('/.netlify/functions/instructor-telemetry', {
+        headers: getAuthHeaders()
+      });
+      
+      if (res.status === 403) {
+        loadingEl.innerHTML = '🔒 Access denied. Instructor account required (@ccsnh.edu).';
+        loadingEl.style.color = '#ce9178';
+        return;
+      }
+      
+      if (!res.ok) throw new Error('Failed to fetch telemetry data');
+      
+      const data = await res.json();
+      studentsData = data.students;
+      
+      if (!studentsData.length) {
+        loadingEl.innerHTML = '📭 No student data found yet.';
+        return;
+      }
+      
+      renderGrid();
+      loadingEl.style.display = 'none';
+      gridEl.style.display = 'table';
+      
+    } catch (err: any) {
+      loadingEl.innerHTML = `❌ Error: ${err.message}`;
+      loadingEl.style.color = '#f14c4c';
+    }
+  }
+
+  function renderGrid() {
+    const bodyEl = document.getElementById('grid-body')!;
+    const weeks = Array.from({ length: 16 }, (_, i) => String(i + 1).padStart(2, '0'));
+    const types = ['checkpoint', 'lab', 'homework', 'quiz'];
+    
+    bodyEl.innerHTML = studentsData.map(student => {
+      let total = 0;
+      let maxPossible = 0;
+      
+      const cells = weeks.flatMap(weekNum => {
+        return types.map(type => {
+          const pageId = `week-${weekNum}-${type}`;
+          const grade = student.grades[pageId];
+          const score = grade?.score;
+          const isLate = grade?.isLate;
+          const isOverride = grade?.isOverride;
+          
+          if (typeof score === 'number') {
+            total += score;
+            maxPossible += 100;
+          }
+          
+          const display = score !== undefined && score !== null ? score : '—';
+          const classes = getScoreClass(score, isLate, isOverride);
+          const title = [
+            isLate ? '⏰ Late submission' : '',
+            isOverride ? `🔧 Override: ${grade?.overrideReason || 'Manual adjustment'}` : ''
+          ].filter(Boolean).join('\n') || 'Click to override';
+          
+          return `<td class="${classes}" data-userid="${student.userId}" data-pageid="${pageId}" data-score="${score ?? ''}" title="${title}">${display}</td>`;
+        });
+      }).join('');
+      
+      const avgScore = maxPossible > 0 ? Math.round((total / maxPossible) * 100) : 0;
+      const displayName = student.name || student.email?.split('@')[0] || student.userId.slice(-8);
+      
+      return `
+        <tr>
+          <td class="student-name" title="${student.email || student.userId}">${displayName}</td>
+          ${cells}
+          <td class="total-cell ${getScoreClass(avgScore)}">${avgScore}%</td>
+        </tr>
+      `;
+    }).join('');
+    
+    // Add click handlers
+    document.querySelectorAll('#grid-body td[data-userid]').forEach(cell => {
+      cell.addEventListener('click', () => openOverrideModal(cell as HTMLElement));
+    });
+  }
+
+  function openOverrideModal(cell: HTMLElement) {
+    const userId = cell.dataset.userid!;
+    const pageId = cell.dataset.pageid!;
+    const currentScore = cell.dataset.score ? parseInt(cell.dataset.score) : 0;
+    
+    const student = studentsData.find(s => s.userId === userId);
+    const displayName = student?.name || student?.email?.split('@')[0] || userId.slice(-8);
+    
+    currentOverride = { userId, pageId, currentScore };
+    
+    document.getElementById('override-student')!.textContent = displayName;
+    document.getElementById('override-assignment')!.textContent = pageId;
+    document.getElementById('override-current')!.textContent = currentScore.toString();
+    (document.getElementById('override-new-score') as HTMLInputElement).value = currentScore.toString();
+    (document.getElementById('override-reason') as HTMLInputElement).value = '';
+    
+    document.getElementById('override-modal')!.style.display = 'block';
+  }
+
+  function closeOverrideModal() {
+    document.getElementById('override-modal')!.style.display = 'none';
+    currentOverride = null;
+  }
+
+  async function saveOverride() {
+    if (!currentOverride) return;
+    
+    const newScore = parseInt((document.getElementById('override-new-score') as HTMLInputElement).value);
+    const reason = (document.getElementById('override-reason') as HTMLInputElement).value || 'Manual adjustment';
+    
+    if (isNaN(newScore) || newScore < 0 || newScore > 100) {
+      alert('Score must be between 0 and 100');
+      return;
+    }
+    
+    const saveBtn = document.getElementById('override-save') as HTMLButtonElement;
+    saveBtn.disabled = true;
+    saveBtn.textContent = '⏳ Saving...';
+    
+    try {
+      const res = await fetch('/.netlify/functions/manual-override', {
+        method: 'POST',
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: currentOverride.userId,
+          pageId: currentOverride.pageId,
+          newScore,
+          reason
+        })
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Override failed');
+      }
+      
+      // Update local data and re-render
+      const student = studentsData.find(s => s.userId === currentOverride!.userId);
+      if (student) {
+        student.grades[currentOverride.pageId] = {
+          score: newScore,
+          status: 'submitted',
+          isOverride: true,
+          overrideReason: reason
+        };
+      }
+      
+      renderGrid();
+      closeOverrideModal();
+      
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = '✓ Apply Override';
+    }
+  }
+
+  // Event listeners
+  document.getElementById('override-cancel')!.addEventListener('click', closeOverrideModal);
+  document.getElementById('override-save')!.addEventListener('click', saveOverride);
+  document.getElementById('override-modal')!.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('override-modal')) closeOverrideModal();
+  });
+
+  // Load data on page load
+  loadTelemetry();
+</script>
+
+</CourseLayout>
