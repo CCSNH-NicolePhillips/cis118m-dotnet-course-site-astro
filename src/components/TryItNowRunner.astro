@@ -102,6 +102,72 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     try {
       await waitForMonaco();
       
+      // Register C# completion provider (once per page)
+      if (!window.__csharpCompletionRegistered) {
+        window.__csharpCompletionRegistered = true;
+        monaco.languages.registerCompletionItemProvider('csharp', {
+          triggerCharacters: ['.', ' '],
+          provideCompletionItems: (model, position) => {
+            const word = model.getWordUntilPosition(position);
+            const range = {
+              startLineNumber: position.lineNumber,
+              endLineNumber: position.lineNumber,
+              startColumn: word.startColumn,
+              endColumn: word.endColumn
+            };
+            
+            // Get the text before cursor to determine context
+            const lineContent = model.getLineContent(position.lineNumber);
+            const textBefore = lineContent.substring(0, position.column - 1);
+            
+            const suggestions = [];
+            
+            // Console methods (after "Console.")
+            if (textBefore.endsWith('Console.')) {
+              suggestions.push(
+                { label: 'WriteLine', kind: monaco.languages.CompletionItemKind.Method, insertText: 'WriteLine($0);', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'void Console.WriteLine(string value)', documentation: 'Writes a line to the console output.', range },
+                { label: 'Write', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Write($0);', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'void Console.Write(string value)', documentation: 'Writes to the console without a newline.', range },
+                { label: 'ReadLine', kind: monaco.languages.CompletionItemKind.Method, insertText: 'ReadLine()', detail: 'string Console.ReadLine()', documentation: 'Reads a line of input from the console.', range },
+                { label: 'ReadKey', kind: monaco.languages.CompletionItemKind.Method, insertText: 'ReadKey()', detail: 'ConsoleKeyInfo Console.ReadKey()', documentation: 'Reads a single key press from the console.', range },
+                { label: 'Clear', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Clear()', detail: 'void Console.Clear()', documentation: 'Clears the console screen.', range },
+              );
+            }
+            // String methods (after string variable with dot)
+            else if (textBefore.match(/"\s*\.\s*$/) || textBefore.match(/[a-zA-Z_]\w*\.\s*$/)) {
+              suggestions.push(
+                { label: 'ToUpper', kind: monaco.languages.CompletionItemKind.Method, insertText: 'ToUpper()', detail: 'string ToUpper()', documentation: 'Converts string to uppercase.', range },
+                { label: 'ToLower', kind: monaco.languages.CompletionItemKind.Method, insertText: 'ToLower()', detail: 'string ToLower()', documentation: 'Converts string to lowercase.', range },
+                { label: 'Trim', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Trim()', detail: 'string Trim()', documentation: 'Removes whitespace from both ends.', range },
+                { label: 'Length', kind: monaco.languages.CompletionItemKind.Property, insertText: 'Length', detail: 'int Length', documentation: 'Gets the number of characters.', range },
+                { label: 'Contains', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Contains($0)', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'bool Contains(string value)', documentation: 'Returns true if string contains the value.', range },
+                { label: 'Replace', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Replace($0)', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'string Replace(string old, string new)', documentation: 'Replaces occurrences of a string.', range },
+                { label: 'Split', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Split($0)', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'string[] Split(char separator)', documentation: 'Splits string into an array.', range },
+                { label: 'Substring', kind: monaco.languages.CompletionItemKind.Method, insertText: 'Substring($0)', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'string Substring(int start, int length)', documentation: 'Gets a portion of the string.', range },
+              );
+            }
+            // General keywords and common items
+            else {
+              suggestions.push(
+                { label: 'Console', kind: monaco.languages.CompletionItemKind.Class, insertText: 'Console', detail: 'System.Console', documentation: 'Provides methods for console I/O.', range },
+                { label: 'Console.WriteLine', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'Console.WriteLine($0);', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'Print a line to console', documentation: 'Writes a line to the console output.', range },
+                { label: 'Console.ReadLine', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'Console.ReadLine()', detail: 'Read a line from console', documentation: 'Reads a line of input from the console.', range },
+                { label: 'string', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'string', detail: 'keyword', documentation: 'Represents text as a sequence of characters.', range },
+                { label: 'int', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'int', detail: 'keyword', documentation: 'Represents a 32-bit signed integer.', range },
+                { label: 'double', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'double', detail: 'keyword', documentation: 'Represents a double-precision floating-point number.', range },
+                { label: 'bool', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'bool', detail: 'keyword', documentation: 'Represents a Boolean value (true/false).', range },
+                { label: 'var', kind: monaco.languages.CompletionItemKind.Keyword, insertText: 'var', detail: 'keyword', documentation: 'Implicitly typed local variable.', range },
+                { label: 'if', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'if (${1:condition})\\n{\\n\\t$0\\n}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'if statement', range },
+                { label: 'for', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'for (int ${1:i} = 0; ${1:i} < ${2:length}; ${1:i}++)\\n{\\n\\t$0\\n}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'for loop', range },
+                { label: 'foreach', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'foreach (var ${1:item} in ${2:collection})\\n{\\n\\t$0\\n}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'foreach loop', range },
+                { label: 'while', kind: monaco.languages.CompletionItemKind.Snippet, insertText: 'while (${1:condition})\\n{\\n\\t$0\\n}', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, detail: 'while loop', range },
+              );
+            }
+            
+            return { suggestions };
+          }
+        });
+      }
+      
       // Initialize Monaco editor
       editor = monaco.editor.create(editorDiv, {
         value: originalCode,
@@ -113,6 +179,8 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         scrollBeyondLastLine: false,
         automaticLayout: true,
         tabSize: 4,
+        quickSuggestions: true,
+        suggestOnTriggerCharacters: true,
       });
       
       // Theme sync
