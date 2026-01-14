@@ -910,3 +910,36 @@ body[data-theme="dark"] .mark-complete-button.completed {
   white-space: nowrap;
   font-weight: 500;
 }
+
+/* Monaco Editor - Suggestion Widget Fix */
+.monaco-editor .suggest-widget {
+  background-color: #1e1e1e !important;
+  border: 1px solid #454545 !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row {
+  color: #d4d4d4 !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused {
+  background-color: #094771 !important;
+  color: #fff !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label .label-name {
+  color: #d4d4d4 !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused .monaco-icon-label,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused .monaco-icon-label .label-name {
+  color: #fff !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .details-label {
+  color: #9cdcfe !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .signature-label {
+  color: #808080 !important;
+}
