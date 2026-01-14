@@ -199,13 +199,15 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         console.log(`[TryItNowRunner ${runnerId}] Result:`, result);
         
         // Check validation regex
+        let isValidated = false;
         const validationRegexStr = container.getAttribute('data-validation-regex');
         if (result.stdout && validationRegexStr) {
           const regexParts = validationRegexStr.match(/\/(.*)\/(.*)/);  
           if (regexParts) {
             const regex = new RegExp(regexParts[1], regexParts[2]);
             if (regex.test(result.stdout)) {
-              statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">🏆 Mission Successful!</span>';
+              isValidated = true;
+              statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">✅ Requirements Met</span>';
             }
           }
         }
@@ -235,8 +237,11 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
           outputTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'errors'));
           outputPanels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== 'errors'));
         } else {
-          statusSpan.textContent = '✓ Success';
-          statusSpan.style.color = '#10b981';
+          // Only set generic success if validation hasn't already passed
+          if (!isValidated) {
+            statusSpan.textContent = '✓ Execution Successful';
+            statusSpan.style.color = '#10b981';
+          }
           
           // Participation Heartbeat (optional - only if logged in)
           try {
