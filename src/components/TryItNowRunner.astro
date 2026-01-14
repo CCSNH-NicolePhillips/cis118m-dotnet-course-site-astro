@@ -168,11 +168,11 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         });
       }
       
-      // Initialize Monaco editor
+      // Initialize Monaco editor - always use vs-dark for consistent styling
       editor = monaco.editor.create(editorDiv, {
         value: originalCode,
         language: 'csharp',
-        theme: document.documentElement.getAttribute('data-theme') === 'dark' ? 'vs-dark' : 'vs',
+        theme: 'vs-dark',
         minimap: { enabled: false },
         fontSize: 14,
         lineNumbers: 'on',
@@ -183,12 +183,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         suggestOnTriggerCharacters: true,
       });
       
-      // Theme sync
-      const observer = new MutationObserver(() => {
-        const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'vs-dark' : 'vs';
-        monaco.editor.setTheme(theme);
-      });
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+      // Theme sync removed - always use vs-dark for code snippets
       
     } catch (err) {
       console.error('[TryItNowRunner] Monaco init failed:', err);
