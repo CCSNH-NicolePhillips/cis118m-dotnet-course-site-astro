@@ -1,4 +1,5 @@
-import Editor from "@monaco-editor/react";
+import Editor, { loader, type Monaco } from "@monaco-editor/react";
+import type { editor } from "monaco-editor";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildStarterId,
@@ -11,6 +12,169 @@ import {
 } from "../../lib/starters";
 import { loadSavedCode, resetCode, saveCode } from "../../lib/storage";
 import { runCode } from "../../lib/runClient";
+
+// Declare global csharpWorker interface for WASM-based IntelliSense
+declare global {
+  interface Window {
+    csharpWorker?: {
+      getCompletions: (code: string, position: { lineNumber: number; column: number }) => Promise<any[]>;
+    };
+  }
+}
+
+// C# keyword completions for basic IntelliSense
+const CSHARP_KEYWORDS = [
+  'abstract', 'as', 'base', 'bool', 'break', 'byte', 'case', 'catch', 'char', 'checked',
+  'class', 'const', 'continue', 'decimal', 'default', 'delegate', 'do', 'double', 'else',
+  'enum', 'event', 'explicit', 'extern', 'false', 'finally', 'fixed', 'float', 'for',
+  'foreach', 'goto', 'if', 'implicit', 'in', 'int', 'interface', 'internal', 'is', 'lock',
+  'long', 'namespace', 'new', 'null', 'object', 'operator', 'out', 'override', 'params',
+  'private', 'protected', 'public', 'readonly', 'ref', 'return', 'sbyte', 'sealed', 'short',
+  'sizeof', 'stackalloc', 'static', 'string', 'struct', 'switch', 'this', 'throw', 'true',
+  'try', 'typeof', 'uint', 'ulong', 'unchecked', 'unsafe', 'ushort', 'using', 'virtual',
+  'void', 'volatile', 'while', 'var', 'async', 'await', 'dynamic', 'nameof', 'record'
+];
+
+// Common .NET types and their methods for Console programming
+const CONSOLE_COMPLETIONS = [
+  { label: 'Console.WriteLine', kind: 1, insertText: 'Console.WriteLine($0);', insertTextRules: 4, detail: 'void Console.WriteLine(string? value)', documentation: 'Writes the specified string value, followed by the current line terminator, to the standard output stream.' },
+  { label: 'Console.Write', kind: 1, insertText: 'Console.Write($0);', insertTextRules: 4, detail: 'void Console.Write(string? value)', documentation: 'Writes the specified string value to the standard output stream.' },
+  { label: 'Console.ReadLine', kind: 1, insertText: 'Console.ReadLine()', detail: 'string? Console.ReadLine()', documentation: 'Reads the next line of characters from the standard input stream.' },
+  { label: 'Console.ReadKey', kind: 1, insertText: 'Console.ReadKey()', detail: 'ConsoleKeyInfo Console.ReadKey()', documentation: 'Obtains the next character or function key pressed by the user.' },
+  { label: 'Console.Clear', kind: 1, insertText: 'Console.Clear()', detail: 'void Console.Clear()', documentation: 'Clears the console buffer and corresponding console window.' },
+];
+
+const STRING_METHODS = [
+  { label: 'Length', kind: 4, insertText: 'Length', detail: 'int Length', documentation: 'Gets the number of characters in the current String object.' },
+  { label: 'ToUpper', kind: 1, insertText: 'ToUpper()', detail: 'string ToUpper()', documentation: 'Returns a copy of this string converted to uppercase.' },
+  { label: 'ToLower', kind: 1, insertText: 'ToLower()', detail: 'string ToLower()', documentation: 'Returns a copy of this string converted to lowercase.' },
+  { label: 'Trim', kind: 1, insertText: 'Trim()', detail: 'string Trim()', documentation: 'Removes all leading and trailing white-space characters.' },
+  { label: 'Split', kind: 1, insertText: 'Split($0)', insertTextRules: 4, detail: 'string[] Split(char separator)', documentation: 'Splits a string into substrings based on specified delimiting characters.' },
+  { label: 'Contains', kind: 1, insertText: 'Contains($0)', insertTextRules: 4, detail: 'bool Contains(string value)', documentation: 'Returns a value indicating whether a specified substring occurs within this string.' },
+  { label: 'Replace', kind: 1, insertText: 'Replace($0)', insertTextRules: 4, detail: 'string Replace(string oldValue, string newValue)', documentation: 'Returns a new string in which all occurrences of a specified string are replaced.' },
+  { label: 'Substring', kind: 1, insertText: 'Substring($0)', insertTextRules: 4, detail: 'string Substring(int startIndex)', documentation: 'Retrieves a substring from this instance.' },
+];
+
+// Initialize C# IntelliSense Engine
+const initializeCSharpIntelliSense = (monaco: Monaco) => {
+  // Register completion provider for C#
+  monaco.languages.registerCompletionItemProvider('csharp', {
+    triggerCharacters: ['.', ' '],
+    provideCompletionItems: async (model, position) => {
+      const word = model.getWordUntilPosition(position);
+      const range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn,
+      };
+
+      // Get the text before cursor to determine context
+      const textUntilPosition = model.getValueInRange({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+      });
+
+      const suggestions: any[] = [];
+
+      // Check if WASM worker is available for deep completions
+      if (window.csharpWorker) {
+        try {
+          const wasmSuggestions = await window.csharpWorker.getCompletions(
+            model.getValue(),
+            { lineNumber: position.lineNumber, column: position.column }
+          );
+          suggestions.push(...wasmSuggestions.map(s => ({ ...s, range })));
+        } catch (err) {
+          console.warn('[IntelliSense] WASM worker unavailable, using built-in completions');
+        }
+      }
+
+      // Context-aware completions
+      if (textUntilPosition.endsWith('Console.')) {
+        // Console method completions
+        CONSOLE_COMPLETIONS.forEach(c => {
+          suggestions.push({
+            label: c.label.replace('Console.', ''),
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: c.insertText.replace('Console.', ''),
+            insertTextRules: c.insertTextRules,
+            detail: c.detail,
+            documentation: c.documentation,
+            range,
+          });
+        });
+      } else if (textUntilPosition.match(/\"[^\"]*\"\.$/)) {
+        // String literal method completions
+        STRING_METHODS.forEach(m => {
+          suggestions.push({
+            label: m.label,
+            kind: m.kind === 1 ? monaco.languages.CompletionItemKind.Method : monaco.languages.CompletionItemKind.Property,
+            insertText: m.insertText,
+            insertTextRules: m.insertTextRules,
+            detail: m.detail,
+            documentation: m.documentation,
+            range,
+          });
+        });
+      } else {
+        // General keyword completions
+        CSHARP_KEYWORDS.forEach(kw => {
+          if (kw.startsWith(word.word.toLowerCase())) {
+            suggestions.push({
+              label: kw,
+              kind: monaco.languages.CompletionItemKind.Keyword,
+              insertText: kw,
+              range,
+            });
+          }
+        });
+
+        // Add Console completions at top level
+        if ('console'.startsWith(word.word.toLowerCase())) {
+          CONSOLE_COMPLETIONS.forEach(c => {
+            suggestions.push({
+              label: c.label,
+              kind: monaco.languages.CompletionItemKind.Method,
+              insertText: c.insertText,
+              insertTextRules: c.insertTextRules,
+              detail: c.detail,
+              documentation: c.documentation,
+              range,
+            });
+          });
+        }
+      }
+
+      return { suggestions };
+    },
+  });
+
+  // Register hover provider for documentation
+  monaco.languages.registerHoverProvider('csharp', {
+    provideHover: (model, position) => {
+      const word = model.getWordAtPosition(position);
+      if (!word) return null;
+
+      // Check for Console methods
+      const consoleMethod = CONSOLE_COMPLETIONS.find(c => c.label.includes(word.word));
+      if (consoleMethod) {
+        return {
+          contents: [
+            { value: `**${consoleMethod.detail}**` },
+            { value: consoleMethod.documentation },
+          ],
+        };
+      }
+
+      return null;
+    },
+  });
+
+  console.log('[IntelliSense] C# language provider initialized');
+};
 
 const DEFAULT_WEEK = "01";
 const RUN_MODE = (import.meta.env.PUBLIC_RUN_MODE || "stub").toLowerCase();
@@ -215,6 +379,9 @@ const EditorApp = () => {
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || "")}
+            onMount={(editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+              initializeCSharpIntelliSense(monaco);
+            }}
             options={{
               minimap: { enabled: false },
               fontSize: 14,
