@@ -151,7 +151,7 @@ const { checkpointId, title, questions } = Astro.props;
           const selectedLabel = e.target.closest('.option-label');
           if (isCorrect) {
             selectedLabel.classList.add('correct');
-            selectedLabel.querySelector('.feedback-icon').textContent = '✓ Correct!';
+            selectedLabel.querySelector('.feedback-icon').textContent = '✅ Technical Concept Validated.';
 
             // Transmit participation to the database
             fetch('/.netlify/functions/progress-update', {
