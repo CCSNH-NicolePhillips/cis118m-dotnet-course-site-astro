@@ -179,8 +179,17 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         scrollBeyondLastLine: false,
         automaticLayout: true,
         tabSize: 4,
-        quickSuggestions: true,
+        quickSuggestions: {
+          other: true,
+          comments: false,
+          strings: true,
+        },
         suggestOnTriggerCharacters: true,
+        parameterHints: { enabled: true },
+        autoClosingBrackets: 'always',
+        autoClosingQuotes: 'always',
+        autoIndent: 'full',
+        renderLineHighlight: 'all',
       });
       
       // Theme sync removed - always use vs-dark for code snippets

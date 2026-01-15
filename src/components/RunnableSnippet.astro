@@ -297,6 +297,17 @@ const snippetId = `snippet-${Math.random().toString(36).substr(2, 9)}`;
         fontSize: 13,
         lineNumbers: 'on',
         scrollBeyondLastLine: false,
+        suggestOnTriggerCharacters: true,
+        quickSuggestions: {
+          other: true,
+          comments: false,
+          strings: true,
+        },
+        parameterHints: { enabled: true },
+        autoClosingBrackets: 'always',
+        autoClosingQuotes: 'always',
+        autoIndent: 'full',
+        renderLineHighlight: 'all',
       });
       
       // Save on change

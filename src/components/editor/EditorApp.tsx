@@ -215,7 +215,29 @@ const EditorApp = () => {
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || "")}
-            options={{ minimap: { enabled: false }, fontSize: 14, wordWrap: "on" }}
+            options={{
+              minimap: { enabled: false },
+              fontSize: 14,
+              wordWrap: "on",
+              automaticLayout: true,
+              suggestOnTriggerCharacters: true,
+              quickSuggestions: {
+                other: true,
+                comments: false,
+                strings: true,
+              },
+              parameterHints: { enabled: true },
+              tabCompletion: "on",
+              formatOnPaste: true,
+              formatOnType: true,
+              autoClosingBrackets: "always",
+              autoClosingQuotes: "always",
+              autoIndent: "full",
+              scrollBeyondLastLine: false,
+              renderLineHighlight: "all",
+              cursorBlinking: "smooth",
+              cursorSmoothCaretAnimation: "on",
+            }}
           />
         </div>
 
