@@ -60,7 +60,7 @@ const initializeCSharpIntelliSense = (monaco: Monaco) => {
   // Register completion provider for C#
   monaco.languages.registerCompletionItemProvider('csharp', {
     triggerCharacters: ['.', ' '],
-    provideCompletionItems: async (model, position) => {
+    provideCompletionItems: (model, position) => {
       const word = model.getWordUntilPosition(position);
       const range = {
         startLineNumber: position.lineNumber,
@@ -69,83 +69,79 @@ const initializeCSharpIntelliSense = (monaco: Monaco) => {
         endColumn: word.endColumn,
       };
 
-      // Get the text before cursor to determine context
-      const textUntilPosition = model.getValueInRange({
-        startLineNumber: 1,
-        startColumn: 1,
-        endLineNumber: position.lineNumber,
-        endColumn: position.column,
-      });
+      // Get the line text before cursor to determine context
+      const lineContent = model.getLineContent(position.lineNumber);
+      const textBeforeCursor = lineContent.substring(0, position.column - 1);
 
       const suggestions: any[] = [];
 
-      // Check if WASM worker is available for deep completions
-      if (window.csharpWorker) {
-        try {
-          const wasmSuggestions = await window.csharpWorker.getCompletions(
-            model.getValue(),
-            { lineNumber: position.lineNumber, column: position.column }
-          );
-          suggestions.push(...wasmSuggestions.map(s => ({ ...s, range })));
-        } catch (err) {
-          console.warn('[IntelliSense] WASM worker unavailable, using built-in completions');
-        }
-      }
-
-      // Context-aware completions
-      if (textUntilPosition.endsWith('Console.')) {
-        // Console method completions
+      // Context-aware completions for Console.
+      if (textBeforeCursor.endsWith('Console.')) {
         CONSOLE_COMPLETIONS.forEach(c => {
           suggestions.push({
             label: c.label.replace('Console.', ''),
             kind: monaco.languages.CompletionItemKind.Method,
             insertText: c.insertText.replace('Console.', ''),
-            insertTextRules: c.insertTextRules,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
             detail: c.detail,
-            documentation: c.documentation,
+            documentation: {
+              value: c.documentation,
+            },
             range,
           });
         });
-      } else if (textUntilPosition.match(/\"[^\"]*\"\.$/)) {
-        // String literal method completions
+        return { suggestions };
+      }
+      
+      // Context-aware completions for string methods (after "string".)
+      if (textBeforeCursor.match(/\"\s*\.\s*$/) || textBeforeCursor.match(/\w+\.\s*$/)) {
+        // Check if it looks like a string variable access
         STRING_METHODS.forEach(m => {
           suggestions.push({
             label: m.label,
             kind: m.kind === 1 ? monaco.languages.CompletionItemKind.Method : monaco.languages.CompletionItemKind.Property,
             insertText: m.insertText,
-            insertTextRules: m.insertTextRules,
+            insertTextRules: m.insertTextRules ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet : undefined,
             detail: m.detail,
-            documentation: m.documentation,
+            documentation: {
+              value: m.documentation,
+            },
             range,
           });
         });
-      } else {
-        // General keyword completions
-        CSHARP_KEYWORDS.forEach(kw => {
-          if (kw.startsWith(word.word.toLowerCase())) {
-            suggestions.push({
-              label: kw,
-              kind: monaco.languages.CompletionItemKind.Keyword,
-              insertText: kw,
-              range,
-            });
-          }
-        });
+      }
 
-        // Add Console completions at top level
-        if ('console'.startsWith(word.word.toLowerCase())) {
-          CONSOLE_COMPLETIONS.forEach(c => {
-            suggestions.push({
-              label: c.label,
-              kind: monaco.languages.CompletionItemKind.Method,
-              insertText: c.insertText,
-              insertTextRules: c.insertTextRules,
-              detail: c.detail,
-              documentation: c.documentation,
-              range,
-            });
+      // General completions when typing
+      const currentWord = word.word.toLowerCase();
+      
+      // C# Keywords
+      CSHARP_KEYWORDS.forEach(kw => {
+        if (currentWord === '' || kw.toLowerCase().startsWith(currentWord)) {
+          suggestions.push({
+            label: kw,
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            insertText: kw,
+            detail: 'C# keyword',
+            range,
           });
         }
+      });
+
+      // Console methods at top level
+      if (currentWord === '' || 'console'.startsWith(currentWord)) {
+        CONSOLE_COMPLETIONS.forEach(c => {
+          suggestions.push({
+            label: c.label,
+            kind: monaco.languages.CompletionItemKind.Method,
+            insertText: c.insertText,
+            insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+            detail: c.detail,
+            documentation: {
+              value: c.documentation,
+            },
+            range,
+          });
+        });
       }
 
       return { suggestions };
@@ -404,6 +400,23 @@ const EditorApp = () => {
               renderLineHighlight: "all",
               cursorBlinking: "smooth",
               cursorSmoothCaretAnimation: "on",
+              // IntelliSense display options
+              suggest: {
+                showIcons: true,
+                showStatusBar: true,
+                preview: true,
+                showInlineDetails: true,
+                showMethods: true,
+                showFunctions: true,
+                showVariables: true,
+                showClasses: true,
+                showKeywords: true,
+                showSnippets: true,
+                filterGraceful: true,
+                localityBonus: true,
+              },
+              // Enable the details widget (documentation popup)
+              "semanticHighlighting.enabled": true,
             }}
           />
         </div>
