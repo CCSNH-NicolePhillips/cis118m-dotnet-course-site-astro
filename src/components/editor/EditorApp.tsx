@@ -215,9 +215,25 @@ const EditorApp = () => {
   const [stderr, setStderr] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [editorTheme, setEditorTheme] = useState("vs-dark");
   const saveTimer = useRef<number | undefined>();
 
   const startersForWeek = useMemo(() => startersByWeek(selectedWeek), [selectedWeek]);
+
+  // Sync editor theme with site data-theme attribute
+  useEffect(() => {
+    const syncTheme = () => {
+      const isDark = document.body.getAttribute('data-theme') !== 'light';
+      setEditorTheme(isDark ? "vs-dark" : "vs");
+    };
+    
+    syncTheme(); // Initial sync
+    
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const starter = findStarterById(starterId) || defaultStarterForWeek(selectedWeek);
@@ -372,7 +388,7 @@ const EditorApp = () => {
           <Editor
             height="520px"
             language="csharp"
-            theme="vs-dark"
+            theme={editorTheme}
             value={code}
             onChange={(value) => setCode(value || "")}
             onMount={(editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {

@@ -40,19 +40,19 @@ export const WEEKS: WeekConfig[] = [
   },
   { slug: '03', title: '03. Logic & Operators', unlockDate: '2026-02-02T00:00:00Z', pages: [] },
   { slug: '04', title: '04. Conditional Control', unlockDate: '2026-02-09T00:00:00Z', pages: [] },
-  { slug: '05', title: '05. Iterative Logic (Loops)', unlockDate: '2026-02-16T00:00:00Z', pages: [] },
+  { slug: '05', title: '05. Iterative Logic', unlockDate: '2026-02-16T00:00:00Z', pages: [] },
   { slug: '06', title: '06. String Manipulation', unlockDate: '2026-02-23T00:00:00Z', pages: [] },
   { slug: '07', title: '07. Modular Methods', unlockDate: '2026-03-02T00:00:00Z', pages: [] },
-  { slug: '08', title: '08. Midterm Assessment', unlockDate: '2026-03-09T00:00:00Z', pages: [] },
-  // Week 09 follows Spring Break (March 15-22)
+  { slug: '08', title: '08. Midterm Technical Review', unlockDate: '2026-03-09T00:00:00Z', pages: [] },
+  // Spring Break: March 15-22
   { slug: '09', title: '09. Array Architectures', unlockDate: '2026-03-23T00:00:00Z', pages: [] },
   { slug: '10', title: '10. Collections & Lists', unlockDate: '2026-03-30T00:00:00Z', pages: [] },
   { slug: '11', title: '11. Object Orientation', unlockDate: '2026-04-06T00:00:00Z', pages: [] },
   { slug: '12', title: '12. Class Inheritance', unlockDate: '2026-04-13T00:00:00Z', pages: [] },
   { slug: '13', title: '13. Polymorphism', unlockDate: '2026-04-20T00:00:00Z', pages: [] },
-  { slug: '14', title: '14. Interfaces', unlockDate: '2026-04-27T00:00:00Z', pages: [] },
-  { slug: '15', title: '15. Capstone: Build', unlockDate: '2026-05-04T00:00:00Z', pages: [] },
-  { slug: '16', title: '16. Final Project Launch', unlockDate: '2026-05-11T00:00:00Z', pages: [] },
+  { slug: '14', title: '14. Abstraction/Interfaces', unlockDate: '2026-04-27T00:00:00Z', pages: [] },
+  { slug: '15', title: '15. Capstone: Build Phase', unlockDate: '2026-05-04T00:00:00Z', pages: [] },
+  { slug: '16', title: '16. Project Delivery & Review', unlockDate: '2026-05-11T00:00:00Z', pages: [] },
 ];
 
 // Helper to get week by slug (e.g., '01', '02')

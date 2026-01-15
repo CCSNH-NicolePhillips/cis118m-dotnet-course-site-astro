@@ -151,17 +151,17 @@ const { checkpointId, title, questions } = Astro.props;
           const selectedLabel = e.target.closest('.option-label');
           if (isCorrect) {
             selectedLabel.classList.add('correct');
-            selectedLabel.querySelector('.feedback-icon').textContent = '✅ Technical Concept Validated.';
+            selectedLabel.querySelector('.feedback-icon').textContent = '✅ Concept Validated';
 
-            // Transmit participation to the database
+            // REPORT PARTICIPATION TO DB
             fetch('/.netlify/functions/progress-update', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ 
-                pageId: questionDiv.closest('.checkpoint-container').dataset.checkpointId, 
+                pageId: window.location.pathname, 
                 status: 'participated' 
               }),
-            }).catch(err => console.error("Telemetry failure:", err));
+            }).catch(err => console.error("Gradebook sync failed:", err));
 
           } else {
             selectedLabel.classList.add('incorrect');

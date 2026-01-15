@@ -141,3 +141,33 @@
   color: #c7ddff;
   font-size: 12px;
 }
+
+/* Fix for invisible IntelliSense text in Monaco Editor */
+.monaco-editor .suggest-widget {
+  background-color: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list-row .label-name,
+.monaco-editor .suggest-widget .monaco-list-row .details-label,
+.monaco-editor .suggest-widget .monaco-list-row .signature-label,
+.monaco-editor .suggest-widget .monaco-list-row .type-label,
+.monaco-editor .suggest-widget .monaco-list-row .monaco-icon-label-container {
+  color: #cccccc !important; /* Forces light text for suggestions */
+}
+
+.monaco-editor .suggest-widget .monaco-list-row.focused .label-name,
+.monaco-editor .suggest-widget .monaco-list-row.focused .monaco-icon-label-container {
+  color: #ffffff !important;
+}
+
+.monaco-editor .suggest-details {
+  background-color: #252526 !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #cccccc !important;
+}
+
+.monaco-editor .suggest-details .monaco-tokenized-source,
+.monaco-editor .suggest-details .docs {
+  color: #cccccc !important;
+}
