@@ -152,6 +152,17 @@ const { checkpointId, title, questions } = Astro.props;
           if (isCorrect) {
             selectedLabel.classList.add('correct');
             selectedLabel.querySelector('.feedback-icon').textContent = '✓ Correct!';
+
+            // Transmit participation to the database
+            fetch('/.netlify/functions/progress-update', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                pageId: questionDiv.closest('.checkpoint-container').dataset.checkpointId, 
+                status: 'participated' 
+              }),
+            }).catch(err => console.error("Telemetry failure:", err));
+
           } else {
             selectedLabel.classList.add('incorrect');
             selectedLabel.querySelector('.feedback-icon').textContent = '✗ Try again';

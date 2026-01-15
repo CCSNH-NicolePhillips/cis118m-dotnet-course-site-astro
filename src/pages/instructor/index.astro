@@ -65,6 +65,7 @@ const description = "View student progress and activity";
           <tr style="border-bottom: 2px solid var(--border);">
             <th style="text-align: left; padding: 12px;">Student</th>
             <th style="text-align: center; padding: 12px;">Completed</th>
+            <th style="text-align: center; padding: 12px;">Participation</th>
             <th style="text-align: center; padding: 12px;">In Progress</th>
             <th style="text-align: left; padding: 12px;">Last Active</th>
             <th style="text-align: center; padding: 12px;">HW Analysis</th>
@@ -210,6 +211,7 @@ const description = "View student progress and activity";
             : filterByWeek(student.progress, weekValue);
           
           const completedCount = countByStatus(progress, 'completed');
+          const participatedCount = countByStatus(progress, 'participated');
           const inProgressCount = countByStatus(progress, 'in_progress');
           
           const lastActive = student.lastActive 
@@ -230,6 +232,7 @@ const description = "View student progress and activity";
           row.innerHTML = `
             <td style="padding: 12px;">${displayName}</td>
             <td style="padding: 12px; text-align: center;">${completedCount}</td>
+            <td style="padding: 12px; text-align: center;">${participatedCount}</td>
             <td style="padding: 12px; text-align: center;">${inProgressCount}</td>
             <td style="padding: 12px;">${lastActive}</td>
             <td style="padding: 12px; text-align: center;">
