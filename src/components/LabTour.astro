@@ -154,6 +154,9 @@
     if (currentStep < targets.length) {
       moveSpotlight();
     } else {
+      // Tour completed - save to localStorage so we don't force it again
+      localStorage.setItem('cis118m:labTourCompleted', 'true');
+      
       document.querySelector('.tour-overlay').style.display = 'none';
       document.body.style.overflow = '';
       currentStep = 0;

@@ -47,13 +47,21 @@
 </style>
 
 <script>
+  // Check if tour was already completed
+  const tourCompleted = localStorage.getItem('cis118m:labTourCompleted');
+  
   // Find the elements
   const overlay = document.getElementById('start-tour-focus-overlay');
-  const arrowContainer = overlay.querySelector('.arrow-container');
-  // We need to find the Start Lab Tour button. We'll assume it has a specific ID.
+  const arrowContainer = overlay?.querySelector('.arrow-container');
   const startButton = document.getElementById('start-lab-tour-btn');
   
-  if (startButton && overlay && arrowContainer) {
+  // Only show focus overlay if tour hasn't been completed
+  if (tourCompleted) {
+    // User already did the tour - hide the focus overlay
+    if (overlay) overlay.style.display = 'none';
+  } else if (startButton && overlay && arrowContainer) {
+    // First time - show the focus overlay
+    
     // Function to update arrow position
     function updateArrowPosition() {
       const rect = startButton.getBoundingClientRect();
