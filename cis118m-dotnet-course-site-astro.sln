@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cis118m-dotnet-runner", "cis118m-dotnet-runner\cis118m-dotnet-runner.csproj", "{4F6D2707-FB19-5CD3-3A64-7BC6DFDF0F3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cis118m-dotnet-runner.Tests", "cis118m-dotnet-runner.Tests\cis118m-dotnet-runner.Tests.csproj", "{F3475707-D1C6-2C16-DF81-1284F68ED143}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F6D2707-FB19-5CD3-3A64-7BC6DFDF0F3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F6D2707-FB19-5CD3-3A64-7BC6DFDF0F3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F6D2707-FB19-5CD3-3A64-7BC6DFDF0F3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F6D2707-FB19-5CD3-3A64-7BC6DFDF0F3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3475707-D1C6-2C16-DF81-1284F68ED143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3475707-D1C6-2C16-DF81-1284F68ED143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3475707-D1C6-2C16-DF81-1284F68ED143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3475707-D1C6-2C16-DF81-1284F68ED143}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7110206C-B722-420A-84B5-5965BA449CC9}
+	EndGlobalSection
+EndGlobal
