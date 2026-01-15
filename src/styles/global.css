@@ -1,24 +1,24 @@
-/* Light theme: Soft Pastel IDE (default) */
+/* Light theme: Professional Pastel IDE (default) */
 body {
-  --bg: #c5cad5;
-  --panel: #d4d9e5;
-  --panel2: #c0c6d4;
-  --text: #1a1f2e;
-  --muted: #3d4758;
-  --link: #1e3a8a;
-  --accent: #3b82f6;
-  --border: #a8b0c0;
-  --shadow: 0 4px 16px rgba(0,0,0,.2);
+  --bg: #e2e8f0;
+  --panel: #ffffff;
+  --panel2: #f1f5f9;
+  --text: #0f172a;
+  --muted: #64748b;
+  --link: #1e40af;
+  --accent: #2563eb;
+  --border: #cbd5e1;
+  --shadow: 0 4px 16px rgba(0,0,0,.15);
   --radius: 16px;
-  --navitem-bg: #c0c6d4;
-  --navitem-hover: #b0b8c8;
-  --navitem-border: rgba(59, 130, 246, 0.4);
-  --badge-bg: rgba(59, 130, 246, 0.15);
-  --badge-border: rgba(59, 130, 246, 0.35);
-  --badge-text: #1e3a8a;
-  --scrollbar-track: #b8bcc8;
-  --scrollbar-thumb: #8b92a8;
-  --scrollbar-thumb-hover: #6b7280;
+  --navitem-bg: #f1f5f9;
+  --navitem-hover: #e2e8f0;
+  --navitem-border: rgba(37, 99, 235, 0.4);
+  --badge-bg: rgba(37, 99, 235, 0.1);
+  --badge-border: rgba(37, 99, 235, 0.3);
+  --badge-text: #1e40af;
+  --scrollbar-track: #e2e8f0;
+  --scrollbar-thumb: #94a3b8;
+  --scrollbar-thumb-hover: #64748b;
 }
 
 /* Dark theme */

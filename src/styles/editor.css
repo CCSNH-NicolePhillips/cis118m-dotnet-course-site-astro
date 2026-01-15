@@ -142,32 +142,99 @@
   font-size: 12px;
 }
 
-/* Fix for invisible IntelliSense text in Monaco Editor */
-.monaco-editor .suggest-widget {
-  background-color: #1e1e1e !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+/* ============================================
+   MONACO INTELLISENSE VISIBILITY FIX
+   Forces high contrast text in suggest widget
+   ============================================ */
+
+/* Suggest Widget Container */
+.monaco-editor .suggest-widget,
+.monaco-editor .suggest-widget.visible {
+  background-color: #252526 !important;
+  border: 1px solid #454545 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important;
 }
 
-.monaco-editor .suggest-widget .monaco-list-row .label-name,
+/* ALL text inside suggest widget - brute force */
+.monaco-editor .suggest-widget * {
+  color: #d4d4d4 !important;
+}
+
+/* Main label text */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label .monaco-icon-label-container,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label .monaco-icon-name-container,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .label-name,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .label-description,
+.monaco-editor .suggest-widget .monaco-list-row .monaco-highlighted-label,
+.monaco-editor .suggest-widget .monaco-list-row span {
+  color: #d4d4d4 !important;
+}
+
+/* Detail/signature text */
 .monaco-editor .suggest-widget .monaco-list-row .details-label,
 .monaco-editor .suggest-widget .monaco-list-row .signature-label,
 .monaco-editor .suggest-widget .monaco-list-row .type-label,
-.monaco-editor .suggest-widget .monaco-list-row .monaco-icon-label-container {
-  color: #cccccc !important; /* Forces light text for suggestions */
+.monaco-editor .suggest-widget .monaco-list-row .qualifier-label {
+  color: #9cdcfe !important;
 }
 
-.monaco-editor .suggest-widget .monaco-list-row.focused .label-name,
-.monaco-editor .suggest-widget .monaco-list-row.focused .monaco-icon-label-container {
+/* Focused/selected row */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.selected,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row:hover {
+  background-color: #062f4a !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused *,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.selected *,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row:hover * {
   color: #ffffff !important;
 }
 
-.monaco-editor .suggest-details {
+/* Details/Documentation panel */
+.monaco-editor .suggest-details-container,
+.monaco-editor .suggest-details,
+.monaco-editor .details-content,
+.monaco-editor .suggest-widget .details {
   background-color: #252526 !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: #cccccc !important;
+  border: 1px solid #454545 !important;
+  color: #d4d4d4 !important;
+}
+
+.monaco-editor .suggest-details *,
+.monaco-editor .details-content * {
+  color: #d4d4d4 !important;
 }
 
 .monaco-editor .suggest-details .monaco-tokenized-source,
-.monaco-editor .suggest-details .docs {
-  color: #cccccc !important;
+.monaco-editor .suggest-details .docs,
+.monaco-editor .suggest-details .type,
+.monaco-editor .suggest-details code {
+  color: #9cdcfe !important;
+}
+
+/* Parameter hints popup */
+.monaco-editor .parameter-hints-widget {
+  background-color: #252526 !important;
+  border: 1px solid #454545 !important;
+}
+
+.monaco-editor .parameter-hints-widget * {
+  color: #d4d4d4 !important;
+}
+
+.monaco-editor .parameter-hints-widget .signature .parameter.active {
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+/* Hover widget */
+.monaco-editor .monaco-hover {
+  background-color: #252526 !important;
+  border: 1px solid #454545 !important;
+}
+
+.monaco-editor .monaco-hover * {
+  color: #d4d4d4 !important;
 }
