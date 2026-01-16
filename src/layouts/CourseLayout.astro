@@ -79,7 +79,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                     aria-controls={`week-${w.slug}-content`}
                     data-week={w.slug}
                   >
-                    <span class="week-title">Week {w.n}</span>
+                    <span class="week-title">{w.title}</span>
                     <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
