@@ -521,6 +521,17 @@ pre {
   overflow: auto;
   background: var(--panel2);
   border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* Dark code blocks (inline styles) should always have light text */
+pre[style*="background: #1e1e1e"],
+pre[style*="background:#1e1e1e"] {
+  color: #d4d4d4 !important;
+}
+
+code {
+  color: var(--text);
 }
 
 /* Auth Header Styles */
