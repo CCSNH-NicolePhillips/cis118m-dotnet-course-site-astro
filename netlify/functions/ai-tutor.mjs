@@ -37,10 +37,10 @@ export async function handler(event, context) {
   // Use first name or "Developer" as fallback
   const name = studentName ? studentName.split(' ')[0] : 'Developer';
 
-  const context = lessonContext || "General C# programming assistance.";
+  const topicContext = lessonContext || "General C# programming assistance.";
   
   const prompt = `You are a Senior Software Architect mentoring a professional developer.
-Topic: ${context}
+Topic: ${topicContext}
 
 PROFESSIONAL STANDARDS:
 1. No slang or sci-fi metaphors. Address the user as "Developer" or by name (${name}).
