@@ -1,18 +1,19 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 01 • Required Quiz"
+title: "Week 01 • Syllabus Assessment"
 ---
 import Quiz from '../../../components/Quiz.astro';
 
-# 🏁 Final Evaluation: Week 01
+# 📋 Course Standards & Syllabus Assessment
 
 <div class="mission-brief">
-  <h2>📋 Mission Parameters</h2>
+  <h2>⚠️ Gatekeeper Assessment</h2>
+  <p>This assessment ensures you understand the course policies before accessing technical modules.</p>
   <ul>
-    <li><strong>Attempts:</strong> You are allowed <strong>2 attempts</strong> on this mission</li>
-    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
-    <li><strong>Passing:</strong> 70% required to pass</li>
-    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Attempts:</strong> You are allowed <strong>2 attempts</strong></li>
+    <li><strong>Passing:</strong> <strong>70% required</strong> to unlock all course content</li>
+    <li><strong>Source:</strong> All answers are found in the <a href="/week-01/syllabus/">Course Syllabus</a></li>
+    <li><strong>Time:</strong> No time limit — review the syllabus as needed</li>
   </ul>
 </div>
 
@@ -20,67 +21,57 @@ import Quiz from '../../../components/Quiz.astro';
 
 <Quiz 
   quizId="week-01-required-quiz"
-  title="Week 01: .NET Fundamentals"
+  title="Course Standards & Syllabus Assessment"
   passingScore={70}
   questions={[
     {
-      id: "q1",
+      id: "s1",
       type: "multiple-choice",
-      question: "What is C# in the .NET ecosystem?",
+      question: "What is the instructor's official contact email?",
       options: [
-        "The execution engine that runs your code",
-        "The programming language you write code in",
-        "A database management system",
-        "A web browser"
+        "nphillips@ccsnh.edu",
+        "MCCCISOnline1@ccsnh.edu",
+        "support@manchestercc.edu",
+        "nicole.phillips@gmail.com"
       ],
-      correctAnswer: "The programming language you write code in",
-      explanation: "C# is the programming language — the 'blueprint' you write. The CLR is the 'engine' that executes it."
+      correctAnswer: "MCCCISOnline1@ccsnh.edu",
+      explanation: "Always use the official MCCCISOnline1@ccsnh.edu address for course communications."
     },
     {
-      id: "q2",
+      id: "s2",
       type: "multiple-choice",
-      question: "What does the CLR (Common Language Runtime) do?",
-      options: [
-        "Checks your code for typos",
-        "Executes your compiled code at runtime",
-        "Designs the user interface",
-        "Connects to the internet"
-      ],
-      correctAnswer: "Executes your compiled code at runtime",
-      explanation: "The CLR is the 'engine' that actually runs your compiled code. It manages memory, security, and execution."
+      question: "What percentage of your final grade is determined by Weekly Coding Labs?",
+      options: ["10%", "20%", "30%", "40%"],
+      correctAnswer: "40%",
+      explanation: "Coding Labs are the most significant part of your grade at 40%."
     },
     {
-      id: "q3",
+      id: "s3",
+      type: "multiple-choice",
+      question: "What is the weight of 'Participation & Progress' in this course?",
+      options: ["5%", "10%", "15%", "20%"],
+      correctAnswer: "10%",
+      explanation: "Participation through checkpoints and progress tracking counts for 10% of your grade."
+    },
+    {
+      id: "s4",
       type: "true-false",
-      question: "A missing semicolon in C# will cause a compile-time error, preventing the CLR from ever running the code.",
+      question: "Late submissions may receive reduced credit unless prior arrangements are made.",
       correctAnswer: "True",
-      explanation: "Correct! The compiler catches syntax errors like missing semicolons BEFORE the CLR ever sees your code."
+      explanation: "Correct. Assignments are expected by the deadline, and late work is subject to point reduction."
     },
     {
-      id: "q4",
+      id: "s5",
       type: "multiple-choice",
-      question: "What is the purpose of Console.WriteLine()?",
+      question: "How is attendance measured in this asynchronous online course?",
       options: [
-        "To read input from the user",
-        "To display output to the terminal/console",
-        "To save data to a file",
-        "To connect to a database"
+        "By logging in every day",
+        "Through active participation in weekly graded activities",
+        "By attending live Zoom sessions",
+        "It isn't measured"
       ],
-      correctAnswer: "To display output to the terminal/console",
-      explanation: "Console.WriteLine() is your communication protocol — it sends messages to the terminal for the user to see."
-    },
-    {
-      id: "q5",
-      type: "multiple-choice",
-      question: "In the 'Blueprint vs Engine' analogy, what does the semicolon represent?",
-      options: [
-        "The engine's fuel",
-        "A signal that one instruction is complete",
-        "The blueprint's title",
-        "A comment in the code"
-      ],
-      correctAnswer: "A signal that one instruction is complete",
-      explanation: "The semicolon tells the compiler 'this statement is finished' — like a period at the end of a sentence."
+      correctAnswer: "Through active participation in weekly graded activities",
+      explanation: "Attendance is verified through your regular submission of labs and assessments."
     }
   ]}
 />

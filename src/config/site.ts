@@ -29,7 +29,8 @@ export const WEEKS: WeekConfig[] = [
       { title: '01. Course Syllabus', href: '/week-01/syllabus/' },
       { title: '02. Syllabus Assessment (Graded)', href: '/week-01/required-quiz/', isGatekeeper: true }, // 70% Score Required
       { title: '03. Lesson: The Spark', href: '/week-01/lesson-1/' },
-      { title: '04. Lab: Console Logic (Graded)', href: '/week-01/lab-01/' }
+      { title: '04. Lab: Console Logic (Graded)', href: '/week-01/lab-01/' },
+      { title: '05. Technical Assessment (Graded)', href: '/week-01/weekly-assessment/' }
     ]
   },
   { slug: '02', title: '02. First C# Program', unlockDate: '2026-01-26T00:00:00Z', dueDate: '2026-02-01T23:59:59Z', pages: [] },
