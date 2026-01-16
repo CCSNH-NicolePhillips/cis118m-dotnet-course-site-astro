@@ -314,14 +314,35 @@ body:not([data-theme="dark"]) .file-tab.active {
    Professional IntelliSense Visibility Patch
    Ensures readable text in completion dropdown
    ============================================ */
+
+/* Force IntelliSense labels to be visible */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .label-name,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .details-label,
 .monaco-editor .suggest-widget .monaco-list-row .label-name,
 .monaco-editor .suggest-widget .monaco-list-row .details-label {
-  color: #cccccc !important; /* Force readable grey/white text */
+  color: #d4d4d4 !important; /* Forces a light grey for the text */
 }
+
+/* Highlights the selected item in the list */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row.focused .label-name,
 .monaco-editor .suggest-widget .monaco-list-row.focused .label-name {
-  color: #ffffff !important; /* Force high contrast on selection */
+  color: #ffffff !important; /* Pure white for the active item */
 }
+
+/* Ensure the background of the suggest box stays dark in both modes */
 .monaco-editor .suggest-widget {
-  background-color: #1e1e1e !important; /* Force dark background for popups */
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background-color: #1e1e1e !important;
+  border: 1px solid #454545 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+
+/* Force all text inside suggest widget */
+.monaco-editor .suggest-widget .monaco-list-row > * {
+  color: #d4d4d4 !important;
+}
+
+/* Type/signature info */
+.monaco-editor .suggest-widget .monaco-list-row .signature-label,
+.monaco-editor .suggest-widget .monaco-list-row .type-label {
+  color: #9cdcfe !important;
 }

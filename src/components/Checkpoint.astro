@@ -132,6 +132,18 @@ const { checkpointId, title, questions } = Astro.props;
         if (explanationDiv) {
           explanationDiv.style.display = 'block';
         }
+
+        // REPORT PARTICIPATION TO DB for checkbox questions
+        if (isCorrect) {
+          fetch('/.netlify/functions/progress-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              pageId: window.location.pathname, 
+              status: 'participated' 
+            }),
+          }).catch(err => console.error("Gradebook sync failed:", err));
+        }
       });
     } else {
       // Handle radio button questions with instant feedback
