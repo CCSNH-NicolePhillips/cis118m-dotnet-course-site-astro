@@ -694,8 +694,9 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           // Logged in state
           if (btnLogin) btnLogin.style.display = "none";
           
-          // Check if instructor (@ccsnh.edu but not @students.ccsnh.edu)
-          const isInstructor = user.email.endsWith('@ccsnh.edu') && !user.email.includes('@students.');
+          // Check if instructor (specific email or @ccsnh.edu domain but not students)
+          const isInstructor = user.email === 'MCCCISOnline1@ccsnh.edu' || 
+                               (user.email.endsWith('@ccsnh.edu') && !user.email.includes('@students.'));
           console.log('[Auth] User:', user.email, 'isInstructor:', isInstructor);
           
           const prereqLock = document.getElementById('prereq-lock');
