@@ -57,6 +57,90 @@ const STRING_METHODS = [
 
 // Initialize C# IntelliSense Engine
 const initializeCSharpIntelliSense = (monaco: Monaco) => {
+  // Define a custom dark theme with proper suggest widget colors
+  monaco.editor.defineTheme('cis118m-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'keyword', foreground: '569cd6' },
+      { token: 'string', foreground: 'ce9178' },
+      { token: 'number', foreground: 'b5cea8' },
+      { token: 'comment', foreground: '6a9955' },
+      { token: 'type', foreground: '4ec9b0' },
+    ],
+    colors: {
+      // Editor colors
+      'editor.background': '#1e1e1e',
+      'editor.foreground': '#d4d4d4',
+      // Suggest widget (IntelliSense dropdown) - CRITICAL FIX
+      'editorSuggestWidget.background': '#252526',
+      'editorSuggestWidget.border': '#454545',
+      'editorSuggestWidget.foreground': '#d4d4d4',
+      'editorSuggestWidget.selectedForeground': '#ffffff',
+      'editorSuggestWidget.selectedBackground': '#062f4a',
+      'editorSuggestWidget.highlightForeground': '#18a3ff',
+      'editorSuggestWidget.focusHighlightForeground': '#18a3ff',
+      // Widget (hover, details panel)
+      'editorWidget.background': '#252526',
+      'editorWidget.foreground': '#d4d4d4',
+      'editorWidget.border': '#454545',
+      // Hover widget
+      'editorHoverWidget.background': '#252526',
+      'editorHoverWidget.foreground': '#d4d4d4',
+      'editorHoverWidget.border': '#454545',
+      // List (dropdown items)
+      'list.hoverBackground': '#2a2d2e',
+      'list.hoverForeground': '#d4d4d4',
+      'list.focusBackground': '#062f4a',
+      'list.focusForeground': '#ffffff',
+      'list.activeSelectionBackground': '#062f4a',
+      'list.activeSelectionForeground': '#ffffff',
+      'list.inactiveSelectionBackground': '#37373d',
+      'list.inactiveSelectionForeground': '#d4d4d4',
+      'list.highlightForeground': '#18a3ff',
+    },
+  });
+
+  // Define a custom light theme
+  monaco.editor.defineTheme('cis118m-light', {
+    base: 'vs',
+    inherit: true,
+    rules: [
+      { token: 'keyword', foreground: '0000ff' },
+      { token: 'string', foreground: 'a31515' },
+      { token: 'number', foreground: '098658' },
+      { token: 'comment', foreground: '008000' },
+      { token: 'type', foreground: '267f99' },
+    ],
+    colors: {
+      'editor.background': '#ffffff',
+      'editor.foreground': '#000000',
+      // Suggest widget for light mode
+      'editorSuggestWidget.background': '#f3f3f3',
+      'editorSuggestWidget.border': '#c8c8c8',
+      'editorSuggestWidget.foreground': '#000000',
+      'editorSuggestWidget.selectedForeground': '#000000',
+      'editorSuggestWidget.selectedBackground': '#0060c0',
+      'editorSuggestWidget.highlightForeground': '#0066bf',
+      'editorSuggestWidget.focusHighlightForeground': '#0066bf',
+      'editorWidget.background': '#f3f3f3',
+      'editorWidget.foreground': '#000000',
+      'editorWidget.border': '#c8c8c8',
+      'editorHoverWidget.background': '#f3f3f3',
+      'editorHoverWidget.foreground': '#000000',
+      'editorHoverWidget.border': '#c8c8c8',
+      'list.hoverBackground': '#e8e8e8',
+      'list.hoverForeground': '#000000',
+      'list.focusBackground': '#0060c0',
+      'list.focusForeground': '#ffffff',
+      'list.activeSelectionBackground': '#0060c0',
+      'list.activeSelectionForeground': '#ffffff',
+      'list.inactiveSelectionBackground': '#e4e6f1',
+      'list.inactiveSelectionForeground': '#000000',
+      'list.highlightForeground': '#0066bf',
+    },
+  });
+
   // Register completion provider for C#
   monaco.languages.registerCompletionItemProvider('csharp', {
     triggerCharacters: ['.', ' '],
@@ -215,7 +299,7 @@ const EditorApp = () => {
   const [stderr, setStderr] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-  const [editorTheme, setEditorTheme] = useState("vs-dark");
+  const [editorTheme, setEditorTheme] = useState("cis118m-dark");
   const saveTimer = useRef<number | undefined>();
 
   const startersForWeek = useMemo(() => startersByWeek(selectedWeek), [selectedWeek]);
@@ -224,7 +308,7 @@ const EditorApp = () => {
   useEffect(() => {
     const syncTheme = () => {
       const isDark = document.body.getAttribute('data-theme') !== 'light';
-      setEditorTheme(isDark ? "vs-dark" : "vs");
+      setEditorTheme(isDark ? "cis118m-dark" : "cis118m-light");
     };
     
     syncTheme(); // Initial sync
