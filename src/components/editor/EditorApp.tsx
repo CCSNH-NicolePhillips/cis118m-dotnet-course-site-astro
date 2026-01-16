@@ -9,8 +9,9 @@ import {
   normalizeWeek,
   starters,
   startersByWeek,
+  type StarterFile,
 } from "../../lib/starters";
-import { loadSavedCode, resetCode, saveCode } from "../../lib/storage";
+import { loadSavedFiles, resetCode, saveFiles } from "../../lib/storage";
 import { runCode } from "../../lib/runClient";
 
 // Declare global csharpWorker interface for WASM-based IntelliSense
@@ -294,15 +295,21 @@ const EditorApp = () => {
   const initialStarter = pickInitialStarter();
   const [selectedWeek, setSelectedWeek] = useState(initialStarter.week);
   const [starterId, setStarterId] = useState(initialStarter.id);
-  const [code, setCode] = useState(initialStarter.source);
+  // Multi-file state
+  const [files, setFiles] = useState<StarterFile[]>(initialStarter.files);
+  const [activeFileIndex, setActiveFileIndex] = useState(0);
   const [output, setOutput] = useState("Output will appear here after Run.");
   const [stderr, setStderr] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [editorTheme, setEditorTheme] = useState("cis118m-dark");
   const saveTimer = useRef<number | undefined>();
+  const monacoRef = useRef<Monaco | null>(null);
 
   const startersForWeek = useMemo(() => startersByWeek(selectedWeek), [selectedWeek]);
+  
+  // Current active file content
+  const activeFile = files[activeFileIndex] || files[0];
 
   // Sync editor theme with site data-theme attribute
   useEffect(() => {
@@ -319,22 +326,25 @@ const EditorApp = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Load starter files when starter changes
   useEffect(() => {
     const starter = findStarterById(starterId) || defaultStarterForWeek(selectedWeek);
-    const saved = loadSavedCode(starter.id);
+    const savedFiles = loadSavedFiles(starter.id);
     setSelectedWeek(starter.week);
-    setCode(saved ?? starter.source);
+    setFiles(savedFiles ?? starter.files);
+    setActiveFileIndex(0);
     setOutput("Ready. Use Run or start typing.");
     setStderr("");
   }, [starterId, selectedWeek]);
 
+  // Auto-save files
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!starterId) return;
+    if (!starterId || files.length === 0) return;
 
     window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(() => {
-      saveCode(starterId, code);
+      saveFiles(starterId, files);
       setLastSaved(new Date());
     }, 500);
 
@@ -343,7 +353,17 @@ const EditorApp = () => {
         window.clearTimeout(saveTimer.current);
       }
     };
-  }, [starterId, code]);
+  }, [starterId, files]);
+
+  // Update file content when editing
+  const handleCodeChange = (newContent: string | undefined) => {
+    if (newContent === undefined) return;
+    setFiles(prevFiles => 
+      prevFiles.map((f, i) => 
+        i === activeFileIndex ? { ...f, content: newContent } : f
+      )
+    );
+  };
 
   const handleWeekChange = (week: string) => {
     const normalized = normalizeWeek(week);
@@ -362,8 +382,10 @@ const EditorApp = () => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code);
-      setOutput("Copied to clipboard.");
+      // Copy all files as combined content
+      const allCode = files.map(f => `// === ${f.name} ===\n${f.content}`).join('\n\n');
+      await navigator.clipboard.writeText(allCode);
+      setOutput(`Copied ${files.length} file(s) to clipboard.`);
       setStderr("");
     } catch (err) {
       setStderr("Copy failed. Your browser may block clipboard access.");
@@ -372,21 +394,34 @@ const EditorApp = () => {
 
   const handleDownload = () => {
     const week = normalizeWeek(selectedWeek);
-    const fileName = `Week${week}.cs`;
-    const blob = new Blob([code], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    URL.revokeObjectURL(url);
+    if (files.length === 1) {
+      // Single file download
+      const blob = new Blob([files[0].content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = files[0].name;
+      link.click();
+      URL.revokeObjectURL(url);
+    } else {
+      // Multi-file: combine into single download
+      const combined = files.map(f => `// === ${f.name} ===\n${f.content}`).join('\n\n');
+      const blob = new Blob([combined], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Week${week}-all-files.cs`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleReset = () => {
     const starter = findStarterById(starterId);
     if (!starter) return;
     resetCode(starter.id);
-    setCode(starter.source);
+    setFiles(starter.files);
+    setActiveFileIndex(0);
     setOutput("Starter restored.");
     setStderr("");
   };
@@ -395,7 +430,9 @@ const EditorApp = () => {
     setIsRunning(true);
     setOutput("Running...");
     setStderr("");
-    const result = await runCode({ starterId, source: code });
+    // Send all files to the runner - primary file (Program.cs) first
+    const source = files.map(f => f.content).join('\n\n');
+    const result = await runCode({ starterId, source });
     setIsRunning(false);
 
     if (result.ok) {
@@ -469,13 +506,32 @@ const EditorApp = () => {
             <span>{currentStarter.title}</span>
             <small>{buildStarterId(currentStarter.week, currentStarter.slug)}</small>
           </div>
+          
+          {/* File Tabs */}
+          {files.length > 1 && (
+            <div className="file-tabs">
+              {files.map((file, index) => (
+                <button
+                  key={file.name}
+                  className={`file-tab ${index === activeFileIndex ? 'active' : ''}`}
+                  onClick={() => setActiveFileIndex(index)}
+                  title={file.name}
+                >
+                  <span className="file-icon">📄</span>
+                  {file.name}
+                </button>
+              ))}
+            </div>
+          )}
+          
           <Editor
-            height="520px"
+            height={files.length > 1 ? "480px" : "520px"}
             language="csharp"
             theme={editorTheme}
-            value={code}
-            onChange={(value) => setCode(value || "")}
+            value={activeFile?.content ?? ""}
+            onChange={handleCodeChange}
             onMount={(editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+              monacoRef.current = monaco;
               initializeCSharpIntelliSense(monaco);
             }}
             options={{

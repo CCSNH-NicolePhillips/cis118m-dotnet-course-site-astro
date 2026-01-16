@@ -143,6 +143,77 @@
 }
 
 /* ============================================
+   FILE TABS (Multi-file editor support)
+   ============================================ */
+
+.file-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 8px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px 8px 0 0;
+  overflow-x: auto;
+}
+
+.file-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px 6px 0 0;
+  background: rgba(30, 30, 30, 0.6);
+  color: var(--muted);
+  font-size: 13px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.file-tab:hover {
+  background: rgba(60, 60, 60, 0.8);
+  color: var(--text);
+}
+
+.file-tab.active {
+  background: #1e1e1e;
+  color: #ffffff;
+  border-bottom: 2px solid #4ec9b0;
+}
+
+.file-tab .file-icon {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.file-tab.active .file-icon {
+  opacity: 1;
+}
+
+/* Light mode adjustments for tabs */
+body:not([data-theme="dark"]) .file-tabs {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+body:not([data-theme="dark"]) .file-tab {
+  background: rgba(200, 200, 200, 0.4);
+  color: #666;
+}
+
+body:not([data-theme="dark"]) .file-tab:hover {
+  background: rgba(200, 200, 200, 0.7);
+  color: #333;
+}
+
+body:not([data-theme="dark"]) .file-tab.active {
+  background: #ffffff;
+  color: #000;
+  border-bottom-color: #2563eb;
+}
+
+/* ============================================
    MONACO INTELLISENSE VISIBILITY FIX
    Forces high contrast text in suggest widget
    ============================================ */
