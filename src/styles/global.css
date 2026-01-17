@@ -282,7 +282,19 @@ a:hover { text-decoration: underline; }
   pointer-events: none;
 }
 
-.main {
+/* Main content area - scoped to avoid conflict with Monaco's internal .main elements */
+.layout > .content-area > .main,
+body > .layout .main:not(.monaco-editor *) {
+  padding: 32px 48px 44px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+/* Fallback for direct .main usage outside Monaco */
+.main:not(.monaco-editor .main) {
   padding: 32px 48px 44px;
   width: 100%;
   max-width: 100%;
@@ -935,6 +947,36 @@ body[data-theme="dark"] .mark-complete-button.completed {
 
 .monaco-editor .suggest-widget * {
   color: #d4d4d4 !important;
+}
+
+/* Critical fix: Ensure Monaco's internal .main elements have proper sizing */
+/* This overrides any global .main rules that might set height:0 or hide content */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row > .contents > .main {
+  display: flex !important;
+  height: auto !important;
+  min-height: 18px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: pre !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row > .contents > .main > .left,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row > .contents > .main > .right {
+  display: flex !important;
+  height: auto !important;
+  visibility: visible !important;
+}
+
+/* Ensure label text is visible */
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label .label-name,
+.monaco-editor .suggest-widget .monaco-list .monaco-list-row .monaco-icon-label-container {
+  color: #d4d4d4 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
 }
 
 .monaco-editor .suggest-widget .monaco-list-row.focused,

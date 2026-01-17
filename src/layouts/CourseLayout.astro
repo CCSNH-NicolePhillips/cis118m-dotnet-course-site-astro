@@ -710,7 +710,25 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
           } else {
             // Student: Check syllabus quiz prerequisite
-            const progress = getProgress();
+            // Fetch progress fresh from server to ensure we have latest quiz scores
+            let progress = {};
+            try {
+              const token = await getAccessToken();
+              if (token) {
+                const response = await fetch('/api/progress-get', {
+                  headers: { 'Authorization': `Bearer ${token}` },
+                });
+                if (response.ok) {
+                  const data = await response.json();
+                  progress = data.progress || {};
+                  cloudProgress = progress; // Update cache too
+                }
+              }
+            } catch (err) {
+              console.error('[Auth] Failed to fetch progress for gatekeeper:', err);
+              progress = getProgress(); // Fall back to cached
+            }
+            
             const syllabusQuiz = progress['week-01-syllabus-quiz'] || progress['week-01-required-quiz'];
             const hasPassedSyllabus = (syllabusQuiz?.score || 0) >= 70;
             

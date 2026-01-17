@@ -24,14 +24,69 @@ export default async function handler(request, context) {
     // Verify authentication
     const user = await requireAuth(request);
 
-    // Get progress from Redis
+    // Get progress from Redis (both old and new storage patterns)
     const redis = getRedis();
-    const key = `progress:${user.sub}`;
-    const progress = await redis.get(key);
+    
+    // Old storage pattern: progress:{userId}
+    const oldKey = `progress:${user.sub}`;
+    const oldProgress = await redis.get(oldKey) || {};
+    
+    // New storage pattern: user:progress:data:{userId} (hash with pageId:score, pageId:status)
+    const newKey = `user:progress:data:${user.sub}`;
+    const newProgressHash = await redis.hgetall(newKey) || {};
+    
+    // Also check completion records for quiz scores
+    // Format: completion:{userId}:{quizId}
+    const completionKeys = [
+      `completion:${user.sub}:week-01-required-quiz`,
+      `completion:${user.sub}:week-01-syllabus-quiz`,
+    ];
+    
+    // Merge new format into progress object
+    // The hash keys look like: "week-01-syllabus-quiz:score", "week-01-syllabus-quiz:status"
+    const mergedProgress = { ...oldProgress };
+    
+    // Parse hash data into progress format
+    for (const [hashKey, value] of Object.entries(newProgressHash)) {
+      const parts = hashKey.split(':');
+      if (parts.length >= 2) {
+        const field = parts.pop(); // score, status, etc.
+        const pageId = parts.join(':'); // rejoin in case pageId has colons
+        
+        if (!mergedProgress[pageId]) {
+          mergedProgress[pageId] = {};
+        }
+        
+        // Convert score string to number
+        if (field === 'score') {
+          mergedProgress[pageId][field] = parseFloat(value) || 0;
+        } else {
+          mergedProgress[pageId][field] = value;
+        }
+      }
+    }
+    
+    // Check completion records for quiz scores
+    for (const compKey of completionKeys) {
+      const completion = await redis.get(compKey);
+      if (completion && typeof completion === 'object') {
+        // Extract quizId from key
+        const quizId = compKey.split(':').pop();
+        if (!mergedProgress[quizId]) {
+          mergedProgress[quizId] = {};
+        }
+        if (completion.score !== undefined) {
+          mergedProgress[quizId].score = completion.score;
+        }
+        if (completion.passed !== undefined) {
+          mergedProgress[quizId].status = completion.passed ? 'passed' : 'attempted';
+        }
+      }
+    }
 
     return new Response(
       JSON.stringify({ 
-        progress: progress || {} 
+        progress: mergedProgress 
       }),
       {
         status: 200,
