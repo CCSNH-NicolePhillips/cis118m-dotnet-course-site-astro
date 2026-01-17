@@ -1,9 +1,10 @@
 export type WeekSlug = string;
 export type PageSlug = "lesson-1" | "lesson-2" | "extra-practice" | "lab" | "homework";
+export type SelfMarkedSlug = "lab" | "homework" | "syllabus" | "start-here";
 
 export type WeekProgress = {
   viewed: Record<PageSlug, boolean>;
-  selfMarked?: Record<"lab" | "homework", boolean>;
+  selfMarked?: Record<SelfMarkedSlug, boolean>;
   lastUpdated?: string;
 };
 
@@ -12,7 +13,12 @@ export type Progress = {
 };
 
 const STORAGE_KEY = "cis118m_progress_v1";
-const defaultSelfMarked = () => ({ lab: false, homework: false });
+const defaultSelfMarked = (): Record<SelfMarkedSlug, boolean> => ({ 
+  lab: false, 
+  homework: false, 
+  syllabus: false, 
+  "start-here": false 
+});
 const defaultWeek = (): WeekProgress => ({
   viewed: {
     "lesson-1": false,
@@ -83,7 +89,7 @@ export const markViewed = (
 
 export const markSelfMarked = (
   week: string,
-  page: "lab" | "homework",
+  page: SelfMarkedSlug,
   value = true,
   store = safeStorage()
 ): Progress => {

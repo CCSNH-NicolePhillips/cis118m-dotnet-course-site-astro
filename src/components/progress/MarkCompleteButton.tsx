@@ -26,16 +26,13 @@ const MarkCompleteButton = () => {
 
   useEffect(() => {
     if (!week || !slug) return;
-    // Only lab and homework are tracked in selfMarked
-    if (slug === "lab" || slug === "homework") {
-      const wp = getWeekProgress(week);
-      setDone(!!wp.selfMarked?.[slug]);
-    }
+    // Track all slug types in selfMarked
+    const wp = getWeekProgress(week);
+    setDone(!!wp.selfMarked?.[slug]);
   }, [week, slug]);
 
   const toggle = () => {
     if (!week || !slug) return;
-    if (slug !== "lab" && slug !== "homework") return;
     
     const next = !done;
     markSelfMarked(week, slug, next);
