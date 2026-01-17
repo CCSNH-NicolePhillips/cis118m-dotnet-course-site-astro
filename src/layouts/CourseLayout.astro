@@ -504,8 +504,19 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
         // Expose getProgress globally for other scripts
         window.__getProgress = getProgress;
         
+        // Helper to get local progress from localStorage
+        const getLocalProgress = () => {
+          try {
+            const raw = localStorage.getItem("cis118m_progress_v1");
+            return raw ? JSON.parse(raw) : { weeks: {} };
+          } catch {
+            return { weeks: {} };
+          }
+        };
+        
         const updateStatusBadges = () => {
           const progress = getProgress();
+          const localProgress = getLocalProgress();
           const statusElements = document.querySelectorAll(".lesson-status");
           
           statusElements.forEach(el => {
@@ -529,8 +540,24 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
               score = entry.score;
               
               // Override status based on score if available (for graded items)
+              // For gatekeeper quizzes, passing is 100%, for others it's 70%
               if (score !== undefined && score !== null) {
-                status = score >= 70 ? "completed" : "attempted";
+                const isGatekeeperQuiz = pageId?.includes('required-quiz') || pageId?.includes('syllabus-quiz');
+                const passingThreshold = isGatekeeperQuiz ? 100 : 70;
+                status = score >= passingThreshold ? "completed" : "attempted";
+              }
+            }
+            
+            // Also check localStorage for viewed lessons (non-graded items)
+            if (status === "not_started" && pageId) {
+              // Extract week and slug from pageId (e.g., "week-01-lesson-1" -> week="01", slug="lesson-1")
+              const match = pageId.match(/^week-(\d+)-(.+)$/);
+              if (match) {
+                const [, week, slug] = match;
+                const weekData = localProgress.weeks?.[week];
+                if (weekData?.viewed?.[slug] || weekData?.selfMarked?.[slug]) {
+                  status = "completed";
+                }
               }
             }
             
