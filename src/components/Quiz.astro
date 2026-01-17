@@ -102,6 +102,14 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       <div class="final-score" id={`final-score-${quizId}`}></div>
     </div>
   </div>
+
+  <div class="quiz-revision" id={`revision-${quizId}`} style="display: none;">
+    <div class="revision-content">
+      <h3>📝 Request Revision</h3>
+      <p>Your score is below the required threshold. You may request to revise and resubmit this quiz.</p>
+      <button class="revision-button" id={`revision-btn-${quizId}`}>🔄 Request Revision</button>
+    </div>
+  </div>
 </div>
 
 <script define:vars={{ quizId, questions, passingScore, effectiveMaxAttempts }}>
@@ -113,6 +121,8 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     const retakeBtn = document.getElementById(`retake-${quizId}`);
     const statusDiv = document.getElementById(`status-${quizId}`);
     const lockedDiv = document.getElementById(`locked-${quizId}`);
+    const revisionDiv = document.getElementById(`revision-${quizId}`);
+    const revisionBtn = document.getElementById(`revision-btn-${quizId}`);
     const maxAttempts = effectiveMaxAttempts;
     const unlimitedAttempts = maxAttempts >= 999999;
     const submitBtn = document.getElementById(`submit-${quizId}`);
@@ -192,6 +202,18 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
                 statusDiv.appendChild(successMsg);
                 // Hide the form since already passed
                 form.style.display = 'none';
+              } else if (bestScore >= 70 && bestScore < passingScore) {
+                // Score is 70-99% (below passing threshold) - show revision option
+                form.style.display = 'none';
+                revisionDiv.style.display = 'block';
+                
+                const revisionMsg = document.createElement('div');
+                revisionMsg.className = 'revision-info';
+                revisionMsg.innerHTML = `
+                  <p>Your score of <strong>${bestScore}%</strong> is below the required <strong>${passingScore}%</strong>.</p>
+                  <p>You may request a revision to attempt this quiz again.</p>
+                `;
+                revisionDiv.querySelector('.revision-content').insertBefore(revisionMsg, revisionBtn);
               }
             }
             
@@ -450,6 +472,68 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       resultsDiv.style.display = 'none';
       retakeBtn.style.display = 'none';
       statusDiv.style.display = 'none';
+      revisionDiv.style.display = 'none';
+    });
+    
+    // Request Revision button - allows students with 70-99% to reset and retake
+    revisionBtn?.addEventListener('click', async () => {
+      const authAvailable = await waitForAuth();
+      if (!authAvailable) {
+        alert('You must be logged in to request a revision.');
+        return;
+      }
+      
+      const authed = await window.__auth.isAuthed();
+      if (!authed) {
+        alert('You must be logged in to request a revision.');
+        return;
+      }
+      
+      try {
+        revisionBtn.disabled = true;
+        revisionBtn.textContent = 'Processing...';
+        
+        const token = await window.__auth.getAccessToken();
+        
+        // Reset the progress status to in_progress
+        await fetch('/api/progress-update', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            pageId: quizId,
+            status: 'in_progress',
+            score: null // Clear the score
+          }),
+        });
+        
+        // Reset local state
+        currentAttempts = 0;
+        bestScore = 0;
+        
+        // Clear localStorage
+        localStorage.removeItem(`quiz-result-${quizId}`);
+        localStorage.removeItem(`quiz-draft-${quizId}`);
+        
+        // Show the form again
+        form.reset();
+        form.style.display = 'block';
+        resultsDiv.style.display = 'none';
+        statusDiv.style.display = 'none';
+        lockedDiv.style.display = 'none';
+        revisionDiv.style.display = 'none';
+        
+        // Reload the page to ensure fresh state
+        window.location.reload();
+        
+      } catch (err) {
+        console.error('[Quiz] Revision request failed:', err);
+        alert('Failed to request revision. Please try again.');
+        revisionBtn.disabled = false;
+        revisionBtn.textContent = '🔄 Request Revision';
+      }
     });
   })();
 </script>
@@ -806,5 +890,48 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     font-weight: bold;
     font-size: 0.9rem;
     margin-bottom: 12px;
+  }
+  
+  /* Request Revision Section */
+  .quiz-revision {
+    background: rgba(206, 145, 120, 0.1);
+    border: 1px solid #ce9178;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+  
+  .revision-content h3 {
+    margin: 0 0 12px 0;
+    color: #ce9178;
+  }
+  
+  .revision-content p {
+    margin: 0 0 12px 0;
+    color: var(--text);
+  }
+  
+  .revision-info {
+    margin-bottom: 16px;
+  }
+  
+  .revision-button {
+    background: #ce9178;
+    color: #1e1e1e;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .revision-button:hover {
+    background: #e5a990;
+  }
+  
+  .revision-button:disabled {
+    background: #666;
+    cursor: not-allowed;
   }
 </style>
