@@ -15,6 +15,8 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
   const [score, setScore] = useState<number | null>(null);
   const [isGrading, setIsGrading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [savedContent, setSavedContent] = useState<string | null>(null);
 
   // Get userId from Auth0
   useEffect(() => {
@@ -25,6 +27,35 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     });
   }, []);
 
+  // Load saved content from database on mount
+  useEffect(() => {
+    async function loadPersistedContent() {
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          setIsLoading(false);
+          return;
+        }
+        
+        const response = await fetch(`/api/code-get?starterId=${assignmentId}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.code) {
+            setSavedContent(data.code);
+          }
+        }
+      } catch (err) {
+        console.error('[EngineeringLog] Failed to load saved content:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadPersistedContent();
+  }, [assignmentId]);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -34,13 +65,13 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
         placeholder: 'Write your reflection here... (3-5 sentences explaining how the CLR runs your C# code and why semicolons matter)',
       }),
     ],
-    content: '',
+    content: savedContent || '',
     editorProps: {
       attributes: {
         spellcheck: 'true',
       },
     },
-  })
+  }, [savedContent])
 
   const submitForInspection = async () => {
     if (!editor) return;
@@ -87,6 +118,16 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       setScore(data.score);
       setFeedback(data.feedback);
 
+      // Save the content to code-save for persistence
+      await fetch('/api/code-save', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          starterId: assignmentId,
+          code: editor.getHTML()
+        }),
+      });
+
       // Save the mission success to the database
       await fetch('/.netlify/functions/progress-update', {
         method: 'POST',
@@ -105,6 +146,16 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       setIsGrading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ border: '2px solid #4ec9b0', borderRadius: '8px', padding: '20px', background: '#1e1e1e', textAlign: 'center', color: '#4ec9b0' }}>
+          Loading your saved work...
+        </div>
+      </div>
+    );
+  }
 
   if (!editor) return null;
 

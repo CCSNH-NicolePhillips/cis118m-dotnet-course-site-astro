@@ -729,7 +729,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
               progress = getProgress(); // Fall back to cached
             }
             
-            const syllabusQuiz = progress['week-01-syllabus-quiz'] || progress['week-01-required-quiz'];
+            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'];
             const hasPassedSyllabus = (syllabusQuiz?.score || 0) >= 70;
             
             // Debug logging
@@ -742,6 +742,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             const isPublicPage = currentPath.includes('/syllabus') || 
                                  currentPath.includes('/syllabus-quiz') || 
                                  currentPath.includes('/required-quiz') ||
+                                 currentPath.includes('/weekly-assessment') ||
                                  currentPath === '/' ||
                                  currentPath.includes('/auth/') ||
                                  currentPath.includes('/start-here');

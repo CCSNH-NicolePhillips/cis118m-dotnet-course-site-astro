@@ -140,38 +140,55 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       
       try {
         const token = await window.__auth.getAccessToken();
-        const response = await fetch(`/api/progress-get?quizId=${quizId}`, {
+        const response = await fetch(`/api/progress-get`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
           const data = await response.json();
-          currentAttempts = data.attempts || 0;
-          bestScore = data.bestScore || 0;
+          const quizProgress = data.progress?.[quizId];
           
-          // If already attempted, show status
-          if (currentAttempts > 0) {
-            statusDiv.style.display = 'block';
-            document.getElementById(`prev-score-${quizId}`).innerHTML = `
-              <span class="score-label">Best Score:</span> 
-              <span class="score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
-            `;
-            document.getElementById(`attempts-${quizId}`).innerHTML = 
-              unlimitedAttempts
-                ? '✅ Unlimited attempts allowed'
-                : (currentAttempts >= maxAttempts 
-                    ? '🔒 No attempts remaining' 
-                    : `✅ ${maxAttempts - currentAttempts} attempt(s) remaining`);
-          }
-          
-          // If max attempts reached, lock the quiz (skip if unlimited)
-          if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
-            form.style.display = 'none';
-            lockedDiv.style.display = 'block';
-            document.getElementById(`final-score-${quizId}`).innerHTML = `
-              <span class="final-score-label">Final Score:</span>
-              <span class="final-score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
-            `;
+          // Extract score and status from progress data
+          if (quizProgress) {
+            bestScore = quizProgress.score || 0;
+            currentAttempts = quizProgress.attempts || (quizProgress.status ? 1 : 0);
+            
+            // If has a score, show status
+            if (bestScore > 0 || quizProgress.status) {
+              statusDiv.style.display = 'block';
+              document.getElementById(`prev-score-${quizId}`).innerHTML = `
+                <span class="score-label">Best Score:</span> 
+                <span class="score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
+              `;
+              document.getElementById(`attempts-${quizId}`).innerHTML = 
+                unlimitedAttempts
+                  ? '✅ Unlimited attempts allowed'
+                  : (currentAttempts >= maxAttempts 
+                      ? '🔒 No attempts remaining' 
+                      : `✅ ${maxAttempts - currentAttempts} attempt(s) remaining`);
+              
+              // If already passed, show success message
+              if (bestScore >= passingScore && (quizId === 'week-01-required-quiz' || quizId === 'week-01-syllabus-quiz')) {
+                const successMsg = document.createElement('div');
+                successMsg.className = 'gatekeeper-success';
+                successMsg.innerHTML = `
+                  <h3>✓ Quiz Already Passed</h3>
+                  <p>You scored ${bestScore}%. All course content is unlocked.</p>
+                  <a href="/week-01/lesson-1/" class="proceed-btn">Proceed to Week 1 Lesson →</a>
+                `;
+                statusDiv.appendChild(successMsg);
+              }
+            }
+            
+            // If max attempts reached, lock the quiz (skip if unlimited)
+            if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
+              form.style.display = 'none';
+              lockedDiv.style.display = 'block';
+              document.getElementById(`final-score-${quizId}`).innerHTML = `
+                <span class="final-score-label">Final Score:</span>
+                <span class="final-score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
+              `;
+            }
           }
         }
       } catch (err) {
