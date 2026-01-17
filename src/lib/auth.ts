@@ -85,8 +85,22 @@ export async function getAccessToken() {
       },
     });
     return token;
-  } catch (err) {
+  } catch (err: any) {
     console.error("Failed to get access token:", err);
+    
+    // If refresh token is missing or expired, force re-login
+    if (err?.message?.includes('Missing Refresh Token') || 
+        err?.message?.includes('invalid_grant') ||
+        err?.error === 'login_required' ||
+        err?.error === 'consent_required') {
+      console.log('[Auth] Session expired or invalid, forcing re-login...');
+      // Clear the cached client to force fresh state
+      client = null;
+      // Redirect to login
+      await login(window.location.pathname);
+      return null;
+    }
+    
     return null;
   }
 }
