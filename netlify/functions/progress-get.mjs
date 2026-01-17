@@ -35,6 +35,10 @@ export default async function handler(request, context) {
     const newKey = `user:progress:data:${user.sub}`;
     const newProgressHash = await redis.hgetall(newKey) || {};
     
+    console.log('[progress-get] userId:', user.sub);
+    console.log('[progress-get] oldProgress keys:', Object.keys(oldProgress));
+    console.log('[progress-get] newProgressHash:', JSON.stringify(newProgressHash));
+    
     // Also check completion records for quiz scores
     // Format: completion:{userId}:{quizId}
     const completionKeys = [
@@ -69,11 +73,13 @@ export default async function handler(request, context) {
     // Check completion records for quiz scores
     for (const compKey of completionKeys) {
       let completion = await redis.get(compKey);
+      console.log('[progress-get] Checking completion key:', compKey, 'value:', completion);
       
       // Handle both string and object formats
       if (completion && typeof completion === 'string') {
         try {
           completion = JSON.parse(completion);
+          console.log('[progress-get] Parsed completion:', completion);
         } catch (e) {
           console.error('[progress-get] Failed to parse completion:', compKey, e);
           continue;
@@ -83,6 +89,7 @@ export default async function handler(request, context) {
       if (completion && typeof completion === 'object') {
         // Extract quizId from key
         const quizId = compKey.split(':').pop();
+        console.log('[progress-get] Extracted quizId:', quizId, 'score:', completion.score);
         if (!mergedProgress[quizId]) {
           mergedProgress[quizId] = {};
         }
@@ -94,6 +101,8 @@ export default async function handler(request, context) {
         }
       }
     }
+    
+    console.log('[progress-get] Final mergedProgress:', JSON.stringify(mergedProgress));
 
     return new Response(
       JSON.stringify({ 
