@@ -17,6 +17,9 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [savedContent, setSavedContent] = useState<string | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<'not-started' | 'in-progress' | 'passed' | 'needs-revision'>('not-started');
+  const PASSING_SCORE = 70;
 
   // Get userId from Auth0
   useEffect(() => {
@@ -27,7 +30,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     });
   }, []);
 
-  // Load saved content from database on mount
+  // Load saved content and progress from database on mount
   useEffect(() => {
     async function loadPersistedContent() {
       try {
@@ -37,14 +40,41 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
           return;
         }
         
-        const response = await fetch(`/api/code-get?starterId=${assignmentId}`, {
+        // Load saved code
+        const codeResponse = await fetch(`/api/code-get?starterId=${assignmentId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         
-        if (response.ok) {
-          const data = await response.json();
+        if (codeResponse.ok) {
+          const data = await codeResponse.json();
           if (data?.code) {
             setSavedContent(data.code);
+          }
+        }
+        
+        // Load progress to check if already submitted/passed
+        const progressResponse = await fetch(`/api/progress-get`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          const assignmentProgress = progressData.progress?.[assignmentId];
+          
+          if (assignmentProgress) {
+            const savedScore = assignmentProgress.score;
+            if (savedScore !== undefined && savedScore !== null) {
+              setScore(savedScore);
+              
+              if (savedScore >= PASSING_SCORE) {
+                setIsLocked(true);
+                setSubmissionStatus('passed');
+                setFeedback('✓ This submission has been validated and committed to your record.');
+              } else if (assignmentProgress.status === 'completed' || assignmentProgress.status === 'attempted') {
+                setSubmissionStatus('needs-revision');
+                setFeedback(assignmentProgress.feedback || 'Previous submission did not meet the passing threshold. You may revise and resubmit.');
+              }
+            }
           }
         }
       } catch (err) {
@@ -117,6 +147,15 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       const data = await response.json();
       setScore(data.score);
       setFeedback(data.feedback);
+      
+      // Determine submission status based on score
+      const passed = data.score >= PASSING_SCORE;
+      if (passed) {
+        setIsLocked(true);
+        setSubmissionStatus('passed');
+      } else {
+        setSubmissionStatus('needs-revision');
+      }
 
       // Save the content to code-save for persistence
       await fetch('/api/code-save', {
@@ -134,7 +173,7 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
         headers,
         body: JSON.stringify({ 
           pageId: assignmentId, 
-          status: 'completed',
+          status: passed ? 'completed' : 'attempted',
           score: data.score,
           feedback: data.feedback
         }),
@@ -218,26 +257,79 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
               1.
             </ToolbarButton>
           </div>
-          <button
-            onClick={submitForInspection}
-            disabled={isGrading}
-            style={{
-              background: '#4ec9b0',
-              color: '#000',
-              border: 'none',
+          
+          {/* Submit Button or Locked Status */}
+          {isLocked ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(78, 201, 176, 0.2)',
+              border: '1px solid #4ec9b0',
               padding: '5px 15px',
               borderRadius: '4px',
-              cursor: isGrading ? 'wait' : 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            {isGrading ? 'Processing...' : 'Submit for Review'}
-          </button>
+              color: '#4ec9b0',
+              fontWeight: 'bold',
+              fontSize: '0.9rem'
+            }}>
+              <span style={{ fontSize: '1.2em' }}>✓</span>
+              SUBMITTED FOR REVIEW
+            </div>
+          ) : (
+            <button
+              onClick={submitForInspection}
+              disabled={isGrading}
+              style={{
+                background: submissionStatus === 'needs-revision' ? '#ce9178' : '#4ec9b0',
+                color: '#000',
+                border: 'none',
+                padding: '5px 15px',
+                borderRadius: '4px',
+                cursor: isGrading ? 'wait' : 'pointer',
+                fontWeight: 'bold'
+              }}
+            >
+              {isGrading ? 'Processing...' : (submissionStatus === 'needs-revision' ? 'Revise & Resubmit' : 'Submit for Review')}
+            </button>
+          )}
         </div>
 
-        {/* Editor */}
-        <div style={{ minHeight: '150px', color: '#d4d4d4', padding: '10px' }}>
+        {/* Editor - with lock overlay when passed */}
+        <div style={{ 
+          minHeight: '150px', 
+          color: '#d4d4d4', 
+          padding: '10px',
+          position: 'relative',
+          opacity: isLocked ? 0.7 : 1,
+          pointerEvents: isLocked ? 'none' : 'auto'
+        }}>
           <EditorContent editor={editor} />
+          {isLocked && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'auto'
+            }}>
+              <div style={{
+                background: '#1e1e1e',
+                border: '2px solid #4ec9b0',
+                borderRadius: '8px',
+                padding: '15px 25px',
+                textAlign: 'center'
+              }}>
+                <div style={{ color: '#4ec9b0', fontSize: '1.5rem', marginBottom: '5px' }}>🔒</div>
+                <div style={{ color: '#4ec9b0', fontWeight: 'bold' }}>Submission Locked</div>
+                <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '5px' }}>Your passing submission has been recorded.</div>
+              </div>
+            </div>
+          )}
         </div>
         
         {/* Word count footer */}
@@ -251,10 +343,48 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
 
       {/* Technical Review Feedback */}
       {(feedback || score !== null) && (
-        <div style={{ marginTop: '15px', background: '#000', border: '1px solid #4ec9b0', padding: '15px', borderRadius: '4px', fontFamily: 'monospace', position: 'relative' }}>
-          <div style={{ color: '#4ec9b0', fontSize: '0.8rem', marginBottom: '10px' }}>TECHNICAL REVIEW REPORT // ARCHITECT_V1</div>
-          {score !== null && <div style={{ fontSize: '1.5rem', color: '#4ec9b0', marginBottom: '10px' }}>SCORE: {score}/100</div>}
+        <div style={{ 
+          marginTop: '15px', 
+          background: '#000', 
+          border: `1px solid ${submissionStatus === 'passed' ? '#4ec9b0' : submissionStatus === 'needs-revision' ? '#ce9178' : '#4ec9b0'}`, 
+          padding: '15px', 
+          borderRadius: '4px', 
+          fontFamily: 'monospace', 
+          position: 'relative' 
+        }}>
+          <div style={{ 
+            color: submissionStatus === 'passed' ? '#4ec9b0' : submissionStatus === 'needs-revision' ? '#ce9178' : '#4ec9b0', 
+            fontSize: '0.8rem', 
+            marginBottom: '10px' 
+          }}>
+            {submissionStatus === 'passed' 
+              ? '✓ SUBMISSION ACCEPTED // PASSING GRADE RECORDED' 
+              : submissionStatus === 'needs-revision' 
+                ? '⚠ REVISION REQUIRED // RESUBMISSION ALLOWED'
+                : 'TECHNICAL REVIEW REPORT // ARCHITECT_V1'}
+          </div>
+          {score !== null && (
+            <div style={{ 
+              fontSize: '1.5rem', 
+              color: score >= PASSING_SCORE ? '#4ec9b0' : '#ce9178', 
+              marginBottom: '10px' 
+            }}>
+              SCORE: {score}/100 {score >= PASSING_SCORE ? '✓ PASS' : '✗ NEEDS IMPROVEMENT'}
+            </div>
+          )}
           <div style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{feedback}</div>
+          
+          {submissionStatus === 'needs-revision' && (
+            <div style={{
+              marginTop: '15px',
+              paddingTop: '15px',
+              borderTop: '1px solid #333',
+              color: '#ce9178',
+              fontSize: '0.85rem'
+            }}>
+              💡 <strong>Next Steps:</strong> Review the feedback above, revise your response in the editor, and click "Revise & Resubmit" to try again.
+            </div>
+          )}
         </div>
       )}
 

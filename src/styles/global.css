@@ -431,17 +431,22 @@ body > .layout .main:not(.monaco-editor *) {
   font-size: 14px;
   font-weight: bold;
   flex-shrink: 0;
+  margin-left: 8px;
+  opacity: 0.8;
 }
 
 .lesson-status.completed {
   color: #22c55e;
+  opacity: 1;
 }
 
 .lesson-status.in-progress {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
+  color: var(--accent);
+}
+
+.lesson-status.not-started {
+  color: var(--text-muted);
+  opacity: 0.5;
 }
 
 .navlist {

@@ -91,27 +91,31 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                           <li>
                             <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
                               <span class="lesson-text">01. Course Syllabus & Expectations</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-syllabus`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
                               <span class="lesson-text">02. Syllabus Assessment (Graded)</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-required-quiz`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lesson-1/`} data-page={`/week-${w.slug}/lesson-1/`} data-starter={`week-${w.slug}-lesson-1`}>
                               <span class="lesson-text">03. Lesson: The Spark</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`} data-page-id={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
                               <span class="lesson-text">04. Lab: Console Logic (Graded)</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-lab-01`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
                               <span class="lesson-text">05. Technical Reflection (Graded)</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-homework`}></span>
                             </a>
                           </li>
                         </>
@@ -120,19 +124,19 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                           <li>
                             <a href={`/week-${w.slug}/lesson-1/`} data-page={`/week-${w.slug}/lesson-1/`} data-starter={`week-${w.slug}-lesson-1`}>
                               <span class="lesson-text">Lesson 1: Memory & Variables</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`} data-page-id={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lesson-2/`} data-page={`/week-${w.slug}/lesson-2/`} data-starter={`week-${w.slug}-lesson-2`}>
                               <span class="lesson-text">Lesson 2</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`} data-page-id={`week-${w.slug}-lesson-2`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/extra-practice/`} data-page={`/week-${w.slug}/extra-practice/`} data-starter={`week-${w.slug}-extra-practice`}>
                               <span class="lesson-text">Extra Practice</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`} data-page-id={`week-${w.slug}-extra-practice`}></span>
                             </a>
                           </li>
                         </>
@@ -141,19 +145,19 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                           <li>
                             <a href={`/week-${w.slug}/lesson-1/`} data-page={`/week-${w.slug}/lesson-1/`} data-starter={`week-${w.slug}-lesson-1`}>
                               <span class="lesson-text">Lesson 1</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`} data-page-id={`week-${w.slug}-lesson-1`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/lesson-2/`} data-page={`/week-${w.slug}/lesson-2/`} data-starter={`week-${w.slug}-lesson-2`}>
                               <span class="lesson-text">Lesson 2</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`} data-page-id={`week-${w.slug}-lesson-2`}></span>
                             </a>
                           </li>
                           <li>
                             <a href={`/week-${w.slug}/extra-practice/`} data-page={`/week-${w.slug}/extra-practice/`} data-starter={`week-${w.slug}-extra-practice`}>
                               <span class="lesson-text">Extra Practice</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`}></span>
+                              <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`} data-page-id={`week-${w.slug}-extra-practice`}></span>
                             </a>
                           </li>
                         </>
@@ -501,19 +505,47 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           const statusElements = document.querySelectorAll(".lesson-status");
           
           statusElements.forEach(el => {
+            // Check both data-starter (legacy) and data-page-id (new)
             const starterId = el.getAttribute("data-starter");
-            const entry = progress[starterId];
-            const status = entry?.status || "not_started";
+            const pageId = el.getAttribute("data-page-id");
+            
+            // Try to find progress entry using pageId first, then starterId
+            let entry = null;
+            let status = "not_started";
+            let score = null;
+            
+            if (pageId && progress[pageId]) {
+              entry = progress[pageId];
+            } else if (starterId && progress[starterId]) {
+              entry = progress[starterId];
+            }
+            
+            if (entry) {
+              status = entry.status || "not_started";
+              score = entry.score;
+              
+              // Override status based on score if available (for graded items)
+              if (score !== undefined && score !== null) {
+                status = score >= 70 ? "completed" : "attempted";
+              }
+            }
             
             // Clear previous content
             el.textContent = "";
             el.className = "lesson-status";
             
-            if (status === "completed") {
-              el.textContent = "✓";
+            if (status === "completed" || status === "passed") {
+              el.textContent = "●";
               el.classList.add("completed");
-            } else if (status === "in_progress") {
+              el.title = score ? `Passed (${score}%)` : "Completed";
+            } else if (status === "attempted" || status === "in_progress") {
+              el.textContent = "◐";
               el.classList.add("in-progress");
+              el.title = score ? `In progress (${score}%)` : "In progress";
+            } else {
+              el.textContent = "○";
+              el.classList.add("not-started");
+              el.title = "Not started";
             }
           });
         };
