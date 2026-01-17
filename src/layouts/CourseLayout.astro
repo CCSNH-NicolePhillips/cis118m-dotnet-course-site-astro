@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 import "../styles/editor.css";
-import { COURSE, WEEKS, getWeekById, isWeekLocked } from "../config/site";
+import { COURSE, WEEKS, getWeekById, isWeekLocked, TEST_STUDENTS } from "../config/site";
 import AITutor from "../components/AITutor";
 const { title = "Course Page", description = "" } = Astro.props;
 
@@ -697,7 +697,12 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           // Check if instructor (specific email or @ccsnh.edu domain but not students)
           const isInstructor = user.email === 'MCCCISOnline1@ccsnh.edu' || 
                                (user.email.endsWith('@ccsnh.edu') && !user.email.includes('@students.'));
-          console.log('[Auth] User:', user.email, 'isInstructor:', isInstructor);
+          
+          // Test students bypass time locks but NOT prerequisite locks (still behave as students)
+          const testStudents = ['nphillips@students.ccsnh.edu'];
+          const isTestStudent = testStudents.includes(user.email);
+          
+          console.log('[Auth] User:', user.email, 'isInstructor:', isInstructor, 'isTestStudent:', isTestStudent);
           
           const prereqLock = document.getElementById('prereq-lock');
           const moduleLock = document.getElementById('module-lock');
@@ -708,6 +713,46 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             if (prereqLock) prereqLock.style.setProperty('display', 'none', 'important');
             if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
             if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
+          } else if (isTestStudent) {
+            // Test Student: Bypass time locks only, but still check prerequisites
+            if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
+            
+            // Still need to check syllabus quiz prerequisite
+            let progress = {};
+            try {
+              const token = await getAccessToken();
+              if (token) {
+                const response = await fetch('/api/progress-get', {
+                  headers: { 'Authorization': `Bearer ${token}` },
+                });
+                if (response.ok) {
+                  const data = await response.json();
+                  progress = data.progress || {};
+                }
+              }
+            } catch (err) {
+              console.error('[Auth] Failed to fetch progress for test student:', err);
+            }
+            
+            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'];
+            const hasPassedSyllabus = (syllabusQuiz?.score || 0) >= 70;
+            
+            const currentPath = window.location.pathname;
+            const isPublicPage = currentPath.includes('/syllabus') || 
+                                 currentPath.includes('/syllabus-quiz') || 
+                                 currentPath.includes('/required-quiz') ||
+                                 currentPath.includes('/weekly-assessment') ||
+                                 currentPath === '/' ||
+                                 currentPath.includes('/auth/') ||
+                                 currentPath.includes('/start-here');
+            
+            if (!hasPassedSyllabus && !isPublicPage) {
+              if (prereqLock) prereqLock.style.setProperty('display', 'block', 'important');
+              if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
+            } else {
+              if (prereqLock) prereqLock.style.setProperty('display', 'none', 'important');
+              if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
+            }
           } else {
             // Student: Check syllabus quiz prerequisite
             // Fetch progress fresh from server to ensure we have latest quiz scores

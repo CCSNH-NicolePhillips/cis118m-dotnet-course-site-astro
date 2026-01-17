@@ -6,6 +6,11 @@ export const COURSE = {
   instructorEmail: "MCCCISOnline1@ccsnh.edu",
 };
 
+// Test students who bypass time constraints but still behave as students
+export const TEST_STUDENTS = [
+  'nphillips@students.ccsnh.edu',
+];
+
 export interface PageConfig {
   title: string;
   href: string;
