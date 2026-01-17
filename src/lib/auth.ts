@@ -28,7 +28,7 @@ async function getClient() {
     authorizationParams: {
       redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI,
       audience: import.meta.env.PUBLIC_AUTH0_AUDIENCE,
-      scope: "openid profile email",
+      scope: "openid profile email offline_access",
     },
     cacheLocation: "localstorage",
     useRefreshTokens: true,
@@ -44,7 +44,7 @@ export async function login(returnTo = "/") {
     authorizationParams: { 
       redirect_uri: import.meta.env.PUBLIC_AUTH0_REDIRECT_URI,
       audience: import.meta.env.PUBLIC_AUTH0_AUDIENCE,
-      scope: "openid profile email",
+      scope: "openid profile email offline_access",
     },
     appState: { returnTo },
   });

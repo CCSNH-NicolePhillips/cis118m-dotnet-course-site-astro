@@ -750,7 +750,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
             
             // Still need to check syllabus quiz prerequisite
-            let progress = {};
+            let progress = getProgress(); // Start with cached progress as fallback
             try {
               const token = await getAccessToken();
               if (token) {
@@ -759,8 +759,12 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                 });
                 if (response.ok) {
                   const data = await response.json();
-                  progress = data.progress || {};
+                  progress = data.progress || progress;
+                } else {
+                  console.warn('[Auth] progress-get returned', response.status, '- using cached progress');
                 }
+              } else {
+                console.warn('[Auth] No access token available - using cached progress');
               }
             } catch (err) {
               console.error('[Auth] Failed to fetch progress for test student:', err);
@@ -788,7 +792,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           } else {
             // Student: Check syllabus quiz prerequisite
             // Fetch progress fresh from server to ensure we have latest quiz scores
-            let progress = {};
+            let progress = getProgress(); // Start with cached progress as fallback
             try {
               const token = await getAccessToken();
               if (token) {
@@ -797,13 +801,17 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                 });
                 if (response.ok) {
                   const data = await response.json();
-                  progress = data.progress || {};
+                  progress = data.progress || progress;
                   cloudProgress = progress; // Update cache too
+                } else {
+                  console.warn('[Auth] progress-get returned', response.status, '- using cached progress');
                 }
+              } else {
+                console.warn('[Auth] No access token available - using cached progress');
               }
             } catch (err) {
               console.error('[Auth] Failed to fetch progress for gatekeeper:', err);
-              progress = getProgress(); // Fall back to cached
+              // Already have cached progress as fallback
             }
             
             const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'];
