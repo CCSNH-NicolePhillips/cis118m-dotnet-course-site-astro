@@ -68,7 +68,18 @@ export default async function handler(request, context) {
     
     // Check completion records for quiz scores
     for (const compKey of completionKeys) {
-      const completion = await redis.get(compKey);
+      let completion = await redis.get(compKey);
+      
+      // Handle both string and object formats
+      if (completion && typeof completion === 'string') {
+        try {
+          completion = JSON.parse(completion);
+        } catch (e) {
+          console.error('[progress-get] Failed to parse completion:', compKey, e);
+          continue;
+        }
+      }
+      
       if (completion && typeof completion === 'object') {
         // Extract quizId from key
         const quizId = compKey.split(':').pop();
