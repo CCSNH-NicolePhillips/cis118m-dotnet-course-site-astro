@@ -543,7 +543,7 @@ const EditorApp = () => {
               quickSuggestions: {
                 other: true,
                 comments: false,
-                strings: true,
+                strings: false,
               },
               parameterHints: { enabled: true },
               tabCompletion: "on",

@@ -13,9 +13,12 @@ interface Props {
   title: string;
   questions: QuizQuestion[];
   passingScore?: number;
+  maxAttempts?: number; // Set to 0 or Infinity for unlimited
 }
 
-const { quizId, title, questions, passingScore = 70 } = Astro.props;
+const { quizId, title, questions, passingScore = 70, maxAttempts = 2 } = Astro.props;
+// Use a large number for "unlimited" since Infinity can't be serialized to JSON
+const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
 ---
 
 <div class="quiz-container" data-quiz-id={quizId}>
@@ -101,7 +104,7 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
   </div>
 </div>
 
-<script define:vars={{ quizId, questions, passingScore }}>
+<script define:vars={{ quizId, questions, passingScore, effectiveMaxAttempts }}>
   (async () => {
     const form = document.getElementById(`quiz-form-${quizId}`);
     const resultsDiv = document.getElementById(`results-${quizId}`);
@@ -110,6 +113,8 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
     const retakeBtn = document.getElementById(`retake-${quizId}`);
     const statusDiv = document.getElementById(`status-${quizId}`);
     const lockedDiv = document.getElementById(`locked-${quizId}`);
+    const maxAttempts = effectiveMaxAttempts;
+    const unlimitedAttempts = maxAttempts >= 999999;
     const submitBtn = document.getElementById(`submit-${quizId}`);
     
     let currentAttempts = 0;
@@ -152,13 +157,15 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
               <span class="score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
             `;
             document.getElementById(`attempts-${quizId}`).innerHTML = 
-              currentAttempts >= 2 
-                ? '🔒 No attempts remaining' 
-                : `✅ ${2 - currentAttempts} attempt(s) remaining`;
+              unlimitedAttempts
+                ? '✅ Unlimited attempts allowed'
+                : (currentAttempts >= maxAttempts 
+                    ? '🔒 No attempts remaining' 
+                    : `✅ ${maxAttempts - currentAttempts} attempt(s) remaining`);
           }
           
-          // If max attempts reached, lock the quiz
-          if (currentAttempts >= 2) {
+          // If max attempts reached, lock the quiz (skip if unlimited)
+          if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
             form.style.display = 'none';
             lockedDiv.style.display = 'block';
             document.getElementById(`final-score-${quizId}`).innerHTML = `
@@ -234,8 +241,8 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Check if attempts exhausted
-      if (currentAttempts >= 2) {
+      // Check if attempts exhausted (skip if unlimited)
+      if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
         alert('Maximum attempts reached. You cannot retake this quiz.');
         return;
       }
@@ -374,17 +381,31 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
               bestScore = score;
             }
             
+            // If passed a gatekeeper quiz, show success message with link to proceed
+            if (passed && (quizId === 'week-01-required-quiz' || quizId === 'week-01-syllabus-quiz')) {
+              const successMsg = document.createElement('div');
+              successMsg.className = 'gatekeeper-success';
+              successMsg.innerHTML = `
+                <h3>🎉 Content Unlocked!</h3>
+                <p>You have passed the Syllabus Assessment. All course content is now available.</p>
+                <a href="/week-01/lesson-1/" class="proceed-btn">Proceed to Week 1 Lesson →</a>
+              `;
+              resultsDiv.appendChild(successMsg);
+            }
+            
           } catch (err) {
             console.error('[Quiz] Save to cloud failed:', err);
           }
         }
       }
       
-      // Show retake button only if attempts remain and didn't pass
-      if (currentAttempts < 2 && !passed) {
+      // Show retake button only if attempts remain and didn't pass (or unlimited attempts)
+      if ((unlimitedAttempts || currentAttempts < maxAttempts) && !passed) {
         retakeBtn.style.display = 'block';
-        retakeBtn.textContent = `🔄 REQUEST RE-IGNITION (Attempt ${currentAttempts + 1}/2)`;
-      } else if (currentAttempts >= 2) {
+        retakeBtn.textContent = unlimitedAttempts 
+          ? `🔄 TRY AGAIN` 
+          : `🔄 REQUEST RE-IGNITION (Attempt ${currentAttempts + 1}/${maxAttempts})`;
+      } else if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
         retakeBtn.style.display = 'none';
         // Show locked message
         const lockedMsg = document.createElement('div');
@@ -395,7 +416,7 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
     });
     
     retakeBtn.addEventListener('click', () => {
-      if (currentAttempts >= 2) {
+      if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
         alert('Maximum attempts reached. You cannot retake this quiz.');
         return;
       }
@@ -710,5 +731,41 @@ const { quizId, title, questions, passingScore = 70 } = Astro.props;
     color: #ef4444;
     text-align: center;
     font-size: 14px;
+  }
+  
+  .gatekeeper-success {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .gatekeeper-success h3 {
+    margin: 0 0 12px 0;
+    color: #10b981;
+    font-size: 20px;
+  }
+  
+  .gatekeeper-success p {
+    margin: 0 0 16px 0;
+    color: var(--text);
+  }
+  
+  .proceed-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #10b981;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  
+  .proceed-btn:hover {
+    background: #059669;
+    text-decoration: none;
   }
 </style>

@@ -745,6 +745,13 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
             automaticLayout: true,
             minimap: { enabled: false },
             fontSize: 14,
+            quickSuggestions: {
+              other: true,
+              comments: false,
+              strings: false,
+            },
+            suggestOnTriggerCharacters: true,
+            parameterHints: { enabled: true },
           });
 
           let timer;

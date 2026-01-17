@@ -732,21 +732,30 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             const syllabusQuiz = progress['week-01-syllabus-quiz'] || progress['week-01-required-quiz'];
             const hasPassedSyllabus = (syllabusQuiz?.score || 0) >= 70;
             
+            // Debug logging
+            console.log('[Gatekeeper] Progress data:', progress);
+            console.log('[Gatekeeper] syllabusQuiz entry:', syllabusQuiz);
+            console.log('[Gatekeeper] Score:', syllabusQuiz?.score, 'Passed:', hasPassedSyllabus);
+            
             // Pages that don't require the prerequisite
             const currentPath = window.location.pathname;
             const isPublicPage = currentPath.includes('/syllabus') || 
                                  currentPath.includes('/syllabus-quiz') || 
                                  currentPath.includes('/required-quiz') ||
                                  currentPath === '/' ||
-                                 currentPath.includes('/auth/');
+                                 currentPath.includes('/auth/') ||
+                                 currentPath.includes('/start-here');
             
-            console.log('[Auth] hasPassedSyllabus:', hasPassedSyllabus, 'isPublicPage:', isPublicPage);
+            console.log('[Gatekeeper] currentPath:', currentPath, 'isPublicPage:', isPublicPage);
             
             if (!hasPassedSyllabus && !isPublicPage) {
               // Lock content until syllabus quiz is passed
+              console.log('[Gatekeeper] LOCKING content - syllabus quiz not passed');
               if (prereqLock) prereqLock.style.setProperty('display', 'block', 'important');
               if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
               if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
+            } else {
+              console.log('[Gatekeeper] Content UNLOCKED');
             }
           }
           
