@@ -173,51 +173,41 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
               <span class="final-score-value ${bestScore >= passingScore ? 'passed' : 'failed'}">${bestScore}%</span>
             `;
           }
-          
-          // Load draft answers if any
-          if (data.draft) {
-            Object.entries(data.draft).forEach(([qId, answer]) => {
-              if (Array.isArray(answer)) {
-                answer.forEach(val => {
-                  const input = form.querySelector(`input[name="q-${qId}"][value="${val}"]`);
-                  if (input) input.checked = true;
-                });
-              } else {
-                const input = form.querySelector(`input[name="q-${qId}"][value="${answer}"]`);
-                if (input) input.checked = true;
-              }
-            });
-          }
         }
       } catch (err) {
         console.error('[Quiz] Failed to load progress:', err);
       }
     };
     
-    // Save draft answers on change
-    const saveDraft = async (answers) => {
-      const authAvailable = await waitForAuth();
-      if (!authAvailable) return;
-      
-      const authed = await window.__auth.isAuthed();
-      if (!authed) return;
-      
+    // Save draft answers to localStorage on change (no server call)
+    const saveDraft = (answers) => {
       try {
-        const token = await window.__auth.getAccessToken();
-        await fetch('/api/progress-update', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: 'quiz-draft',
-            id: quizId,
-            draft: answers
-          }),
-        });
+        localStorage.setItem(`quiz-draft-${quizId}`, JSON.stringify(answers));
       } catch (err) {
         console.error('[Quiz] Draft save failed:', err);
+      }
+    };
+    
+    // Load draft from localStorage
+    const loadDraft = () => {
+      try {
+        const saved = localStorage.getItem(`quiz-draft-${quizId}`);
+        if (saved) {
+          const answers = JSON.parse(saved);
+          Object.entries(answers).forEach(([qId, answer]) => {
+            if (Array.isArray(answer)) {
+              answer.forEach(val => {
+                const input = form.querySelector(`input[name="q-${qId}"][value="${val}"]`);
+                if (input) input.checked = true;
+              });
+            } else if (answer) {
+              const input = form.querySelector(`input[name="q-${qId}"][value="${answer}"]`);
+              if (input) input.checked = true;
+            }
+          });
+        }
+      } catch (err) {
+        console.error('[Quiz] Draft load failed:', err);
       }
     };
     
@@ -234,6 +224,9 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       });
       saveDraft(answers);
     });
+    
+    // Load draft on init
+    loadDraft();
     
     // Load progress on init
     loadProgress();
