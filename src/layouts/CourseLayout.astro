@@ -218,6 +218,9 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           </header>
           
           <main class="card main">
+            <div id="content-loading" style="display:block; text-align:center; padding:60px 20px; color: var(--text-muted);">
+              <p>Loading...</p>
+            </div>
             <div id="prereq-lock" style="display:none;">
               <div class="component-card text-center p-20">
                 <h2>🔒 Access Pending</h2>
@@ -226,7 +229,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                 <a href="/week-01/required-quiz/" class="vscode-button mt-8" style="text-decoration:none;">TAKE SYLLABUS ASSESSMENT</a>
               </div>
             </div>
-            <div id="module-lock" style={isLocked ? "display:block" : "display:none"}>
+            <div id="module-lock" style="display:none;" data-server-locked={isLocked ? "true" : "false"} data-unlock-time={unlockTime}>
               <div class="mission-locked">
                 <div class="lock-icon">🔒</div>
                 <h1>Module Scheduled</h1>
@@ -238,7 +241,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                 <button onclick="window.history.back()" class="return-btn">← Return to Dashboard</button>
               </div>
             </div>
-            <div id="module-content" style={isLocked ? "display:none" : "display:block"}>
+            <div id="module-content" style="display:none;">
               <slot />
             </div>
           </main>
@@ -651,6 +654,20 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
         const markViewed = () => {
           const info = getWeekAndSlugFromPath();
           if (!info) return;
+          
+          // Don't mark as viewed if content is locked (check after a small delay for JS locks to apply)
+          const moduleContent = document.getElementById('module-content');
+          const prereqLock = document.getElementById('prereq-lock');
+          const moduleLock = document.getElementById('module-lock');
+          
+          // If locks are visible or content is hidden, don't mark as viewed
+          if (prereqLock?.style.display === 'block' || 
+              moduleLock?.style.display === 'block' ||
+              moduleContent?.style.display === 'none') {
+            console.log('[Progress] Content is locked, not marking as viewed');
+            return;
+          }
+          
           const { week, slug } = info;
           const data = load();
           const w = ensureWeek(data, week);
@@ -708,8 +725,11 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           });
         };
 
+        // Make markViewed available globally so the auth script can call it after content is unlocked
+        window.__markViewedAfterUnlock = markViewed;
+        
         document.addEventListener("DOMContentLoaded", () => {
-          markViewed();
+          // Don't call markViewed here - it will be called by the auth script after determining lock state
           applyProgressBadges();
           wireMarkCompleteButtons();
         });
@@ -775,21 +795,36 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           
           console.log('[Auth] User:', user.email, 'isInstructor:', isInstructor, 'isTestStudent:', isTestStudent);
           
+          const contentLoading = document.getElementById('content-loading');
           const prereqLock = document.getElementById('prereq-lock');
           const moduleLock = document.getElementById('module-lock');
           const moduleContent = document.getElementById('module-content');
           
-          if (isInstructor) {
-            // Master Bypass: Instructors see everything
+          // Check if module is date-locked (from server)
+          const isDateLocked = moduleLock?.getAttribute('data-server-locked') === 'true';
+          
+          // Helper to hide loading and show final state
+          const showFinalState = (showElement) => {
+            if (contentLoading) contentLoading.style.setProperty('display', 'none', 'important');
             if (prereqLock) prereqLock.style.setProperty('display', 'none', 'important');
             if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
-            if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
+            if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
+            if (showElement) showElement.style.setProperty('display', 'block', 'important');
+            
+            // Only mark as viewed if we're showing the actual content (not a lock screen)
+            if (showElement === moduleContent && window.__markViewedAfterUnlock) {
+              window.__markViewedAfterUnlock();
+            }
+          };
+          
+          if (isInstructor) {
+            // Master Bypass: Instructors see everything
+            showFinalState(moduleContent);
           } else if (isTestStudent) {
             // Test Student: Bypass time locks only, but still check prerequisites
-            if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
             
             // Still need to check syllabus quiz prerequisite
-            let progress = (window.__getProgress && window.__getProgress()) || {}; // Start with cached progress as fallback
+            let progress = (window.__getProgress && window.__getProgress()) || {};
             try {
               const token = await getAccessToken();
               if (token) {
@@ -835,78 +870,81 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                                  currentPath.includes('/start-here');
             
             if (!hasPassedSyllabus && !isPublicPage) {
-              if (prereqLock) prereqLock.style.setProperty('display', 'block', 'important');
-              if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
+              showFinalState(prereqLock);
             } else {
-              if (prereqLock) prereqLock.style.setProperty('display', 'none', 'important');
-              if (moduleContent) moduleContent.style.setProperty('display', 'block', 'important');
+              showFinalState(moduleContent);
             }
           } else {
-            // Student: Check syllabus quiz prerequisite
-            // Fetch progress fresh from server to ensure we have latest quiz scores
-            let progress = (window.__getProgress && window.__getProgress()) || {}; // Start with cached progress as fallback
-            try {
-              const token = await getAccessToken();
-              if (token) {
-                const response = await fetch('/api/progress-get', {
-                  headers: { 'Authorization': `Bearer ${token}` },
-                });
-                if (response.ok) {
-                  const data = await response.json();
-                  progress = data.progress || progress;
-                  cloudProgress = progress; // Update cache too
-                } else {
-                  console.warn('[Auth] progress-get returned', response.status, '- using cached progress');
-                }
-              } else {
-                console.warn('[Auth] No access token available - using cached progress');
-              }
-            } catch (err) {
-              console.error('[Auth] Failed to fetch progress for gatekeeper:', err);
-              // Already have cached progress as fallback
-            }
+            // Student: Check both date lock and syllabus quiz prerequisite
             
-            // Check for syllabus quiz completion (quizId: week-01-required-quiz)
-            const syllabusQuiz = progress['week-01-required-quiz'];
-            
-            // Handle both object format { score: 100, status: 'completed' } and simple format
-            let syllabusScore = 0;
-            if (syllabusQuiz) {
-              if (typeof syllabusQuiz === 'object' && syllabusQuiz.score !== undefined) {
-                syllabusScore = syllabusQuiz.score;
-              } else if (typeof syllabusQuiz === 'number') {
-                syllabusScore = syllabusQuiz;
-              }
-            }
-            
-            // THE 100% RULE: Student must have exactly 100% to proceed
-            const hasPassedSyllabus = syllabusScore === 100;
-            
-            // Debug logging
-            console.log('[Gatekeeper] Progress data:', progress);
-            console.log('[Gatekeeper] syllabusQuiz entry:', syllabusQuiz);
-            console.log('[Gatekeeper] Score:', syllabusScore, 'Passed (100% required):', hasPassedSyllabus);
-            
-            // Pages that don't require the prerequisite
-            const currentPath = window.location.pathname;
-            const isPublicPage = currentPath.includes('/syllabus') || 
-                                 currentPath.includes('/syllabus-quiz') || 
-                                 currentPath.includes('/required-quiz') ||
-                                 currentPath.includes('/weekly-assessment') ||
-                                 currentPath === '/' ||
-                                 currentPath.includes('/auth/') ||
-                                 currentPath.includes('/start-here');
-            
-            console.log('[Gatekeeper] currentPath:', currentPath, 'isPublicPage:', isPublicPage);
-            
-            if (!hasPassedSyllabus && !isPublicPage) {
-              // Lock content until syllabus quiz is passed
-              console.log('[Gatekeeper] LOCKING content - syllabus quiz not passed');
-              if (prereqLock) prereqLock.style.setProperty('display', 'block', 'important');
-              if (moduleLock) moduleLock.style.setProperty('display', 'none', 'important');
-              if (moduleContent) moduleContent.style.setProperty('display', 'none', 'important');
+            // First check if module is date-locked
+            if (isDateLocked) {
+              console.log('[Gatekeeper] Module is DATE LOCKED');
+              showFinalState(moduleLock);
             } else {
-              console.log('[Gatekeeper] Content UNLOCKED');
+              // Check syllabus quiz prerequisite
+              let progress = (window.__getProgress && window.__getProgress()) || {};
+              try {
+                const token = await getAccessToken();
+                if (token) {
+                  const response = await fetch('/api/progress-get', {
+                    headers: { 'Authorization': `Bearer ${token}` },
+                  });
+                  if (response.ok) {
+                    const data = await response.json();
+                    progress = data.progress || progress;
+                    cloudProgress = progress;
+                  } else {
+                    console.warn('[Auth] progress-get returned', response.status, '- using cached progress');
+                  }
+                } else {
+                  console.warn('[Auth] No access token available - using cached progress');
+                }
+              } catch (err) {
+                console.error('[Auth] Failed to fetch progress for gatekeeper:', err);
+              }
+              
+              // Check for syllabus quiz completion (quizId: week-01-required-quiz)
+              const syllabusQuiz = progress['week-01-required-quiz'];
+              
+              // Handle both object format { score: 100, status: 'completed' } and simple format
+              let syllabusScore = 0;
+              if (syllabusQuiz) {
+                if (typeof syllabusQuiz === 'object' && syllabusQuiz.score !== undefined) {
+                  syllabusScore = syllabusQuiz.score;
+                } else if (typeof syllabusQuiz === 'number') {
+                  syllabusScore = syllabusQuiz;
+                }
+              }
+              
+              // THE 100% RULE: Student must have exactly 100% to proceed
+              const hasPassedSyllabus = syllabusScore === 100;
+              
+              // Debug logging
+              console.log('[Gatekeeper] Progress data:', progress);
+              console.log('[Gatekeeper] syllabusQuiz entry:', syllabusQuiz);
+              console.log('[Gatekeeper] Score:', syllabusScore, 'Passed (100% required):', hasPassedSyllabus);
+              
+              // Pages that don't require the prerequisite
+              const currentPath = window.location.pathname;
+              const isPublicPage = currentPath.includes('/syllabus') || 
+                                   currentPath.includes('/syllabus-quiz') || 
+                                   currentPath.includes('/required-quiz') ||
+                                   currentPath.includes('/weekly-assessment') ||
+                                   currentPath === '/' ||
+                                   currentPath.includes('/auth/') ||
+                                   currentPath.includes('/start-here');
+              
+              console.log('[Gatekeeper] currentPath:', currentPath, 'isPublicPage:', isPublicPage);
+              
+              if (!hasPassedSyllabus && !isPublicPage) {
+                // Lock content until syllabus quiz is passed
+                console.log('[Gatekeeper] LOCKING content - syllabus quiz not passed');
+                showFinalState(prereqLock);
+              } else {
+                console.log('[Gatekeeper] Content UNLOCKED');
+                showFinalState(moduleContent);
+              }
             }
           }
           
