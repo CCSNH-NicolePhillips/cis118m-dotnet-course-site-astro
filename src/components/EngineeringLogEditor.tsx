@@ -158,16 +158,17 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
       }
 
       // Save the content to code-save for persistence
+      const contentHtml = editor.getHTML();
       await fetch('/api/code-save', {
         method: 'POST',
         headers,
         body: JSON.stringify({
           starterId: assignmentId,
-          code: editor.getHTML()
+          code: contentHtml
         }),
       });
 
-      // Save the mission success to the database
+      // Save the mission success to the database with savedCode for gradebook
       await fetch('/.netlify/functions/progress-update', {
         method: 'POST',
         headers,
@@ -175,7 +176,8 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
           pageId: assignmentId, 
           status: passed ? 'completed' : 'attempted',
           score: data.score,
-          feedback: data.feedback
+          feedback: data.feedback,
+          savedCode: editor.getText() // Plain text for easy viewing in gradebook
         }),
       });
     } catch (err) {

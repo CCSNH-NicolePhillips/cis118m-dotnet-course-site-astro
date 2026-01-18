@@ -6,9 +6,15 @@ import { getRedis } from "./_lib/redis.mjs";
  * 
  * POST /.netlify/functions/manual-override
  * Headers: Authorization: Bearer <token>
- * Body: { userId: string, pageId: string, newScore: number, reason?: string }
+ * Body: { 
+ *   userId: string, 
+ *   pageId: string, 
+ *   action: 'UPDATE_GRADE' | 'DELETE_ATTEMPT',
+ *   newScore?: number,  // Required for UPDATE_GRADE
+ *   reason?: string 
+ * }
  * 
- * Returns: { ok: true, score: number }
+ * Returns: { ok: true, score?: number, action: string }
  */
 export default async function handler(request, context) {
   try {
@@ -33,7 +39,7 @@ export default async function handler(request, context) {
       );
     }
 
-    const { userId, pageId, newScore, reason } = body;
+    const { userId, pageId, newScore, reason, action = 'UPDATE_GRADE' } = body;
 
     // Validate inputs
     if (!userId || typeof userId !== "string") {
@@ -50,60 +56,114 @@ export default async function handler(request, context) {
       );
     }
 
-    if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {
-      return new Response(
-        JSON.stringify({ error: "Score must be a number between 0 and 100" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
     const redis = getRedis();
+    const overrideTime = new Date().toISOString();
 
     // Get current data for audit trail
     const currentScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:score`);
-    
-    // Determine status based on score: 0 = allow retry (in_progress), else submitted
-    const newStatus = newScore === 0 ? "in_progress" : "submitted";
-    
-    // Apply the override
-    const overrideTime = new Date().toISOString();
-    await redis.hset(`user:progress:data:${userId}`,
-      `${pageId}:score`, newScore,
-      `${pageId}:isOverride`, "true",
-      `${pageId}:overrideReason`, reason || "Manual adjustment",
-      `${pageId}:overrideBy`, instructor.email || instructor.sub,
-      `${pageId}:overrideAt`, overrideTime,
-      `${pageId}:previousScore`, currentScore || 0,
-      `${pageId}:status`, newStatus
-    );
+    const currentStatus = await redis.hget(`user:progress:data:${userId}`, `${pageId}:status`);
 
-    // Log the override for audit purposes
-    const auditEntry = JSON.stringify({
-      action: "MANUAL_OVERRIDE",
-      userId,
-      pageId,
-      previousScore: currentScore,
-      newScore,
-      reason: reason || "Manual adjustment",
-      instructor: instructor.email || instructor.sub,
-      timestamp: overrideTime
-    });
-    
-    await redis.lpush("cis118m:audit:overrides", auditEntry);
-    // Keep only last 1000 audit entries
-    await redis.ltrim("cis118m:audit:overrides", 0, 999);
+    if (action === 'DELETE_ATTEMPT') {
+      // Completely wipe the record so student can try again fresh
+      const fieldsToDelete = [
+        `${pageId}:score`,
+        `${pageId}:status`,
+        `${pageId}:feedback`,
+        `${pageId}:submittedAt`,
+        `${pageId}:isOverride`,
+        `${pageId}:overrideReason`,
+        `${pageId}:overrideBy`,
+        `${pageId}:overrideAt`,
+        `${pageId}:previousScore`,
+        `${pageId}:originalScore`,
+        `${pageId}:isLate`,
+        `${pageId}:daysLate`,
+        `${pageId}:penalty`
+      ];
+      
+      await redis.hdel(`user:progress:data:${userId}`, ...fieldsToDelete);
+      
+      // Also delete saved code if exists
+      await redis.del(`code:${userId}:${pageId}`);
+      
+      // Log the deletion for audit
+      const auditEntry = JSON.stringify({
+        action: "DELETE_ATTEMPT",
+        userId,
+        pageId,
+        previousScore: currentScore,
+        previousStatus: currentStatus,
+        reason: reason || "Instructor reset attempt",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
 
-    console.log(`[OVERRIDE] ${instructor.email} changed ${userId}/${pageId}: ${currentScore} -> ${newScore} (${reason || 'Manual adjustment'})`);
+      console.log(`[DELETE_ATTEMPT] ${instructor.email} wiped ${userId}/${pageId} (was: ${currentScore}%)`);
 
-    return new Response(
-      JSON.stringify({ 
-        ok: true, 
-        score: newScore,
-        previousScore: currentScore ? parseInt(currentScore) : null,
-        flagged: "MANUALLY_ADJUSTED"
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'DELETE_ATTEMPT',
+          previousScore: currentScore ? parseInt(currentScore) : null,
+          message: 'Student can now retry this assignment'
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
+    } else {
+      // UPDATE_GRADE action
+      if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {
+        return new Response(
+          JSON.stringify({ error: "Score must be a number between 0 and 100" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      // Determine status based on score: 0 = allow retry (in_progress), else submitted
+      const newStatus = newScore === 0 ? "in_progress" : "completed";
+      
+      // Apply the override
+      await redis.hset(`user:progress:data:${userId}`,
+        `${pageId}:score`, newScore,
+        `${pageId}:isOverride`, "true",
+        `${pageId}:overrideReason`, reason || "Manual adjustment",
+        `${pageId}:overrideBy`, instructor.email || instructor.sub,
+        `${pageId}:overrideAt`, overrideTime,
+        `${pageId}:previousScore`, currentScore || 0,
+        `${pageId}:status`, newStatus
+      );
+
+      // Log the override for audit purposes
+      const auditEntry = JSON.stringify({
+        action: "UPDATE_GRADE",
+        userId,
+        pageId,
+        previousScore: currentScore,
+        newScore,
+        reason: reason || "Manual adjustment",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[UPDATE_GRADE] ${instructor.email} changed ${userId}/${pageId}: ${currentScore} -> ${newScore} (${reason || 'Manual adjustment'})`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'UPDATE_GRADE',
+          score: newScore,
+          previousScore: currentScore ? parseInt(currentScore) : null,
+          manualOverride: true
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
   } catch (err) {
     console.error("Manual override error:", err);

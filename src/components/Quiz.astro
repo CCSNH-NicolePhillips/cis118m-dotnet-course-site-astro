@@ -419,8 +419,9 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
               },
               body: JSON.stringify({
                 pageId: quizId,
-                status: passed ? 'passed' : 'attempted',
-                score
+                status: passed ? 'completed' : 'attempted',
+                score,
+                savedCode: JSON.stringify(answers) // Save answers as savedCode for gradebook
               }),
             });
             

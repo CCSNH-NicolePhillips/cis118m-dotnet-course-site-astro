@@ -40,7 +40,7 @@ export default async function handler(request, context) {
       );
     }
 
-    const { starterId, event, pageId, status, score, feedback } = body;
+    const { starterId, event, pageId, status, score, feedback, savedCode } = body;
 
     // Handle new pageId/status/score/feedback format (from EngineeringLogEditor)
     if (pageId && status) {
@@ -52,7 +52,8 @@ export default async function handler(request, context) {
       const lateInfo = calculateLatePenalty(pageId, score || 0, submissionTime);
       const finalScore = lateInfo.finalScore;
       
-      await redis.hset(`user:progress:data:${userId}`, 
+      // Build the hash fields to set
+      const hashFields = [
         `${pageId}:status`, status, 
         `${pageId}:score`, finalScore,
         `${pageId}:originalScore`, score || 0,
@@ -61,7 +62,14 @@ export default async function handler(request, context) {
         `${pageId}:daysLate`, lateInfo.daysLate || 0,
         `${pageId}:penalty`, lateInfo.penalty || 0,
         `${pageId}:submittedAt`, submissionTime.toISOString()
-      );
+      ];
+      
+      // Add savedCode if provided
+      if (savedCode) {
+        hashFields.push(`${pageId}:savedCode`, savedCode);
+      }
+      
+      await redis.hset(`user:progress:data:${userId}`, ...hashFields);
 
       // Track student in index for instructor dashboard
       await redis.sadd("cis118m:students", userId);

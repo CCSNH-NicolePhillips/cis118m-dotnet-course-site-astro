@@ -811,7 +811,18 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             
             // Check for syllabus completion - try multiple possible keys
             const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'] || progress['week-01-syllabus-ack'];
-            const syllabusScore = syllabusQuiz?.score ?? (typeof syllabusQuiz === 'object' ? 0 : 0);
+            
+            // Handle both object format { score: 100, status: 'completed' } and simple format
+            let syllabusScore = 0;
+            if (syllabusQuiz) {
+              if (typeof syllabusQuiz === 'object' && syllabusQuiz.score !== undefined) {
+                syllabusScore = syllabusQuiz.score;
+              } else if (typeof syllabusQuiz === 'number') {
+                syllabusScore = syllabusQuiz;
+              }
+            }
+            
+            // THE 100% RULE: Student must have exactly 100% to proceed
             const hasPassedSyllabus = syllabusScore === 100;
             
             const currentPath = window.location.pathname;
@@ -857,7 +868,18 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             
             // Check for syllabus completion - try multiple possible keys
             const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'] || progress['week-01-syllabus-ack'];
-            const syllabusScore = syllabusQuiz?.score ?? (typeof syllabusQuiz === 'object' ? 0 : 0);
+            
+            // Handle both object format { score: 100, status: 'completed' } and simple format
+            let syllabusScore = 0;
+            if (syllabusQuiz) {
+              if (typeof syllabusQuiz === 'object' && syllabusQuiz.score !== undefined) {
+                syllabusScore = syllabusQuiz.score;
+              } else if (typeof syllabusQuiz === 'number') {
+                syllabusScore = syllabusQuiz;
+              }
+            }
+            
+            // THE 100% RULE: Student must have exactly 100% to proceed
             const hasPassedSyllabus = syllabusScore === 100;
             
             // Debug logging
