@@ -1,24 +1,24 @@
-/* Light theme: Professional Pastel IDE (default) */
+/* Light theme: Professional Soft Beige (default) */
 body {
-  --bg: #e2e8f0;
-  --panel: #ffffff;
-  --panel2: #f1f5f9;
-  --text: #0f172a;
-  --muted: #64748b;
-  --link: #1e40af;
-  --accent: #2563eb;
-  --border: #cbd5e1;
-  --shadow: 0 4px 16px rgba(0,0,0,.15);
+  --bg: #f5f0e8;
+  --panel: #faf8f5;
+  --panel2: #f0ebe3;
+  --text: #2d2a26;
+  --muted: #6b6560;
+  --link: #8b5a2b;
+  --accent: #a0714f;
+  --border: #d4cfc6;
+  --shadow: 0 4px 16px rgba(0,0,0,.12);
   --radius: 16px;
-  --navitem-bg: #f1f5f9;
-  --navitem-hover: #e2e8f0;
-  --navitem-border: rgba(37, 99, 235, 0.4);
-  --badge-bg: rgba(37, 99, 235, 0.1);
-  --badge-border: rgba(37, 99, 235, 0.3);
-  --badge-text: #1e40af;
-  --scrollbar-track: #e2e8f0;
-  --scrollbar-thumb: #94a3b8;
-  --scrollbar-thumb-hover: #64748b;
+  --navitem-bg: #f0ebe3;
+  --navitem-hover: #e8e2d8;
+  --navitem-border: rgba(160, 113, 79, 0.4);
+  --badge-bg: rgba(160, 113, 79, 0.1);
+  --badge-border: rgba(160, 113, 79, 0.3);
+  --badge-text: #6b4423;
+  --scrollbar-track: #e8e2d8;
+  --scrollbar-thumb: #b8b0a4;
+  --scrollbar-thumb-hover: #9a9286;
 }
 
 /* Dark theme */
@@ -566,6 +566,128 @@ pre {
 pre[style*="background: #1e1e1e"],
 pre[style*="background:#1e1e1e"] {
   color: #d4d4d4 !important;
+}
+
+/* =============================================
+   LIGHT MODE: Inline styled element overrides
+   These ensure dark-background elements with
+   inline styles remain readable in light mode
+   ============================================= */
+
+/* Dark background divs (code-style blocks) should keep light text */
+div[style*="background: #1e1e1e"],
+div[style*="background:#1e1e1e"],
+div[style*="background: #0d0d0d"],
+div[style*="background:#0d0d0d"],
+div[style*="background: #2d2d2d"],
+div[style*="background:#2d2d2d"],
+div[style*="background: linear-gradient(180deg, #2d2d2d"],
+div[style*="background: linear-gradient(180deg,#2d2d2d"] {
+  color: #e8e8e8 !important;
+}
+
+div[style*="background: #1e1e1e"] p,
+div[style*="background:#1e1e1e"] p,
+div[style*="background: #0d0d0d"] p,
+div[style*="background:#0d0d0d"] p,
+div[style*="background: #2d2d2d"] p,
+div[style*="background:#2d2d2d"] p,
+div[style*="background: linear-gradient(180deg, #2d2d2d"] p,
+div[style*="background: linear-gradient(180deg,#2d2d2d"] p,
+div[style*="background: linear-gradient(180deg, #2d2d2d"] h5,
+div[style*="background: linear-gradient(180deg,#2d2d2d"] h5 {
+  color: #e8e8e8 !important;
+}
+
+/* Callout boxes - ensure text uses proper theme colors */
+div[style*="background: rgba(107, 159, 255"] p,
+div[style*="background: rgba(78, 201, 176"] p,
+div[style*="background: linear-gradient(135deg, rgba(78, 201, 176"] p,
+div[style*="background: rgba(206, 145, 120"] p {
+  color: var(--text) !important;
+}
+
+/* Component cards grid layout */
+.component-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 24px 0;
+}
+
+/* Component cards with dark backgrounds - force theme colors */
+.component-card {
+  background: rgba(30, 30, 34, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+body:not([data-theme="dark"]) .component-card {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.component-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.component-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+body:not([data-theme="dark"]) .component-card p {
+  color: var(--text) !important;
+}
+
+.component-card h5 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #8ab4f8;
+  margin: 0 0 12px 0;
+}
+
+body:not([data-theme="dark"]) .component-card h5 {
+  color: var(--accent) !important;
+}
+
+/* Error cards */
+.component-card.error-card {
+  border-top: 3px solid #ef4444;
+}
+
+.error-title {
+  color: #ef4444 !important;
+}
+
+/* System patch boxes */
+.system-patch {
+  background: rgba(16, 185, 129, 0.15);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #10b981;
+  margin-top: 12px;
+}
+
+.system-patch .patch-title {
+  margin: 0;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.system-patch .patch-text {
+  margin: 5px 0 0 0;
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+body[data-theme="dark"] .system-patch .patch-text {
+  color: #a7f3d0;
 }
 
 code {
