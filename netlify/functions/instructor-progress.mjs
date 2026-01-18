@@ -62,8 +62,19 @@ export default async function handler(request, context) {
         const name = await redis.get(`cis118m:studentName:${sub}`);
         const progress = await redis.get(`progress:${sub}`);
         
-        // Also check the new progress data format
+        // Also check the new progress data format (hash with all fields)
         const progressData = await redis.hgetall(`user:progress:data:${sub}`);
+        
+        // Get saved code for each assignment
+        const savedCodes = {};
+        const codeKeys = await redis.keys(`code:${sub}:*`);
+        for (const codeKey of codeKeys) {
+          const savedCode = await redis.get(codeKey);
+          const assignmentId = codeKey.replace(`code:${sub}:`, '');
+          if (savedCode) {
+            savedCodes[assignmentId] = savedCode;
+          }
+        }
         
         // Calculate last active from progress data
         let lastActive = null;
@@ -79,8 +90,13 @@ export default async function handler(request, context) {
           }
         }
         
-        // Merge old progress format with new progress data format
+        // Merge old progress format with new progress data format and saved codes
         const mergedProgress = { ...(progress || {}), ...(progressData || {}) };
+        
+        // Add saved codes to progress
+        for (const [assignmentId, code] of Object.entries(savedCodes)) {
+          mergedProgress[`${assignmentId}:savedCode`] = code;
+        }
         
         students.push({
           sub,

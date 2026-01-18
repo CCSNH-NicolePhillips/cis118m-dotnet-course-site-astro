@@ -62,6 +62,9 @@ export default async function handler(request, context) {
     // Get current data for audit trail
     const currentScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:score`);
     
+    // Determine status based on score: 0 = allow retry (in_progress), else submitted
+    const newStatus = newScore === 0 ? "in_progress" : "submitted";
+    
     // Apply the override
     const overrideTime = new Date().toISOString();
     await redis.hset(`user:progress:data:${userId}`,
@@ -71,7 +74,7 @@ export default async function handler(request, context) {
       `${pageId}:overrideBy`, instructor.email || instructor.sub,
       `${pageId}:overrideAt`, overrideTime,
       `${pageId}:previousScore`, currentScore || 0,
-      `${pageId}:status`, "submitted"  // Ensure status is set
+      `${pageId}:status`, newStatus
     );
 
     // Log the override for audit purposes

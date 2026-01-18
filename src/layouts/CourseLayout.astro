@@ -809,8 +809,9 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
               console.error('[Auth] Failed to fetch progress for test student:', err);
             }
             
-            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'];
-            const syllabusScore = syllabusQuiz?.score || 0;
+            // Check for syllabus completion - try multiple possible keys
+            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'] || progress['week-01-syllabus-ack'];
+            const syllabusScore = syllabusQuiz?.score ?? (typeof syllabusQuiz === 'object' ? 0 : 0);
             const hasPassedSyllabus = syllabusScore === 100;
             
             const currentPath = window.location.pathname;
@@ -854,8 +855,9 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
               // Already have cached progress as fallback
             }
             
-            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'];
-            const syllabusScore = syllabusQuiz?.score || 0;
+            // Check for syllabus completion - try multiple possible keys
+            const syllabusQuiz = progress['week-01-required-quiz'] || progress['week-01-syllabus-quiz'] || progress['week-01-syllabus-ack'];
+            const syllabusScore = syllabusQuiz?.score ?? (typeof syllabusQuiz === 'object' ? 0 : 0);
             const hasPassedSyllabus = syllabusScore === 100;
             
             // Debug logging
