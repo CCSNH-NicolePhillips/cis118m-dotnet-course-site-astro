@@ -1,0 +1,687 @@
+---
+// Onboarding Component - Welcome modal + Site tour for first-time users
+---
+
+<!-- Welcome Modal (shown on first login) -->
+<div id="welcome-modal" class="onboarding-modal" style="display: none;">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>👋 Welcome to CIS118M!</h2>
+      <p class="modal-subtitle">.NET Programming with C#</p>
+    </div>
+    
+    <div class="modal-body">
+      <label for="display-name-input" class="name-label">
+        What would you like to be called?
+      </label>
+      <input 
+        type="text" 
+        id="display-name-input" 
+        class="name-input"
+        placeholder="Enter your preferred name..."
+        maxlength="50"
+      />
+      <p class="name-hint">This is how you'll appear in the course. You can change it anytime.</p>
+    </div>
+    
+    <div class="modal-actions">
+      <button id="welcome-continue-btn" class="btn-primary" disabled>
+        Continue →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Site Tour Overlay -->
+<div id="site-tour-overlay" class="tour-overlay" style="display: none;">
+  <div class="spotlight"></div>
+  <div class="tour-tooltip">
+    <div class="tour-step-indicator">
+      <span id="tour-step-current">1</span> / <span id="tour-step-total">6</span>
+    </div>
+    <div id="tour-tooltip-text" class="tour-tooltip-text"></div>
+    <div class="tour-tooltip-actions">
+      <button id="tour-skip-btn" class="tour-btn-secondary">Skip Tour</button>
+      <button id="tour-next-btn" class="tour-btn-primary">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal (accessible from dropdown) -->
+<div id="settings-modal" class="onboarding-modal" style="display: none;">
+  <div class="modal-backdrop" onclick="window.__onboarding?.closeSettings()"></div>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚙️ Settings</h2>
+      <button class="modal-close-btn" onclick="window.__onboarding?.closeSettings()">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="settings-section">
+        <label for="settings-name-input" class="name-label">
+          Display Name
+        </label>
+        <input 
+          type="text" 
+          id="settings-name-input" 
+          class="name-input"
+          placeholder="Enter your preferred name..."
+          maxlength="50"
+        />
+        <p class="name-hint">This is how you appear in the course.</p>
+      </div>
+      
+      <div class="settings-section">
+        <label class="name-label">Site Tour</label>
+        <p class="name-hint">Need a refresher on how to navigate the course?</p>
+        <button id="restart-tour-btn" class="tour-restart-btn" onclick="window.__onboarding?.startTour()">
+          🎯 Take the Tour Again
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button id="settings-save-btn" class="btn-primary">
+        Save Changes
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .onboarding-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .modal-content {
+    position: relative;
+    background: var(--panel, #1e1e1e);
+    border: 2px solid var(--border, #333);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+  }
+
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .modal-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .modal-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.75rem;
+    color: var(--text, #fff);
+  }
+
+  .modal-subtitle {
+    margin: 0;
+    color: var(--text-muted, #888);
+    font-size: 1rem;
+  }
+
+  .modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted, #888);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    line-height: 1;
+  }
+
+  .modal-close-btn:hover {
+    color: var(--text, #fff);
+  }
+
+  .modal-body {
+    margin-bottom: 24px;
+  }
+
+  .name-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text, #fff);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .name-input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--input-bg, #2d2d2d);
+    border: 2px solid var(--border, #444);
+    border-radius: 10px;
+    color: var(--text, #fff);
+    font-size: 1.1rem;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .name-input:focus {
+    outline: none;
+    border-color: #4ec9b0;
+  }
+
+  .name-input::placeholder {
+    color: var(--text-muted, #666);
+  }
+
+  .name-hint {
+    margin: 8px 0 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted, #888);
+  }
+
+  .settings-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border, #333);
+  }
+
+  .settings-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .tour-restart-btn {
+    margin-top: 12px;
+    padding: 12px 20px;
+    background: rgba(78, 201, 176, 0.15);
+    border: 2px solid #4ec9b0;
+    border-radius: 10px;
+    color: #4ec9b0;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tour-restart-btn:hover {
+    background: rgba(78, 201, 176, 0.25);
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: linear-gradient(135deg, #4ec9b0, #3ba896);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(78, 201, 176, 0.4);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Tour Overlay Styles */
+  .tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: auto;
+  }
+
+  .tour-overlay .spotlight {
+    position: fixed;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85);
+    border: 3px solid #4ec9b0;
+    border-radius: 8px;
+    transition: all 0.4s ease;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  .tour-tooltip {
+    position: fixed;
+    background: var(--panel, #1e1e1e);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    max-width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    animation: tooltipFadeIn 0.3s ease;
+  }
+
+  @keyframes tooltipFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tour-step-indicator {
+    font-size: 0.8rem;
+    color: var(--text-muted, #888);
+    margin-bottom: 10px;
+  }
+
+  .tour-tooltip-text {
+    color: var(--text, #fff);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .tour-tooltip-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tour-btn-secondary {
+    padding: 10px 18px;
+    background: transparent;
+    border: 1px solid var(--border, #444);
+    border-radius: 8px;
+    color: var(--text-muted, #888);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tour-btn-secondary:hover {
+    border-color: var(--text-muted, #888);
+    color: var(--text, #fff);
+  }
+
+  .tour-btn-primary {
+    padding: 10px 24px;
+    background: #4ec9b0;
+    border: none;
+    border-radius: 8px;
+    color: #1e1e1e;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tour-btn-primary:hover {
+    background: #5fd9c0;
+  }
+</style>
+
+<script>
+  // Onboarding system
+  const STORAGE_KEYS = {
+    displayName: 'cis118m:displayName',
+    onboardingComplete: 'cis118m:onboardingComplete',
+    tourComplete: 'cis118m:siteTourComplete'
+  };
+
+  // Tour steps configuration
+  const TOUR_STEPS = [
+    {
+      selector: '.sidebar',
+      text: '📚 <strong>Course Navigation</strong><br/>Use the sidebar to browse weekly modules. Each week has lessons, labs, and assignments.',
+      position: 'right'
+    },
+    {
+      selector: '[data-auth="user-chip"]',
+      text: '👤 <strong>Your Account</strong><br/>Click here to access your grades, settings, and sign out.',
+      position: 'bottom'
+    },
+    {
+      selector: '#instructor-link',
+      text: '📊 <strong>My Grades</strong><br/>Track your progress here. You can see scores for quizzes, labs, homework, and participation.',
+      position: 'bottom',
+      fallbackSelector: '.dropdown-menu'
+    },
+    {
+      selector: '.week-item:first-child',
+      text: '📖 <strong>Weekly Content</strong><br/>Click a week to expand it. Complete items in order: Start Here → Lessons → Labs → Quizzes.',
+      position: 'right'
+    },
+    {
+      selector: '.theme-toggle-btn',
+      text: '🎨 <strong>Theme Toggle</strong><br/>Switch between light and dark mode based on your preference.',
+      position: 'bottom'
+    },
+    {
+      selector: null,
+      text: '🎉 <strong>You\'re all set!</strong><br/>Start with Week 1 and work through the content at your own pace. Good luck with your .NET journey!',
+      position: 'center'
+    }
+  ];
+
+  let currentTourStep = 0;
+  let displayName = '';
+
+  // Initialize onboarding
+  function initOnboarding() {
+    const welcomeModal = document.getElementById('welcome-modal');
+    const nameInput = document.getElementById('display-name-input');
+    const continueBtn = document.getElementById('welcome-continue-btn');
+    const tourNextBtn = document.getElementById('tour-next-btn');
+    const tourSkipBtn = document.getElementById('tour-skip-btn');
+    const settingsSaveBtn = document.getElementById('settings-save-btn');
+
+    // Load saved display name
+    displayName = localStorage.getItem(STORAGE_KEYS.displayName) || '';
+
+    // Enable continue button when name is entered
+    if (nameInput) {
+      nameInput.addEventListener('input', () => {
+        const hasName = nameInput.value.trim().length > 0;
+        if (continueBtn) continueBtn.disabled = !hasName;
+      });
+    }
+
+    // Welcome continue button
+    if (continueBtn) {
+      continueBtn.addEventListener('click', () => {
+        const name = nameInput?.value.trim();
+        if (name) {
+          saveDisplayName(name);
+          closeWelcomeModal();
+          // Start tour after a short delay
+          setTimeout(() => startTour(), 500);
+        }
+      });
+    }
+
+    // Tour navigation
+    if (tourNextBtn) {
+      tourNextBtn.addEventListener('click', nextTourStep);
+    }
+
+    if (tourSkipBtn) {
+      tourSkipBtn.addEventListener('click', endTour);
+    }
+
+    // Settings save
+    if (settingsSaveBtn) {
+      settingsSaveBtn.addEventListener('click', saveSettings);
+    }
+  }
+
+  function saveDisplayName(name) {
+    displayName = name;
+    localStorage.setItem(STORAGE_KEYS.displayName, name);
+    localStorage.setItem(STORAGE_KEYS.onboardingComplete, 'true');
+    
+    // Update the user chip to show the display name
+    updateUserChipDisplay();
+    
+    // Sync to server (optional, for instructor dashboard)
+    syncDisplayNameToServer(name);
+  }
+
+  async function syncDisplayNameToServer(name) {
+    try {
+      const token = window.__auth?.getAccessToken ? await window.__auth.getAccessToken() : null;
+      if (token) {
+        await fetch('/.netlify/functions/progress-update', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            pageId: 'user-settings',
+            status: 'updated',
+            displayName: name
+          })
+        });
+      }
+    } catch (err) {
+      console.error('[Onboarding] Failed to sync display name:', err);
+    }
+  }
+
+  function updateUserChipDisplay() {
+    const userEmail = document.querySelector('[data-auth="user-email"]');
+    if (userEmail && displayName) {
+      userEmail.textContent = displayName;
+    }
+  }
+
+  function closeWelcomeModal() {
+    const modal = document.getElementById('welcome-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function startTour() {
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) settingsModal.style.display = 'none';
+    
+    currentTourStep = 0;
+    const overlay = document.getElementById('site-tour-overlay');
+    if (overlay) {
+      overlay.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+      showTourStep();
+    }
+  }
+
+  function showTourStep() {
+    const step = TOUR_STEPS[currentTourStep];
+    const spotlight = document.querySelector('#site-tour-overlay .spotlight');
+    const tooltip = document.querySelector('.tour-tooltip');
+    const tooltipText = document.getElementById('tour-tooltip-text');
+    const stepCurrent = document.getElementById('tour-step-current');
+    const stepTotal = document.getElementById('tour-step-total');
+    const nextBtn = document.getElementById('tour-next-btn');
+
+    if (!spotlight || !tooltip || !tooltipText) return;
+
+    // Update step indicator
+    if (stepCurrent) stepCurrent.textContent = currentTourStep + 1;
+    if (stepTotal) stepTotal.textContent = TOUR_STEPS.length;
+
+    // Update button text for last step
+    if (nextBtn) {
+      nextBtn.textContent = currentTourStep === TOUR_STEPS.length - 1 ? 'Finish 🎉' : 'Next →';
+    }
+
+    // Update tooltip text
+    tooltipText.innerHTML = step.text;
+
+    // Find target element
+    let element = step.selector ? document.querySelector(step.selector) : null;
+    if (!element && step.fallbackSelector) {
+      element = document.querySelector(step.fallbackSelector);
+    }
+
+    if (element && step.selector) {
+      // Scroll element into view
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      setTimeout(() => {
+        const rect = element.getBoundingClientRect();
+        
+        // Position spotlight
+        spotlight.style.display = 'block';
+        spotlight.style.width = `${rect.width + 20}px`;
+        spotlight.style.height = `${rect.height + 20}px`;
+        spotlight.style.top = `${rect.top - 10}px`;
+        spotlight.style.left = `${rect.left - 10}px`;
+
+        // Position tooltip
+        positionTooltip(tooltip, rect, step.position);
+      }, 400);
+    } else {
+      // No target - center the tooltip
+      spotlight.style.display = 'none';
+      tooltip.style.top = '50%';
+      tooltip.style.left = '50%';
+      tooltip.style.transform = 'translate(-50%, -50%)';
+    }
+  }
+
+  function positionTooltip(tooltip, targetRect, position) {
+    const padding = 20;
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    tooltip.style.transform = 'none';
+
+    switch (position) {
+      case 'right':
+        tooltip.style.top = `${targetRect.top}px`;
+        tooltip.style.left = `${targetRect.right + padding}px`;
+        break;
+      case 'bottom':
+        tooltip.style.top = `${targetRect.bottom + padding}px`;
+        tooltip.style.left = `${targetRect.left}px`;
+        break;
+      case 'left':
+        tooltip.style.top = `${targetRect.top}px`;
+        tooltip.style.left = `${targetRect.left - tooltipRect.width - padding}px`;
+        break;
+      case 'top':
+        tooltip.style.top = `${targetRect.top - tooltipRect.height - padding}px`;
+        tooltip.style.left = `${targetRect.left}px`;
+        break;
+      default:
+        tooltip.style.top = '50%';
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translate(-50%, -50%)';
+    }
+
+    // Keep tooltip in viewport
+    setTimeout(() => {
+      const rect = tooltip.getBoundingClientRect();
+      if (rect.right > window.innerWidth - 20) {
+        tooltip.style.left = `${window.innerWidth - rect.width - 20}px`;
+      }
+      if (rect.left < 20) {
+        tooltip.style.left = '20px';
+      }
+      if (rect.bottom > window.innerHeight - 20) {
+        tooltip.style.top = `${window.innerHeight - rect.height - 20}px`;
+      }
+    }, 50);
+  }
+
+  function nextTourStep() {
+    currentTourStep++;
+    if (currentTourStep < TOUR_STEPS.length) {
+      showTourStep();
+    } else {
+      endTour();
+    }
+  }
+
+  function endTour() {
+    const overlay = document.getElementById('site-tour-overlay');
+    if (overlay) overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    localStorage.setItem(STORAGE_KEYS.tourComplete, 'true');
+    currentTourStep = 0;
+  }
+
+  function openSettings() {
+    const modal = document.getElementById('settings-modal');
+    const nameInput = document.getElementById('settings-name-input');
+    
+    if (modal) {
+      modal.style.display = 'flex';
+      if (nameInput) {
+        nameInput.value = localStorage.getItem(STORAGE_KEYS.displayName) || '';
+      }
+    }
+  }
+
+  function closeSettings() {
+    const modal = document.getElementById('settings-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function saveSettings() {
+    const nameInput = document.getElementById('settings-name-input');
+    const name = nameInput?.value.trim();
+    
+    if (name) {
+      saveDisplayName(name);
+    }
+    
+    closeSettings();
+  }
+
+  // Check if user needs onboarding
+  function checkOnboardingNeeded() {
+    const isComplete = localStorage.getItem(STORAGE_KEYS.onboardingComplete) === 'true';
+    return !isComplete;
+  }
+
+  // Show welcome modal for new users
+  function showWelcomeModal() {
+    const modal = document.getElementById('welcome-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      const nameInput = document.getElementById('display-name-input');
+      if (nameInput) nameInput.focus();
+    }
+  }
+
+  // Expose functions globally
+  window.__onboarding = {
+    init: initOnboarding,
+    checkNeeded: checkOnboardingNeeded,
+    showWelcome: showWelcomeModal,
+    startTour,
+    openSettings,
+    closeSettings,
+    updateUserChip: updateUserChipDisplay,
+    getDisplayName: () => localStorage.getItem(STORAGE_KEYS.displayName) || ''
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOnboarding);
+  } else {
+    initOnboarding();
+  }
+</script>

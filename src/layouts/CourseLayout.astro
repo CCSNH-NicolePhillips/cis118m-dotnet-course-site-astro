@@ -3,6 +3,7 @@ import "../styles/global.css";
 import "../styles/editor.css";
 import { COURSE, WEEKS, getWeekById, isWeekLocked, TEST_STUDENTS } from "../config/site";
 import AITutor from "../components/AITutor";
+import Onboarding from "../components/Onboarding.astro";
 const { title = "Course Page", description = "" } = Astro.props;
 
 // Check if current page is in a locked week
@@ -251,6 +252,8 @@ const getWeekLockInfo = (weekSlug: string) => {
               </button>
               <div data-auth="dropdown-menu" class="dropdown-menu" role="menu" style="display:none;">
                 <a href="/grades/" class="dropdown-item" role="menuitem">📊 My Grades</a>
+                <button type="button" class="dropdown-item" role="menuitem" onclick="window.__onboarding?.openSettings()">⚙️ Settings</button>
+                <hr style="margin: 4px 0; border: none; border-top: 1px solid var(--border);" />
                 <button data-auth="logout" type="button" class="dropdown-item" role="menuitem">Sign out</button>
               </div>
             </div>
@@ -287,6 +290,9 @@ const getWeekLockInfo = (weekSlug: string) => {
         </div>
       </div>
     </div>
+
+    <!-- Onboarding Component -->
+    <Onboarding />
 
     <!-- Theme management -->
     <script is:inline>
@@ -1088,7 +1094,20 @@ const getWeekLockInfo = (weekSlug: string) => {
           
           if (userChip) {
             userChip.style.display = "flex";
-            if (userEmail) userEmail.textContent = user.email;
+            
+            // Check if user has set a display name, otherwise show email
+            const displayName = window.__onboarding?.getDisplayName();
+            if (userEmail) {
+              userEmail.textContent = displayName || user.email;
+            }
+            
+            // Check if onboarding is needed (first-time user)
+            if (window.__onboarding?.checkNeeded()) {
+              // Show welcome modal after a short delay to let page settle
+              setTimeout(() => {
+                window.__onboarding.showWelcome();
+              }, 800);
+            }
             
             // Chip click toggles dropdown
             userChip.addEventListener("click", (e) => {
