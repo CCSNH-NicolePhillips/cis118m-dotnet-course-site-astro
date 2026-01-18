@@ -20,8 +20,9 @@ import Quiz from '../../../components/Quiz.astro';
 
 <Quiz 
   quizId="week-01-technical-assessment"
-  title="Week 01: .NET Fundamentals"
+  title="Week 01: .NET Fundamentals (Graded)"
   passingScore={70}
+  maxAttempts={2}
   questions={[
     {
       id: "q1",
@@ -81,6 +82,91 @@ import Quiz from '../../../components/Quiz.astro';
       ],
       correctAnswer: "A signal that one instruction is complete",
       explanation: "The semicolon tells the compiler 'this statement is finished' — like a period at the end of a sentence."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What does the BCL (Base Class Library) provide?",
+      options: [
+        "The runtime engine that executes code",
+        "Pre-built classes for common tasks like File I/O and Collections",
+        "A code editor for writing C#",
+        "Network hardware drivers"
+      ],
+      correctAnswer: "Pre-built classes for common tasks like File I/O and Collections",
+      explanation: "The BCL is your 'toolbox' — thousands of pre-built classes so you don't have to write everything from scratch."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What does the Roslyn compiler produce when it compiles your C# code?",
+      options: [
+        "Native machine code specific to your CPU",
+        "Intermediate Language (IL) that any .NET runtime can execute",
+        "HTML and CSS files",
+        "A Docker container"
+      ],
+      correctAnswer: "Intermediate Language (IL) that any .NET runtime can execute",
+      explanation: "Roslyn compiles C# to IL (Intermediate Language). The JIT compiler then translates IL to native code at runtime."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "When does the JIT (Just-In-Time) compiler run?",
+      options: [
+        "When you save your .cs file",
+        "When Roslyn compiles your code",
+        "At runtime, when the program actually executes",
+        "When you install Visual Studio"
+      ],
+      correctAnswer: "At runtime, when the program actually executes",
+      explanation: "The JIT compiler runs at execution time, translating IL to native machine code for your specific CPU."
+    },
+    {
+      id: "q9",
+      type: "true-false",
+      question: "Console applications require a graphical user interface (GUI) to run.",
+      correctAnswer: "False",
+      explanation: "Console applications run in a terminal/command line — no GUI required. They're lightweight and great for learning."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What is wrong with this code: Console.WriteLine(Hello World);",
+      options: [
+        "Console should be lowercase",
+        "Missing double quotes around the text",
+        "WriteLine is spelled incorrectly",
+        "Missing a semicolon"
+      ],
+      correctAnswer: "Missing double quotes around the text",
+      explanation: "String literals (text) must be wrapped in double quotes: Console.WriteLine(\"Hello World\");"
+    },
+    {
+      id: "q11",
+      type: "multiple-choice",
+      question: "Which email should you use for technical help in this course?",
+      options: [
+        "help@microsoft.com",
+        "MCCCISOnline1@ccsnh.edu",
+        "support@dotnet.org",
+        "admin@ccsnh.edu"
+      ],
+      correctAnswer: "MCCCISOnline1@ccsnh.edu",
+      explanation: "For technical questions and course support, email MCCCISOnline1@ccsnh.edu."
+    },
+    {
+      id: "q12",
+      type: "multiple-choice",
+      question: "When is the hard deadline for weekly missions?",
+      options: [
+        "Friday at 5:00 PM",
+        "Saturday at midnight",
+        "Sunday at 11:59 PM",
+        "Monday at 8:00 AM"
+      ],
+      correctAnswer: "Sunday at 11:59 PM",
+      explanation: "Weekly assignments are due Sunday at 11:59 PM. Late submissions may have point deductions."
     }
   ]}
 />

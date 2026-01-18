@@ -6,7 +6,6 @@ description: "Week 1 Lesson 1: .NET vs C# + Console Apps"
 
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
-import Quiz from '../../../components/Quiz.astro';
 
 # Week 1 Lesson 1: .NET vs C# + Console Apps
 
@@ -378,73 +377,43 @@ The output isn't just "the running program"—it's a **deployable package**:
 
 ---
 
-<Quiz
-  quizId="week-01-lesson-1-diagnostic"
-  title="🚦 Lesson 1 & Course Policy Check - (GRADED)"
-  passingScore={100}
+import Checkpoint from '../../../components/Checkpoint.astro';
+
+<Checkpoint
+  checkpointId="week-01-lesson-1-checkpoint"
+  title="🔍 Lesson 1 Knowledge Check (Participation)"
   questions={[
     {
-      id: "q1",
+      id: "cp1",
       type: "multiple-choice",
       question: "You write a 'blueprint' for a program. Is that 'C#' or '.NET'?",
       options: ["C# (The Language)", ".NET (The Platform)"],
-      correctAnswer: "C# (The Language)"
+      correctAnswer: "C# (The Language)",
+      explanation: "C# is the language you write your code in — the blueprint. .NET is the platform that runs it."
     },
     {
-      id: "q2",
+      id: "cp2",
       type: "multiple-choice",
-      question: "Which component handles things like security while the code is running?",
+      question: "Which component handles memory management and security while the code is running?",
       options: ["The BCL (The Toolbox)", "The CLR (The Engine)"],
-      correctAnswer: "The CLR (The Engine)"
+      correctAnswer: "The CLR (The Engine)",
+      explanation: "The CLR (Common Language Runtime) is the 'engine' that executes your code and manages memory/security."
     },
     {
-      id: "q3",
+      id: "cp3",
       type: "multiple-choice",
       question: "What is wrong with this command: Console.WriteLine(Ignition);",
       options: ["Missing a semicolon", "Missing double quotes around Ignition", "The word Ignition must be capitalized"],
-      correctAnswer: "Missing double quotes around Ignition"
+      correctAnswer: "Missing double quotes around Ignition",
+      explanation: "Text data must be wrapped in double quotes. Without them, the compiler thinks 'Ignition' is a variable name."
     },
     {
-      id: "q4",
+      id: "cp4",
       type: "multiple-choice",
       question: "What does the Roslyn Compiler produce?",
-      options: ["Native machine code for your CPU", "Intermediate Language (IL) that any .NET runtime can execute", "A Docker container"],
-      correctAnswer: "Intermediate Language (IL) that any .NET runtime can execute"
-    },
-    {
-      id: "q5",
-      type: "multiple-choice",
-      question: "What is 'Source Code' from an architect's perspective?",
-      options: ["Just text files on a laptop", "The single source of truth managed by version control", "The compiled .exe file"],
-      correctAnswer: "The single source of truth managed by version control"
-    },
-    {
-      id: "q6",
-      type: "multiple-choice",
-      question: "When does the JIT (Just-In-Time) compiler run?",
-      options: ["When you write the code", "When Roslyn compiles to IL", "At runtime, when the program actually executes"],
-      correctAnswer: "At runtime, when the program actually executes"
-    },
-    {
-      id: "q7",
-      type: "multiple-choice",
-      question: "Which email should you use for technical help?",
-      options: ["MCCCISOnline1@ccsnh.edu", "instructor@school.edu", "help@dotnet.com"],
-      correctAnswer: "MCCCISOnline1@ccsnh.edu"
-    },
-    {
-      id: "q8",
-      type: "multiple-choice",
-      question: "When is the hard deadline for weekly missions?",
-      options: ["Sunday at 11:59 PM", "Friday at 5:00 PM", "Monday at 11:59 PM"],
-      correctAnswer: "Sunday at 11:59 PM"
-    },
-    {
-      id: "q9",
-      type: "multiple-choice",
-      question: "True or False: Using AI to write your lab code is permitted.",
-      options: ["True", "False"],
-      correctAnswer: "False"
+      options: ["Native machine code for your CPU", "Intermediate Language (IL)", "A Docker container"],
+      correctAnswer: "Intermediate Language (IL)",
+      explanation: "Roslyn compiles C# into IL (Intermediate Language), which the CLR then JIT-compiles to native code at runtime."
     }
   ]}
 />
