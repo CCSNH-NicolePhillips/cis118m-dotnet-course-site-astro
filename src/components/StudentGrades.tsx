@@ -266,34 +266,61 @@ const StudentGrades: React.FC = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
       {/* Overall Grade Card */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-        borderRadius: '16px',
-        padding: '30px',
-        marginBottom: '30px',
-        border: '1px solid #333',
-        textAlign: 'center'
-      }}>
-        <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-          Current Course Grade
-        </div>
-        <div style={{
-          fontSize: '4rem',
-          fontWeight: 'bold',
-          color: grades.courseTotal >= 70 ? '#4ec9b0' : grades.courseTotal >= 60 ? '#fbbf24' : '#ef4444',
-          lineHeight: 1.1
-        }}>
-          {grades.courseTotal.toFixed(1)}%
-        </div>
-        <div style={{
-          fontSize: '2rem',
-          fontWeight: 'bold',
-          color: grades.courseTotal >= 70 ? '#4ec9b0' : grades.courseTotal >= 60 ? '#fbbf24' : '#ef4444',
-          marginTop: '5px'
-        }}>
-          {getLetterGrade(grades.courseTotal)}
-        </div>
-      </div>
+      {(() => {
+        const hasAnyGrades = grades.labsCount > 0 || grades.quizzesCount > 0 || grades.homeworkCount > 0 || grades.participationCount > 0 || grades.finalCount > 0;
+        return (
+          <div style={{
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            borderRadius: '16px',
+            padding: '30px',
+            marginBottom: '30px',
+            border: '1px solid #333',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+              Current Course Grade
+            </div>
+            {hasAnyGrades ? (
+              <>
+                <div style={{
+                  fontSize: '4rem',
+                  fontWeight: 'bold',
+                  color: grades.courseTotal >= 70 ? '#4ec9b0' : grades.courseTotal >= 60 ? '#fbbf24' : '#ef4444',
+                  lineHeight: 1.1
+                }}>
+                  {grades.courseTotal.toFixed(1)}%
+                </div>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 'bold',
+                  color: grades.courseTotal >= 70 ? '#4ec9b0' : grades.courseTotal >= 60 ? '#fbbf24' : '#ef4444',
+                  marginTop: '5px'
+                }}>
+                  {getLetterGrade(grades.courseTotal)}
+                </div>
+              </>
+            ) : (
+              <>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 'bold',
+                  color: '#888',
+                  lineHeight: 1.1
+                }}>
+                  —
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  color: '#666',
+                  marginTop: '10px'
+                }}>
+                  No grades yet
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Category Breakdown */}
       <div style={{
@@ -489,9 +516,10 @@ const StudentGrades: React.FC = () => {
                         borderRadius: '4px',
                         background: partScore >= 100 ? 'rgba(78, 201, 176, 0.15)' : 'rgba(251, 191, 36, 0.15)',
                         color: partScore >= 100 ? '#4ec9b0' : '#fbbf24',
-                        fontSize: '0.9rem'
+                        fontSize: '0.9rem',
+                        fontWeight: 500
                       }}>
-                        {partCount}/{EXPECTED_CHECKPOINTS_PER_WEEK}
+                        {Math.min(100, partScore).toFixed(0)}
                       </span>
                     ) : (
                       <span style={{ color: '#444' }}>—</span>
