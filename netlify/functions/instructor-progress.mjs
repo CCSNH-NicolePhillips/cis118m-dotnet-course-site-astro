@@ -64,6 +64,10 @@ export default async function handler(request, context) {
         // Get quiz progress from user:progress:{sub} hash (attempts, bestScore, etc)
         const quizProgress = await redis.hgetall(`user:progress:${sub}`) || {};
         
+        // Get participation/graded progress from user:progress:data:{sub} hash
+        // This is where progress-update stores participation, homework, lab, quiz scores
+        const dataProgress = await redis.hgetall(`user:progress:data:${sub}`) || {};
+        
         // Get completions list to find all completed items
         const completionsList = await redis.smembers(`completions:${sub}`) || [];
         
@@ -113,6 +117,11 @@ export default async function handler(request, context) {
             const pageId = key.replace(':bestScore', '');
             mergedProgress[`${pageId}:score`] = value;
           }
+        }
+        
+        // Add participation and graded progress from progress-update (homework, lab, quiz, participation)
+        for (const [key, value] of Object.entries(dataProgress)) {
+          mergedProgress[key] = value;
         }
         
         // Add completion details (score, passed, status from completion records)
