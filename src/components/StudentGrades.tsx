@@ -60,14 +60,31 @@ interface ProgressData {
   };
 }
 
-// Auth0 token retrieval
+// Declare global auth interface
+declare global {
+  interface Window {
+    __auth?: {
+      getAccessToken: () => Promise<string | null>;
+      isAuthed: () => Promise<boolean>;
+      getUser: () => Promise<{ email?: string; sub?: string } | null>;
+    };
+  }
+}
+
+// Auth0 token retrieval - use global auth helper
 const getAccessToken = async (): Promise<string | null> => {
-  const stored = localStorage.getItem('auth_token');
-  if (!stored) return null;
-  try {
-    const { access_token, expires_at } = JSON.parse(stored);
-    if (Date.now() < expires_at) return access_token;
-  } catch { }
+  // Wait for auth to be ready
+  for (let i = 0; i < 20; i++) {
+    if (window.__auth?.getAccessToken) {
+      try {
+        return await window.__auth.getAccessToken();
+      } catch (err) {
+        console.error('[StudentGrades] Error getting token:', err);
+        return null;
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
   return null;
 };
 
@@ -216,9 +233,32 @@ const StudentGrades: React.FC = () => {
   }
 
   if (error) {
+    const handleLogin = () => {
+      if (window.__auth?.getAccessToken) {
+        // Auth is ready but no token - trigger login
+        window.location.href = '/';
+      } else {
+        window.location.reload();
+      }
+    };
+
     return (
-      <div style={{ textAlign: 'center', padding: '40px', color: '#ef4444' }}>
-        {error}
+      <div style={{ textAlign: 'center', padding: '40px' }}>
+        <p style={{ color: '#ef4444', marginBottom: '20px' }}>{error}</p>
+        <button 
+          onClick={handleLogin}
+          style={{
+            padding: '12px 24px',
+            background: 'linear-gradient(135deg, #4ec9b0, #3ba896)',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#fff',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          Go to Home & Sign In
+        </button>
       </div>
     );
   }
