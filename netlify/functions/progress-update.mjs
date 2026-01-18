@@ -40,9 +40,39 @@ export default async function handler(request, context) {
       );
     }
 
-    const { starterId, event, pageId, status, score, feedback, savedCode } = body;
+    const { starterId, event, pageId, status, score, feedback, savedCode, type } = body;
 
-    // Handle new pageId/status/score/feedback format (from EngineeringLogEditor)
+    // Handle checkpoint participation (from Checkpoint.astro)
+    if (pageId && status === 'participated' && type === 'checkpoint') {
+      const redis = getRedis();
+      const userId = user.sub;
+      
+      console.log('[progress-update] Recording checkpoint participation:', pageId);
+      
+      // Store participation status in hash
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${pageId}:status`]: 'participated',
+        [`${pageId}:timestamp`]: new Date().toISOString()
+      });
+
+      // Track student in index for instructor dashboard
+      await redis.sadd("cis118m:students", userId);
+      
+      // Store student email and name for instructor dashboard
+      if (user.email) {
+        await redis.set(`cis118m:studentEmail:${userId}`, user.email);
+      }
+      if (user.name) {
+        await redis.set(`cis118m:studentName:${userId}`, user.name);
+      }
+
+      return new Response(
+        JSON.stringify({ ok: true, recorded: pageId }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Handle graded submissions (from EngineeringLogEditor)
     if (pageId && status) {
       const redis = getRedis();
       const userId = user.sub;
@@ -53,23 +83,17 @@ export default async function handler(request, context) {
       const finalScore = lateInfo.finalScore;
       
       // Build the hash fields to set
-      const hashFields = [
-        `${pageId}:status`, status, 
-        `${pageId}:score`, finalScore,
-        `${pageId}:originalScore`, score || 0,
-        `${pageId}:feedback`, feedback || "",
-        `${pageId}:isLate`, lateInfo.isLate ? "true" : "false",
-        `${pageId}:daysLate`, lateInfo.daysLate || 0,
-        `${pageId}:penalty`, lateInfo.penalty || 0,
-        `${pageId}:submittedAt`, submissionTime.toISOString()
-      ];
-      
-      // Add savedCode if provided
-      if (savedCode) {
-        hashFields.push(`${pageId}:savedCode`, savedCode);
-      }
-      
-      await redis.hset(`user:progress:data:${userId}`, ...hashFields);
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${pageId}:status`]: status,
+        [`${pageId}:score`]: finalScore,
+        [`${pageId}:originalScore`]: score || 0,
+        [`${pageId}:feedback`]: feedback || "",
+        [`${pageId}:isLate`]: lateInfo.isLate ? "true" : "false",
+        [`${pageId}:daysLate`]: lateInfo.daysLate || 0,
+        [`${pageId}:penalty`]: lateInfo.penalty || 0,
+        [`${pageId}:submittedAt`]: submissionTime.toISOString(),
+        ...(savedCode ? { [`${pageId}:savedCode`]: savedCode } : {})
+      });
 
       // Track student in index for instructor dashboard
       await redis.sadd("cis118m:students", userId);
