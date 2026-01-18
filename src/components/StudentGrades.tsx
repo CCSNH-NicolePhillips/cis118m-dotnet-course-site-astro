@@ -338,16 +338,16 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Labs (40%)
+            Labs
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: TYPE_COLORS.lab.text }}>
-            {grades.labsAvg.toFixed(0)}
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.labsCount > 0 ? TYPE_COLORS.lab.text : '#666' }}>
+            {grades.labsCount > 0 ? grades.labsAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            avg of {grades.labsCount} lab{grades.labsCount !== 1 ? 's' : ''}
+            {grades.labsCount > 0 ? `avg of ${grades.labsCount} lab${grades.labsCount !== 1 ? 's' : ''}` : 'No labs yet'}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.lab.text, marginTop: '6px' }}>
-            Contributes: {grades.labsWeighted.toFixed(1)} pts
+            Worth: 40% of grade
           </div>
         </div>
 
@@ -360,16 +360,16 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Quizzes (20%)
+            Quizzes
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: TYPE_COLORS.quiz.text }}>
-            {grades.quizzesAvg.toFixed(0)}
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.quizzesCount > 0 ? TYPE_COLORS.quiz.text : '#666' }}>
+            {grades.quizzesCount > 0 ? grades.quizzesAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            avg of {grades.quizzesCount} quiz{grades.quizzesCount !== 1 ? 'zes' : ''}
+            {grades.quizzesCount > 0 ? `avg of ${grades.quizzesCount} quiz${grades.quizzesCount !== 1 ? 'zes' : ''}` : 'No quizzes yet'}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.quiz.text, marginTop: '6px' }}>
-            Contributes: {grades.quizzesWeighted.toFixed(1)} pts
+            Worth: 20% of grade
           </div>
         </div>
 
@@ -382,16 +382,16 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Homework (20%)
+            Homework
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: TYPE_COLORS.homework.text }}>
-            {grades.homeworkAvg.toFixed(0)}
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.homeworkCount > 0 ? TYPE_COLORS.homework.text : '#666' }}>
+            {grades.homeworkCount > 0 ? grades.homeworkAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            avg of {grades.homeworkCount} assignment{grades.homeworkCount !== 1 ? 's' : ''}
+            {grades.homeworkCount > 0 ? `avg of ${grades.homeworkCount} assignment${grades.homeworkCount !== 1 ? 's' : ''}` : 'No homework yet'}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.homework.text, marginTop: '6px' }}>
-            Contributes: {grades.homeworkWeighted.toFixed(1)} pts
+            Worth: 20% of grade
           </div>
         </div>
 
@@ -404,16 +404,16 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Participation (10%)
+            Participation
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: TYPE_COLORS.participation.text }}>
-            {grades.participationAvg.toFixed(0)}
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.participationCount > 0 ? TYPE_COLORS.participation.text : '#666' }}>
+            {grades.participationCount > 0 ? grades.participationAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            avg of {grades.participationCount} week{grades.participationCount !== 1 ? 's' : ''}
+            {grades.participationCount > 0 ? `avg of ${grades.participationCount} week${grades.participationCount !== 1 ? 's' : ''}` : 'No participation yet'}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.participation.text, marginTop: '6px' }}>
-            Contributes: {grades.participationWeighted.toFixed(1)} pts
+            Worth: 10% of grade
           </div>
         </div>
 
@@ -426,16 +426,16 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Final (10%)
+            Final Exam
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: TYPE_COLORS.final.text }}>
-            {grades.finalAvg.toFixed(0)}
+          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.finalCount > 0 ? TYPE_COLORS.final.text : '#666' }}>
+            {grades.finalCount > 0 ? grades.finalAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
             {grades.finalCount === 0 ? 'Not yet taken' : `${grades.finalCount} exam`}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.final.text, marginTop: '6px' }}>
-            Contributes: {grades.finalWeighted.toFixed(1)} pts
+            Worth: 10% of grade
           </div>
         </div>
       </div>
