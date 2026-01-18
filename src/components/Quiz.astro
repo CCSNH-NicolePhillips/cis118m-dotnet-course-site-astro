@@ -179,6 +179,10 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
               
               // If already passed, show success message
               if (bestScore >= passingScore && (quizId === 'week-01-required-quiz' || quizId === 'week-01-syllabus-quiz')) {
+                // Hide the mission-brief/gatekeeper info box since quiz is passed
+                const missionBrief = document.querySelector('.mission-brief');
+                if (missionBrief) missionBrief.style.display = 'none';
+                
                 const successMsg = document.createElement('div');
                 successMsg.className = 'gatekeeper-success';
                 successMsg.innerHTML = `
