@@ -236,30 +236,144 @@ class Program
 
 ---
 
-## 🏗️ The Professional Pipeline
+## 🏗️ The Architect's Professional Pipeline
 
-<div style="background: rgba(78, 201, 176, 0.1); border: 2px solid #4ec9b0; padding: 20px; border-radius: 8px; margin: 24px 0;">
-  <h4 style="margin-top: 0; color: #4ec9b0;">📋 Thinking Like an Architect</h4>
-  <p>Before you can master C#, you need to understand the <strong>"Build" process</strong>—how your typed instructions become a running program.</p>
+<div style="background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%); border: 2px solid #4ec9b0; padding: 24px; border-radius: 12px; margin: 24px 0;">
+  <h4 style="margin-top: 0; color: #4ec9b0;">🎯 From Blueprint to Reality</h4>
+  <p style="margin-bottom: 0;">To think like a <strong>software architect</strong>, you need to understand how code transforms from text files into running software. This isn't just "compile and run"—it's a <strong>professional pipeline</strong> that powers every app you've ever used.</p>
 </div>
+
+<img src="/media/week-1/lesson-1/pipeline.png" alt="The Architect's Professional Pipeline: From Blueprint to Reality" style="width: 100%; border-radius: 12px; margin: 20px 0; border: 2px solid #333;" />
+
+### 📄 1. Source Code (The Managed Blueprint)
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #4ec9b0;">
+    <p style="color: #4ec9b0; margin-top: 0; font-weight: bold; font-size: 0.9rem;">👨‍💻 THE DEVELOPER VIEW</p>
+    <p style="margin: 0;">The <code>.cs</code> files I type code into.</p>
+  </div>
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #6b9fff;">
+    <p style="color: #6b9fff; margin-top: 0; font-weight: bold; font-size: 0.9rem;">🏛️ THE ARCHITECT VIEW</p>
+    <p style="margin: 0;">The <strong>single source of truth</strong>, managed by version control (like Git).</p>
+  </div>
+</div>
+
+An architect doesn't just see text files—they see a **managed history** of the entire product. They think about:
 
 <div class="component-cards">
-  <div class="component-card">
-    <h5>📄 Source Code</h5>
-    <p>The <strong>human-readable text</strong> you write in your <code>.cs</code> files. This is YOUR blueprint—written in C# syntax that humans can read and edit.</p>
+  <div class="component-card" style="border-left: 4px solid #4ec9b0;">
+    <h5>🌿 Branching Strategies</h5>
+    <p>How do teams work on features <strong>simultaneously</strong> without breaking the "main" blueprint?</p>
   </div>
-  <div class="component-card">
-    <h5>🔧 The Compiler (Roslyn)</h5>
-    <p>A specialized program that <strong>translates</strong> your Source Code into instructions the computer can execute. Think of it as a translator between human language and machine language.</p>
+  <div class="component-card" style="border-left: 4px solid #ce9178;">
+    <h5>👁️ Code Review</h5>
+    <p>Ensuring <strong>human eyes</strong> verify the blueprint before it moves to the next stage.</p>
   </div>
-  <div class="component-card">
-    <h5>⚡ The Output</h5>
-    <p>The final program (a <code>.dll</code> or <code>.exe</code>) that the CLR can "run". This is what gets executed when you click Run.</p>
+  <div class="component-card" style="border-left: 4px solid #6b9fff;">
+    <h5>📦 Dependencies (NuGet)</h5>
+    <p>Your code relies on <strong>external packages</strong>. The source stage defines exactly which versions are needed.</p>
   </div>
 </div>
 
-<div style="background: #1e1e1e; padding: 20px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #4ec9b0;">
-  <p style="margin: 0; font-size: 0.95rem;"><strong>The Flow:</strong> You write <span style="color: #4ec9b0;">Source Code</span> → The <span style="color: #ce9178;">Compiler</span> translates it → The <span style="color: #6b9fff;">CLR</span> runs the output.</p>
+---
+
+### 🔧 2. The Compiler (The Build Factory)
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #4ec9b0;">
+    <p style="color: #4ec9b0; margin-top: 0; font-weight: bold; font-size: 0.9rem;">👨‍💻 THE DEVELOPER VIEW</p>
+    <p style="margin: 0;">Hitting <kbd>F5</kbd> in Visual Studio. Roslyn does its magic.</p>
+  </div>
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #6b9fff;">
+    <p style="color: #6b9fff; margin-top: 0; font-weight: bold; font-size: 0.9rem;">🏛️ THE ARCHITECT VIEW</p>
+    <p style="margin: 0;">A <strong>multi-stage transformation</strong> running on a build server, not a laptop.</p>
+  </div>
+</div>
+
+<div style="background: rgba(206, 145, 120, 0.1); border: 2px solid #ce9178; padding: 20px; border-radius: 8px; margin: 20px 0;">
+  <h4 style="margin-top: 0; color: #ce9178;">🎭 The Two-Part Dance</h4>
+  <p style="margin-bottom: 0;">In .NET, compilation is actually a <strong>two-step process</strong> that architects must understand:</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div style="background: linear-gradient(180deg, #2d2d2d 0%, #1e1e1e 100%); padding: 20px; border-radius: 8px; border: 1px solid #4ec9b0;">
+    <h5 style="color: #4ec9b0; margin-top: 0;">Step 2a: Roslyn → IL</h5>
+    <p style="font-size: 0.9rem;">Roslyn translates your C# into <strong>Intermediate Language (IL)</strong>—a generic, CPU-agnostic assembly language.</p>
+    <div style="background: #0d0d0d; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.8rem;">
+      <span style="color: #569cd6;">C#</span> → <span style="color: #ce9178;">IL (MSIL/CIL)</span>
+    </div>
+  </div>
+  <div style="background: linear-gradient(180deg, #2d2d2d 0%, #1e1e1e 100%); padding: 20px; border-radius: 8px; border: 1px solid #6b9fff;">
+    <h5 style="color: #6b9fff; margin-top: 0;">Step 2b: CLR → Native</h5>
+    <p style="font-size: 0.9rem;">At runtime, the <strong>JIT (Just-In-Time) compiler</strong> translates IL into native machine code for YOUR specific CPU.</p>
+    <div style="background: #0d0d0d; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.8rem;">
+      <span style="color: #ce9178;">IL</span> → <span style="color: #4ec9b0;">Native (x64/ARM64)</span>
+    </div>
+  </div>
+</div>
+
+<div style="background: #1e1e1e; padding: 16px 20px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+  <p style="margin: 0; font-size: 0.95rem;"><strong style="color: #f59e0b;">💡 Why does an architect care?</strong> The same compiled output can run on <strong>different processors</strong> (x64, ARM64) and <strong>different operating systems</strong> (Windows, Linux, Mac)!</p>
+</div>
+
+---
+
+### ⚡ 3. The Output (The Deliverable Package)
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #4ec9b0;">
+    <p style="color: #4ec9b0; margin-top: 0; font-weight: bold; font-size: 0.9rem;">👨‍💻 THE DEVELOPER VIEW</p>
+    <p style="margin: 0;">The <code>.exe</code> file in <code>/bin/debug</code> that I can run.</p>
+  </div>
+  <div style="background: #1e1e1e; padding: 20px; border-radius: 8px; border-top: 4px solid #6b9fff;">
+    <p style="color: #6b9fff; margin-top: 0; font-weight: bold; font-size: 0.9rem;">🏛️ THE ARCHITECT VIEW</p>
+    <p style="margin: 0;">A <strong>versioned artifact</strong> ready for deployment to any environment.</p>
+  </div>
+</div>
+
+The output isn't just "the running program"—it's a **deployable package**:
+
+<div class="component-cards">
+  <div class="component-card" style="border-left: 4px solid #a855f7;">
+    <h5>📦 Artifact Types</h5>
+    <p><strong>.exe</strong> (executable), <strong>.dll</strong> (library), or <strong>Docker container</strong> (program + environment bundled together).</p>
+  </div>
+  <div class="component-card" style="border-left: 4px solid #10b981;">
+    <h5>⚙️ Configuration vs Code</h5>
+    <p>The output must be <strong>generic</strong>—no hardcoded passwords! It accepts environment configs at runtime (Test vs Production).</p>
+  </div>
+</div>
+
+---
+
+### 🎯 The Complete Pipeline
+
+<div style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); padding: 24px; border-radius: 12px; border: 2px solid #4ec9b0; margin: 20px 0;">
+  <p style="color: #888; margin: 0 0 12px 0; font-size: 0.85rem;">DEVELOPER VIEW:</p>
+  <p style="margin: 0 0 20px 0; font-size: 1.1rem; font-family: monospace;">
+    <span style="color: #4ec9b0;">Source</span> → <span style="color: #ce9178;">Compile</span> → <span style="color: #6b9fff;">Run</span>
+  </p>
+  
+  <p style="color: #888; margin: 0 0 12px 0; font-size: 0.85rem;">ARCHITECT VIEW:</p>
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.85rem;">
+    <span style="background: #4ec9b0; color: #000; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Git Commit</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Build Server</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Restore Deps</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Auto-Test</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #ce9178; color: #000; padding: 4px 8px; border-radius: 4px; font-weight: bold;">Roslyn → IL</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Package</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Artifact Repo</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #333; color: #fff; padding: 4px 8px; border-radius: 4px;">Deploy</span>
+    <span style="color: #666;">→</span>
+    <span style="background: #6b9fff; color: #000; padding: 4px 8px; border-radius: 4px; font-weight: bold;">JIT → Run</span>
+  </div>
 </div>
 
 ---
@@ -293,19 +407,40 @@ class Program
     {
       id: "q4",
       type: "multiple-choice",
+      question: "What does the Roslyn Compiler produce?",
+      options: ["Native machine code for your CPU", "Intermediate Language (IL) that any .NET runtime can execute", "A Docker container"],
+      correctAnswer: "Intermediate Language (IL) that any .NET runtime can execute"
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "What is 'Source Code' from an architect's perspective?",
+      options: ["Just text files on a laptop", "The single source of truth managed by version control", "The compiled .exe file"],
+      correctAnswer: "The single source of truth managed by version control"
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "When does the JIT (Just-In-Time) compiler run?",
+      options: ["When you write the code", "When Roslyn compiles to IL", "At runtime, when the program actually executes"],
+      correctAnswer: "At runtime, when the program actually executes"
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
       question: "Which email should you use for technical help?",
       options: ["MCCCISOnline1@ccsnh.edu", "instructor@school.edu", "help@dotnet.com"],
       correctAnswer: "MCCCISOnline1@ccsnh.edu"
     },
     {
-      id: "q5",
+      id: "q8",
       type: "multiple-choice",
       question: "When is the hard deadline for weekly missions?",
       options: ["Sunday at 11:59 PM", "Friday at 5:00 PM", "Monday at 11:59 PM"],
       correctAnswer: "Sunday at 11:59 PM"
     },
     {
-      id: "q6",
+      id: "q9",
       type: "multiple-choice",
       question: "True or False: Using AI to write your lab code is permitted.",
       options: ["True", "False"],
