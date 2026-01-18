@@ -17,26 +17,28 @@ export const lessonContexts = {
     type: "homework",
     week: "01",
     taughtConcepts: `
+      - SOURCE CODE: The human-readable text you write in .cs files - YOUR blueprint written in C# syntax
+      - THE COMPILER (Roslyn): A specialized program that TRANSLATES your Source Code into computer instructions
       - C# is the programming language (syntax, keywords, rules you write)
       - .NET is the platform (the engine and toolbox that runs your code)
-      - The CLR (Common Language Runtime) is the execution engine that runs compiled code
-      - C# code compiles to IL (Intermediate Language), then the CLR executes the IL
-      - Semicolons terminate statements - missing one is a syntax error caught by the compiler
-      - The compiler checks syntax BEFORE the CLR ever runs anything
-      - Console.WriteLine() outputs text to the terminal
+      - The CLR (Common Language Runtime) is the execution engine that runs the compiled output
+      - The BUILD PROCESS: Source Code → Compiler translates → CLR runs the output
+      - Semicolons terminate statements - missing one is a syntax error caught by the COMPILER (not the CLR)
+      - The COMPILER checks syntax BEFORE the CLR ever runs anything
     `,
     assignmentPrompt: `
-      In 3-5 sentences, answer:
-      1. How does the CLR (Engine) interact with your C# Blueprint to make code run?
-      2. Why does a missing semicolon prevent the engine from starting?
+      In 3-5 sentences, explain the Build Process:
+      1. What is Source Code and who creates it?
+      2. What does the Compiler do with your Source Code?
+      3. Why does a missing semicolon prevent the program from running?
     `,
     rubric: `
-      CLR as execution engine (40pts): Student explains the CLR runs/executes the compiled code
-      C# as source/blueprint (30pts): Student understands C# is the code that gets compiled
-      Semicolon = compiler error (20pts): Student explains missing semicolon stops compilation before CLR runs
-      Clarity (10pts): Clear, understandable writing
+      Source Code definition (35pts): Student explains that Source Code is the human-readable text they write in .cs files
+      Compiler role (35pts): Student explains the Compiler translates/converts Source Code into computer-executable instructions
+      Semicolon = COMPILER error (20pts): Student correctly identifies that missing semicolon is caught by the COMPILER (not runtime)
+      Clarity and keyword usage (10pts): Clear writing using both 'Source Code' and 'Compiler' terms
     `,
-    requiredKeywords: ["CLR", "compile", "semicolon"]
+    requiredKeywords: ["Source Code", "Compiler"]
   },
 
   "week-01-lab-01": {

@@ -102,7 +102,7 @@ const EngineeringLogEditor = ({
       Underline,
       CharacterCount,
       Placeholder.configure({
-        placeholder: 'Write your reflection here... (3-5 sentences explaining how the CLR runs your C# code and why semicolons matter)',
+        placeholder: 'Write your reflection here... (3-5 sentences explaining Source Code, what the Compiler does, and why semicolons matter)',
       }),
     ],
     content: savedContent || '',
