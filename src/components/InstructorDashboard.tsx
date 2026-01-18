@@ -4,22 +4,40 @@ import { getAccessToken } from '../lib/auth';
 // Number of weeks in course
 const TOTAL_WEEKS = 16;
 
+// Assignment type
+type AssignmentType = 'participation' | 'quiz' | 'homework' | 'lab' | 'final';
+
+// Color scheme for each assignment type
+const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: string }> = {
+  participation: { text: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)', border: '#fbbf24' },  // Yellow/Gold
+  quiz: { text: '#a78bfa', bg: 'rgba(167, 139, 250, 0.2)', border: '#a78bfa' },          // Purple
+  homework: { text: '#60a5fa', bg: 'rgba(96, 165, 250, 0.2)', border: '#60a5fa' },       // Blue
+  lab: { text: '#4ade80', bg: 'rgba(74, 222, 128, 0.2)', border: '#4ade80' },            // Green
+  final: { text: '#f472b6', bg: 'rgba(244, 114, 182, 0.2)', border: '#f472b6' },         // Pink
+};
+
 // Assignment definitions for the course - dynamically generate all weeks
 const generateAssignments = () => {
-  const assignments: { id: string; label: string; week: number; type: 'quiz' | 'homework' | 'lab' }[] = [];
+  const assignments: { id: string; label: string; week: number; type: AssignmentType }[] = [];
   
   // Week 1 is special - syllabus quiz
+  assignments.push({ id: 'week-01-participation', label: 'Part', week: 1, type: 'participation' });
   assignments.push({ id: 'week-01-required-quiz', label: 'Syllabus', week: 1, type: 'quiz' });
   assignments.push({ id: 'week-01-homework', label: 'HW', week: 1, type: 'homework' });
   assignments.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
   
-  // Weeks 2-16
-  for (let w = 2; w <= TOTAL_WEEKS; w++) {
+  // Weeks 2-15 (regular weeks)
+  for (let w = 2; w <= 15; w++) {
     const wStr = w.toString().padStart(2, '0');
+    assignments.push({ id: `week-${wStr}-participation`, label: 'Part', week: w, type: 'participation' });
     assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
     assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
     assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
   }
+  
+  // Week 16 - Final Capstone
+  assignments.push({ id: 'week-16-participation', label: 'Part', week: 16, type: 'participation' });
+  assignments.push({ id: 'week-16-final', label: 'Final', week: 16, type: 'final' });
   
   return assignments;
 };
@@ -106,22 +124,25 @@ const calculateWeightedTotals = (
   quizzesWeighted: number;
   homeworkWeighted: number;
   participationWeighted: number;
+  finalWeighted: number;
   labsAvg: number;
   quizzesAvg: number;
   homeworkAvg: number;
   participationPct: number;
+  finalAvg: number;
 } => {
   if (!parsed) {
     return {
       courseTotal: 0,
-      labsWeighted: 0, quizzesWeighted: 0, homeworkWeighted: 0, participationWeighted: 0,
-      labsAvg: 0, quizzesAvg: 0, homeworkAvg: 0, participationPct: 0
+      labsWeighted: 0, quizzesWeighted: 0, homeworkWeighted: 0, participationWeighted: 0, finalWeighted: 0,
+      labsAvg: 0, quizzesAvg: 0, homeworkAvg: 0, participationPct: 0, finalAvg: 0
     };
   }
   
   const labScores: number[] = [];
   const quizScores: number[] = [];
   const homeworkScores: number[] = [];
+  const finalScores: number[] = [];
   
   for (const assignment of assignments) {
     const score = parsed[assignment.id]?.score;
@@ -129,6 +150,7 @@ const calculateWeightedTotals = (
       if (assignment.type === 'lab') labScores.push(score);
       else if (assignment.type === 'quiz') quizScores.push(score);
       else if (assignment.type === 'homework') homeworkScores.push(score);
+      else if (assignment.type === 'final') finalScores.push(score);
     }
   }
   
@@ -137,6 +159,7 @@ const calculateWeightedTotals = (
   const labsAvg = avg(labScores);
   const quizzesAvg = avg(quizScores);
   const homeworkAvg = avg(homeworkScores);
+  const finalAvg = avg(finalScores);
   
   const totalExpected = TOTAL_WEEKS * EXPECTED_CHECKPOINTS_PER_WEEK;
   const participationPct = totalExpected > 0 ? Math.min(100, (participationCount / totalExpected) * 100) : 0;
@@ -145,13 +168,14 @@ const calculateWeightedTotals = (
   const quizzesWeighted = quizzesAvg * WEIGHTS.quizzes;
   const homeworkWeighted = homeworkAvg * WEIGHTS.homework;
   const participationWeighted = participationPct * WEIGHTS.participation;
+  const finalWeighted = finalAvg * WEIGHTS.final;
   
-  const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted;
+  const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted + finalWeighted;
   
   return {
     courseTotal,
-    labsWeighted, quizzesWeighted, homeworkWeighted, participationWeighted,
-    labsAvg, quizzesAvg, homeworkAvg, participationPct
+    labsWeighted, quizzesWeighted, homeworkWeighted, participationWeighted, finalWeighted,
+    labsAvg, quizzesAvg, homeworkAvg, participationPct, finalAvg
   };
 };
 
@@ -163,7 +187,7 @@ const InstructorDashboard: React.FC = () => {
   
   // Filters
   const [weekFilter, setWeekFilter] = useState<number | 'all'>('all');
-  const [typeFilter, setTypeFilter] = useState<'all' | 'quiz' | 'homework' | 'lab'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | AssignmentType>('all');
   const [showTotals, setShowTotals] = useState(true);
   
   // Modal state
@@ -356,14 +380,17 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
-  const getScoreColor = (score: number | undefined) => {
-    if (score === undefined || score === null) return '#888';
-    return score >= 70 ? '#4ec9b0' : '#ce9178';
-  };
-
-  const getScoreBgColor = (score: number | undefined) => {
-    if (score === undefined || score === null) return 'rgba(100, 100, 100, 0.2)';
-    return score >= 70 ? 'rgba(78, 201, 176, 0.2)' : 'rgba(206, 145, 120, 0.2)';
+  // Get colors based on assignment type and score
+  const getTypeColors = (type: AssignmentType, score: number | undefined) => {
+    const colors = TYPE_COLORS[type];
+    if (score === undefined || score === null) {
+      return { text: '#888', bg: 'rgba(100, 100, 100, 0.2)', border: '#666' };
+    }
+    // If failing score, show muted version
+    if (score < 70) {
+      return { text: '#ce9178', bg: 'rgba(206, 145, 120, 0.2)', border: '#ce9178' };
+    }
+    return colors;
   };
 
   // Styles
@@ -451,13 +478,15 @@ const InstructorDashboard: React.FC = () => {
           Type:
           <select
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as 'all' | 'quiz' | 'homework' | 'lab')}
+            onChange={(e) => setTypeFilter(e.target.value as 'all' | AssignmentType)}
             style={filterSelectStyle}
           >
             <option value="all">All Types</option>
+            <option value="participation">Participation Only</option>
             <option value="quiz">Quizzes Only</option>
             <option value="homework">Homework Only</option>
             <option value="lab">Labs Only</option>
+            <option value="final">Final Only</option>
           </select>
         </label>
         
@@ -488,16 +517,9 @@ const InstructorDashboard: React.FC = () => {
                 Student
               </th>
               
-              {/* Participation columns per week (if showing all or filtered week) */}
-              {activeWeeks.map(week => (
-                <th key={`part-${week}`} style={{ ...thStyle, color: '#fbbf24', minWidth: '40px' }} title={`Week ${week} Participation`}>
-                  P{week}
-                </th>
-              ))}
-              
-              {/* Assignment columns */}
+              {/* Assignment columns with type-based colors */}
               {filteredAssignments.map(a => (
-                <th key={a.id} style={thStyle} title={a.id}>
+                <th key={a.id} style={{ ...thStyle, color: TYPE_COLORS[a.type].text }} title={a.id}>
                   W{a.week} {a.label}
                 </th>
               ))}
@@ -505,11 +527,12 @@ const InstructorDashboard: React.FC = () => {
               {/* Weighted totals columns */}
               {showTotals && (
                 <>
-                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Labs Weighted (40%)">Labs</th>
-                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Quizzes Weighted (20%)">Quiz</th>
-                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Homework Weighted (20%)">HW</th>
-                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Participation Weighted (10%)">Part</th>
-                  <th style={{ ...thStyle, background: '#4d4d4d', minWidth: '65px' }} title="Course Total (90% - no final yet)">Total</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.lab.text, minWidth: '55px' }} title="Labs Weighted (40%)">Labs</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.quiz.text, minWidth: '55px' }} title="Quizzes Weighted (20%)">Quiz</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.homework.text, minWidth: '55px' }} title="Homework Weighted (20%)">HW</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.participation.text, minWidth: '55px' }} title="Participation Weighted (10%)">Part</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.final.text, minWidth: '55px' }} title="Final Capstone (10%)">Final</th>
+                  <th style={{ ...thStyle, background: '#4d4d4d', minWidth: '65px' }} title="Course Total">Total</th>
                 </>
               )}
             </tr>
@@ -523,10 +546,9 @@ const InstructorDashboard: React.FC = () => {
               </tr>
             ) : (
               students.map(student => {
-                const participationByWeek = countParticipationByWeek(student.progress);
                 const totalPart = countTotalParticipation(student.progress);
                 const syllabusOk = hasSyllabusQuizPassed(student.parsedProgress);
-                const weighted = calculateWeightedTotals(student.parsedProgress, totalPart, filteredAssignments);
+                const weighted = calculateWeightedTotals(student.parsedProgress, totalPart, ASSIGNMENTS);
                 
                 return (
                   <tr 
@@ -554,47 +576,41 @@ const InstructorDashboard: React.FC = () => {
                       </div>
                     </td>
                     
-                    {/* Participation per week */}
-                    {activeWeeks.map(week => (
-                      <td key={`part-${week}`} style={{ padding: '6px', textAlign: 'center' }}>
-                        <span style={{
-                          display: 'inline-block',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          background: (participationByWeek[week] || 0) > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(100, 100, 100, 0.15)',
-                          color: (participationByWeek[week] || 0) > 0 ? '#fbbf24' : '#666',
-                          fontWeight: 'bold',
-                          fontSize: '0.8rem'
-                        }}>
-                          {participationByWeek[week] || 0}
-                        </span>
-                      </td>
-                    ))}
-                    
-                    {/* Assignment Scores */}
+                    {/* Assignment Scores with type-based colors */}
                     {filteredAssignments.map(a => {
                       const progress = student.parsedProgress?.[a.id];
-                      const score = progress?.score;
-                      
+                      let score = progress?.score;
                       let cellContent = '-';
-                      if (score !== undefined && score !== null) {
-                        cellContent = `${score}`;
-                      } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
-                        cellContent = '...';
+                      
+                      // For participation, count checkpoints for that week
+                      if (a.type === 'participation') {
+                        const participationByWeek = countParticipationByWeek(student.progress);
+                        const weekPart = participationByWeek[a.week] || 0;
+                        // Convert count to percentage (5 checkpoints = 100%)
+                        score = Math.min(100, (weekPart / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
+                        cellContent = `${weekPart}`;
+                      } else {
+                        if (score !== undefined && score !== null) {
+                          cellContent = `${score}`;
+                        } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
+                          cellContent = '...';
+                        }
                       }
+                      
+                      const colors = getTypeColors(a.type, a.type === 'participation' ? (score && score > 0 ? score : undefined) : score);
                       
                       return (
                         <td key={a.id} style={{ padding: '6px', textAlign: 'center' }}>
                           <span
-                            onClick={() => openSubmissionModal(student, a.id, `Week ${a.week} ${a.label}`)}
+                            onClick={() => a.type !== 'participation' && openSubmissionModal(student, a.id, `Week ${a.week} ${a.label}`)}
                             style={{
                               display: 'inline-block',
                               padding: '4px 10px',
                               borderRadius: '4px',
-                              cursor: 'pointer',
-                              background: getScoreBgColor(score),
-                              color: getScoreColor(score),
-                              border: `1px solid ${getScoreColor(score)}`,
+                              cursor: a.type !== 'participation' ? 'pointer' : 'default',
+                              background: colors.bg,
+                              color: colors.text,
+                              border: `1px solid ${colors.border}`,
                               fontWeight: 'bold',
                               fontSize: '0.85rem'
                             }}
@@ -609,23 +625,28 @@ const InstructorDashboard: React.FC = () => {
                     {showTotals && (
                       <>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
-                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.labsAvg.toFixed(0)}% avg * 40%`}>
+                          <span style={{ color: TYPE_COLORS.lab.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.labsAvg.toFixed(0)}% avg * 40%`}>
                             {weighted.labsWeighted.toFixed(1)}
                           </span>
                         </td>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
-                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.quizzesAvg.toFixed(0)}% avg * 20%`}>
+                          <span style={{ color: TYPE_COLORS.quiz.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.quizzesAvg.toFixed(0)}% avg * 20%`}>
                             {weighted.quizzesWeighted.toFixed(1)}
                           </span>
                         </td>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
-                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.homeworkAvg.toFixed(0)}% avg * 20%`}>
+                          <span style={{ color: TYPE_COLORS.homework.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.homeworkAvg.toFixed(0)}% avg * 20%`}>
                             {weighted.homeworkWeighted.toFixed(1)}
                           </span>
                         </td>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
-                          <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.participationPct.toFixed(0)}% * 10%`}>
+                          <span style={{ color: TYPE_COLORS.participation.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.participationPct.toFixed(0)}% * 10%`}>
                             {weighted.participationWeighted.toFixed(1)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
+                          <span style={{ color: TYPE_COLORS.final.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.finalAvg.toFixed(0)}% avg * 10%`}>
+                            {weighted.finalWeighted.toFixed(1)}
                           </span>
                         </td>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(60,60,60,0.4)' }}>
@@ -699,7 +720,11 @@ const InstructorDashboard: React.FC = () => {
                   <div style={{
                     fontSize: '2rem',
                     fontWeight: 'bold',
-                    color: getScoreColor(modalData.student.parsedProgress?.[modalData.assignmentId]?.score)
+                    color: (() => {
+                      const score = modalData.student.parsedProgress?.[modalData.assignmentId]?.score;
+                      if (score === undefined || score === null) return '#888';
+                      return score >= 70 ? '#4ec9b0' : '#ce9178';
+                    })()
                   }}>
                     {modalData.student.parsedProgress?.[modalData.assignmentId]?.score ?? '--'}%
                   </div>
