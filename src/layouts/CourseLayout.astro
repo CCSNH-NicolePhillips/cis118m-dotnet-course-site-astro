@@ -519,6 +519,8 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           const localProgress = getLocalProgress();
           const statusElements = document.querySelectorAll(".lesson-status");
           
+          console.log('[Sidebar] Cloud progress:', JSON.stringify(progress));
+          
           statusElements.forEach(el => {
             // Check both data-starter (legacy) and data-page-id (new)
             const starterId = el.getAttribute("data-starter");
@@ -531,6 +533,7 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             
             if (pageId && progress[pageId]) {
               entry = progress[pageId];
+              console.log('[Sidebar] Found entry for', pageId, ':', JSON.stringify(entry));
             } else if (starterId && progress[starterId]) {
               entry = progress[starterId];
             }
