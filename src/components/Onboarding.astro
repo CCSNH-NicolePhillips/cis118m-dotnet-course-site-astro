@@ -370,19 +370,15 @@
     },
     {
       selector: '[data-auth="user-chip"]',
-      text: '👤 <strong>Your Account</strong><br/>Click here to access your grades, settings, and sign out.',
-      position: 'bottom'
-    },
-    {
-      selector: '#instructor-link',
-      text: '📊 <strong>My Grades</strong><br/>Track your progress here. You can see scores for quizzes, labs, homework, and participation.',
+      text: '👤 <strong>Your Account Menu</strong><br/>Click your name to access:<br/>• 📊 <strong>My Grades</strong> - view your scores<br/>• ⚙️ <strong>Settings</strong> - change your name or retake this tour<br/>• Sign out',
       position: 'bottom',
-      fallbackSelector: '.dropdown-menu'
+      action: 'openDropdown'
     },
     {
       selector: '.week-item:first-child',
       text: '📖 <strong>Weekly Content</strong><br/>Click a week to expand it. Complete items in order: Start Here → Lessons → Labs → Quizzes.',
-      position: 'right'
+      position: 'right',
+      action: 'closeDropdown'
     },
     {
       selector: '.theme-toggle-btn',
@@ -529,6 +525,14 @@
     // Update tooltip text
     tooltipText.innerHTML = step.text;
 
+    // Handle dropdown actions
+    const dropdownMenu = document.querySelector('[data-auth="dropdown-menu"]');
+    if (step.action === 'openDropdown' && dropdownMenu) {
+      dropdownMenu.style.display = 'block';
+    } else if (step.action === 'closeDropdown' && dropdownMenu) {
+      dropdownMenu.style.display = 'none';
+    }
+
     // Find target element
     let element = step.selector ? document.querySelector(step.selector) : null;
     if (!element && step.fallbackSelector) {
@@ -542,15 +546,29 @@
       setTimeout(() => {
         const rect = element.getBoundingClientRect();
         
+        // If dropdown is open, expand spotlight to include it
+        let spotlightRect = rect;
+        if (step.action === 'openDropdown' && dropdownMenu) {
+          const dropdownRect = dropdownMenu.getBoundingClientRect();
+          spotlightRect = {
+            top: Math.min(rect.top, dropdownRect.top),
+            left: Math.min(rect.left, dropdownRect.left),
+            right: Math.max(rect.right, dropdownRect.right),
+            bottom: Math.max(rect.bottom, dropdownRect.bottom),
+            width: Math.max(rect.right, dropdownRect.right) - Math.min(rect.left, dropdownRect.left),
+            height: Math.max(rect.bottom, dropdownRect.bottom) - Math.min(rect.top, dropdownRect.top)
+          };
+        }
+        
         // Position spotlight
         spotlight.style.display = 'block';
-        spotlight.style.width = `${rect.width + 20}px`;
-        spotlight.style.height = `${rect.height + 20}px`;
-        spotlight.style.top = `${rect.top - 10}px`;
-        spotlight.style.left = `${rect.left - 10}px`;
+        spotlight.style.width = `${spotlightRect.width + 20}px`;
+        spotlight.style.height = `${spotlightRect.height + 20}px`;
+        spotlight.style.top = `${spotlightRect.top - 10}px`;
+        spotlight.style.left = `${spotlightRect.left - 10}px`;
 
         // Position tooltip
-        positionTooltip(tooltip, rect, step.position);
+        positionTooltip(tooltip, spotlightRect, step.position);
       }, 400);
     } else {
       // No target - center the tooltip
@@ -620,6 +638,10 @@
     document.body.style.overflow = '';
     localStorage.setItem(STORAGE_KEYS.tourComplete, 'true');
     currentTourStep = 0;
+    
+    // Make sure dropdown is closed
+    const dropdownMenu = document.querySelector('[data-auth="dropdown-menu"]');
+    if (dropdownMenu) dropdownMenu.style.display = 'none';
   }
 
   function openSettings() {
