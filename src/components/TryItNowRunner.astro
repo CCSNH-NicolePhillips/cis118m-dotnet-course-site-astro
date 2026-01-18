@@ -99,6 +99,37 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       }
     };
     
+    // Celebration animation when requirements are met
+    const triggerCelebration = () => {
+      // Create confetti container
+      const confettiContainer = document.createElement('div');
+      confettiContainer.className = 'celebration-confetti';
+      document.body.appendChild(confettiContainer);
+      
+      // Create confetti pieces
+      const colors = ['#4ec9b0', '#10b981', '#22c55e', '#34d399', '#6ee7b7', '#fbbf24', '#f59e0b'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+        confettiContainer.appendChild(confetti);
+      }
+      
+      // Show success banner
+      const banner = document.createElement('div');
+      banner.className = 'celebration-banner';
+      banner.innerHTML = '🎉 Lab Complete! Great work!';
+      container.insertBefore(banner, container.firstChild);
+      
+      // Remove confetti after animation
+      setTimeout(() => {
+        confettiContainer.remove();
+      }, 3000);
+    };
+    
     try {
       await waitForMonaco();
       
@@ -280,6 +311,40 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
             if (regex.test(result.stdout)) {
               isValidated = true;
               statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">✅ Requirements Met</span>';
+              
+              // Trigger celebration animation
+              triggerCelebration();
+              
+              // Save lab completion for gradebook (if this is a lab)
+              try {
+                if (window.__auth && typeof window.__auth.getAccessToken === 'function') {
+                  const token = await window.__auth.getAccessToken().catch(() => null);
+                  if (token) {
+                    // Derive lab ID from starterId or URL path
+                    const labIdFromStarter = starterId?.match(/^(week-\d+)-/)?.[0] + 'lab';
+                    const weekMatch = window.location.pathname.match(/\/week-(\d+)\//);
+                    const labId = labIdFromStarter || (weekMatch ? `week-${weekMatch[1].padStart(2, '0')}-lab` : null);
+                    
+                    if (labId) {
+                      await fetch('/api/progress-update', {
+                        method: 'POST',
+                        headers: { 
+                          'Authorization': `Bearer ${token}`,
+                          'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify({
+                          pageId: labId,
+                          status: 'completed',
+                          score: 100
+                        }),
+                      }).catch(() => {});
+                      console.log('[TryItNowRunner] Lab completion recorded:', labId);
+                    }
+                  }
+                }
+              } catch (labErr) {
+                console.error('[TryItNowRunner] Lab completion save failed:', labErr);
+              }
             }
           }
         }
@@ -576,6 +641,62 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       width: 100%;
       margin-left: 0;
       margin-top: 8px;
+    }
+  }
+  
+  /* Celebration animation styles */
+  .celebration-banner {
+    background: linear-gradient(135deg, #4ec9b0 0%, #10b981 100%);
+    color: white;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    animation: bannerSlideIn 0.5s ease-out;
+  }
+  
+  @keyframes bannerSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<style is:global>
+  .celebration-confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+  
+  .confetti-piece {
+    position: absolute;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confettiFall 2s ease-out forwards;
+  }
+  
+  @keyframes confettiFall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
     }
   }
 </style>

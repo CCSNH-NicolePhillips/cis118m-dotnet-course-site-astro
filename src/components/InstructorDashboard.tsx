@@ -20,9 +20,10 @@ const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: st
 const generateAssignments = () => {
   const assignments: { id: string; label: string; week: number; type: AssignmentType }[] = [];
   
-  // Week 1 is special - syllabus quiz
+  // Week 1 is special - has syllabus quiz AND regular quiz
   assignments.push({ id: 'week-01-participation', label: 'Part', week: 1, type: 'participation' });
   assignments.push({ id: 'week-01-required-quiz', label: 'Syllabus', week: 1, type: 'quiz' });
+  assignments.push({ id: 'week-01-quiz', label: 'Quiz', week: 1, type: 'quiz' });
   assignments.push({ id: 'week-01-homework', label: 'HW', week: 1, type: 'homework' });
   assignments.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
   
