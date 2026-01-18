@@ -93,10 +93,50 @@ const { checkpointId, title, questions } = Astro.props;
 </div>
 
 <script>
+  // Helper to get auth token
+  const getAuthToken = async () => {
+    if (!window.__auth) return null;
+    const authed = await window.__auth.isAuthed();
+    if (!authed) return null;
+    return await window.__auth.getAccessToken();
+  };
+
+  // Send participation signal to Redis
+  const sendParticipation = async (checkpointId, questionId) => {
+    try {
+      const token = await getAuthToken();
+      if (!token) {
+        console.log('[Checkpoint] Not authenticated, skipping participation ping');
+        return;
+      }
+      
+      // Create unique participation key: combines page path with checkpoint and question
+      const pageId = `${checkpointId}:${questionId}`;
+      
+      await fetch('/.netlify/functions/progress-update', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          pageId,
+          status: 'participated',
+          type: 'checkpoint'
+        }),
+      });
+      console.log('[Checkpoint] Participation recorded:', pageId);
+    } catch (err) {
+      console.error('[Checkpoint] Participation sync failed:', err);
+    }
+  };
+
   document.querySelectorAll('.checkpoint-question').forEach(questionDiv => {
     const correctAnswer = JSON.parse(questionDiv.dataset.correct || '""');
     const explanationDiv = questionDiv.querySelector('.explanation');
     const isMulti = questionDiv.querySelector('[data-multi="true"]') !== null;
+    const questionId = questionDiv.dataset.questionId;
+    const checkpointId = questionDiv.closest('.checkpoint-container')?.dataset.checkpointId || 'unknown';
     
     if (isMulti) {
       // Handle checkbox questions with "Check Answer" button
@@ -135,14 +175,7 @@ const { checkpointId, title, questions } = Astro.props;
 
         // REPORT PARTICIPATION TO DB for checkbox questions
         if (isCorrect) {
-          fetch('/.netlify/functions/progress-update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              pageId: window.location.pathname, 
-              status: 'participated' 
-            }),
-          }).catch(err => console.error("Gradebook sync failed:", err));
+          sendParticipation(checkpointId, questionId);
         }
       });
     } else {
@@ -166,14 +199,7 @@ const { checkpointId, title, questions } = Astro.props;
             selectedLabel.querySelector('.feedback-icon').textContent = '✅ Concept Validated';
 
             // REPORT PARTICIPATION TO DB
-            fetch('/.netlify/functions/progress-update', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                pageId: window.location.pathname, 
-                status: 'participated' 
-              }),
-            }).catch(err => console.error("Gradebook sync failed:", err));
+            sendParticipation(checkpointId, questionId);
 
           } else {
             selectedLabel.classList.add('incorrect');

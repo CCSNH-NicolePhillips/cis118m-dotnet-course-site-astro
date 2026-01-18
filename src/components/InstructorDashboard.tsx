@@ -20,6 +20,18 @@ const ASSIGNMENTS = [
   { id: 'week-05-lab', label: 'Lab 5', week: 5, type: 'lab' },
 ];
 
+// Syllabus weights for final grade calculation
+const WEIGHTS = {
+  participation: 0.10,  // 10%
+  homework: 0.20,       // 20%
+  quizzes: 0.20,        // 20%
+  labs: 0.40,           // 40%
+  final: 0.10,          // 10%
+};
+
+// Total expected checkpoints per week (for participation calculation)
+const EXPECTED_CHECKPOINTS_PER_WEEK = 5;
+
 interface StudentProgress {
   [key: string]: string | number;
 }
@@ -37,6 +49,84 @@ interface SubmissionModalData {
   assignmentId: string;
   assignmentLabel: string;
 }
+
+// Helper to count participation checkpoints
+const countParticipation = (progress: StudentProgress): number => {
+  let count = 0;
+  for (const [key, value] of Object.entries(progress || {})) {
+    // Match checkpoint participation entries (e.g., "checkpoint-1:q1:status" = "participated")
+    if (key.endsWith(':status') && value === 'participated') {
+      count++;
+    }
+  }
+  return count;
+};
+
+// Helper to check if student passed syllabus quiz
+const hasSyllabusQuizPassed = (parsed: { [pageId: string]: { score?: number } } | undefined): boolean => {
+  const syllabusScore = parsed?.['week-01-required-quiz']?.score;
+  return syllabusScore !== undefined && syllabusScore >= 100;
+};
+
+// Calculate weighted total grade
+const calculateWeightedTotal = (
+  parsed: { [pageId: string]: { score?: number; status?: string } } | undefined,
+  participationCount: number,
+  totalWeeks: number
+): { total: number; breakdown: { labs: number; quizzes: number; homework: number; participation: number } } => {
+  if (!parsed) {
+    return { total: 0, breakdown: { labs: 0, quizzes: 0, homework: 0, participation: 0 } };
+  }
+  
+  // Collect scores by category
+  const labScores: number[] = [];
+  const quizScores: number[] = [];
+  const homeworkScores: number[] = [];
+  
+  for (const assignment of ASSIGNMENTS) {
+    const score = parsed[assignment.id]?.score;
+    if (score !== undefined && score !== null) {
+      if (assignment.type === 'lab') {
+        labScores.push(score);
+      } else if (assignment.type === 'quiz') {
+        quizScores.push(score);
+      } else if (assignment.type === 'homework') {
+        homeworkScores.push(score);
+      }
+    }
+  }
+  
+  // Calculate averages (or 0 if no scores)
+  const avg = (arr: number[]) => arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
+  
+  const labAvg = avg(labScores);
+  const quizAvg = avg(quizScores);
+  const homeworkAvg = avg(homeworkScores);
+  
+  // Participation: count / expected total checkpoints
+  const totalExpectedCheckpoints = totalWeeks * EXPECTED_CHECKPOINTS_PER_WEEK;
+  const participationScore = totalExpectedCheckpoints > 0 
+    ? Math.min(100, (participationCount / totalExpectedCheckpoints) * 100) 
+    : 0;
+  
+  // Calculate weighted total (excluding final for now)
+  const weightedTotal = 
+    (labAvg * WEIGHTS.labs) +
+    (quizAvg * WEIGHTS.quizzes) +
+    (homeworkAvg * WEIGHTS.homework) +
+    (participationScore * WEIGHTS.participation);
+    // Final exam weight (WEIGHTS.final) not included yet
+  
+  return {
+    total: weightedTotal,
+    breakdown: {
+      labs: labAvg,
+      quizzes: quizAvg,
+      homework: homeworkAvg,
+      participation: participationScore
+    }
+  };
+};
 
 const InstructorDashboard: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
@@ -312,7 +402,7 @@ const InstructorDashboard: React.FC = () => {
 
       {/* Gradebook Table */}
       <div style={{ overflowX: 'auto', border: '1px solid #333', borderRadius: '8px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '900px' }}>
           <thead>
             <tr>
               <th style={{
@@ -328,6 +418,17 @@ const InstructorDashboard: React.FC = () => {
               }}>
                 Student
               </th>
+              <th style={{
+                padding: '10px 8px',
+                textAlign: 'center',
+                background: '#2d2d2d',
+                color: '#fbbf24',
+                fontWeight: 'bold',
+                fontSize: '0.85rem',
+                minWidth: '80px'
+              }} title="Participation checkpoints completed">
+                📋 Part
+              </th>
               {ASSIGNMENTS.map(a => (
                 <th key={a.id} style={{
                   padding: '10px 8px',
@@ -340,70 +441,128 @@ const InstructorDashboard: React.FC = () => {
                   {a.label}
                 </th>
               ))}
+              <th style={{
+                padding: '10px 8px',
+                textAlign: 'center',
+                background: '#2d2d2d',
+                color: '#4ec9b0',
+                fontWeight: 'bold',
+                fontSize: '0.85rem',
+                minWidth: '90px'
+              }} title="Weighted total based on syllabus weights">
+                📊 Total
+              </th>
             </tr>
           </thead>
           <tbody>
             {students.length === 0 ? (
               <tr>
-                <td colSpan={ASSIGNMENTS.length + 1} style={{ textAlign: 'center', color: '#888', padding: '40px' }}>
+                <td colSpan={ASSIGNMENTS.length + 3} style={{ textAlign: 'center', color: '#888', padding: '40px' }}>
                   No student data yet
                 </td>
               </tr>
             ) : (
-              students.map(student => (
-                <tr key={student.sub} style={{ borderBottom: '1px solid #333' }}>
-                  <td style={{
-                    padding: '10px 12px',
-                    textAlign: 'left',
-                    position: 'sticky',
-                    left: 0,
-                    background: '#1e1e1e',
-                    zIndex: 5
-                  }}>
-                    <div style={{ fontWeight: 'bold', color: '#ddd' }}>
-                      {student.name || student.email?.split('@')[0] || 'Unknown'}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: '#888' }}>
-                      {student.email}
-                    </div>
-                  </td>
-                  {ASSIGNMENTS.map(a => {
-                    const progress = student.parsedProgress?.[a.id];
-                    const score = progress?.score;
-                    
-                    let cellContent = '-';
-                    if (score !== undefined && score !== null) {
-                      cellContent = `${score}%`;
-                    } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
-                      cellContent = '...';
-                    }
-                    
-                    return (
-                      <td key={a.id} style={{ padding: '8px', textAlign: 'center' }}>
-                        <span
-                          onClick={() => openSubmissionModal(student, a.id, a.label)}
-                          style={{
-                            display: 'inline-block',
-                            padding: '6px 12px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            background: getScoreBgColor(score),
-                            color: getScoreColor(score),
-                            border: `1px solid ${getScoreColor(score)}`,
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem',
-                            transition: 'transform 0.2s'
-                          }}
-                          onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-                          onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                        >
-                          {cellContent}
-                        </span>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))
+              students.map(student => {
+                const participationCount = countParticipation(student.progress);
+                const syllabusOk = hasSyllabusQuizPassed(student.parsedProgress);
+                const weighted = calculateWeightedTotal(student.parsedProgress, participationCount, 5);
+                
+                return (
+                  <tr 
+                    key={student.sub} 
+                    style={{ 
+                      borderBottom: '1px solid #333',
+                      background: syllabusOk ? 'transparent' : 'rgba(239, 68, 68, 0.1)',
+                      opacity: syllabusOk ? 1 : 0.85
+                    }}
+                  >
+                    <td style={{
+                      padding: '10px 12px',
+                      textAlign: 'left',
+                      position: 'sticky',
+                      left: 0,
+                      background: syllabusOk ? '#1e1e1e' : 'rgba(239, 68, 68, 0.15)',
+                      zIndex: 5
+                    }}>
+                      <div style={{ fontWeight: 'bold', color: syllabusOk ? '#ddd' : '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {!syllabusOk && <span title="Syllabus quiz not passed">🔒</span>}
+                        {student.name || student.email?.split('@')[0] || 'Unknown'}
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: '#888' }}>
+                        {student.email}
+                      </div>
+                    </td>
+                    {/* Participation Column */}
+                    <td style={{ padding: '8px', textAlign: 'center' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '6px 10px',
+                        borderRadius: '4px',
+                        background: participationCount > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(100, 100, 100, 0.2)',
+                        color: participationCount > 0 ? '#fbbf24' : '#888',
+                        fontWeight: 'bold',
+                        fontSize: '0.85rem'
+                      }} title={`${participationCount} checkpoints completed`}>
+                        {participationCount}
+                      </span>
+                    </td>
+                    {/* Assignment Columns */}
+                    {ASSIGNMENTS.map(a => {
+                      const progress = student.parsedProgress?.[a.id];
+                      const score = progress?.score;
+                      
+                      let cellContent = '-';
+                      if (score !== undefined && score !== null) {
+                        cellContent = `${score}%`;
+                      } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
+                        cellContent = '...';
+                      }
+                      
+                      return (
+                        <td key={a.id} style={{ padding: '8px', textAlign: 'center' }}>
+                          <span
+                            onClick={() => openSubmissionModal(student, a.id, a.label)}
+                            style={{
+                              display: 'inline-block',
+                              padding: '6px 12px',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              background: getScoreBgColor(score),
+                              color: getScoreColor(score),
+                              border: `1px solid ${getScoreColor(score)}`,
+                              fontWeight: 'bold',
+                              fontSize: '0.9rem',
+                              transition: 'transform 0.2s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                          >
+                            {cellContent}
+                          </span>
+                        </td>
+                      );
+                    })}
+                    {/* Weighted Total Column */}
+                    <td style={{ padding: '8px', textAlign: 'center' }}>
+                      <span 
+                        style={{
+                          display: 'inline-block',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          background: weighted.total >= 70 ? 'rgba(78, 201, 176, 0.3)' : 'rgba(206, 145, 120, 0.3)',
+                          color: weighted.total >= 70 ? '#4ec9b0' : '#ce9178',
+                          fontWeight: 'bold',
+                          fontSize: '0.9rem',
+                          cursor: 'help'
+                        }}
+                        title={`Labs: ${weighted.breakdown.labs.toFixed(0)}% (40%), Quizzes: ${weighted.breakdown.quizzes.toFixed(0)}% (20%), HW: ${weighted.breakdown.homework.toFixed(0)}% (20%), Part: ${weighted.breakdown.participation.toFixed(0)}% (10%)`}
+                      >
+                        {weighted.total.toFixed(1)}%
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
