@@ -39,12 +39,20 @@ export default async function handler(request, context) {
     console.log('[progress-get] oldProgress keys:', Object.keys(oldProgress));
     console.log('[progress-get] newProgressHash:', JSON.stringify(newProgressHash));
     
-    // Also check completion records for quiz scores
-    // Format: completion:{userId}:{quizId}
-    const completionKeys = [
-      `completion:${user.sub}:week-01-required-quiz`,
-      `completion:${user.sub}:week-01-syllabus-quiz`,
-    ];
+    // Get all completion IDs from the completions set
+    const completionsSetKey = `completions:${user.sub}`;
+    const completedItems = await redis.smembers(completionsSetKey) || [];
+    console.log('[progress-get] Completed items from set:', completedItems);
+    
+    // Build completion keys from the set
+    const completionKeys = completedItems.map(itemId => `completion:${user.sub}:${itemId}`);
+    
+    // Also add the legacy syllabus quiz key in case it's stored differently
+    if (!completionKeys.includes(`completion:${user.sub}:week-01-syllabus-quiz`)) {
+      completionKeys.push(`completion:${user.sub}:week-01-syllabus-quiz`);
+    }
+    
+    console.log('[progress-get] Checking completion keys:', completionKeys);
     
     // Merge new format into progress object
     // The hash keys look like: "week-01-syllabus-quiz:score", "week-01-syllabus-quiz:status"
@@ -85,9 +93,9 @@ export default async function handler(request, context) {
     // Check completion records for quiz scores
     for (const compKey of completionKeys) {
       let completion = await redis.get(compKey);
-      console.log('[progress-get] Checking completion key:', compKey, 'value:', completion);
+      console.log('[progress-get] Checking completion key:', compKey, 'value:', JSON.stringify(completion), 'type:', typeof completion);
       
-      // Handle both string and object formats
+      // Upstash may return object directly if it was stored as JSON
       if (completion && typeof completion === 'string') {
         try {
           completion = JSON.parse(completion);
@@ -99,17 +107,21 @@ export default async function handler(request, context) {
       }
       
       if (completion && typeof completion === 'object') {
-        // Extract quizId from key
-        const quizId = compKey.split(':').pop();
-        console.log('[progress-get] Extracted quizId:', quizId, 'score:', completion.score);
+        // Extract quizId from key - handle case where userId contains colons
+        const keyParts = compKey.split(':');
+        const quizId = keyParts[keyParts.length - 1]; // last segment is quiz ID
+        console.log('[progress-get] Extracted quizId:', quizId, 'from key:', compKey);
+        
         if (!mergedProgress[quizId]) {
           mergedProgress[quizId] = {};
         }
         if (completion.score !== undefined) {
           mergedProgress[quizId].score = completion.score;
+          console.log('[progress-get] Set score for', quizId, ':', completion.score);
         }
         if (completion.passed !== undefined) {
           mergedProgress[quizId].status = completion.passed ? 'passed' : 'attempted';
+          console.log('[progress-get] Set status for', quizId, ':', mergedProgress[quizId].status);
         }
       }
     }
