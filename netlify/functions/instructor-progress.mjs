@@ -60,10 +60,36 @@ export default async function handler(request, context) {
       try {
         const email = await redis.get(`cis118m:studentEmail:${sub}`);
         const name = await redis.get(`cis118m:studentName:${sub}`);
-        const progress = await redis.get(`progress:${sub}`);
         
-        // Also check the new progress data format (hash with all fields)
-        const progressData = await redis.hgetall(`user:progress:data:${sub}`);
+        // Get quiz progress from user:progress:{sub} hash (attempts, bestScore, etc)
+        const quizProgress = await redis.hgetall(`user:progress:${sub}`) || {};
+        
+        // Get completions list to find all completed items
+        const completionsList = await redis.smembers(`completions:${sub}`) || [];
+        
+        // Get completion details for each completed item
+        const completionDetails = {};
+        for (const itemId of completionsList) {
+          const completionData = await redis.get(`completion:${sub}:${itemId}`);
+          if (completionData) {
+            try {
+              const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
+              // Convert completion data to progress format
+              if (parsed.score !== undefined && parsed.score !== null) {
+                completionDetails[`${itemId}:score`] = parsed.score;
+              }
+              if (parsed.passed !== undefined && parsed.passed !== null) {
+                completionDetails[`${itemId}:passed`] = parsed.passed ? 1 : 0;
+              }
+              if (parsed.timestamp) {
+                completionDetails[`${itemId}:timestamp`] = parsed.timestamp;
+              }
+              completionDetails[`${itemId}:status`] = 'completed';
+            } catch (e) {
+              console.error(`[instructor-progress] Failed to parse completion for ${sub}:${itemId}:`, e);
+            }
+          }
+        }
         
         // Get saved code for each assignment
         const savedCodes = {};
@@ -76,26 +102,41 @@ export default async function handler(request, context) {
           }
         }
         
-        // Calculate last active from progress data
-        let lastActive = null;
-        if (progress && typeof progress === "object") {
-          const timestamps = [];
-          Object.values(progress).forEach(entry => {
-            if (entry.lastSavedAt) timestamps.push(new Date(entry.lastSavedAt));
-            if (entry.lastRunAt) timestamps.push(new Date(entry.lastRunAt));
-            if (entry.lastPassedAt) timestamps.push(new Date(entry.lastPassedAt));
-          });
-          if (timestamps.length > 0) {
-            lastActive = new Date(Math.max(...timestamps)).toISOString();
+        // Merge all progress sources
+        const mergedProgress = {};
+        
+        // Add quiz progress (attempts, bestScore, etc)
+        for (const [key, value] of Object.entries(quizProgress)) {
+          mergedProgress[key] = value;
+          // Map bestScore to score for gradebook display
+          if (key.endsWith(':bestScore')) {
+            const pageId = key.replace(':bestScore', '');
+            mergedProgress[`${pageId}:score`] = value;
           }
         }
         
-        // Merge old progress format with new progress data format and saved codes
-        const mergedProgress = { ...(progress || {}), ...(progressData || {}) };
+        // Add completion details (score, passed, status from completion records)
+        for (const [key, value] of Object.entries(completionDetails)) {
+          mergedProgress[key] = value;
+        }
         
-        // Add saved codes to progress
+        // Add saved codes
         for (const [assignmentId, code] of Object.entries(savedCodes)) {
           mergedProgress[`${assignmentId}:savedCode`] = code;
+        }
+        
+        // Calculate last active from timestamps
+        let lastActive = null;
+        const timestamps = [];
+        for (const [key, value] of Object.entries(mergedProgress)) {
+          if (key.endsWith(':timestamp') || key.endsWith(':lastSubmit')) {
+            try {
+              timestamps.push(new Date(value));
+            } catch (e) {}
+          }
+        }
+        if (timestamps.length > 0) {
+          lastActive = new Date(Math.max(...timestamps)).toISOString();
         }
         
         students.push({
