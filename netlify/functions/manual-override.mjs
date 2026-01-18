@@ -65,10 +65,14 @@ export default async function handler(request, context) {
 
     if (action === 'DELETE_ATTEMPT') {
       // Completely wipe the record so student can try again fresh
-      const fieldsToDelete = [
+      // Must delete from ALL storage patterns used by this codebase
+      
+      // Pattern 1: user:progress:data:{userId} (progress-update uses this)
+      const fieldsToDeleteFromData = [
         `${pageId}:score`,
         `${pageId}:status`,
         `${pageId}:feedback`,
+        `${pageId}:savedCode`,
         `${pageId}:submittedAt`,
         `${pageId}:isOverride`,
         `${pageId}:overrideReason`,
@@ -78,12 +82,51 @@ export default async function handler(request, context) {
         `${pageId}:originalScore`,
         `${pageId}:isLate`,
         `${pageId}:daysLate`,
-        `${pageId}:penalty`
+        `${pageId}:penalty`,
+        `${pageId}:attempts`,
       ];
       
-      await redis.hdel(`user:progress:data:${userId}`, ...fieldsToDelete);
+      const dataHashKey = `user:progress:data:${userId}`;
+      console.log(`[DELETE_ATTEMPT] Deleting from ${dataHashKey}:`, fieldsToDeleteFromData);
+      const result1 = await redis.hdel(dataHashKey, ...fieldsToDeleteFromData);
+      console.log(`[DELETE_ATTEMPT] hdel user:progress:data result: ${result1} fields removed`);
       
-      // Also delete saved code if exists
+      // Pattern 2: user:progress:{userId} (submit-quiz uses this for attempts/scores)
+      const fieldsToDeleteFromProgress = [
+        `${pageId}:attempts`,
+        `${pageId}:bestScore`,
+        `${pageId}:lastScore`,
+        `${pageId}:passed`,
+        `${pageId}:lastSubmit`,
+      ];
+      
+      const progressHashKey = `user:progress:${userId}`;
+      console.log(`[DELETE_ATTEMPT] Deleting from ${progressHashKey}:`, fieldsToDeleteFromProgress);
+      const result2 = await redis.hdel(progressHashKey, ...fieldsToDeleteFromProgress);
+      console.log(`[DELETE_ATTEMPT] hdel user:progress result: ${result2} fields removed`);
+      
+      // Pattern 3: completion:{userId}:{pageId} (legacy completion record)
+      const completionKey = `completion:${userId}:${pageId}`;
+      console.log(`[DELETE_ATTEMPT] Deleting completion key: ${completionKey}`);
+      const result3 = await redis.del(completionKey);
+      console.log(`[DELETE_ATTEMPT] del completion result: ${result3}`);
+      
+      // Pattern 4: submissions:{userId}:{pageId} (submission history)
+      const submissionsKey = `submissions:${userId}:${pageId}`;
+      console.log(`[DELETE_ATTEMPT] Deleting submissions history: ${submissionsKey}`);
+      const result4 = await redis.del(submissionsKey);
+      console.log(`[DELETE_ATTEMPT] del submissions result: ${result4}`);
+      
+      // Pattern 5: progress:{userId} - old object-style progress (remove pageId entry)
+      const oldProgressKey = `progress:${userId}`;
+      const oldProgress = await redis.get(oldProgressKey);
+      if (oldProgress && typeof oldProgress === 'object' && oldProgress[pageId]) {
+        delete oldProgress[pageId];
+        await redis.set(oldProgressKey, JSON.stringify(oldProgress));
+        console.log(`[DELETE_ATTEMPT] Removed ${pageId} from old progress object`);
+      }
+      
+      // Pattern 6: Legacy code storage
       await redis.del(`code:${userId}:${pageId}`);
       
       // Log the deletion for audit
