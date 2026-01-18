@@ -8,9 +8,19 @@ import { getAccessToken, getUser } from '../lib/auth'
 
 interface EngineeringLogEditorProps {
   assignmentId?: string;
+  /** Optional context to pass to AI grader (fallback if not in server config) */
+  context?: {
+    question?: string;
+    requiredKeywords?: string[];
+    lessonKeyPoints?: string;
+    rubric?: string;
+  };
 }
 
-const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: EngineeringLogEditorProps) => {
+const EngineeringLogEditor = ({ 
+  assignmentId = 'week-01-homework',
+  context 
+}: EngineeringLogEditorProps) => {
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState<number | null>(null);
   const [isGrading, setIsGrading] = useState(false);
@@ -132,10 +142,27 @@ const EngineeringLogEditor = ({ assignmentId = 'week-01-homework' }: Engineering
     };
     
     try {
+      // Build payload with optional context for AI grading
+      const payload: Record<string, unknown> = { 
+        content: editor.getText(), 
+        assignmentId, 
+        userId 
+      };
+      
+      // Include context if provided (fallback for assignments not yet in server config)
+      if (context) {
+        payload.context = {
+          taughtConcepts: context.lessonKeyPoints,
+          assignmentPrompt: context.question,
+          rubric: context.rubric,
+          requiredKeywords: context.requiredKeywords,
+        };
+      }
+      
       const response = await fetch('/.netlify/functions/ai-grade', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ content: editor.getText(), assignmentId, userId }),
+        body: JSON.stringify(payload),
       });
       
       if (!response.ok) {

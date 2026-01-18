@@ -18,14 +18,19 @@ export async function handler(event, context) {
     };
   }
 
-  const { content, assignmentId, userId } = body;
+  const { content, assignmentId, userId, context: clientContext } = body;
   
-  // Get lesson context for this assignment
+  // Get lesson context for this assignment (server-side is authoritative)
   const lessonContext = getLessonContext(assignmentId);
-  if (!lessonContext) {
+  
+  // If no server-side context exists but client provided context, use it as fallback
+  // This allows new assignments to work before server config is updated
+  const effectiveContext = lessonContext || clientContext;
+  
+  if (!effectiveContext) {
     return { 
       statusCode: 400, 
-      body: JSON.stringify({ error: `Unknown assignment: ${assignmentId}` }) 
+      body: JSON.stringify({ error: `Unknown assignment: ${assignmentId}. Please add context to lesson-contexts.mjs` }) 
     };
   }
 
@@ -41,13 +46,14 @@ export async function handler(event, context) {
   const prompt = `You are a friendly programming instructor grading a student reflection.
 
 LESSON CONTEXT - What we taught:
-${lessonContext.taughtConcepts}
+${effectiveContext.taughtConcepts}
 
-ASSIGNMENT: ${lessonContext.assignmentPrompt}
+ASSIGNMENT: ${effectiveContext.assignmentPrompt}
 
 STUDENT RESPONSE: "${content}"
 
-RUBRIC: ${lessonContext.rubric}
+RUBRIC: ${effectiveContext.rubric}
+${effectiveContext.requiredKeywords?.length ? `\nREQUIRED KEYWORDS (check if present): ${effectiveContext.requiredKeywords.join(', ')}` : ''}
 
 Grade the response and provide:
 1. "score": total points (0-100)
