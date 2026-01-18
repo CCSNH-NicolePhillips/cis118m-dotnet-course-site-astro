@@ -539,8 +539,13 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
             }
             
             if (entry) {
-              status = entry.status || "not_started";
-              score = entry.score;
+              // Handle both string format ("completed") and object format ({ status, score })
+              if (typeof entry === 'string') {
+                status = entry;
+              } else {
+                status = entry.status || "not_started";
+                score = entry.score;
+              }
               
               // Override status based on score if available (for graded items)
               // For gatekeeper quizzes, passing is 100%, for others it's 70%

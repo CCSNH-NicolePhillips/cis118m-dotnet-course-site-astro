@@ -48,7 +48,17 @@ export default async function handler(request, context) {
     
     // Merge new format into progress object
     // The hash keys look like: "week-01-syllabus-quiz:score", "week-01-syllabus-quiz:status"
-    const mergedProgress = { ...oldProgress };
+    const mergedProgress = {};
+    
+    // First, normalize old progress entries to object format
+    for (const [pageId, value] of Object.entries(oldProgress)) {
+      if (typeof value === 'string') {
+        // Convert simple string status to object format
+        mergedProgress[pageId] = { status: value };
+      } else if (typeof value === 'object' && value !== null) {
+        mergedProgress[pageId] = { ...value };
+      }
+    }
     
     // Parse hash data into progress format
     for (const [hashKey, value] of Object.entries(newProgressHash)) {
@@ -69,6 +79,8 @@ export default async function handler(request, context) {
         }
       }
     }
+    
+    console.log('[progress-get] After merging hash data:', JSON.stringify(mergedProgress));
     
     // Check completion records for quiz scores
     for (const compKey of completionKeys) {
