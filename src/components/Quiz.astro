@@ -425,6 +425,25 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
               }),
             });
             
+            // Trigger sidebar refresh so status indicator updates immediately
+            if (window.__updateProgress) {
+              // Build updated progress object with new quiz status
+              const updatedEntry = { status: passed ? 'completed' : 'attempted', score };
+              // Fetch fresh progress and update sidebar
+              try {
+                const progressRes = await fetch('/api/progress-get', {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (progressRes.ok) {
+                  const progressData = await progressRes.json();
+                  window.__updateProgress(progressData.progress || {});
+                  console.log('[Quiz] Sidebar refreshed with new progress');
+                }
+              } catch (sidebarErr) {
+                console.error('[Quiz] Failed to refresh sidebar:', sidebarErr);
+              }
+            }
+            
             // Increment attempt count locally
             currentAttempts++;
             
