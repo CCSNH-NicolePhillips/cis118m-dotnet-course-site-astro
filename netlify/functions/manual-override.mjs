@@ -9,7 +9,7 @@ import { getRedis } from "./_lib/redis.mjs";
  * Body: { 
  *   userId: string, 
  *   pageId: string, 
- *   action: 'UPDATE_GRADE' | 'DELETE_ATTEMPT',
+ *   action: 'UPDATE_GRADE' | 'DELETE_ATTEMPT' | 'DROP_LOWEST',
  *   newScore?: number,  // Required for UPDATE_GRADE
  *   reason?: string 
  * }
@@ -63,7 +63,85 @@ export default async function handler(request, context) {
     const currentScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:score`);
     const currentStatus = await redis.hget(`user:progress:data:${userId}`, `${pageId}:status`);
 
-    if (action === 'DELETE_ATTEMPT') {
+    if (action === 'DROP_LOWEST') {
+      // Drop lowest attempt: decrement attempt count, keep best score
+      // This allows student to retry while preserving their highest score
+      
+      const progressHashKey = `user:progress:${userId}`;
+      const currentAttempts = parseInt(await redis.hget(progressHashKey, `${pageId}:attempts`) || "0");
+      const bestScore = parseInt(await redis.hget(progressHashKey, `${pageId}:bestScore`) || "0");
+      
+      if (currentAttempts <= 0) {
+        return new Response(
+          JSON.stringify({ error: "No attempts to drop" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Decrement attempts by 1 (giving them back one try)
+      const newAttempts = Math.max(0, currentAttempts - 1);
+      await redis.hset(progressHashKey, `${pageId}:attempts`, newAttempts);
+      
+      // Remove the lowest score from submission history if it exists
+      const submissionsKey = `submissions:${userId}:${pageId}`;
+      const submissions = await redis.lrange(submissionsKey, 0, -1);
+      
+      if (submissions && submissions.length > 0) {
+        // Parse submissions and find the lowest scoring one
+        const parsed = submissions.map(s => {
+          try { return JSON.parse(s); } catch { return null; }
+        }).filter(Boolean);
+        
+        if (parsed.length > 1) {
+          // Find the index of the lowest score
+          let lowestIdx = 0;
+          let lowestScore = parsed[0]?.score ?? 100;
+          for (let i = 1; i < parsed.length; i++) {
+            if ((parsed[i]?.score ?? 100) < lowestScore) {
+              lowestScore = parsed[i]?.score ?? 100;
+              lowestIdx = i;
+            }
+          }
+          
+          // Remove that submission from the list
+          // Note: Redis LREM removes from head, so we need to mark and remove
+          const toRemove = submissions[lowestIdx];
+          await redis.lrem(submissionsKey, 1, toRemove);
+          console.log(`[DROP_LOWEST] Removed submission with score ${lowestScore} from history`);
+        }
+      }
+      
+      // Log the action for audit
+      const auditEntry = JSON.stringify({
+        action: "DROP_LOWEST",
+        userId,
+        pageId,
+        previousAttempts: currentAttempts,
+        newAttempts,
+        bestScore,
+        reason: reason || "Instructor dropped lowest attempt",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[DROP_LOWEST] ${instructor.email} dropped lowest for ${userId}/${pageId} (attempts: ${currentAttempts} -> ${newAttempts}, best: ${bestScore}%)`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'DROP_LOWEST',
+          previousAttempts: currentAttempts,
+          newAttempts,
+          bestScore,
+          message: `Dropped lowest attempt. Student now has ${2 - newAttempts} attempt(s) remaining.`
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
+    } else if (action === 'DELETE_ATTEMPT') {
       // Completely wipe the record so student can try again fresh
       // Must delete from ALL storage patterns used by this codebase
       

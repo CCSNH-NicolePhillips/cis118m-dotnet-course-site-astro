@@ -177,6 +177,45 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
+  const handleDropLowest = async () => {
+    if (!modalData) return;
+    
+    if (!confirm('Drop the lowest attempt? This keeps their best score but gives them another try.')) {
+      return;
+    }
+    
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/manual-override', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          pageId: modalData.assignmentId,
+          action: 'DROP_LOWEST',
+          reason: overrideReason || 'Instructor dropped lowest attempt'
+        })
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Drop lowest failed');
+      }
+      
+      const result = await res.json();
+      setActionFeedback({ type: 'success', message: result.message || 'Dropped lowest attempt' });
+      setTimeout(() => {
+        closeModal();
+        loadGradebook();
+      }, 1500);
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` });
+    }
+  };
+
   const handleResetAttempt = async () => {
     if (!modalData) return;
     
@@ -549,6 +588,25 @@ const InstructorDashboard: React.FC = () => {
                       Allow the student to resubmit this assignment:
                     </p>
                     <button
+                      onClick={handleDropLowest}
+                      style={{
+                        background: '#fbbf24',
+                        color: '#000',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        width: '100%',
+                        marginBottom: '10px'
+                      }}
+                    >
+                      ⬇️ Drop Lowest Attempt
+                    </button>
+                    <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: '15px' }}>
+                      Keeps best score, gives them another try.
+                    </p>
+                    <button
                       onClick={handleResetAttempt}
                       style={{
                         background: '#ce9178',
@@ -561,10 +619,10 @@ const InstructorDashboard: React.FC = () => {
                         width: '100%'
                       }}
                     >
-                      🔄 Reset Attempt
+                      🔄 Full Reset
                     </button>
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
-                      This will delete their submission and allow them to retry.
+                      Wipes everything - fresh start from scratch.
                     </p>
                   </div>
                 </div>
