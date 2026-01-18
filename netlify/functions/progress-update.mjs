@@ -42,16 +42,17 @@ export default async function handler(request, context) {
 
     const { starterId, event, pageId, status, score, feedback, savedCode, type } = body;
 
-    // Handle checkpoint participation (from Checkpoint.astro)
-    if (pageId && status === 'participated' && type === 'checkpoint') {
+    // Handle participation events (from Checkpoint.astro, TryItNowRunner, etc.)
+    if (pageId && status === 'participated' && (type === 'checkpoint' || type === 'tryit' || type === 'deepdive')) {
       const redis = getRedis();
       const userId = user.sub;
       
-      console.log('[progress-update] Recording checkpoint participation:', pageId);
+      console.log(`[progress-update] Recording ${type} participation:`, pageId);
       
       // Store participation status in hash
       await redis.hset(`user:progress:data:${userId}`, {
         [`${pageId}:status`]: 'participated',
+        [`${pageId}:type`]: type,
         [`${pageId}:timestamp`]: new Date().toISOString()
       });
 

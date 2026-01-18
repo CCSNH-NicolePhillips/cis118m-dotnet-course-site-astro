@@ -320,6 +320,10 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
             if (window.__auth && typeof window.__auth.getAccessToken === 'function') {
               const token = await window.__auth.getAccessToken().catch(() => null);
               if (token) {
+                // Build participation ID: combine page path with runner ID
+                const pageSlug = window.location.pathname.replace(/\/$/, '');
+                const participationId = `${pageSlug}:tryit:${starterId || runnerId}`;
+                
                 await fetch('/api/progress-update', {
                   method: 'POST',
                   headers: { 
@@ -327,11 +331,13 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
                     'Content-Type': 'application/json' 
                   },
                   body: JSON.stringify({
-                    slug: window.location.pathname,
-                    activityId: runnerId,
-                    status: 'completed'
+                    pageId: participationId,
+                    status: 'participated',
+                    type: 'tryit'
                   }),
                 }).catch(() => {}); // Ignore progress update failures
+                
+                console.log('[TryItNowRunner] Participation recorded:', participationId);
               }
             }
           } catch (heartbeatErr) {

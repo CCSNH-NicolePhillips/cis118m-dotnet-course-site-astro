@@ -99,6 +99,38 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
 
     const tabButtons = tabsBar.querySelectorAll(".tab-btn");
     const tabPanels = container.querySelectorAll(".tab-content");
+    const visitedTabs = new Set();
+
+    // Participation tracking for deep dive exploration
+    async function recordParticipation(tabId) {
+      if (visitedTabs.has(tabId)) return; // Only record once per tab
+      visitedTabs.add(tabId);
+      
+      try {
+        if (window.__auth && typeof window.__auth.getAccessToken === 'function') {
+          const token = await window.__auth.getAccessToken().catch(() => null);
+          if (token) {
+            const pageSlug = window.location.pathname.replace(/\/$/, '');
+            const participationId = `${pageSlug}:deepdive:${componentId}:${tabId}`;
+            
+            await fetch('/api/progress-update', {
+              method: 'POST',
+              headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json' 
+              },
+              body: JSON.stringify({
+                pageId: participationId,
+                status: 'participated',
+                type: 'deepdive'
+              }),
+            }).catch(() => {});
+          }
+        }
+      } catch (err) {
+        // Silently ignore
+      }
+    }
 
     function switchTab(targetId) {
       tabButtons.forEach((btn) => {
@@ -112,6 +144,8 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
         if (isActive) {
           panel.hidden = false;
           panel.style.animation = "fadeSlideIn 180ms ease-out";
+          // Record participation when viewing a tab
+          recordParticipation(targetId);
         } else {
           panel.hidden = true;
         }
@@ -149,6 +183,12 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
         switchTab(buttons[nextIndex].dataset.tabId);
       }
     });
+    
+    // Record initial tab view
+    const defaultTab = tabsBar.querySelector('.tab-btn-active');
+    if (defaultTab) {
+      recordParticipation(defaultTab.dataset.tabId);
+    }
   })();
 </script>
 
