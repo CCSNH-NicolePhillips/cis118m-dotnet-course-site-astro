@@ -51,6 +51,15 @@ const getWeekLockInfo = (weekSlug: string) => {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} • {COURSE.code}</title>
     {description ? <meta name="description" content={description} /> : null}
+    
+    <!-- Apply theme before render to prevent flash -->
+    <script is:inline>
+      (function() {
+        var theme = localStorage.getItem('cis118m:theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+    
     <script is:inline src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
     <script is:inline src="/monaco/vs/loader.js"></script>
     <script is:inline>
@@ -392,11 +401,11 @@ const getWeekLockInfo = (weekSlug: string) => {
       (() => {
         const openWeekKey = "cis118m:openWeek";
         const instructorCacheKey = "cis118m:isPrivilegedUser";
+        const sidebar = document.getElementById("sidebar");
         const allHeaders = document.querySelectorAll(".week-header");
         const allItems = document.querySelectorAll(".week-item");
         
         // Check if user was previously identified as instructor/test student
-        // This prevents flash on page load
         const cachedPrivileged = localStorage.getItem(instructorCacheKey) === 'true';
         
         // If cached as privileged user, unlock all weeks immediately
@@ -448,11 +457,24 @@ const getWeekLockInfo = (weekSlug: string) => {
           });
         };
         
-        // Toggle week open/closed
+        // Open a week without animation (for initial load)
+        const openWeekInstant = (header) => {
+          const item = header.closest(".week-item");
+          if (item.getAttribute("data-locked") === "true") return;
+          
+          const content = item.querySelector(".week-content");
+          if (!content) return;
+          
+          item.classList.add("isOpen");
+          header.setAttribute("aria-expanded", "true");
+          content.style.maxHeight = content.scrollHeight + "px";
+        };
+        
+        // Toggle week open/closed (with animation, for user clicks)
         const toggleWeek = (header, shouldOpen) => {
           const item = header.closest(".week-item");
           
-          // Don't allow toggling locked weeks (unless privileged)
+          // Don't allow toggling locked weeks
           if (item.getAttribute("data-locked") === "true") {
             return;
           }
@@ -501,28 +523,36 @@ const getWeekLockInfo = (weekSlug: string) => {
           });
         });
         
-        // Initialize sidebar state
+        // Initialize sidebar state (runs once on page load)
         const initSidebar = () => {
           // Determine which week to open: current page > saved preference > week 01
           const currentWeek = getCurrentWeek();
           const savedWeek = localStorage.getItem(openWeekKey);
           const weekToOpen = currentWeek || savedWeek || "01";
           
-          // Open the appropriate week
+          // Open the appropriate week instantly (no animation)
           allHeaders.forEach(header => {
             if (header.getAttribute("data-week") === weekToOpen) {
-              toggleWeek(header, true);
+              openWeekInstant(header);
+              localStorage.setItem(openWeekKey, weekToOpen);
             }
           });
           
           highlightActiveLink();
+          
+          // Enable transitions for future interactions
+          if (sidebar) {
+            sidebar.classList.add("sidebar-ready");
+          }
         };
         
         // Run immediately
         initSidebar();
         
         // Expose for re-initialization after auth unlocks weeks
-        window.__reinitSidebar = initSidebar;
+        window.__reinitSidebar = () => {
+          highlightActiveLink();
+        };
       })();
     </script>
 

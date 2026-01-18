@@ -375,6 +375,11 @@ body > .layout .main:not(.monaco-editor *) {
   transform: rotate(180deg);
 }
 
+/* Disable transitions until sidebar is ready to prevent flash on page load */
+.sidebar:not(.sidebar-ready) .week-content {
+  transition: none !important;
+}
+
 .week-content {
   max-height: 0;
   overflow: hidden;
