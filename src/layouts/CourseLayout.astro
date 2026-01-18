@@ -20,6 +20,29 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
   minute: '2-digit',
   timeZoneName: 'short'
 }) : '';
+
+// Helper to format unlock date for each week
+const formatUnlockDate = (dateStr: string) => {
+  return new Date(dateStr).toLocaleString('en-US', { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  });
+};
+
+// Get week lock status for sidebar
+const getWeekLockInfo = (weekSlug: string) => {
+  const weekId = `week-${weekSlug}`;
+  const week = getWeekById(weekId);
+  if (!week) return { isLocked: false, unlockDate: '' };
+  const locked = new Date() < new Date(week.unlockDate);
+  return {
+    isLocked: locked,
+    unlockDate: locked ? formatUnlockDate(week.unlockDate) : ''
+  };
+};
 ---
 <html lang="en">
   <head>
@@ -70,20 +93,29 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
           <nav>
             <div class="hint" style="margin-bottom:8px;">Weeks</div>
             <div class="week-menu">
-              {WEEKS.map((w) => (
-                <div class="week-item" data-week={w.slug}>
+              {WEEKS.map((w) => {
+                const lockInfo = getWeekLockInfo(w.slug);
+                return (
+                <div class={`week-item ${lockInfo.isLocked ? 'week-locked' : ''}`} data-week={w.slug} data-locked={lockInfo.isLocked ? 'true' : 'false'} data-unlock-date={lockInfo.unlockDate}>
                   <button 
                     class="week-header" 
                     type="button"
                     aria-expanded="false"
                     aria-controls={`week-${w.slug}-content`}
                     data-week={w.slug}
+                    title={lockInfo.isLocked ? `Unlocks ${lockInfo.unlockDate}` : undefined}
                   >
-                    <span class="week-title">{w.title}</span>
-                    <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <span class="week-title">
+                      {lockInfo.isLocked && <span class="week-lock-icon">🔒 </span>}
+                      {w.title}
+                    </span>
+                    {!lockInfo.isLocked && (
+                      <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    )}
                   </button>
+                  {!lockInfo.isLocked && (
                   <div class="week-content" id={`week-${w.slug}-content`}>
                     <ul class="week-links">
                       {w.slug === '01' ? (
@@ -164,8 +196,9 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
                       )}
                     </ul>
                   </div>
+                  )}
                 </div>
-              ))}
+              );})}
             </div>
           </nav>
 
@@ -399,7 +432,15 @@ const unlockTime = weekData ? new Date(weekData.unlockDate).toLocaleString('en-U
         // Toggle week open/closed
         const toggleWeek = (header, shouldOpen) => {
           const item = header.closest(".week-item");
+          
+          // Don't allow toggling locked weeks
+          if (item.getAttribute("data-locked") === "true") {
+            return;
+          }
+          
           const content = item.querySelector(".week-content");
+          if (!content) return; // Locked weeks don't have content
+          
           const isOpen = item.classList.contains("isOpen");
           
           if (shouldOpen === undefined) {

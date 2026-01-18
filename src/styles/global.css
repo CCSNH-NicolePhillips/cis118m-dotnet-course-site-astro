@@ -386,6 +386,27 @@ body > .layout .main:not(.monaco-editor *) {
   opacity: 1;
 }
 
+/* Locked week styles */
+.week-item.week-locked {
+  opacity: 0.6;
+}
+
+.week-item.week-locked .week-header {
+  cursor: default;
+}
+
+.week-item.week-locked .week-header:hover {
+  background: var(--navitem-bg);
+}
+
+.week-item.week-locked:hover {
+  border-color: var(--border);
+}
+
+.week-lock-icon {
+  margin-right: 2px;
+}
+
 .week-links {
   list-style: none;
   margin: 0;
