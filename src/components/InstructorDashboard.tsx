@@ -97,17 +97,6 @@ const countParticipationByWeek = (progress: StudentProgress): { [week: number]: 
   return counts;
 };
 
-// Total participation count
-const countTotalParticipation = (progress: StudentProgress): number => {
-  let count = 0;
-  for (const [key, value] of Object.entries(progress || {})) {
-    if (key.endsWith(':status') && value === 'participated') {
-      count++;
-    }
-  }
-  return count;
-};
-
 // Check if student passed syllabus quiz
 const hasSyllabusQuizPassed = (parsed: { [pageId: string]: { score?: number } } | undefined): boolean => {
   const syllabusScore = parsed?.['week-01-required-quiz']?.score;
@@ -117,7 +106,7 @@ const hasSyllabusQuizPassed = (parsed: { [pageId: string]: { score?: number } } 
 // Calculate weighted totals by category and overall
 const calculateWeightedTotals = (
   parsed: { [pageId: string]: { score?: number; status?: string } } | undefined,
-  participationCount: number,
+  participationByWeek: { [week: number]: number },
   assignments: typeof ASSIGNMENTS
 ): {
   courseTotal: number;
@@ -129,14 +118,14 @@ const calculateWeightedTotals = (
   labsAvg: number;
   quizzesAvg: number;
   homeworkAvg: number;
-  participationPct: number;
+  participationAvg: number;
   finalAvg: number;
 } => {
   if (!parsed) {
     return {
       courseTotal: 0,
       labsWeighted: 0, quizzesWeighted: 0, homeworkWeighted: 0, participationWeighted: 0, finalWeighted: 0,
-      labsAvg: 0, quizzesAvg: 0, homeworkAvg: 0, participationPct: 0, finalAvg: 0
+      labsAvg: 0, quizzesAvg: 0, homeworkAvg: 0, participationAvg: 0, finalAvg: 0
     };
   }
   
@@ -144,10 +133,18 @@ const calculateWeightedTotals = (
   const quizScores: number[] = [];
   const homeworkScores: number[] = [];
   const finalScores: number[] = [];
+  const participationScores: number[] = [];
   
   for (const assignment of assignments) {
     const score = parsed[assignment.id]?.score;
-    if (score !== undefined && score !== null) {
+    if (assignment.type === 'participation') {
+      // Calculate per-week participation as 0-100 score
+      const weekCount = participationByWeek[assignment.week] || 0;
+      const weekScore = Math.min(100, (weekCount / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
+      if (weekCount > 0) {
+        participationScores.push(weekScore);
+      }
+    } else if (score !== undefined && score !== null) {
       if (assignment.type === 'lab') labScores.push(score);
       else if (assignment.type === 'quiz') quizScores.push(score);
       else if (assignment.type === 'homework') homeworkScores.push(score);
@@ -161,14 +158,12 @@ const calculateWeightedTotals = (
   const quizzesAvg = avg(quizScores);
   const homeworkAvg = avg(homeworkScores);
   const finalAvg = avg(finalScores);
-  
-  const totalExpected = TOTAL_WEEKS * EXPECTED_CHECKPOINTS_PER_WEEK;
-  const participationPct = totalExpected > 0 ? Math.min(100, (participationCount / totalExpected) * 100) : 0;
+  const participationAvg = avg(participationScores);
   
   const labsWeighted = labsAvg * WEIGHTS.labs;
   const quizzesWeighted = quizzesAvg * WEIGHTS.quizzes;
   const homeworkWeighted = homeworkAvg * WEIGHTS.homework;
-  const participationWeighted = participationPct * WEIGHTS.participation;
+  const participationWeighted = participationAvg * WEIGHTS.participation;
   const finalWeighted = finalAvg * WEIGHTS.final;
   
   const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted + finalWeighted;
@@ -176,7 +171,7 @@ const calculateWeightedTotals = (
   return {
     courseTotal,
     labsWeighted, quizzesWeighted, homeworkWeighted, participationWeighted, finalWeighted,
-    labsAvg, quizzesAvg, homeworkAvg, participationPct, finalAvg
+    labsAvg, quizzesAvg, homeworkAvg, participationAvg, finalAvg
   };
 };
 
@@ -547,9 +542,9 @@ const InstructorDashboard: React.FC = () => {
               </tr>
             ) : (
               students.map(student => {
-                const totalPart = countTotalParticipation(student.progress);
+                const participationByWeek = countParticipationByWeek(student.progress);
                 const syllabusOk = hasSyllabusQuizPassed(student.parsedProgress);
-                const weighted = calculateWeightedTotals(student.parsedProgress, totalPart, ASSIGNMENTS);
+                const weighted = calculateWeightedTotals(student.parsedProgress, participationByWeek, ASSIGNMENTS);
                 
                 return (
                   <tr 
@@ -641,7 +636,7 @@ const InstructorDashboard: React.FC = () => {
                           </span>
                         </td>
                         <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
-                          <span style={{ color: TYPE_COLORS.participation.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.participationPct.toFixed(0)}% * 10%`}>
+                          <span style={{ color: TYPE_COLORS.participation.text, fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.participationAvg.toFixed(0)}% avg * 10%`}>
                             {weighted.participationWeighted.toFixed(1)}
                           </span>
                         </td>

@@ -1,0 +1,16 @@
+---
+import CourseLayout from "../../layouts/CourseLayout.astro";
+import StudentGrades from "../../components/StudentGrades.tsx";
+const title = "My Grades";
+const description = "View your current course grades and progress";
+---
+
+<CourseLayout title={title} description={description}>
+  <div style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+    <h1 style="text-align: center; margin-bottom: 10px;">📊 My Grades</h1>
+    <p style="text-align: center; color: #888; margin-bottom: 30px;">
+      Your current progress in CIS118M - .NET Programming
+    </p>
+    <StudentGrades client:load />
+  </div>
+</CourseLayout>
