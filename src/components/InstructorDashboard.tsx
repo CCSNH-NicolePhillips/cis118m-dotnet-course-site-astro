@@ -1,24 +1,30 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAccessToken } from '../lib/auth';
 
-// Assignment definitions for the course
-const ASSIGNMENTS = [
-  { id: 'week-01-required-quiz', label: 'Syllabus', week: 1, type: 'quiz' },
-  { id: 'week-01-homework', label: 'HW 1', week: 1, type: 'homework' },
-  { id: 'week-01-lab', label: 'Lab 1', week: 1, type: 'lab' },
-  { id: 'week-02-quiz', label: 'Quiz 2', week: 2, type: 'quiz' },
-  { id: 'week-02-homework', label: 'HW 2', week: 2, type: 'homework' },
-  { id: 'week-02-lab', label: 'Lab 2', week: 2, type: 'lab' },
-  { id: 'week-03-quiz', label: 'Quiz 3', week: 3, type: 'quiz' },
-  { id: 'week-03-homework', label: 'HW 3', week: 3, type: 'homework' },
-  { id: 'week-03-lab', label: 'Lab 3', week: 3, type: 'lab' },
-  { id: 'week-04-quiz', label: 'Quiz 4', week: 4, type: 'quiz' },
-  { id: 'week-04-homework', label: 'HW 4', week: 4, type: 'homework' },
-  { id: 'week-04-lab', label: 'Lab 4', week: 4, type: 'lab' },
-  { id: 'week-05-quiz', label: 'Quiz 5', week: 5, type: 'quiz' },
-  { id: 'week-05-homework', label: 'HW 5', week: 5, type: 'homework' },
-  { id: 'week-05-lab', label: 'Lab 5', week: 5, type: 'lab' },
-];
+// Number of weeks in course
+const TOTAL_WEEKS = 16;
+
+// Assignment definitions for the course - dynamically generate all weeks
+const generateAssignments = () => {
+  const assignments: { id: string; label: string; week: number; type: 'quiz' | 'homework' | 'lab' }[] = [];
+  
+  // Week 1 is special - syllabus quiz
+  assignments.push({ id: 'week-01-required-quiz', label: 'Syllabus', week: 1, type: 'quiz' });
+  assignments.push({ id: 'week-01-homework', label: 'HW', week: 1, type: 'homework' });
+  assignments.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
+  
+  // Weeks 2-16
+  for (let w = 2; w <= TOTAL_WEEKS; w++) {
+    const wStr = w.toString().padStart(2, '0');
+    assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
+    assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
+    assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
+  }
+  
+  return assignments;
+};
+
+const ASSIGNMENTS = generateAssignments();
 
 // Syllabus weights for final grade calculation
 const WEIGHTS = {
@@ -29,7 +35,7 @@ const WEIGHTS = {
   final: 0.10,          // 10%
 };
 
-// Total expected checkpoints per week (for participation calculation)
+// Expected checkpoints per week
 const EXPECTED_CHECKPOINTS_PER_WEEK = 5;
 
 interface StudentProgress {
@@ -50,11 +56,32 @@ interface SubmissionModalData {
   assignmentLabel: string;
 }
 
-// Helper to count participation checkpoints
-const countParticipation = (progress: StudentProgress): number => {
+// Count participation checkpoints by week
+const countParticipationByWeek = (progress: StudentProgress): { [week: number]: number } => {
+  const counts: { [week: number]: number } = {};
+  for (let w = 1; w <= TOTAL_WEEKS; w++) {
+    counts[w] = 0;
+  }
+  
+  for (const [key, value] of Object.entries(progress || {})) {
+    if (key.endsWith(':status') && value === 'participated') {
+      // Try to extract week from checkpoint ID
+      const weekMatch = key.match(/week-(\d+)/i);
+      if (weekMatch) {
+        const week = parseInt(weekMatch[1]);
+        if (week >= 1 && week <= TOTAL_WEEKS) {
+          counts[week] = (counts[week] || 0) + 1;
+        }
+      }
+    }
+  }
+  return counts;
+};
+
+// Total participation count
+const countTotalParticipation = (progress: StudentProgress): number => {
   let count = 0;
   for (const [key, value] of Object.entries(progress || {})) {
-    // Match checkpoint participation entries (e.g., "checkpoint-1:q1:status" = "participated")
     if (key.endsWith(':status') && value === 'participated') {
       count++;
     }
@@ -62,69 +89,69 @@ const countParticipation = (progress: StudentProgress): number => {
   return count;
 };
 
-// Helper to check if student passed syllabus quiz
+// Check if student passed syllabus quiz
 const hasSyllabusQuizPassed = (parsed: { [pageId: string]: { score?: number } } | undefined): boolean => {
   const syllabusScore = parsed?.['week-01-required-quiz']?.score;
   return syllabusScore !== undefined && syllabusScore >= 100;
 };
 
-// Calculate weighted total grade
-const calculateWeightedTotal = (
+// Calculate weighted totals by category and overall
+const calculateWeightedTotals = (
   parsed: { [pageId: string]: { score?: number; status?: string } } | undefined,
   participationCount: number,
-  totalWeeks: number
-): { total: number; breakdown: { labs: number; quizzes: number; homework: number; participation: number } } => {
+  assignments: typeof ASSIGNMENTS
+): {
+  courseTotal: number;
+  labsWeighted: number;
+  quizzesWeighted: number;
+  homeworkWeighted: number;
+  participationWeighted: number;
+  labsAvg: number;
+  quizzesAvg: number;
+  homeworkAvg: number;
+  participationPct: number;
+} => {
   if (!parsed) {
-    return { total: 0, breakdown: { labs: 0, quizzes: 0, homework: 0, participation: 0 } };
+    return {
+      courseTotal: 0,
+      labsWeighted: 0, quizzesWeighted: 0, homeworkWeighted: 0, participationWeighted: 0,
+      labsAvg: 0, quizzesAvg: 0, homeworkAvg: 0, participationPct: 0
+    };
   }
   
-  // Collect scores by category
   const labScores: number[] = [];
   const quizScores: number[] = [];
   const homeworkScores: number[] = [];
   
-  for (const assignment of ASSIGNMENTS) {
+  for (const assignment of assignments) {
     const score = parsed[assignment.id]?.score;
     if (score !== undefined && score !== null) {
-      if (assignment.type === 'lab') {
-        labScores.push(score);
-      } else if (assignment.type === 'quiz') {
-        quizScores.push(score);
-      } else if (assignment.type === 'homework') {
-        homeworkScores.push(score);
-      }
+      if (assignment.type === 'lab') labScores.push(score);
+      else if (assignment.type === 'quiz') quizScores.push(score);
+      else if (assignment.type === 'homework') homeworkScores.push(score);
     }
   }
   
-  // Calculate averages (or 0 if no scores)
   const avg = (arr: number[]) => arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
   
-  const labAvg = avg(labScores);
-  const quizAvg = avg(quizScores);
+  const labsAvg = avg(labScores);
+  const quizzesAvg = avg(quizScores);
   const homeworkAvg = avg(homeworkScores);
   
-  // Participation: count / expected total checkpoints
-  const totalExpectedCheckpoints = totalWeeks * EXPECTED_CHECKPOINTS_PER_WEEK;
-  const participationScore = totalExpectedCheckpoints > 0 
-    ? Math.min(100, (participationCount / totalExpectedCheckpoints) * 100) 
-    : 0;
+  const totalExpected = TOTAL_WEEKS * EXPECTED_CHECKPOINTS_PER_WEEK;
+  const participationPct = totalExpected > 0 ? Math.min(100, (participationCount / totalExpected) * 100) : 0;
   
-  // Calculate weighted total (excluding final for now)
-  const weightedTotal = 
-    (labAvg * WEIGHTS.labs) +
-    (quizAvg * WEIGHTS.quizzes) +
-    (homeworkAvg * WEIGHTS.homework) +
-    (participationScore * WEIGHTS.participation);
-    // Final exam weight (WEIGHTS.final) not included yet
+  const labsWeighted = labsAvg * WEIGHTS.labs;
+  const quizzesWeighted = quizzesAvg * WEIGHTS.quizzes;
+  const homeworkWeighted = homeworkAvg * WEIGHTS.homework;
+  const participationWeighted = participationPct * WEIGHTS.participation;
+  
+  const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted;
   
   return {
-    total: weightedTotal,
-    breakdown: {
-      labs: labAvg,
-      quizzes: quizAvg,
-      homework: homeworkAvg,
-      participation: participationScore
-    }
+    courseTotal,
+    labsWeighted, quizzesWeighted, homeworkWeighted, participationWeighted,
+    labsAvg, quizzesAvg, homeworkAvg, participationPct
   };
 };
 
@@ -134,13 +161,33 @@ const InstructorDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
+  // Filters
+  const [weekFilter, setWeekFilter] = useState<number | 'all'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'quiz' | 'homework' | 'lab'>('all');
+  const [showTotals, setShowTotals] = useState(true);
+  
   // Modal state
   const [modalData, setModalData] = useState<SubmissionModalData | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [manualGrade, setManualGrade] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
 
-  // Parse hash-style progress data into usable format
+  // Filter assignments based on current filters
+  const filteredAssignments = useMemo(() => {
+    return ASSIGNMENTS.filter(a => {
+      if (weekFilter !== 'all' && a.week !== weekFilter) return false;
+      if (typeFilter !== 'all' && a.type !== typeFilter) return false;
+      return true;
+    });
+  }, [weekFilter, typeFilter]);
+
+  // Get weeks that are active in current filter
+  const activeWeeks = useMemo(() => {
+    const weeks = new Set<number>();
+    filteredAssignments.forEach(a => weeks.add(a.week));
+    return Array.from(weeks).sort((a, b) => a - b);
+  }, [filteredAssignments]);
+
   const parseProgressData = (progress: StudentProgress) => {
     const parsed: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string } } = {};
     
@@ -150,22 +197,14 @@ const InstructorDashboard: React.FC = () => {
         const field = parts.pop()!;
         const pageId = parts.join(':');
         
-        if (!parsed[pageId]) {
-          parsed[pageId] = {};
-        }
+        if (!parsed[pageId]) parsed[pageId] = {};
         
-        if (field === 'score') {
-          parsed[pageId].score = parseFloat(String(value)) || 0;
-        } else if (field === 'status') {
-          parsed[pageId].status = String(value);
-        } else if (field === 'feedback') {
-          parsed[pageId].feedback = String(value);
-        } else if (field === 'savedCode') {
-          parsed[pageId].savedCode = String(value);
-        }
+        if (field === 'score') parsed[pageId].score = parseFloat(String(value)) || 0;
+        else if (field === 'status') parsed[pageId].status = String(value);
+        else if (field === 'feedback') parsed[pageId].feedback = String(value);
+        else if (field === 'savedCode') parsed[pageId].savedCode = String(value);
       }
     }
-    
     return parsed;
   };
 
@@ -186,14 +225,12 @@ const InstructorDashboard: React.FC = () => {
       });
       
       if (res.status === 403) {
-        setError('Instructor access required. You must be logged in with an @ccsnh.edu email.');
+        setError('Instructor access required.');
         setLoading(false);
         return;
       }
       
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       
       const data = await res.json();
       const studentsWithParsed = (data.students || []).map((s: Student) => ({
@@ -228,7 +265,6 @@ const InstructorDashboard: React.FC = () => {
 
   const handleUpdateGrade = async () => {
     if (!modalData) return;
-    
     const score = parseInt(manualGrade);
     if (isNaN(score) || score < 0 || score > 100) {
       setActionFeedback({ type: 'error', message: 'Please enter a valid score (0-100)' });
@@ -239,10 +275,7 @@ const InstructorDashboard: React.FC = () => {
       const token = await getAccessToken();
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: modalData.student.sub,
           pageId: modalData.assignmentId,
@@ -258,30 +291,21 @@ const InstructorDashboard: React.FC = () => {
       }
       
       setActionFeedback({ type: 'success', message: `Score updated to ${score}%` });
-      setTimeout(() => {
-        closeModal();
-        loadGradebook();
-      }, 1500);
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
     } catch (err) {
-      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` });
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
     }
   };
 
   const handleDropLowest = async () => {
     if (!modalData) return;
-    
-    if (!confirm('Drop the lowest attempt? This keeps their best score but gives them another try.')) {
-      return;
-    }
+    if (!confirm('Drop the lowest attempt? This keeps their best score but gives them another try.')) return;
     
     try {
       const token = await getAccessToken();
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: modalData.student.sub,
           pageId: modalData.assignmentId,
@@ -297,30 +321,21 @@ const InstructorDashboard: React.FC = () => {
       
       const result = await res.json();
       setActionFeedback({ type: 'success', message: result.message || 'Dropped lowest attempt' });
-      setTimeout(() => {
-        closeModal();
-        loadGradebook();
-      }, 1500);
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
     } catch (err) {
-      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` });
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
     }
   };
 
   const handleResetAttempt = async () => {
     if (!modalData) return;
-    
-    if (!confirm('Are you sure you want to reset this student\'s attempt? This will delete their submission and allow them to retry.')) {
-      return;
-    }
+    if (!confirm('Reset this student\'s attempt? This will delete their submission.')) return;
     
     try {
       const token = await getAccessToken();
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: modalData.student.sub,
           pageId: modalData.assignmentId,
@@ -335,12 +350,9 @@ const InstructorDashboard: React.FC = () => {
       }
       
       setActionFeedback({ type: 'success', message: 'Student can now retry this assignment' });
-      setTimeout(() => {
-        closeModal();
-        loadGradebook();
-      }, 1500);
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
     } catch (err) {
-      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` });
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
     }
   };
 
@@ -354,10 +366,29 @@ const InstructorDashboard: React.FC = () => {
     return score >= 70 ? 'rgba(78, 201, 176, 0.2)' : 'rgba(206, 145, 120, 0.2)';
   };
 
+  // Styles
+  const thStyle: React.CSSProperties = {
+    padding: '10px 6px',
+    textAlign: 'center',
+    background: '#2d2d2d',
+    color: '#4ec9b0',
+    fontWeight: 'bold',
+    fontSize: '0.8rem',
+    whiteSpace: 'nowrap'
+  };
+  
+  const filterSelectStyle: React.CSSProperties = {
+    padding: '6px 10px',
+    background: '#2d2d2d',
+    border: '1px solid #4ec9b0',
+    borderRadius: '4px',
+    color: '#fff',
+    fontSize: '0.9rem'
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: '#4ec9b0' }}>
-        <div style={{ fontSize: '2rem', marginBottom: '10px' }}>⏳</div>
         Loading gradebook data...
       </div>
     );
@@ -366,7 +397,7 @@ const InstructorDashboard: React.FC = () => {
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', color: '#ce9178' }}>
-        <h2>⚠️ Error</h2>
+        <h2>Error</h2>
         <p>{error}</p>
       </div>
     );
@@ -375,191 +406,243 @@ const InstructorDashboard: React.FC = () => {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-        <h1 style={{ margin: 0, color: '#4ec9b0' }}>📊 Course Gradebook</h1>
-        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+      <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+        <h1 style={{ margin: 0, color: '#4ec9b0' }}>Course Gradebook</h1>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
             onClick={loadGradebook}
             style={{
               background: '#4ec9b0',
               color: '#000',
               border: 'none',
-              padding: '8px 16px',
+              padding: '6px 14px',
               borderRadius: '4px',
               cursor: 'pointer',
               fontWeight: 'bold'
             }}
           >
-            🔄 Refresh
+            Refresh
           </button>
           {lastUpdated && (
             <span style={{ color: '#888', fontSize: '0.85rem' }}>
-              Updated: {lastUpdated.toLocaleTimeString()}
+              {lastUpdated.toLocaleTimeString()}
             </span>
           )}
         </div>
       </div>
 
+      {/* Filters */}
+      <div style={{ marginBottom: '15px', display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ddd' }}>
+          Week:
+          <select
+            value={weekFilter}
+            onChange={(e) => setWeekFilter(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+            style={filterSelectStyle}
+          >
+            <option value="all">All Weeks</option>
+            {Array.from({ length: TOTAL_WEEKS }, (_, i) => i + 1).map(w => (
+              <option key={w} value={w}>Week {w}</option>
+            ))}
+          </select>
+        </label>
+        
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ddd' }}>
+          Type:
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value as 'all' | 'quiz' | 'homework' | 'lab')}
+            style={filterSelectStyle}
+          >
+            <option value="all">All Types</option>
+            <option value="quiz">Quizzes Only</option>
+            <option value="homework">Homework Only</option>
+            <option value="lab">Labs Only</option>
+          </select>
+        </label>
+        
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ddd' }}>
+          <input
+            type="checkbox"
+            checked={showTotals}
+            onChange={(e) => setShowTotals(e.target.checked)}
+          />
+          Show Weighted Totals
+        </label>
+      </div>
+
       {/* Gradebook Table */}
       <div style={{ overflowX: 'auto', border: '1px solid #333', borderRadius: '8px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '900px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead>
             <tr>
+              {/* Student Column */}
               <th style={{
-                padding: '12px',
+                ...thStyle,
                 textAlign: 'left',
-                background: '#2d2d2d',
-                color: '#4ec9b0',
-                fontWeight: 'bold',
                 position: 'sticky',
                 left: 0,
                 zIndex: 20,
-                minWidth: '200px'
+                minWidth: '180px'
               }}>
                 Student
               </th>
-              <th style={{
-                padding: '10px 8px',
-                textAlign: 'center',
-                background: '#2d2d2d',
-                color: '#fbbf24',
-                fontWeight: 'bold',
-                fontSize: '0.85rem',
-                minWidth: '80px'
-              }} title="Participation checkpoints completed">
-                📋 Part
-              </th>
-              {ASSIGNMENTS.map(a => (
-                <th key={a.id} style={{
-                  padding: '10px 8px',
-                  textAlign: 'center',
-                  background: '#2d2d2d',
-                  color: '#4ec9b0',
-                  fontWeight: 'bold',
-                  fontSize: '0.85rem'
-                }} title={a.id}>
-                  {a.label}
+              
+              {/* Participation columns per week (if showing all or filtered week) */}
+              {activeWeeks.map(week => (
+                <th key={`part-${week}`} style={{ ...thStyle, color: '#fbbf24', minWidth: '40px' }} title={`Week ${week} Participation`}>
+                  P{week}
                 </th>
               ))}
-              <th style={{
-                padding: '10px 8px',
-                textAlign: 'center',
-                background: '#2d2d2d',
-                color: '#4ec9b0',
-                fontWeight: 'bold',
-                fontSize: '0.85rem',
-                minWidth: '90px'
-              }} title="Weighted total based on syllabus weights">
-                📊 Total
-              </th>
+              
+              {/* Assignment columns */}
+              {filteredAssignments.map(a => (
+                <th key={a.id} style={thStyle} title={a.id}>
+                  W{a.week} {a.label}
+                </th>
+              ))}
+              
+              {/* Weighted totals columns */}
+              {showTotals && (
+                <>
+                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Labs Weighted (40%)">Labs</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Quizzes Weighted (20%)">Quiz</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Homework Weighted (20%)">HW</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', minWidth: '55px' }} title="Participation Weighted (10%)">Part</th>
+                  <th style={{ ...thStyle, background: '#4d4d4d', minWidth: '65px' }} title="Course Total (90% - no final yet)">Total</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
             {students.length === 0 ? (
               <tr>
-                <td colSpan={ASSIGNMENTS.length + 3} style={{ textAlign: 'center', color: '#888', padding: '40px' }}>
+                <td colSpan={100} style={{ textAlign: 'center', color: '#888', padding: '40px' }}>
                   No student data yet
                 </td>
               </tr>
             ) : (
               students.map(student => {
-                const participationCount = countParticipation(student.progress);
+                const participationByWeek = countParticipationByWeek(student.progress);
+                const totalPart = countTotalParticipation(student.progress);
                 const syllabusOk = hasSyllabusQuizPassed(student.parsedProgress);
-                const weighted = calculateWeightedTotal(student.parsedProgress, participationCount, 5);
+                const weighted = calculateWeightedTotals(student.parsedProgress, totalPart, filteredAssignments);
                 
                 return (
                   <tr 
                     key={student.sub} 
                     style={{ 
                       borderBottom: '1px solid #333',
-                      background: syllabusOk ? 'transparent' : 'rgba(239, 68, 68, 0.1)',
-                      opacity: syllabusOk ? 1 : 0.85
+                      background: syllabusOk ? 'transparent' : 'rgba(239, 68, 68, 0.08)'
                     }}
                   >
+                    {/* Student Name */}
                     <td style={{
-                      padding: '10px 12px',
+                      padding: '8px 10px',
                       textAlign: 'left',
                       position: 'sticky',
                       left: 0,
-                      background: syllabusOk ? '#1e1e1e' : 'rgba(239, 68, 68, 0.15)',
+                      background: syllabusOk ? '#1e1e1e' : 'rgba(239, 68, 68, 0.12)',
                       zIndex: 5
                     }}>
-                      <div style={{ fontWeight: 'bold', color: syllabusOk ? '#ddd' : '#ef4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {!syllabusOk && <span title="Syllabus quiz not passed">🔒</span>}
+                      <div style={{ fontWeight: 'bold', color: syllabusOk ? '#ddd' : '#ef4444', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.9rem' }}>
+                        {!syllabusOk && <span title="Syllabus quiz not passed" style={{ fontSize: '0.8rem' }}>[LOCKED]</span>}
                         {student.name || student.email?.split('@')[0] || 'Unknown'}
                       </div>
-                      <div style={{ fontSize: '0.8rem', color: '#888' }}>
+                      <div style={{ fontSize: '0.75rem', color: '#666' }}>
                         {student.email}
                       </div>
                     </td>
-                    {/* Participation Column */}
-                    <td style={{ padding: '8px', textAlign: 'center' }}>
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '6px 10px',
-                        borderRadius: '4px',
-                        background: participationCount > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(100, 100, 100, 0.2)',
-                        color: participationCount > 0 ? '#fbbf24' : '#888',
-                        fontWeight: 'bold',
-                        fontSize: '0.85rem'
-                      }} title={`${participationCount} checkpoints completed`}>
-                        {participationCount}
-                      </span>
-                    </td>
-                    {/* Assignment Columns */}
-                    {ASSIGNMENTS.map(a => {
+                    
+                    {/* Participation per week */}
+                    {activeWeeks.map(week => (
+                      <td key={`part-${week}`} style={{ padding: '6px', textAlign: 'center' }}>
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          background: (participationByWeek[week] || 0) > 0 ? 'rgba(251, 191, 36, 0.2)' : 'rgba(100, 100, 100, 0.15)',
+                          color: (participationByWeek[week] || 0) > 0 ? '#fbbf24' : '#666',
+                          fontWeight: 'bold',
+                          fontSize: '0.8rem'
+                        }}>
+                          {participationByWeek[week] || 0}
+                        </span>
+                      </td>
+                    ))}
+                    
+                    {/* Assignment Scores */}
+                    {filteredAssignments.map(a => {
                       const progress = student.parsedProgress?.[a.id];
                       const score = progress?.score;
                       
                       let cellContent = '-';
                       if (score !== undefined && score !== null) {
-                        cellContent = `${score}%`;
+                        cellContent = `${score}`;
                       } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
                         cellContent = '...';
                       }
                       
                       return (
-                        <td key={a.id} style={{ padding: '8px', textAlign: 'center' }}>
+                        <td key={a.id} style={{ padding: '6px', textAlign: 'center' }}>
                           <span
-                            onClick={() => openSubmissionModal(student, a.id, a.label)}
+                            onClick={() => openSubmissionModal(student, a.id, `Week ${a.week} ${a.label}`)}
                             style={{
                               display: 'inline-block',
-                              padding: '6px 12px',
+                              padding: '4px 10px',
                               borderRadius: '4px',
                               cursor: 'pointer',
                               background: getScoreBgColor(score),
                               color: getScoreColor(score),
                               border: `1px solid ${getScoreColor(score)}`,
                               fontWeight: 'bold',
-                              fontSize: '0.9rem',
-                              transition: 'transform 0.2s'
+                              fontSize: '0.85rem'
                             }}
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                           >
                             {cellContent}
                           </span>
                         </td>
                       );
                     })}
-                    {/* Weighted Total Column */}
-                    <td style={{ padding: '8px', textAlign: 'center' }}>
-                      <span 
-                        style={{
-                          display: 'inline-block',
-                          padding: '6px 12px',
-                          borderRadius: '4px',
-                          background: weighted.total >= 70 ? 'rgba(78, 201, 176, 0.3)' : 'rgba(206, 145, 120, 0.3)',
-                          color: weighted.total >= 70 ? '#4ec9b0' : '#ce9178',
-                          fontWeight: 'bold',
-                          fontSize: '0.9rem',
-                          cursor: 'help'
-                        }}
-                        title={`Labs: ${weighted.breakdown.labs.toFixed(0)}% (40%), Quizzes: ${weighted.breakdown.quizzes.toFixed(0)}% (20%), HW: ${weighted.breakdown.homework.toFixed(0)}% (20%), Part: ${weighted.breakdown.participation.toFixed(0)}% (10%)`}
-                      >
-                        {weighted.total.toFixed(1)}%
-                      </span>
-                    </td>
+                    
+                    {/* Weighted Totals */}
+                    {showTotals && (
+                      <>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
+                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.labsAvg.toFixed(0)}% avg * 40%`}>
+                            {weighted.labsWeighted.toFixed(1)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
+                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.quizzesAvg.toFixed(0)}% avg * 20%`}>
+                            {weighted.quizzesWeighted.toFixed(1)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
+                          <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.homeworkAvg.toFixed(0)}% avg * 20%`}>
+                            {weighted.homeworkWeighted.toFixed(1)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(50,50,50,0.3)' }}>
+                          <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '0.85rem' }} title={`${weighted.participationPct.toFixed(0)}% * 10%`}>
+                            {weighted.participationWeighted.toFixed(1)}
+                          </span>
+                        </td>
+                        <td style={{ padding: '6px', textAlign: 'center', background: 'rgba(60,60,60,0.4)' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '4px 10px',
+                            borderRadius: '4px',
+                            background: weighted.courseTotal >= 70 ? 'rgba(78, 201, 176, 0.25)' : 'rgba(206, 145, 120, 0.25)',
+                            color: weighted.courseTotal >= 70 ? '#4ec9b0' : '#ce9178',
+                            fontWeight: 'bold',
+                            fontSize: '0.9rem'
+                          }}>
+                            {weighted.courseTotal.toFixed(1)}%
+                          </span>
+                        </td>
+                      </>
+                    )}
                   </tr>
                 );
               })
@@ -602,11 +685,8 @@ const InstructorDashboard: React.FC = () => {
                 </h2>
                 <p style={{ margin: '5px 0 0', color: '#888' }}>{modalData.student.email}</p>
               </div>
-              <button
-                onClick={closeModal}
-                style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ✕
+              <button onClick={closeModal} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>
+                X
               </button>
             </div>
 
@@ -639,7 +719,7 @@ const InstructorDashboard: React.FC = () => {
               {/* Student Code */}
               <details open style={{ marginBottom: '20px' }}>
                 <summary style={{ cursor: 'pointer', color: '#4ec9b0', fontWeight: 'bold', padding: '10px 0' }}>
-                  📝 Student Submission
+                  Student Submission
                 </summary>
                 <pre style={{
                   background: '#0d0d0d',
@@ -661,7 +741,7 @@ const InstructorDashboard: React.FC = () => {
               {/* AI Feedback */}
               <details open style={{ marginBottom: '20px' }}>
                 <summary style={{ cursor: 'pointer', color: '#4ec9b0', fontWeight: 'bold', padding: '10px 0' }}>
-                  🤖 AI Feedback
+                  AI Feedback
                 </summary>
                 <div style={{
                   background: '#0d0d0d',
@@ -679,7 +759,7 @@ const InstructorDashboard: React.FC = () => {
 
               {/* Instructor Actions */}
               <div style={{ borderTop: '1px solid #333', paddingTop: '20px' }}>
-                <h3 style={{ color: '#ce9178', marginTop: 0 }}>⚙️ Instructor Actions</h3>
+                <h3 style={{ color: '#ce9178', marginTop: 0 }}>Instructor Actions</h3>
                 
                 <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                   {/* Override Grade */}
@@ -744,7 +824,7 @@ const InstructorDashboard: React.FC = () => {
                   {/* Reset Attempt */}
                   <div style={{ flex: 1, minWidth: '250px', background: '#2d2d2d', padding: '15px', borderRadius: '8px' }}>
                     <p style={{ color: '#ddd', marginTop: 0 }}>
-                      Allow the student to resubmit this assignment:
+                      Allow the student to resubmit:
                     </p>
                     <button
                       onClick={handleDropLowest}
@@ -760,10 +840,10 @@ const InstructorDashboard: React.FC = () => {
                         marginBottom: '10px'
                       }}
                     >
-                      ⬇️ Drop Lowest Attempt
+                      Drop Lowest Attempt
                     </button>
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: '15px' }}>
-                      Keeps best score, gives them another try.
+                      Keeps best score, gives another try.
                     </p>
                     <button
                       onClick={handleResetAttempt}
@@ -778,10 +858,10 @@ const InstructorDashboard: React.FC = () => {
                         width: '100%'
                       }}
                     >
-                      🔄 Full Reset
+                      Full Reset
                     </button>
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
-                      Wipes everything - fresh start from scratch.
+                      Wipes everything - fresh start.
                     </p>
                   </div>
                 </div>
@@ -796,7 +876,7 @@ const InstructorDashboard: React.FC = () => {
                     color: '#000',
                     fontWeight: 'bold'
                   }}>
-                    {actionFeedback.type === 'success' ? '✓' : '✕'} {actionFeedback.message}
+                    {actionFeedback.message}
                   </div>
                 )}
               </div>
