@@ -391,8 +391,31 @@ const getWeekLockInfo = (weekSlug: string) => {
     <script is:inline>
       (() => {
         const openWeekKey = "cis118m:openWeek";
+        const instructorCacheKey = "cis118m:isPrivilegedUser";
         const allHeaders = document.querySelectorAll(".week-header");
         const allItems = document.querySelectorAll(".week-item");
+        
+        // Check if user was previously identified as instructor/test student
+        // This prevents flash on page load
+        const cachedPrivileged = localStorage.getItem(instructorCacheKey) === 'true';
+        
+        // If cached as privileged user, unlock all weeks immediately
+        if (cachedPrivileged) {
+          allItems.forEach(item => {
+            if (item.classList.contains('week-locked')) {
+              item.classList.remove('week-locked');
+              item.setAttribute('data-locked', 'false');
+              
+              const chevron = item.querySelector('.week-chevron');
+              const lockIcon = item.querySelector('.week-lock-icon');
+              if (chevron) chevron.style.display = '';
+              if (lockIcon) lockIcon.style.display = 'none';
+              
+              const header = item.querySelector('.week-header');
+              if (header) header.removeAttribute('title');
+            }
+          });
+        }
         
         // Get current week from URL path or query params
         const getCurrentWeek = () => {
@@ -429,13 +452,13 @@ const getWeekLockInfo = (weekSlug: string) => {
         const toggleWeek = (header, shouldOpen) => {
           const item = header.closest(".week-item");
           
-          // Don't allow toggling locked weeks
+          // Don't allow toggling locked weeks (unless privileged)
           if (item.getAttribute("data-locked") === "true") {
             return;
           }
           
           const content = item.querySelector(".week-content");
-          if (!content) return; // Locked weeks don't have content
+          if (!content) return;
           
           const isOpen = item.classList.contains("isOpen");
           
@@ -478,19 +501,28 @@ const getWeekLockInfo = (weekSlug: string) => {
           });
         });
         
-        // Determine which week to open
-        const currentWeek = getCurrentWeek();
-        const savedWeek = localStorage.getItem(openWeekKey);
-        const weekToOpen = currentWeek || savedWeek || "01";
+        // Initialize sidebar state
+        const initSidebar = () => {
+          // Determine which week to open: current page > saved preference > week 01
+          const currentWeek = getCurrentWeek();
+          const savedWeek = localStorage.getItem(openWeekKey);
+          const weekToOpen = currentWeek || savedWeek || "01";
+          
+          // Open the appropriate week
+          allHeaders.forEach(header => {
+            if (header.getAttribute("data-week") === weekToOpen) {
+              toggleWeek(header, true);
+            }
+          });
+          
+          highlightActiveLink();
+        };
         
-        // Open the appropriate week
-        allHeaders.forEach(header => {
-          if (header.getAttribute("data-week") === weekToOpen) {
-            toggleWeek(header, true);
-          }
-        });
+        // Run immediately
+        initSidebar();
         
-        highlightActiveLink();
+        // Expose for re-initialization after auth unlocks weeks
+        window.__reinitSidebar = initSidebar;
       })();
     </script>
 
@@ -991,6 +1023,14 @@ const getWeekLockInfo = (weekSlug: string) => {
             instructorLink.style.display = 'block';
           }
           
+          // Cache privileged status for faster page loads
+          const privilegedCacheKey = 'cis118m:isPrivilegedUser';
+          if (isInstructor || isTestStudent) {
+            localStorage.setItem(privilegedCacheKey, 'true');
+          } else {
+            localStorage.removeItem(privilegedCacheKey);
+          }
+          
           // Unlock all weeks in sidebar for instructors and test students
           if (isInstructor || isTestStudent) {
             document.querySelectorAll('.week-item.week-locked').forEach(item => {
@@ -1008,6 +1048,11 @@ const getWeekLockInfo = (weekSlug: string) => {
               const header = item.querySelector('.week-header');
               if (header) header.removeAttribute('title');
             });
+            
+            // Re-initialize sidebar to open the correct week now that locks are removed
+            if (window.__reinitSidebar) {
+              window.__reinitSidebar();
+            }
           }
           
           if (userChip) {
