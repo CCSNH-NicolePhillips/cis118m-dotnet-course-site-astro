@@ -1,0 +1,570 @@
+---
+import EmbeddedEditorLayout from "../../layouts/EmbeddedEditorLayout.astro";
+
+const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
+---
+
+<EmbeddedEditorLayout title="Embedded Editor">
+  <div class="editor-bar">
+    <div class="editor-actions">
+      <button id="save-btn" class="button editor-btn" type="button">💾 Save</button>
+      <button id="reset-btn" class="button editor-btn" type="button">↺ Reset</button>
+      <button id="download-btn" class="button editor-btn" type="button">⬇ Download</button>
+      <button id="run-btn" class="button editor-btn primary" type="button" title="Ctrl/Cmd+Enter">▶ Run</button>
+      <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">✓ Run Checks</button>
+      <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
+    </div>
+  </div>
+
+  <div id="editor" aria-label="Monaco editor" style="border:1px solid var(--border); border-radius:8px; overflow:hidden;"></div>
+
+  <div class="output-drawer" id="output-drawer">
+    <div class="output-drawer-header" id="output-drawer-header">
+      <span class="output-drawer-title">Output <span id="drawer-toggle">▾</span></span>
+      <span id="output-status" class="hint">Waiting to run…</span>
+    </div>
+    <div class="output-drawer-content" id="output-drawer-content">
+      <div class="output-tabs">
+        <button class="output-tab active" data-tab="console">Console</button>
+        <button class="output-tab" data-tab="errors">Errors</button>
+        <button class="output-tab" data-tab="checks">Checks</button>
+      </div>
+      <div class="output-tab-content">
+        <div class="tab-pane active" id="tab-console">
+          <pre id="stdout" class="output-pre">(no output yet)</pre>
+        </div>
+        <div class="tab-pane" id="tab-errors">
+          <pre id="stderr" class="output-pre">(no errors yet)</pre>
+        </div>
+        <div class="tab-pane" id="tab-checks">
+          <div id="checks-results"></div>
+          <div id="checks-hint" class="checks-hint"></div>
+          <div id="checks-empty" class="hint">Click "Run Checks" to see guided feedback.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ runnerUrl }}>
+    (() => {
+      const envRunnerUrl = runnerUrl;
+      const qs = new URLSearchParams(window.location.search);
+      const starterId = qs.get("starter") || "week-01-lab-1";
+      const storageKey = `cis118m:${starterId}:Program.cs`;
+      
+      const resolveRunnerUrl = (publicUrl, origin) => {
+        const trimmed = (publicUrl ?? "").trim().replace(/\/+$/, "");
+        return trimmed || (origin ?? "").trim().replace(/\/+$/, "") || "";
+      };
+      
+      const runnerBase = resolveRunnerUrl(envRunnerUrl, window.location.origin);
+
+      const starterTemplates = {
+        "week-01-lab-1": `// Lab 1: Welcome Program\n// Name: Your Name Here\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Create variables for your name, course, goal, and fun fact\n        string name = "";\n        string course = "";\n        \n        // TODO: Print 4 lines using Console.WriteLine\n        // Example: Console.WriteLine($"My name is {name}.");\n        \n    }\n}\n`,
+      };
+
+      const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
+
+      const status = document.getElementById("status");
+      const saveBtn = document.getElementById("save-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const downloadBtn = document.getElementById("download-btn");
+      const runBtn = document.getElementById("run-btn");
+      const checkBtn = document.getElementById("check-btn");
+      const editorHost = document.getElementById("editor");
+      const stdoutBlock = document.getElementById("stdout");
+      const stderrBlock = document.getElementById("stderr");
+      const checksResults = document.getElementById("checks-results");
+      const checksHint = document.getElementById("checks-hint");
+      const checksEmpty = document.getElementById("checks-empty");
+      const outputStatus = document.getElementById("output-status");
+      const outputDrawer = document.getElementById("output-drawer");
+      const outputDrawerHeader = document.getElementById("output-drawer-header");
+      const drawerToggle = document.getElementById("drawer-toggle");
+
+      let editorInstance = null;
+      let drawerExpanded = false;
+
+      const setStatus = (msg) => { status.textContent = msg; };
+      
+      const setBusy = (busy, msg) => {
+        runBtn.disabled = busy;
+        checkBtn.disabled = busy;
+        if (busy && msg) setStatus(msg);
+      };
+
+      const toggleDrawer = () => {
+        drawerExpanded = !drawerExpanded;
+        outputDrawer.classList.toggle("expanded", drawerExpanded);
+        drawerToggle.textContent = drawerExpanded ? "▴" : "▾";
+      };
+      
+      const openDrawer = () => { if (!drawerExpanded) toggleDrawer(); };
+      
+      outputDrawerHeader.addEventListener("click", toggleDrawer);
+      
+      // Tab switching
+      document.querySelectorAll(".output-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          const target = tab.dataset.tab;
+          document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(`tab-${target}`).classList.add("active");
+        });
+      });
+
+      // Auth helpers
+      const waitForAuth = async () => {
+        let attempts = 0;
+        while (!window.__auth) {
+          if (attempts++ > 100) throw new Error('Auth not available');
+          await new Promise(r => setTimeout(r, 100));
+        }
+        return window.__auth;
+      };
+
+      const isUserAuthenticated = async () => {
+        try {
+          const auth = await waitForAuth();
+          return await auth.isAuthed();
+        } catch { return false; }
+      };
+
+      const getUserAccessToken = async () => {
+        try {
+          const auth = await waitForAuth();
+          return await auth.getAccessToken();
+        } catch { return null; }
+      };
+
+      // Storage
+      const loadFromStorage = () => {
+        try {
+          const saved = localStorage.getItem(storageKey);
+          if (saved) { setStatus("Loaded saved code"); return saved; }
+        } catch {}
+        const template = starterTemplates[starterId] || genericTemplate(starterId);
+        setStatus("Loaded starter");
+        return template;
+      };
+
+      const loadFromCloud = async () => {
+        try {
+          const authed = await isUserAuthenticated();
+          if (!authed) return loadFromStorage();
+          
+          const token = await getUserAccessToken();
+          if (!token) return loadFromStorage();
+
+          const response = await fetch(`/api/code-get?starterId=${encodeURIComponent(starterId)}`, {
+            headers: { "Authorization": `Bearer ${token}` },
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.code) { setStatus("Loaded from cloud"); return data.code; }
+          }
+          return loadFromStorage();
+        } catch { return loadFromStorage(); }
+      };
+
+      const saveToStorage = (value) => {
+        try { localStorage.setItem(storageKey, value); setStatus("Saved"); }
+        catch { setStatus("Save failed"); }
+      };
+
+      const saveToCloud = async (value) => {
+        saveToStorage(value);
+        try {
+          const authed = await isUserAuthenticated();
+          if (!authed) return;
+          
+          const token = await getUserAccessToken();
+          if (!token) return;
+
+          const response = await fetch("/api/code-save", {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ starterId, code: value }),
+          });
+          
+          if (response.ok) setStatus("Saved to cloud ☁️");
+        } catch { setStatus("Saved locally"); }
+      };
+
+      // Runner
+      const buildPayload = (code, stdin) => ({ starterId, files: { "Program.cs": code }, stdin: stdin ?? "" });
+      const makeUrl = (path) => `${runnerBase}${path}`;
+
+      const applyMarkers = (diagnostics) => {
+        if (!editorInstance || !window.monaco) return;
+        const model = editorInstance.getModel();
+        if (!model) return;
+        const lineCount = model.getLineCount();
+        const markers = (diagnostics || []).map((d) => ({
+          startLineNumber: Math.min(Math.max(d.line, 1), lineCount),
+          startColumn: d.column,
+          endLineNumber: Math.min(Math.max(d.line, 1), lineCount),
+          endColumn: d.column + 1,
+          message: d.message,
+          severity: monaco.MarkerSeverity.Error,
+        }));
+        monaco.editor.setModelMarkers(model, "runner", markers);
+      };
+
+      const renderChecks = (checks, hint) => {
+        checksResults.innerHTML = "";
+        checksHint.innerHTML = "";
+        
+        if (!checks || checks.length === 0) {
+          checksEmpty.style.display = "block";
+          return;
+        }
+        
+        checksEmpty.style.display = "none";
+        
+        const ul = document.createElement("ul");
+        ul.className = "checks-list";
+        
+        checks.forEach((check) => {
+          const li = document.createElement("li");
+          li.className = check.passed ? "check-pass" : "check-fail";
+          li.innerHTML = `<span class="check-icon">${check.passed ? "✓" : "✗"}</span><span>${check.name}: ${check.message}</span>`;
+          ul.appendChild(li);
+        });
+        
+        checksResults.appendChild(ul);
+        
+        if (hint) {
+          checksHint.innerHTML = `<div class="hint-text"><strong>💡 Hint:</strong> ${hint}</div>`;
+        }
+        
+        if (checks.every(c => c.passed)) {
+          checksHint.innerHTML += `<div class="checks-success">🎉 <strong>All checks passed!</strong></div>`;
+        }
+      };
+
+      const updateOutputs = (result, kind) => {
+        const stdout = result?.stdout || "";
+        const stderr = result?.stderr || "";
+        const diagnostics = result?.diagnostics || [];
+
+        stdoutBlock.textContent = stdout.trim() ? stdout : "(no stdout)";
+        stderrBlock.textContent = stderr.trim() ? stderr : "(no stderr)";
+        applyMarkers(diagnostics);
+        
+        if (kind === "check") {
+          renderChecks(result?.checks || [], result?.hint || "");
+          openDrawer();
+          document.querySelector('[data-tab="checks"]').click();
+          const allPassed = (result?.checks || []).every(c => c.passed);
+          outputStatus.textContent = allPassed ? "All checks passed!" : "Some checks need attention";
+          setStatus(allPassed ? "All checks passed!" : "Check results ready");
+          return;
+        }
+        
+        if (stdout.trim() || stderr.trim() || diagnostics.length > 0) openDrawer();
+
+        const compileOk = Boolean(result?.compileOk);
+        const runOk = kind === "run" ? Boolean(result?.runOk) : false;
+        const runTimedOut = Boolean(result?.runTimedOut ?? result?.RunTimedOut);
+
+        if (!compileOk) {
+          outputStatus.textContent = "Compile failed";
+          setStatus("Compile failed");
+          document.querySelector('[data-tab="errors"]').click();
+          return;
+        }
+
+        outputStatus.textContent = runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run failed";
+        setStatus(runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run completed");
+      };
+
+      const runnerRequest = async (path, payload, kind) => {
+        setBusy(true, kind === "check" ? "Running checks..." : "Running...");
+        openDrawer();
+        stdoutBlock.textContent = "(running...)";
+        
+        try {
+          const res = await fetch(makeUrl(path), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          updateOutputs(await res.json(), kind);
+        } catch (err) {
+          setStatus("Runner error");
+          stderrBlock.textContent = err?.message || "Runner unavailable";
+        } finally {
+          setBusy(false);
+        }
+      };
+
+      // Monaco init
+      const initEditor = async () => {
+        if (window.__embeddedEditorInit) return;
+        window.__embeddedEditorInit = true;
+
+        // Wait for Monaco
+        let attempts = 0;
+        while (!window.monaco?.editor) {
+          if (attempts++ > 100) { setStatus("Editor failed to load"); return; }
+          await new Promise(r => setTimeout(r, 100));
+        }
+
+        // Get theme from parent or localStorage
+        let theme = 'dark';
+        try {
+          theme = window.parent?.document?.documentElement?.getAttribute('data-theme') || 
+                  localStorage.getItem('cis118m:theme') || 'dark';
+        } catch {}
+
+        monaco.editor.defineTheme("vs-soft", {
+          base: "vs", inherit: true, rules: [],
+          colors: {
+            "editor.background": "#d4d9e5",
+            "editor.lineHighlightBackground": "#c8ceda",
+          }
+        });
+
+        const initialValue = await loadFromCloud();
+        editorInstance = monaco.editor.create(editorHost, {
+          value: initialValue,
+          language: "csharp",
+          theme: theme === "dark" ? "vs-dark" : "vs-soft",
+          automaticLayout: true,
+          minimap: { enabled: false },
+          fontSize: 14,
+        });
+
+        // Expose for submit
+        window.monacoEditorInstances = window.monacoEditorInstances || {};
+        window.monacoEditorInstances[starterId] = editorInstance;
+
+        // Autosave
+        let timer;
+        editorInstance.onDidChangeModelContent(() => {
+          clearTimeout(timer);
+          timer = setTimeout(() => saveToCloud(editorInstance.getValue()), 500);
+        });
+
+        // Buttons
+        saveBtn.addEventListener("click", () => saveToCloud(editorInstance.getValue()));
+        
+        resetBtn.addEventListener("click", () => {
+          const template = starterTemplates[starterId] || genericTemplate(starterId);
+          editorInstance.setValue(template);
+          saveToCloud(template);
+          applyMarkers([]);
+          setStatus("Reset to starter");
+        });
+
+        downloadBtn.addEventListener("click", () => {
+          const blob = new Blob([editorInstance.getValue()], { type: "text/plain" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "Program.cs";
+          link.click();
+          URL.revokeObjectURL(url);
+          setStatus("Downloaded");
+        });
+
+        runBtn.addEventListener("click", () => {
+          if (!editorInstance) return;
+          runnerRequest("/api/run", buildPayload(editorInstance.getValue(), ""), "run");
+        });
+
+        checkBtn.addEventListener("click", () => {
+          if (!editorInstance) return;
+          runnerRequest("/api/check", buildPayload(editorInstance.getValue(), ""), "check");
+        });
+
+        // Keyboard shortcuts
+        editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => runBtn.click());
+
+        setStatus("Ready");
+      };
+
+      initEditor();
+    })();
+  </script>
+
+  <style>
+    .editor-bar {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    
+    .editor-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .editor-btn {
+      border-radius: 6px;
+      border: 1px solid var(--border, #444);
+      background: var(--panel, #1e293b);
+      color: var(--text, #f1f5f9);
+      padding: 0.4rem 0.7rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .editor-btn:hover {
+      background: var(--panel2, #334155);
+    }
+
+    .editor-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .editor-btn.primary {
+      background: #22c55e;
+      border-color: #16a34a;
+      color: white;
+    }
+    
+    .editor-btn.primary:hover {
+      background: #16a34a;
+    }
+
+    #editor {
+      flex: 1;
+      min-height: 200px;
+    }
+
+    .output-drawer {
+      background: var(--panel, #1e293b);
+      border-top: 1px solid var(--border, #444);
+      border-radius: 0 0 8px 8px;
+      height: 32px;
+      overflow: hidden;
+      transition: height 0.2s;
+    }
+    
+    .output-drawer.expanded {
+      height: 200px;
+    }
+    
+    .output-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border, #444);
+    }
+    
+    .output-drawer-title {
+      font-weight: 700;
+      font-size: 12px;
+    }
+    
+    .output-drawer-content {
+      height: calc(100% - 32px);
+      overflow: hidden;
+    }
+    
+    .output-tabs {
+      display: flex;
+      gap: 2px;
+      padding: 4px 12px 0;
+      border-bottom: 1px solid var(--border, #444);
+    }
+    
+    .output-tab {
+      padding: 4px 10px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted, #94a3b8);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .output-tab.active {
+      color: var(--text, #f1f5f9);
+      border-bottom-color: #22c55e;
+    }
+    
+    .output-tab-content {
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    .tab-pane {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+      padding: 8px 12px;
+    }
+    
+    .tab-pane.active {
+      display: block;
+    }
+
+    .output-pre {
+      border: 1px solid var(--border, #444);
+      border-radius: 4px;
+      background: var(--panel2, #0f172a);
+      padding: 8px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+      margin: 0;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+
+    .checks-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .checks-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: var(--panel2, #0f172a);
+      font-size: 12px;
+    }
+    
+    .check-icon { font-weight: bold; }
+    .check-pass .check-icon { color: #22c55e; }
+    .check-fail .check-icon { color: #ef4444; }
+    
+    .checks-hint {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 4px;
+      background: rgba(59, 130, 246, 0.1);
+      font-size: 12px;
+    }
+    
+    .checks-success {
+      margin-top: 4px;
+      color: #22c55e;
+    }
+    
+    .hint {
+      color: var(--muted, #94a3b8);
+      font-size: 11px;
+    }
+  </style>
+</EmbeddedEditorLayout>

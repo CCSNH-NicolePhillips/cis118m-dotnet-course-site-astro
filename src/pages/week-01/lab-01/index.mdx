@@ -54,18 +54,17 @@ Your output can be different, but it should follow the same structure.
 
 <LabTour />
 
-<div id="lab-editor"></div>
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-01-lab-1" 
+    style="width: 100%; height: 550px; border: none;"
+    title="Lab 1 Code Editor"
+  ></iframe>
+</div>
 
-<TryItNowRunner
-  code={"// Lab 1: Welcome Program\n// Name: Your Name Here\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Create variables for your name, course, goal, and fun fact\n        string name = \"\";\n        string course = \"\";\n        \n        // TODO: Print 4 lines using Console.WriteLine\n        // Example: Console.WriteLine($\"My name is {name}.\");\n        \n    }\n}"}
-  starterId="week-01-lab-1"
-  height={400}
-  instructions="Complete the TODOs above. Run your code to test it. When you're happy with your program, click Submit Lab below."
-/>
-
-<p style="margin-top: 1rem; text-align: center;">
-  <a href="/editor?starter=week-01-lab-1" style="color: #4ec9b0; text-decoration: underline;">
-    🖥️ Open in full-screen editor (with Save, Download, Run Checks)
+<p style="margin-top: 0.5rem; text-align: center; font-size: 0.9rem; color: #888;">
+  <a href="/editor?starter=week-01-lab-1" target="_blank" style="color: #4ec9b0; text-decoration: underline;">
+    ↗ Open in new tab for more space
   </a>
 </p>
 

@@ -1,0 +1,154 @@
+---
+import "../styles/global.css";
+import "../styles/editor.css";
+
+const { title = "Embedded Editor" } = Astro.props;
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    
+    <!-- Apply theme before render to prevent flash -->
+    <script is:inline>
+      (function() {
+        // Try to get theme from parent window first
+        try {
+          var parentTheme = window.parent?.document?.documentElement?.getAttribute('data-theme');
+          if (parentTheme) {
+            document.documentElement.setAttribute('data-theme', parentTheme);
+            return;
+          }
+        } catch (e) {}
+        var theme = localStorage.getItem('cis118m:theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+    
+    <script is:inline src="https://cdn.auth0.com/js/auth0-spa-js/2.0/auth0-spa-js.production.js"></script>
+    <script is:inline src="/monaco/vs/loader.js"></script>
+    <script is:inline>
+      require.config({ paths: { vs: '/monaco/vs' } });
+      require(['vs/editor/editor.main'], function() {
+        console.log('[Monaco] Editor loaded successfully');
+      });
+    </script>
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      
+      .embedded-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 0.5rem;
+        box-sizing: border-box;
+      }
+      
+      .embedded-container .editor-bar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .embedded-container .editor-meta {
+        display: none;
+      }
+      
+      .embedded-container .editor-actions {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+      }
+      
+      .embedded-container .editor-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+      }
+      
+      .embedded-container #editor {
+        flex: 1;
+        min-height: 0;
+        height: auto !important;
+      }
+      
+      .embedded-container .output-drawer {
+        max-height: 40%;
+      }
+      
+      .embedded-container .stdin-wrap {
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="embedded-container">
+      <slot />
+    </div>
+    
+    <!-- Auth script (minimal version for embedded) -->
+    <script is:inline>
+      (function() {
+        let auth0 = null;
+        const config = {
+          domain: 'dev-ijy3tgfx3z18y3kn.us.auth0.com',
+          clientId: 'g9I09P4tX3nqp0IqJuLJAi6Y3e0Y1Vxl',
+          cacheLocation: 'localstorage',
+          useRefreshTokens: true,
+        };
+
+        async function initAuth() {
+          if (auth0) return auth0;
+          try {
+            auth0 = await window.auth0.createAuth0Client({
+              ...config,
+              authorizationParams: {
+                redirect_uri: window.location.origin + '/auth/callback',
+                audience: 'https://cis118m-course-api',
+              },
+            });
+          } catch (e) {
+            console.error('[Auth] Init failed:', e);
+          }
+          return auth0;
+        }
+
+        window.__auth = {
+          async isAuthed() {
+            try {
+              const client = await initAuth();
+              return client ? await client.isAuthenticated() : false;
+            } catch {
+              return false;
+            }
+          },
+          async getUser() {
+            try {
+              const client = await initAuth();
+              return client ? await client.getUser() : null;
+            } catch {
+              return null;
+            }
+          },
+          async getAccessToken() {
+            try {
+              const client = await initAuth();
+              if (!client) return null;
+              return await client.getTokenSilently();
+            } catch (e) {
+              console.error('[Auth] Token error:', e);
+              return null;
+            }
+          },
+        };
+        
+        initAuth();
+      })();
+    </script>
+  </body>
+</html>
