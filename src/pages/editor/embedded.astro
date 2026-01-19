@@ -60,7 +60,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       const runnerBase = resolveRunnerUrl(envRunnerUrl, window.location.origin);
 
       const starterTemplates = {
-        "week-01-lab-1": `// Lab 1: Welcome Program\n// Name: Your Name Here\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Create variables for your name, course, goal, and fun fact\n        string name = "";\n        string course = "";\n        \n        // TODO: Print 4 lines using Console.WriteLine\n        // Example: Console.WriteLine($"My name is {name}.");\n        \n    }\n}\n`,
+        "week-01-lab-1": `// Lab 1: Welcome Program\n// Name: Your Name Here\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Print 4 lines about yourself\n        // Line 1: Your name\n        // Line 2: The course (CIS 118M)\n        // Line 3: Your goal for this course\n        // Line 4: A fun fact about yourself\n        \n        Console.WriteLine("My name is ...");\n        \n    }\n}\n`,
       };
 
       const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;

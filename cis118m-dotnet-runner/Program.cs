@@ -260,15 +260,14 @@ internal static class CheckRunner
                 ? "Found header comment with your name."
                 : "Add a header comment with your name (e.g., // Name: Your Name)"));
 
-        // Check 2: Has at least 2 variables
-        var variableCount = Regex.Matches(programCs, @"\b(string|int|double|bool|var)\s+\w+\s*=").Count;
-        var hasTwoVariables = variableCount >= 2;
+        // Check 2: Has at least one Console.WriteLine
+        var hasWriteLine = programCs.Contains("Console.WriteLine");
         checks.Add(new CheckResult(
-            Name: "HasTwoVariables",
-            Passed: hasTwoVariables,
-            Message: hasTwoVariables
-                ? $"Found {variableCount} variable(s)."
-                : $"You need at least 2 variables. Found {variableCount}."));
+            Name: "HasConsoleWriteLine",
+            Passed: hasWriteLine,
+            Message: hasWriteLine
+                ? "Found Console.WriteLine statement."
+                : "You need at least one Console.WriteLine statement."));
 
         // Check 3: Has 4 Console.WriteLine statements
         var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
@@ -277,28 +276,18 @@ internal static class CheckRunner
             Name: "HasFourWriteLines",
             Passed: hasFourWriteLines,
             Message: hasFourWriteLines
-                ? $"Found {writeLineCount} Console.WriteLine statements."
+                ? $"Found {writeLineCount} Console.WriteLine statements. Perfect!"
                 : $"You need 4 Console.WriteLine statements for the 4 lines of output. Found {writeLineCount}."));
 
-        // Check 4: Uses string interpolation or concatenation
-        var hasInterpolation = programCs.Contains("$\"") || programCs.Contains("$@\"");
-        var hasConcatenation = Regex.IsMatch(programCs, @"""[^""]*""\s*\+|\+\s*""[^""]*""");
-        var usesVariablesInOutput = hasInterpolation || hasConcatenation;
+        // Check 4: Has actual content (not just the starter template)
+        var hasCustomContent = !programCs.Contains("My name is ...") && 
+                               Regex.IsMatch(programCs, @"Console\.WriteLine\s*\(\s*""[^""]+""");
         checks.Add(new CheckResult(
-            Name: "UsesVariablesInOutput",
-            Passed: usesVariablesInOutput,
-            Message: usesVariablesInOutput
-                ? "Using string interpolation or concatenation."
-                : "Use string interpolation ($\"...\") or concatenation (+) to include variables in output."));
-
-        // Check 5: Variables are actually used (not empty)
-        var hasFilledVariables = !Regex.IsMatch(programCs, @"=\s*""""\s*;");
-        checks.Add(new CheckResult(
-            Name: "VariablesHaveValues",
-            Passed: hasFilledVariables,
-            Message: hasFilledVariables
-                ? "Variables have values assigned."
-                : "Fill in your variables with actual values (not empty strings)."));
+            Name: "HasCustomContent",
+            Passed: hasCustomContent,
+            Message: hasCustomContent
+                ? "Your output has real content."
+                : "Replace the placeholder text with your actual information."));
 
         return checks;
     }
@@ -311,10 +300,9 @@ internal static class CheckRunner
         return firstFailed.Name switch
         {
             "HasHeaderComment" => "Add a comment at the top like: // Name: Your Name Here",
-            "HasTwoVariables" => "Create variables for your name, course, goal, etc. Example: string name = \"Alex\";",
-            "HasFourWriteLines" => "Add 4 Console.WriteLine() statements - one for each line of output.",
-            "UsesVariablesInOutput" => "Use your variables in the output! Try: Console.WriteLine($\"My name is {name}.\");",
-            "VariablesHaveValues" => "Replace the empty strings \"\" with actual values like your name and course.",
+            "HasConsoleWriteLine" => "Use Console.WriteLine(\"your text\"); to print a line.",
+            "HasFourWriteLines" => "Add 4 Console.WriteLine() statements - one for your name, course, goal, and fun fact.",
+            "HasCustomContent" => "Replace \"My name is ...\" with your actual name and add the other 3 lines!",
             _ => "Keep working on your solution!"
         };
     }

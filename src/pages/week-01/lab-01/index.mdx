@@ -23,11 +23,9 @@ Create a console program that prints a welcome message with information about yo
 
 Your program must:
 
-1. ✅ Print **exactly 4 lines** of output
+1. ✅ Print **exactly 4 lines** of output using `Console.WriteLine`
 2. ✅ Include a **header comment** with your name and the assignment name
-3. ✅ Use **at least 2 variables** (string, int, or both)
-4. ✅ Use **either** string interpolation **or** concatenation (your choice)
-5. ✅ Print the following information:
+3. ✅ Print the following information:
    - Your name
    - The course name or number (e.g., "CIS 118M")
    - Your goal for this course
@@ -72,8 +70,8 @@ Your output can be different, but it should follow the same structure.
 
 ## Steps
 
-1. **Add variables** for your name, course, goal, and fun fact
-2. **Print 4 lines** using `Console.WriteLine`
+1. **Write 4 `Console.WriteLine` statements** - one for each piece of information
+2. **Add a header comment** at the top with your name
 3. **Test your code** by clicking Run
 4. **Make sure your output matches the requirements**
 5. **Click Submit Lab** below when you're done
@@ -85,7 +83,7 @@ Your output can be different, but it should follow the same structure.
 | Criteria | Points |
 |----------|--------|
 | **Correctness** (runs without errors) | 40 pts |
-| **Requirements** (4 lines, 2+ variables, interpolation/concatenation) | 30 pts |
+| **Requirements** (4 lines of output with required info) | 30 pts |
 | **Header Comment** (name + assignment) | 10 pts |
 | **Code Quality** (readable, well-formatted) | 10 pts |
 | **Submission** (submitted on time) | 10 pts |
@@ -128,17 +126,15 @@ Your output can be different, but it should follow the same structure.
 **Stuck?** Here's a hint:
 
 ```csharp
-string name = "Nikki";
-string course = "CIS 118M";
-Console.WriteLine($"My name is {name}.");
-Console.WriteLine($"I'm taking {course}.");
+Console.WriteLine("Welcome to CIS 118M!");
+Console.WriteLine("My name is Nikki.");
 ```
 
 **Common mistakes to avoid:**
-- Forgetting quotes around string values
+- Forgetting quotes around your text
 - Forgetting semicolons at the end of statements
-- Forgetting the `$` in front of interpolated strings
-- Misspelling `Console.WriteLine`
+- Misspelling `Console.WriteLine` (capital C, capital W, capital L)
+- Forgetting the parentheses `()`
 
 ---
 
