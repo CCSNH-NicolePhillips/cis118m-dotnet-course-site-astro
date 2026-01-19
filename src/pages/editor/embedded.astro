@@ -277,6 +277,8 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           return;
         }
 
+        // Switch to console tab to show run output
+        document.querySelector('[data-tab="console"]').click();
         outputStatus.textContent = runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run failed";
         setStatus(runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run completed");
       };
