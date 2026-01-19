@@ -1,0 +1,12 @@
+﻿{"starterId":"week-01-lab-1","files":{"Program.cs":"// Lab 1: Welcome Program
+// Name: Your Name Here
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine(\"My name is ...\");
+    }
+}"}}
