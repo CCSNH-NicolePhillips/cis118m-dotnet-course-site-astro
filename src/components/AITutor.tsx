@@ -146,6 +146,7 @@ const AITutor: React.FC = () => {
     <>
       {/* Floating Button */}
       <button
+        className="ai-tutor-button"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',

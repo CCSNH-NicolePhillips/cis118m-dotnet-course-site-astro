@@ -1,41 +1,49 @@
 ---
 // Lab Tour Component - Spotlight walkthrough for lab assignments
+// Auto-starts on first visit, with button to restart
 ---
 
 <div class="tour-container">
-  <button id="start-lab-tour-btn" class="start-tour-btn" onclick="startTour()">
-    🎯 Start Lab Tour
+  <button id="start-lab-tour-btn" class="start-tour-btn">
+    🎯 Take the Lab Tour
   </button>
 </div>
 
-<div class="tour-overlay">
-  <div class="spotlight"></div>
-  <div class="tour-label"></div>
-  <button class="tour-next-btn" onclick="nextStep()">Next →</button>
+<div class="tour-overlay" id="tour-overlay">
+  <div class="tour-backdrop"></div>
+  <div class="spotlight" id="spotlight"></div>
+  <div class="tour-tooltip" id="tour-tooltip">
+    <div class="tour-step-indicator" id="tour-step-indicator"></div>
+    <div class="tour-content" id="tour-content"></div>
+    <div class="tour-buttons">
+      <button class="tour-skip-btn" id="tour-skip-btn">Skip Tour</button>
+      <button class="tour-next-btn" id="tour-next-btn">Next →</button>
+    </div>
+  </div>
 </div>
 
 <style>
   .tour-container {
-    margin: 20px 0;
+    margin: 16px 0;
     text-align: center;
   }
 
   .start-tour-btn {
-    padding: 12px 24px;
-    background: linear-gradient(120deg, rgba(78, 201, 176, 0.2), rgba(78, 201, 176, 0.3));
+    padding: 10px 20px;
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15), rgba(78, 201, 176, 0.25));
     border: 2px solid #4ec9b0;
-    border-radius: 12px;
+    border-radius: 10px;
     color: #4ec9b0;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   .start-tour-btn:hover {
-    background: linear-gradient(120deg, rgba(78, 201, 176, 0.3), rgba(78, 201, 176, 0.4));
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.25), rgba(78, 201, 176, 0.35));
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(78, 201, 176, 0.3);
+    box-shadow: 0 4px 16px rgba(78, 201, 176, 0.3);
   }
 
   .tour-overlay {
@@ -44,126 +52,404 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: transparent;
-    z-index: 9999;
+    z-index: 10000;
     display: none;
+    pointer-events: auto;
+  }
+
+  .tour-overlay.active {
+    display: block;
+  }
+
+  .tour-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
     pointer-events: auto;
   }
 
   .spotlight {
     position: fixed;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85);
     border: 3px solid #4ec9b0;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    pointer-events: none;
+    border-radius: 12px;
+    box-shadow: 
+      0 0 0 4px rgba(78, 201, 176, 0.3),
+      0 0 30px rgba(78, 201, 176, 0.4),
+      inset 0 0 20px rgba(78, 201, 176, 0.1);
     background: transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 10001;
   }
 
-  .tour-label {
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border: 3px solid transparent;
+    border-radius: 14px;
+    background: linear-gradient(45deg, #4ec9b0, #22c55e, #4ec9b0) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: borderGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes borderGlow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .tour-tooltip {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--panel);
+    background: linear-gradient(135deg, #1a2332, #0f172a);
     border: 2px solid #4ec9b0;
-    border-radius: 12px;
-    padding: 20px 30px;
-    max-width: 600px;
-    color: var(--text);
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    border-radius: 16px;
+    padding: 20px 24px;
+    max-width: 400px;
+    min-width: 320px;
+    color: #f1f5f9;
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(78, 201, 176, 0.2);
+    z-index: 10002;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tour-step-indicator {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+
+  .tour-step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #334155;
+    transition: all 0.3s ease;
+  }
+
+  .tour-step-dot.active {
+    background: #4ec9b0;
+    box-shadow: 0 0 10px rgba(78, 201, 176, 0.5);
+  }
+
+  .tour-step-dot.completed {
+    background: #22c55e;
+  }
+
+  .tour-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .tour-content h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.15rem;
+    color: #4ec9b0;
+  }
+
+  .tour-content p {
+    margin: 0;
+    color: #cbd5e1;
+  }
+
+  .tour-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tour-skip-btn {
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid #475569;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tour-skip-btn:hover {
+    background: rgba(71, 85, 105, 0.3);
+    color: #f1f5f9;
   }
 
   .tour-next-btn {
-    position: fixed;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 12px 32px;
-    background: #1a1a1a;
-    border: 2px solid #4ec9b0;
-    border-radius: 12px;
-    color: #4ec9b0;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #4ec9b0, #22c55e);
+    border: none;
+    border-radius: 8px;
+    color: #0f172a;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    text-decoration: none !important;
-    display: inline-block;
-    line-height: 1;
-    z-index: 10000;
+    flex: 1;
+    max-width: 140px;
   }
 
   .tour-next-btn:hover {
-    background: #2a2a2a;
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(78, 201, 176, 0.4);
+  }
+
+  /* Cutout effect for backdrop */
+  .tour-backdrop.with-cutout {
+    clip-path: var(--cutout-path);
   }
 </style>
 
 <script>
-  let currentStep = 0;
-  const targets = [
-    { selector: '.editor-container', text: '✍️ Step 1: This is your Editor. Type your C# blueprint here!' },
-    { selector: '.toolbar .btn-run', text: '🚀 Step 2: Click this button to ignite the .NET Engine!' },
-    { selector: '.output-container', text: '📟 Step 3: Watch this terminal for your "Access Granted" signal.' }
-  ];
-
-  function startTour() {
-    const overlay = document.querySelector('.tour-overlay');
-    overlay.style.display = 'block';
-    moveSpotlight();
-  }
-
-  function moveSpotlight() {
-    const step = targets[currentStep];
-    const element = document.querySelector(step.selector);
-    const spotlight = document.querySelector('.spotlight');
-    const label = document.querySelector('.tour-label');
+  (function() {
+    let currentStep = 0;
+    let overlay, spotlight, tooltip, content, stepIndicator, nextBtn, skipBtn, backdrop;
     
-    if (element) {
-      // Temporarily allow scrolling to bring element into view
-      document.body.style.overflow = '';
-      
-      // Scroll element into view
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Wait for scroll, then lock and position spotlight
-      setTimeout(() => {
-        document.body.style.overflow = 'hidden';
-        const rect = element.getBoundingClientRect();
-        spotlight.style.width = `${rect.width + 20}px`;
-        spotlight.style.height = `${rect.height + 20}px`;
-        spotlight.style.top = `${rect.top - 10}px`;
-        spotlight.style.left = `${rect.left - 10}px`;
-        spotlight.style.display = 'block';
-        label.textContent = step.text;
-      }, 600);
-    } else {
-      // If element not found, just show the label without spotlight
-      spotlight.style.display = 'none';
-      label.textContent = step.text;
-    }
-  }
+    const tourSteps = [
+      {
+        selector: '#lab-editor',
+        title: '✍️ Code Editor',
+        text: 'This is where you write your C# code. The editor has Save, Reset, and Download buttons at the top.',
+        position: 'bottom'
+      },
+      {
+        selector: '#lab-editor',
+        title: '▶️ Run Your Code',
+        text: 'Click the green <strong>Run</strong> button to compile and execute your program. Your output will appear below.',
+        position: 'bottom'
+      },
+      {
+        selector: '#lab-editor',
+        title: '✓ Run Checks',
+        text: 'Click <strong>Run Checks</strong> to get instant feedback on your code. It will tell you what requirements you\'ve met!',
+        position: 'bottom'
+      },
+      {
+        selector: '.ai-tutor-button',
+        title: '🤖 AI Tutor',
+        text: 'Stuck? Click the AI Tutor button in the corner! It can see your code and help guide you (without giving away the answer).',
+        position: 'left'
+      },
+      {
+        selector: '#submit-section',
+        title: '📤 Submit Your Work',
+        text: 'When you\'re happy with your code, click <strong>Submit Lab for Grading</strong>. You\'ll get instant AI feedback and a score!',
+        position: 'top'
+      },
+      {
+        selector: null,
+        title: '🎉 You\'re Ready!',
+        text: 'That\'s it! Start by reading the requirements above, then write your code. Good luck and have fun!',
+        position: 'center'
+      }
+    ];
 
-  function nextStep() {
-    currentStep++;
-    if (currentStep < targets.length) {
-      moveSpotlight();
-    } else {
-      // Tour completed - save to localStorage so we don't force it again
-      localStorage.setItem('cis118m:labTourCompleted', 'true');
+    function init() {
+      overlay = document.getElementById('tour-overlay');
+      spotlight = document.getElementById('spotlight');
+      tooltip = document.getElementById('tour-tooltip');
+      content = document.getElementById('tour-content');
+      stepIndicator = document.getElementById('tour-step-indicator');
+      nextBtn = document.getElementById('tour-next-btn');
+      skipBtn = document.getElementById('tour-skip-btn');
+      backdrop = document.querySelector('.tour-backdrop');
       
-      document.querySelector('.tour-overlay').style.display = 'none';
+      const startBtn = document.getElementById('start-lab-tour-btn');
+      
+      if (startBtn) {
+        startBtn.addEventListener('click', startTour);
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', nextStep);
+      }
+      
+      if (skipBtn) {
+        skipBtn.addEventListener('click', endTour);
+      }
+      
+      // Auto-start tour on first visit
+      const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
+      if (!localStorage.getItem(tourKey)) {
+        // Small delay to let page fully load
+        setTimeout(() => {
+          startTour();
+        }, 1000);
+      }
+    }
+
+    function startTour() {
+      currentStep = 0;
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      renderStepIndicator();
+      showStep();
+    }
+
+    function renderStepIndicator() {
+      stepIndicator.innerHTML = tourSteps.map((_, i) => 
+        `<div class="tour-step-dot ${i === currentStep ? 'active' : ''} ${i < currentStep ? 'completed' : ''}"></div>`
+      ).join('');
+    }
+
+    function showStep() {
+      const step = tourSteps[currentStep];
+      
+      // Update step indicator
+      renderStepIndicator();
+      
+      // Update content
+      content.innerHTML = `<h4>${step.title}</h4><p>${step.text}</p>`;
+      
+      // Update button text
+      nextBtn.textContent = currentStep === tourSteps.length - 1 ? 'Got it!' : 'Next →';
+      
+      if (step.selector) {
+        const element = document.querySelector(step.selector);
+        
+        if (element) {
+          // Scroll into view
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          
+          setTimeout(() => {
+            const rect = element.getBoundingClientRect();
+            const padding = 12;
+            
+            // Position spotlight
+            spotlight.style.display = 'block';
+            spotlight.style.width = `${rect.width + padding * 2}px`;
+            spotlight.style.height = `${rect.height + padding * 2}px`;
+            spotlight.style.top = `${rect.top - padding}px`;
+            spotlight.style.left = `${rect.left - padding}px`;
+            
+            // Create backdrop cutout
+            const cutoutRect = {
+              top: rect.top - padding,
+              left: rect.left - padding,
+              width: rect.width + padding * 2,
+              height: rect.height + padding * 2
+            };
+            
+            backdrop.style.clipPath = `polygon(
+              0% 0%, 0% 100%, 
+              ${cutoutRect.left}px 100%, 
+              ${cutoutRect.left}px ${cutoutRect.top}px, 
+              ${cutoutRect.left + cutoutRect.width}px ${cutoutRect.top}px, 
+              ${cutoutRect.left + cutoutRect.width}px ${cutoutRect.top + cutoutRect.height}px, 
+              ${cutoutRect.left}px ${cutoutRect.top + cutoutRect.height}px, 
+              ${cutoutRect.left}px 100%, 
+              100% 100%, 100% 0%
+            )`;
+            
+            // Position tooltip
+            positionTooltip(rect, step.position);
+          }, 400);
+        } else {
+          // Element not found, show tooltip in center
+          spotlight.style.display = 'none';
+          backdrop.style.clipPath = 'none';
+          positionTooltipCenter();
+        }
+      } else {
+        // No selector, center everything
+        spotlight.style.display = 'none';
+        backdrop.style.clipPath = 'none';
+        positionTooltipCenter();
+      }
+    }
+
+    function positionTooltip(rect, position) {
+      const tooltipRect = tooltip.getBoundingClientRect();
+      const padding = 20;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      let top, left;
+      
+      switch (position) {
+        case 'top':
+          top = rect.top - tooltipRect.height - padding - 20;
+          left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+          break;
+        case 'bottom':
+          top = rect.bottom + padding + 20;
+          left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+          break;
+        case 'left':
+          top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+          left = rect.left - tooltipRect.width - padding - 20;
+          break;
+        case 'right':
+          top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+          left = rect.right + padding + 20;
+          break;
+        default:
+          positionTooltipCenter();
+          return;
+      }
+      
+      // Keep tooltip in viewport
+      if (left < padding) left = padding;
+      if (left + tooltipRect.width > viewportWidth - padding) {
+        left = viewportWidth - tooltipRect.width - padding;
+      }
+      if (top < padding) top = padding;
+      if (top + tooltipRect.height > viewportHeight - padding) {
+        top = viewportHeight - tooltipRect.height - padding;
+      }
+      
+      tooltip.style.top = `${top}px`;
+      tooltip.style.left = `${left}px`;
+    }
+
+    function positionTooltipCenter() {
+      tooltip.style.top = '50%';
+      tooltip.style.left = '50%';
+      tooltip.style.transform = 'translate(-50%, -50%)';
+      
+      // Reset transform after positioning
+      setTimeout(() => {
+        const tooltipRect = tooltip.getBoundingClientRect();
+        tooltip.style.top = `${(window.innerHeight - tooltipRect.height) / 2}px`;
+        tooltip.style.left = `${(window.innerWidth - tooltipRect.width) / 2}px`;
+        tooltip.style.transform = 'none';
+      }, 50);
+    }
+
+    function nextStep() {
+      currentStep++;
+      if (currentStep < tourSteps.length) {
+        showStep();
+      } else {
+        endTour();
+      }
+    }
+
+    function endTour() {
+      overlay.classList.remove('active');
       document.body.style.overflow = '';
       currentStep = 0;
+      
+      // Mark tour as completed for this page
+      const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
+      localStorage.setItem(tourKey, 'true');
     }
-  }
 
-  // Make functions available to the buttons
-  window.startTour = startTour;
-  window.nextStep = nextStep;
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
 </script>
