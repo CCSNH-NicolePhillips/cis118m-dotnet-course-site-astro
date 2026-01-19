@@ -114,7 +114,16 @@ Return JSON:
           starterId
         }));
 
-        // Update progress with score
+        // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
+        const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
+        
+        // Update progress in the standard hash format used by gradebook
+        await redis.hset(`user:progress:data:${sub}`, {
+          [`${assignmentId}:score`]: aiGrade,
+          [`${assignmentId}:status`]: 'completed'
+        });
+
+        // Also keep the old format for backwards compatibility
         const progressKey = `progress:${sub}`;
         const existingProgress = await redis.get(progressKey);
         const progress = existingProgress ? JSON.parse(existingProgress) : {};
