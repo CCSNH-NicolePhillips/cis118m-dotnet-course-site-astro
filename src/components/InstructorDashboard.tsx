@@ -27,8 +27,8 @@ const generateAssignments = () => {
   assignments.push({ id: 'week-01-homework', label: 'HW', week: 1, type: 'homework' });
   assignments.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
   
-  // Weeks 2-15 (regular weeks)
-  for (let w = 2; w <= 15; w++) {
+  // Weeks 2-14 (regular weeks)
+  for (let w = 2; w <= 14; w++) {
     const wStr = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${wStr}-participation`, label: 'Part', week: w, type: 'participation' });
     assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
@@ -36,9 +36,12 @@ const generateAssignments = () => {
     assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
   }
   
-  // Week 16 - Final Capstone
-  assignments.push({ id: 'week-16-participation', label: 'Part', week: 16, type: 'participation' });
-  assignments.push({ id: 'week-16-final', label: 'Final', week: 16, type: 'final' });
+  // Week 15 - Final week with regular assignments plus Final Project
+  assignments.push({ id: 'week-15-participation', label: 'Part', week: 15, type: 'participation' });
+  assignments.push({ id: 'week-15-quiz', label: 'Quiz', week: 15, type: 'quiz' });
+  assignments.push({ id: 'week-15-homework', label: 'HW', week: 15, type: 'homework' });
+  assignments.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
+  assignments.push({ id: 'week-15-final', label: 'Final', week: 15, type: 'final' });
   
   return assignments;
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { WEEKS } from '../config/site';
 
-const TOTAL_WEEKS = 16;
+const TOTAL_WEEKS = 15;
 const EXPECTED_CHECKPOINTS_PER_WEEK = 5;
 
 // Get due date for a week number (1-indexed)
@@ -63,8 +63,8 @@ ASSIGNMENTS.push({ id: 'week-01-quiz', label: 'Weekly Quiz', week: 1, type: 'qui
 ASSIGNMENTS.push({ id: 'week-01-homework', label: 'Homework', week: 1, type: 'homework' });
 ASSIGNMENTS.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
 
-// Weeks 2-15: Participation, Quiz, Homework, Lab
-for (let w = 2; w <= 15; w++) {
+// Weeks 2-14: Participation, Quiz, Homework, Lab
+for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
   ASSIGNMENTS.push({ id: `week-${wStr}-participation`, label: 'Participation', week: w, type: 'participation' });
   ASSIGNMENTS.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
@@ -72,9 +72,12 @@ for (let w = 2; w <= 15; w++) {
   ASSIGNMENTS.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
 }
 
-// Week 16: Participation + Final
-ASSIGNMENTS.push({ id: 'week-16-participation', label: 'Participation', week: 16, type: 'participation' });
-ASSIGNMENTS.push({ id: 'week-16-final', label: 'Final', week: 16, type: 'final' });
+// Week 15: Participation, Quiz, Homework, Lab + Final Project
+ASSIGNMENTS.push({ id: 'week-15-participation', label: 'Participation', week: 15, type: 'participation' });
+ASSIGNMENTS.push({ id: 'week-15-quiz', label: 'Quiz', week: 15, type: 'quiz' });
+ASSIGNMENTS.push({ id: 'week-15-homework', label: 'Homework', week: 15, type: 'homework' });
+ASSIGNMENTS.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
+ASSIGNMENTS.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
 
 interface ProgressData {
   [pageId: string]: {
@@ -556,7 +559,6 @@ const StudentGrades: React.FC = () => {
               
               const hwScore = progress[`week-${wStr}-homework`]?.score;
               const labScore = progress[`week-${wStr}-lab`]?.score;
-              const finalScore = week === 16 ? progress['week-16-final']?.score : undefined;
 
               const renderScore = (score: number | undefined, color: string) => {
                 if (score === undefined || score === null) {
@@ -581,7 +583,6 @@ const StudentGrades: React.FC = () => {
                 <tr key={week} style={{ borderTop: '1px solid #333' }}>
                   <td style={{ padding: '10px 12px', color: '#ccc' }}>
                     Week {week}
-                    {week === 16 && <span style={{ color: '#888', fontSize: '0.75rem' }}> (Final)</span>}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                     {partCount > 0 ? (
@@ -601,13 +602,13 @@ const StudentGrades: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {week === 16 ? renderScore(finalScore, TYPE_COLORS.final.text) : renderScore(quizScore, TYPE_COLORS.quiz.text)}
+                    {renderScore(quizScore, TYPE_COLORS.quiz.text)}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {week === 16 ? <span style={{ color: '#444' }}>—</span> : renderScore(hwScore, TYPE_COLORS.homework.text)}
+                    {renderScore(hwScore, TYPE_COLORS.homework.text)}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {week === 16 ? <span style={{ color: '#444' }}>—</span> : renderScore(labScore, TYPE_COLORS.lab.text)}
+                    {renderScore(labScore, TYPE_COLORS.lab.text)}
                   </td>
                 </tr>
               );
@@ -627,25 +628,24 @@ const StudentGrades: React.FC = () => {
         <h4 style={{ marginBottom: '12px', color: '#888', fontSize: '0.85rem', textTransform: 'uppercase' }}>Grade Scale</h4>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.8rem' }}>
           {[
-            { grade: 'A', min: 93 }, { grade: 'A-', min: 90 },
-            { grade: 'B+', min: 87 }, { grade: 'B', min: 83 }, { grade: 'B-', min: 80 },
-            { grade: 'C+', min: 77 }, { grade: 'C', min: 73 }, { grade: 'C-', min: 70 },
-            { grade: 'D+', min: 67 }, { grade: 'D', min: 63 }, { grade: 'D-', min: 60 },
-            { grade: 'F', min: 0 }
-          ].map(({ grade, min }) => (
-            <span key={grade} style={{
-              padding: '4px 8px',
-              borderRadius: '4px',
-              background: grades.courseTotal >= min && (grade === 'F' || grades.courseTotal < (min === 93 ? 100 : min + 3)) 
-                ? 'rgba(78, 201, 176, 0.2)' 
-                : 'rgba(50,50,50,0.5)',
-              color: grades.courseTotal >= min && (grade === 'F' || grades.courseTotal < (min === 93 ? 100 : min + 3))
-                ? '#4ec9b0'
-                : '#666'
-            }}>
-              {grade}: {min}+
-            </span>
-          ))}
+            { grade: 'A', min: 93, max: 101 }, { grade: 'A-', min: 90, max: 93 },
+            { grade: 'B+', min: 87, max: 90 }, { grade: 'B', min: 83, max: 87 }, { grade: 'B-', min: 80, max: 83 },
+            { grade: 'C+', min: 77, max: 80 }, { grade: 'C', min: 73, max: 77 }, { grade: 'C-', min: 70, max: 73 },
+            { grade: 'D+', min: 67, max: 70 }, { grade: 'D', min: 63, max: 67 }, { grade: 'D-', min: 60, max: 63 },
+            { grade: 'F', min: 0, max: 60 }
+          ].map(({ grade, min, max }) => {
+            const isCurrentGrade = grades.hasAnyGrades && grades.courseTotal >= min && grades.courseTotal < max;
+            return (
+              <span key={grade} style={{
+                padding: '4px 8px',
+                borderRadius: '4px',
+                background: isCurrentGrade ? 'rgba(78, 201, 176, 0.2)' : 'rgba(50,50,50,0.5)',
+                color: isCurrentGrade ? '#4ec9b0' : '#666'
+              }}>
+                {grade}: {min}+
+              </span>
+            );
+          })}
         </div>
       </div>
     </div>
