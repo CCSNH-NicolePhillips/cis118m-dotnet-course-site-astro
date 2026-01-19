@@ -232,6 +232,7 @@ internal static class CheckRunner
         return starterId switch
         {
             "week-01-lesson-1" => Week01Lesson1Checks(programCs),
+            "week-01-lab-1" => Week01Lab1Checks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -241,7 +242,80 @@ internal static class CheckRunner
         return starterId switch
         {
             "week-01-lesson-1" => Week01Lesson1Hint(checks),
+            "week-01-lab-1" => Week01Lab1Hint(checks),
             _ => "Keep working on your solution."
+        };
+    }
+
+    private static List<CheckResult> Week01Lab1Checks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has a header comment with name
+        var hasHeaderComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Add a header comment with your name (e.g., // Name: Your Name)"));
+
+        // Check 2: Has at least 2 variables
+        var variableCount = Regex.Matches(programCs, @"\b(string|int|double|bool|var)\s+\w+\s*=").Count;
+        var hasTwoVariables = variableCount >= 2;
+        checks.Add(new CheckResult(
+            Name: "HasTwoVariables",
+            Passed: hasTwoVariables,
+            Message: hasTwoVariables
+                ? $"Found {variableCount} variable(s)."
+                : $"You need at least 2 variables. Found {variableCount}."));
+
+        // Check 3: Has 4 Console.WriteLine statements
+        var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
+        var hasFourWriteLines = writeLineCount >= 4;
+        checks.Add(new CheckResult(
+            Name: "HasFourWriteLines",
+            Passed: hasFourWriteLines,
+            Message: hasFourWriteLines
+                ? $"Found {writeLineCount} Console.WriteLine statements."
+                : $"You need 4 Console.WriteLine statements for the 4 lines of output. Found {writeLineCount}."));
+
+        // Check 4: Uses string interpolation or concatenation
+        var hasInterpolation = programCs.Contains("$\"") || programCs.Contains("$@\"");
+        var hasConcatenation = Regex.IsMatch(programCs, @"""[^""]*""\s*\+|\+\s*""[^""]*""");
+        var usesVariablesInOutput = hasInterpolation || hasConcatenation;
+        checks.Add(new CheckResult(
+            Name: "UsesVariablesInOutput",
+            Passed: usesVariablesInOutput,
+            Message: usesVariablesInOutput
+                ? "Using string interpolation or concatenation."
+                : "Use string interpolation ($\"...\") or concatenation (+) to include variables in output."));
+
+        // Check 5: Variables are actually used (not empty)
+        var hasFilledVariables = !Regex.IsMatch(programCs, @"=\s*""""\s*;");
+        checks.Add(new CheckResult(
+            Name: "VariablesHaveValues",
+            Passed: hasFilledVariables,
+            Message: hasFilledVariables
+                ? "Variables have values assigned."
+                : "Fill in your variables with actual values (not empty strings)."));
+
+        return checks;
+    }
+
+    private static string Week01Lab1Hint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Add a comment at the top like: // Name: Your Name Here",
+            "HasTwoVariables" => "Create variables for your name, course, goal, etc. Example: string name = \"Alex\";",
+            "HasFourWriteLines" => "Add 4 Console.WriteLine() statements - one for each line of output.",
+            "UsesVariablesInOutput" => "Use your variables in the output! Try: Console.WriteLine($\"My name is {name}.\");",
+            "VariablesHaveValues" => "Replace the empty strings \"\" with actual values like your name and course.",
+            _ => "Keep working on your solution!"
         };
     }
 
