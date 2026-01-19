@@ -260,7 +260,7 @@ internal static class CheckRunner
             Passed: hasHeaderComment,
             Message: hasHeaderComment
                 ? "Found header comment with your name."
-                : "Add a comment with your name at the TOP of the file (e.g., // Name: Jane Doe)"));
+                : "On line 1, replace 'Your Name Here' with YOUR name (e.g., // Name: Jane Doe)"));
 
         // Check 2: Has at least one Console.WriteLine
         var hasWriteLine = programCs.Contains("Console.WriteLine");
