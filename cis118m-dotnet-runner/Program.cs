@@ -251,14 +251,16 @@ internal static class CheckRunner
     {
         var checks = new List<CheckResult>();
 
-        // Check 1: Has a header comment with name
-        var hasHeaderComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        // Check 1: Has a header comment with name (but not the placeholder)
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
         checks.Add(new CheckResult(
             Name: "HasHeaderComment",
             Passed: hasHeaderComment,
             Message: hasHeaderComment
                 ? "Found header comment with your name."
-                : "Add a header comment with your name (e.g., // Name: Your Name)"));
+                : "Add a header comment with YOUR name (e.g., // Name: Jane Doe)"));
 
         // Check 2: Has at least one Console.WriteLine
         var hasWriteLine = programCs.Contains("Console.WriteLine");
