@@ -78,29 +78,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         throw new Error("Please log in to submit your lab");
       }
 
-      // First, fetch the code from cloud storage
-      const codeResponse = await fetch(`/.netlify/functions/code-get?starterId=${encodeURIComponent(starterId)}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
       let code = null;
-      if (codeResponse.ok) {
-        const codeData = await codeResponse.json();
-        code = codeData.code;
+      
+      // First, try to get code from embedded Monaco editor on this page
+      if (window.monacoEditorInstances) {
+        const editor = window.monacoEditorInstances[starterId];
+        if (editor) {
+          code = editor.getValue();
+        }
+      }
+      
+      // If no embedded editor, fetch the code from cloud storage
+      if (!code) {
+        const codeResponse = await fetch(`/.netlify/functions/code-get?starterId=${encodeURIComponent(starterId)}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (codeResponse.ok) {
+          const codeData = await codeResponse.json();
+          code = codeData.code;
+        }
       }
       
       // If no cloud code, try to get from local storage
       if (!code) {
         const storageKey = `cis118m:${starterId}:Program.cs`;
         code = localStorage.getItem(storageKey);
-      }
-      
-      // If still no code, check for embedded editor
-      if (!code && window.monacoEditorInstances) {
-        const editor = window.monacoEditorInstances[starterId];
-        if (editor) {
-          code = editor.getValue();
-        }
       }
       
       if (!code) {
