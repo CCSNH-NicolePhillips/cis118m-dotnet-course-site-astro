@@ -36,7 +36,7 @@ export async function handler(event, context) {
     const pageId = quizId; // e.g., "week-01-required-quiz"
     
     // Check current attempt count
-    const currentProgress = await redis.hgetall(`user:progress:${sub}`);
+    const currentProgress = await redis.hgetall(`user:progress:data:${sub}`);
     const attempts = parseInt(currentProgress?.[`${pageId}:attempts`] || "0");
     
     // Enforce 2-attempt maximum
@@ -75,12 +75,14 @@ export async function handler(event, context) {
     await redis.lpush(historyKey, JSON.stringify(submission));
 
     // Update progress with new attempt count and best score
-    await redis.hset(`user:progress:${sub}`, {
+    await redis.hset(`user:progress:data:${sub}`, {
       [`${pageId}:attempts`]: attempts + 1,
       [`${pageId}:bestScore`]: newBestScore,
       [`${pageId}:lastScore`]: score,
       [`${pageId}:passed`]: passed ? 1 : 0,
-      [`${pageId}:lastSubmit`]: submittedAt
+      [`${pageId}:lastSubmit`]: submittedAt,
+      [`${pageId}:score`]: newBestScore,
+      [`${pageId}:status`]: passed ? 'completed' : 'attempted'
     });
 
     // Add to index for instructor view
