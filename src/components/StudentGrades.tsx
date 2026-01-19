@@ -261,7 +261,8 @@ const StudentGrades: React.FC = () => {
     }
 
     // Normalize to 100% scale (scale up to what grades would be if all categories had data)
-    const courseTotal = totalWeight > 0 ? (weightedSum / totalWeight) * 100 : 0;
+    // Note: averages are already 0-100, so we just divide by totalWeight to normalize
+    const courseTotal = totalWeight > 0 ? (weightedSum / totalWeight) : 0;
     const hasAnyGrades = totalWeight > 0;
 
     return {
