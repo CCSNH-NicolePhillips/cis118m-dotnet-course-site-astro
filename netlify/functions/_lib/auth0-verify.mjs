@@ -179,4 +179,3 @@ export async function requireInstructor(requestOrEvent) {
     return { authorized: false, error: error.message };
   }
 }
-}
