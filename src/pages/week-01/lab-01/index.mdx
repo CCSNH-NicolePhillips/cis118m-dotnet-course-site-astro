@@ -1,139 +1,38 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Week 01 • Lab 1"
-description: "Week 1 Lab: Welcome Program"
+title: "Lab 01: Welcome Protocol"
+description: "Initialize your connection to the .NET Engine."
 ---
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+import LabTour from '../../../components/LabTour.astro';
+import StartTourFocus from '../../../components/StartTourFocus.astro';
 
-# Lab 1: Welcome Program
+# Lab 01: Welcome Protocol
 
-**Time: 45 minutes**  
-**Points: 100**
+## 🛡️ Mission: First Transmission
 
-## Objective
+<div style="background: rgba(78, 201, 176, 0.1); border: 2px solid #4ec9b0; padding: 20px; border-radius: 8px;">
+  <h4 style="margin-top: 0; color: #4ec9b0;">📋 Mission Objective</h4>
+  <p>Use <code>Console.WriteLine()</code> to send a message to the terminal. This is how C# programs communicate with the outside world.</p>
+  <p><strong>Your Task:</strong> Print these two lines:</p>
+  <pre style="background: #1e1e1e; color: #d4d4d4; padding: 10px; border-radius: 4px;">System Online
+Engineer Connected</pre>
+</div>
 
-Create a console program that prints a welcome message with information about yourself and this course.
+<StartTourFocus />
 
----
+<LabTour />
 
-## Requirements
-
-Your program must:
-
-1. ✅ Print **exactly 4 lines** of output
-2. ✅ Include a **header comment** with your name and the assignment name
-3. ✅ Use **at least 2 variables** (string, int, or both)
-4. ✅ Use **either** string interpolation **or** concatenation (your choice)
-5. ✅ Print the following information:
-   - Your name
-   - The course name or number (e.g., "CIS 118M")
-   - Your goal for this course
-   - A fun fact about yourself
-
----
-
-## Example Output
-
-```
-Welcome to CIS 118M!
-My name is Nikki Smith.
-My goal this term is to build my first real app.
-Fun fact: I love hiking and photography.
-```
-
-Your output can be different, but it should follow the same structure.
-
----
-
-## Starter Code
-
-<div id="lab-editor"></div>
-
-<TryItNowRunner
-  code={"using System;\n\n// Lab 1: Welcome Program\n// Name: Your Name Here\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Create variables for your name, course, goal, and fun fact\n        \n        // TODO: Print 4 lines using Console.WriteLine\n        \n    }\n}"}
-  starterId="week-01-lab-1"
-  height={300}
-  instructions="Complete the TODOs above. Run your code to test it. When you're happy with your program, click Submit Lab below."
+<TryItNowRunner 
+  code={"using System;\n\nclass Program\n{\n    static void Main()\n    {\n        // Use Console.WriteLine() to print your messages\n        \n    }\n}"} 
+  starterId="lab-01-auth" 
+  height={300} 
+  instructions="Use Console.WriteLine() twice - once for each line."
+  validationRegex="/System Online.*Engineer.*Connected/s"
 />
 
 ---
 
-## Steps
-
-1. **Add variables** for your name, course, goal, and fun fact
-2. **Print 4 lines** using `Console.WriteLine`
-3. **Test your code** by clicking Run
-4. **Make sure your output matches the requirements**
-5. **Click Submit Lab** below when you're done
-
----
-
-## Grading Rubric
-
-| Criteria | Points |
-|----------|--------|
-| **Correctness** (runs without errors) | 40 pts |
-| **Requirements** (4 lines, 2+ variables, interpolation/concatenation) | 30 pts |
-| **Header Comment** (name + assignment) | 10 pts |
-| **Code Quality** (readable, well-formatted) | 10 pts |
-| **Submission** (submitted on time) | 10 pts |
-| **Total** | **100 pts** |
-
----
-
-## Submit Your Lab
-
-<div id="submit-section" style="margin-top: 2rem; padding: 1.5rem; border: 2px solid #4CAF50; border-radius: 8px; background: rgba(76, 175, 80, 0.05);">
-  <h3 style="margin-top: 0;">Ready to Submit?</h3>
-  <p>When you click Submit, your current code in the editor above will be saved to your account.</p>
-  <p><strong>You can resubmit as many times as you need.</strong> Only your most recent submission counts.</p>
-  
-  <button id="submit-lab-btn" style="
-    padding: 12px 24px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-right: 10px;
-  ">
-    Submit Lab
-  </button>
-  
-  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
-  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
-</div>
-
-<script src="/scripts/submit-lab.js"></script>
-
----
-
-## Tips
-
-**Stuck?** Here's a hint:
-
-```csharp
-string name = "Nikki";
-string course = "CIS 118M";
-Console.WriteLine($"My name is {name}.");
-Console.WriteLine($"I'm taking {course}.");
-```
-
-**Common mistakes to avoid:**
-- Forgetting quotes around string values
-- Forgetting semicolons at the end of statements
-- Forgetting the `$` in front of interpolated strings
-- Misspelling `Console.WriteLine`
-
----
-
-## Next Steps
-
-After submitting your lab:
-
-- [Homework: Reflection + Code Change →](../homework/)
-- [Required Submission Quiz →](../required-quiz/)
-- [Back to Week 1 Overview](../)
+[→ Continue to Week 2](/week-02/lesson-1/)
