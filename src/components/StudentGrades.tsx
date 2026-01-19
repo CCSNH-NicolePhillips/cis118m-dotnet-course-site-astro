@@ -1,7 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { WEEKS } from '../config/site';
 
 const TOTAL_WEEKS = 16;
 const EXPECTED_CHECKPOINTS_PER_WEEK = 5;
+
+// Get due date for a week number (1-indexed)
+const getWeekDueDate = (weekNum: number): Date | null => {
+  const weekConfig = WEEKS.find(w => parseInt(w.slug) === weekNum);
+  if (weekConfig?.dueDate) {
+    return new Date(weekConfig.dueDate);
+  }
+  return null;
+};
+
+// Check if a week is past due
+const isWeekPastDue = (weekNum: number): boolean => {
+  const dueDate = getWeekDueDate(weekNum);
+  if (!dueDate) return false;
+  return new Date() > dueDate;
+};
+
+// Check if a week has started (is unlocked)
+const isWeekStarted = (weekNum: number): boolean => {
+  const weekConfig = WEEKS.find(w => parseInt(w.slug) === weekNum);
+  if (!weekConfig?.unlockDate) return false;
+  return new Date() >= new Date(weekConfig.unlockDate);
+};
 
 type AssignmentType = 'participation' | 'quiz' | 'homework' | 'lab' | 'final';
 
@@ -153,6 +177,10 @@ const StudentGrades: React.FC = () => {
   const participationByWeek = countParticipationByWeek(progress);
 
   // Calculate averages and weighted totals
+  // Logic:
+  // - If assignment is submitted: count the actual score
+  // - If week is past due and not submitted: count as 0
+  // - If week is current/future and not submitted: don't count at all
   const calculateGrades = () => {
     const labScores: number[] = [];
     const quizScores: number[] = [];
@@ -161,20 +189,40 @@ const StudentGrades: React.FC = () => {
     const participationScores: number[] = [];
 
     for (const assignment of ASSIGNMENTS) {
+      const weekNum = assignment.week;
+      const weekPastDue = isWeekPastDue(weekNum);
+      const weekStarted = isWeekStarted(weekNum);
+
       if (assignment.type === 'participation') {
-        const weekCount = participationByWeek[assignment.week] || 0;
+        const weekCount = participationByWeek[weekNum] || 0;
         const weekScore = Math.min(100, (weekCount / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
+        
         if (weekCount > 0) {
+          // Student participated, count their score
           participationScores.push(weekScore);
+        } else if (weekPastDue) {
+          // Week is past due with no participation, count as 0
+          participationScores.push(0);
         }
+        // Otherwise: week not due yet, don't count
       } else {
         const score = progress[assignment.id]?.score;
-        if (score !== undefined && score !== null) {
+        const hasScore = score !== undefined && score !== null;
+        
+        if (hasScore) {
+          // Assignment was submitted, count actual score
           if (assignment.type === 'lab') labScores.push(score);
           else if (assignment.type === 'quiz') quizScores.push(score);
           else if (assignment.type === 'homework') homeworkScores.push(score);
           else if (assignment.type === 'final') finalScores.push(score);
+        } else if (weekPastDue && weekStarted) {
+          // Week is past due with no submission, count as 0
+          if (assignment.type === 'lab') labScores.push(0);
+          else if (assignment.type === 'quiz') quizScores.push(0);
+          else if (assignment.type === 'homework') homeworkScores.push(0);
+          else if (assignment.type === 'final') finalScores.push(0);
         }
+        // Otherwise: week not due yet, don't count
       }
     }
 
@@ -186,18 +234,45 @@ const StudentGrades: React.FC = () => {
     const finalAvg = avg(finalScores);
     const participationAvg = avg(participationScores);
 
-    const labsWeighted = labsAvg * WEIGHTS.labs;
-    const quizzesWeighted = quizzesAvg * WEIGHTS.quizzes;
-    const homeworkWeighted = homeworkAvg * WEIGHTS.homework;
-    const participationWeighted = participationAvg * WEIGHTS.participation;
-    const finalWeighted = finalAvg * WEIGHTS.final;
+    // Calculate weighted totals, but only include categories that have countable assignments
+    // If a category has no assignments (past due or submitted), don't penalize the student
+    let totalWeight = 0;
+    let weightedSum = 0;
 
-    const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted + finalWeighted;
+    if (labScores.length > 0) {
+      totalWeight += WEIGHTS.labs;
+      weightedSum += labsAvg * WEIGHTS.labs;
+    }
+    if (quizScores.length > 0) {
+      totalWeight += WEIGHTS.quizzes;
+      weightedSum += quizzesAvg * WEIGHTS.quizzes;
+    }
+    if (homeworkScores.length > 0) {
+      totalWeight += WEIGHTS.homework;
+      weightedSum += homeworkAvg * WEIGHTS.homework;
+    }
+    if (participationScores.length > 0) {
+      totalWeight += WEIGHTS.participation;
+      weightedSum += participationAvg * WEIGHTS.participation;
+    }
+    if (finalScores.length > 0) {
+      totalWeight += WEIGHTS.final;
+      weightedSum += finalAvg * WEIGHTS.final;
+    }
+
+    // Normalize to 100% scale (scale up to what grades would be if all categories had data)
+    const courseTotal = totalWeight > 0 ? (weightedSum / totalWeight) * 100 : 0;
+    const hasAnyGrades = totalWeight > 0;
 
     return {
       labsAvg, quizzesAvg, homeworkAvg, finalAvg, participationAvg,
-      labsWeighted, quizzesWeighted, homeworkWeighted, finalWeighted, participationWeighted,
+      labsWeighted: labScores.length > 0 ? labsAvg * WEIGHTS.labs : 0,
+      quizzesWeighted: quizScores.length > 0 ? quizzesAvg * WEIGHTS.quizzes : 0,
+      homeworkWeighted: homeworkScores.length > 0 ? homeworkAvg * WEIGHTS.homework : 0,
+      finalWeighted: finalScores.length > 0 ? finalAvg * WEIGHTS.final : 0,
+      participationWeighted: participationScores.length > 0 ? participationAvg * WEIGHTS.participation : 0,
       courseTotal,
+      hasAnyGrades,
       labsCount: labScores.length,
       quizzesCount: quizScores.length,
       homeworkCount: homeworkScores.length,
@@ -267,7 +342,6 @@ const StudentGrades: React.FC = () => {
     <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto' }}>
       {/* Overall Grade Card */}
       {(() => {
-        const hasAnyGrades = grades.labsCount > 0 || grades.quizzesCount > 0 || grades.homeworkCount > 0 || grades.participationCount > 0 || grades.finalCount > 0;
         return (
           <div style={{
             background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
@@ -280,7 +354,7 @@ const StudentGrades: React.FC = () => {
             <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
               Current Course Grade
             </div>
-            {hasAnyGrades ? (
+            {grades.hasAnyGrades ? (
               <>
                 <div style={{
                   fontSize: '4rem',
