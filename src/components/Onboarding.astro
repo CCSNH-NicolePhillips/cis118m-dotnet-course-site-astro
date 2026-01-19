@@ -183,10 +183,10 @@
   .name-input {
     width: 100%;
     padding: 14px 16px;
-    background: var(--input-bg, #2d2d2d);
-    border: 2px solid var(--border, #444);
+    background: var(--input-bg);
+    border: 2px solid var(--input-border, var(--border));
     border-radius: 10px;
-    color: var(--text, #fff);
+    color: var(--input-text);
     font-size: 1.1rem;
     transition: border-color 0.2s ease;
     box-sizing: border-box;
@@ -198,13 +198,13 @@
   }
 
   .name-input::placeholder {
-    color: var(--text-muted, #666);
+    color: var(--text-muted);
   }
 
   .name-hint {
     margin: 8px 0 0 0;
     font-size: 0.85rem;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
   }
 
   .settings-section {
@@ -548,16 +548,19 @@
         
         // If dropdown is open, expand spotlight to include it
         let spotlightRect = rect;
-        if (step.action === 'openDropdown' && dropdownMenu) {
+        if (step.action === 'openDropdown' && dropdownMenu && dropdownMenu.style.display !== 'none') {
           const dropdownRect = dropdownMenu.getBoundingClientRect();
-          spotlightRect = {
-            top: Math.min(rect.top, dropdownRect.top),
-            left: Math.min(rect.left, dropdownRect.left),
-            right: Math.max(rect.right, dropdownRect.right),
-            bottom: Math.max(rect.bottom, dropdownRect.bottom),
-            width: Math.max(rect.right, dropdownRect.right) - Math.min(rect.left, dropdownRect.left),
-            height: Math.max(rect.bottom, dropdownRect.bottom) - Math.min(rect.top, dropdownRect.top)
-          };
+          // Only merge rects if dropdown has actual dimensions (is visible)
+          if (dropdownRect.width > 0 && dropdownRect.height > 0) {
+            spotlightRect = {
+              top: Math.min(rect.top, dropdownRect.top),
+              left: Math.min(rect.left, dropdownRect.left),
+              right: Math.max(rect.right, dropdownRect.right),
+              bottom: Math.max(rect.bottom, dropdownRect.bottom),
+              width: Math.max(rect.right, dropdownRect.right) - Math.min(rect.left, dropdownRect.left),
+              height: Math.max(rect.bottom, dropdownRect.bottom) - Math.min(rect.top, dropdownRect.top)
+            };
+          }
         }
         
         // Position spotlight
