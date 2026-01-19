@@ -262,7 +262,18 @@ internal static class CheckRunner
                 ? "Found header comment with your name."
                 : "On line 1, replace 'Your Name Here' with YOUR name (e.g., // Name: Jane Doe)"));
 
-        // Check 2: Has at least one Console.WriteLine
+        // Check 2: Has assignment name comment
+        var hasAssignmentComment = Regex.IsMatch(programCs, @"//.*Assignment:\s*.+", RegexOptions.IgnoreCase) ||
+                                    Regex.IsMatch(programCs, @"//.*Lab\s*1", RegexOptions.IgnoreCase) ||
+                                    Regex.IsMatch(programCs, @"//.*Week\s*1.*Lab", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult(
+            Name: "HasAssignmentComment",
+            Passed: hasAssignmentComment,
+            Message: hasAssignmentComment
+                ? "Found assignment name in header comment."
+                : "On line 2, add a comment with the assignment name (e.g., // Assignment: Lab 1 - Welcome Program)"));
+
+        // Check 3: Has at least one Console.WriteLine
         var hasWriteLine = programCs.Contains("Console.WriteLine");
         checks.Add(new CheckResult(
             Name: "HasConsoleWriteLine",
@@ -271,7 +282,7 @@ internal static class CheckRunner
                 ? "Found Console.WriteLine statement."
                 : "You need at least one Console.WriteLine statement."));
 
-        // Check 3: Has 4 Console.WriteLine statements
+        // Check 4: Has 4 Console.WriteLine statements
         var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
         var hasFourWriteLines = writeLineCount >= 4;
         checks.Add(new CheckResult(
@@ -281,7 +292,7 @@ internal static class CheckRunner
                 ? $"Found {writeLineCount} Console.WriteLine statements. Perfect!"
                 : $"You need 4 Console.WriteLine statements for the 4 lines of output. Found {writeLineCount}."));
 
-        // Check 4: Has actual content (not just the starter template)
+        // Check 5: Has actual content (not just the starter template)
         var hasCustomContent = !programCs.Contains("My name is ...") && 
                                Regex.IsMatch(programCs, @"Console\.WriteLine\s*\(\s*""[^""]+""");
         checks.Add(new CheckResult(

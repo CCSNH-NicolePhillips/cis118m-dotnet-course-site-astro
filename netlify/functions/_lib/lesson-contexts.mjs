@@ -55,14 +55,15 @@ export const lessonContexts = {
     `,
     assignmentPrompt: `
       Create a console program that prints a welcome message with:
-      1. Print exactly 4 lines of output using Console.WriteLine
-      2. Include a header comment with your name and assignment name
-      3. Print: your name, the course name (CIS 118M), your goal, and a fun fact
+      1. Line 1: A header comment with your name (e.g., // Name: Jane Doe)
+      2. Line 2: A header comment with the assignment name (e.g., // Assignment: Lab 1 - Welcome Program)
+      3. Print exactly 4 lines of output using Console.WriteLine
+      4. Print: your name, the course name (CIS 118M), your goal, and a fun fact
     `,
     rubric: `
       Correctness - runs without errors (40pts): Code compiles and runs successfully
       Requirements - 4 lines of output with required info (30pts): Has 4 Console.WriteLine statements with name, course, goal, fun fact
-      Header Comment - name + assignment (10pts): Has comment at top with student name and assignment
+      Header Comments (10pts): Line 1 has // Name: [student name], Line 2 has // Assignment: [assignment name like "Lab 1" or "Welcome Program"]
       Code Quality - readable, well-formatted (10pts): Clean indentation
       Submission - on time (10pts): Submitted by due date
     `,
@@ -85,14 +86,15 @@ export const lessonContexts = {
     `,
     assignmentPrompt: `
       Create a console program that prints a welcome message with:
-      1. Print exactly 4 lines of output using Console.WriteLine
-      2. Include a header comment with your name and assignment name
-      3. Print: your name, the course name (CIS 118M), your goal, and a fun fact
+      1. Line 1: A header comment with your name (e.g., // Name: Jane Doe)
+      2. Line 2: A header comment with the assignment name (e.g., // Assignment: Lab 1 - Welcome Program)
+      3. Print exactly 4 lines of output using Console.WriteLine
+      4. Print: your name, the course name (CIS 118M), your goal, and a fun fact
     `,
     rubric: `
       Correctness - runs without errors (40pts): Code compiles and runs successfully
       Requirements - 4 lines of output with required info (30pts): Has 4 Console.WriteLine statements with name, course, goal, fun fact
-      Header Comment - name + assignment (10pts): Has comment at top with student name and assignment
+      Header Comments (10pts): Line 1 has // Name: [student name], Line 2 has // Assignment: [assignment name like "Lab 1" or "Welcome Program"]
       Code Quality - readable, well-formatted (10pts): Clean indentation
       Submission - on time (10pts): Submitted by due date
     `,
