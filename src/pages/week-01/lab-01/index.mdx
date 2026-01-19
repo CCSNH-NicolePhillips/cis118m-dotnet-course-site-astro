@@ -4,7 +4,6 @@ title: "Week 01 • Lab 1"
 description: "Week 1 Lab: Welcome Program"
 ---
 
-import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import LabTour from '../../../components/LabTour.astro';
 import StartTourFocus from '../../../components/StartTourFocus.astro';
 
@@ -48,30 +47,45 @@ Your output can be different, but it should follow the same structure.
 
 ---
 
-## Starter Code
+## Open the Code Editor
 
 <StartTourFocus />
 
 <LabTour />
 
-<div id="lab-editor"></div>
-
-<TryItNowRunner
-  code={"using System;\n\n// Lab 1: Welcome Program\n// Name: Your Name Here\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Create variables for your name, course, goal, and fun fact\n        \n        // TODO: Print 4 lines using Console.WriteLine\n        \n    }\n}"}
-  starterId="week-01-lab-1"
-  height={300}
-  instructions="Complete the TODOs above. Run your code to test it. When you're happy with your program, click Submit Lab below."
-/>
+<div style="margin: 2rem 0; text-align: center;">
+  <a 
+    href="/editor?starter=week-01-lab-1" 
+    class="button"
+    style="
+      display: inline-block;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background: linear-gradient(135deg, #4ec9b0, #3ba896);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    "
+  >
+    🚀 Open Lab in Code Editor
+  </a>
+  <p style="margin-top: 1rem; color: #888; font-size: 0.9rem;">
+    The full editor lets you save your work, run checks, and download your code.
+  </p>
+</div>
 
 ---
 
 ## Steps
 
-1. **Add variables** for your name, course, goal, and fun fact
-2. **Print 4 lines** using `Console.WriteLine`
-3. **Test your code** by clicking Run
-4. **Make sure your output matches the requirements**
-5. **Click Submit Lab** below when you're done
+1. **Click "Open Lab in Code Editor"** above to launch the full editor
+2. **Add variables** for your name, course, goal, and fun fact
+3. **Print 4 lines** using `Console.WriteLine`
+4. **Click "Run"** to test your code
+5. **Click "Run Checks"** to verify your program meets requirements
+6. **When all checks pass**, click "Submit Lab" below
 
 ---
 
@@ -92,7 +106,7 @@ Your output can be different, but it should follow the same structure.
 
 <div id="submit-section" style="margin-top: 2rem; padding: 1.5rem; border: 2px solid #4CAF50; border-radius: 8px; background: rgba(76, 175, 80, 0.05);">
   <h3 style="margin-top: 0;">Ready to Submit?</h3>
-  <p>When you click Submit, your current code in the editor above will be saved to your account.</p>
+  <p>When you click Submit, your code from the editor will be saved and graded by AI.</p>
   <p><strong>You can resubmit as many times as you need.</strong> Only your most recent submission counts.</p>
 
   <button id="submit-lab-btn" style="
@@ -106,10 +120,11 @@ Your output can be different, but it should follow the same structure.
     cursor: pointer;
     margin-right: 10px;
   ">
-    Submit Lab
+    Submit Lab for Grading
   </button>
 
   <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
@@ -141,5 +156,5 @@ Console.WriteLine($"I'm taking {course}.");
 After submitting your lab:
 
 - [Homework: Reflection + Code Change →](../homework/)
-- [Required Submission Quiz →](../required-quiz/)
+- [Weekly Assessment →](../weekly-assessment/)
 - [Back to Week 1 Overview](../)

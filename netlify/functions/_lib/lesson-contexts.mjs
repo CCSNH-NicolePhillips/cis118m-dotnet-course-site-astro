@@ -42,28 +42,70 @@ export const lessonContexts = {
   },
 
   "week-01-lab-01": {
-    title: "Week 1: Lab - Console Logic",
+    title: "Week 1: Lab - Welcome Program",
     type: "lab",
     week: "01",
     taughtConcepts: `
       - Console.WriteLine() is the method to print text to the terminal
+      - Variables store data: string for text, int for whole numbers
+      - String interpolation uses $"text {variable}" syntax
+      - String concatenation uses + to join strings
       - Each Console.WriteLine() call creates a new line of output
-      - String literals are enclosed in double quotes
+      - Comments use // for single lines and explain your code
       - Every C# statement ends with a semicolon
       - The Main() method is where program execution begins
     `,
     assignmentPrompt: `
-      Use Console.WriteLine() to print:
-      Line 1: "System Online"
-      Line 2: "Engineer Connected"
+      Create a console program that prints a welcome message with:
+      1. Print exactly 4 lines of output
+      2. Include a header comment with your name and assignment name
+      3. Use at least 2 variables (string, int, or both)
+      4. Use either string interpolation or concatenation
+      5. Print: your name, the course name, your goal, and a fun fact
     `,
     rubric: `
-      Correct output (50pts): Both lines appear in correct order
-      Console.WriteLine usage (30pts): Proper syntax with quotes and semicolons
-      Code compiles (20pts): No syntax errors
+      Correctness - runs without errors (40pts): Code compiles and runs successfully
+      Requirements - 4 lines, 2+ variables, interpolation/concatenation (30pts): Meets all stated requirements
+      Header Comment - name + assignment (10pts): Has comment at top with student name and assignment
+      Code Quality - readable, well-formatted (10pts): Clean indentation and clear variable names
+      Submission - on time (10pts): Submitted by due date
     `,
-    requiredKeywords: ["Console.WriteLine", "System Online", "Engineer Connected"],
-    validationRegex: "/System Online.*Engineer.*Connected/s"
+    requiredKeywords: ["Console.WriteLine"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  // Legacy ID alias (some code may reference week-01-lab-1)
+  "week-01-lab-1": {
+    title: "Week 1: Lab - Welcome Program",
+    type: "lab",
+    week: "01",
+    taughtConcepts: `
+      - Console.WriteLine() is the method to print text to the terminal
+      - Variables store data: string for text, int for whole numbers
+      - String interpolation uses $"text {variable}" syntax
+      - String concatenation uses + to join strings
+      - Each Console.WriteLine() call creates a new line of output
+      - Comments use // for single lines and explain your code
+      - Every C# statement ends with a semicolon
+      - The Main() method is where program execution begins
+    `,
+    assignmentPrompt: `
+      Create a console program that prints a welcome message with:
+      1. Print exactly 4 lines of output
+      2. Include a header comment with your name and assignment name
+      3. Use at least 2 variables (string, int, or both)
+      4. Use either string interpolation or concatenation
+      5. Print: your name, the course name, your goal, and a fun fact
+    `,
+    rubric: `
+      Correctness - runs without errors (40pts): Code compiles and runs successfully
+      Requirements - 4 lines, 2+ variables, interpolation/concatenation (30pts): Meets all stated requirements
+      Header Comment - name + assignment (10pts): Has comment at top with student name and assignment
+      Code Quality - readable, well-formatted (10pts): Clean indentation and clear variable names
+      Submission - on time (10pts): Submitted by due date
+    `,
+    requiredKeywords: ["Console.WriteLine"],
+    gradingTone: "college-freshman-friendly"
   },
 
   "week-01-weekly-assessment": {
