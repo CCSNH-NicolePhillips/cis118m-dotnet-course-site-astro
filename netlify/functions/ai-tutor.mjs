@@ -16,7 +16,7 @@ export async function handler(event, context) {
     };
   }
 
-  const { message, pageId, lessonContext, studentName } = body;
+  const { message, pageId, lessonContext, studentName, studentCode } = body;
 
   if (!message) {
     return {
@@ -30,7 +30,7 @@ export async function handler(event, context) {
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: 300,
+      maxOutputTokens: 400,
     }
   });
 
@@ -39,20 +39,29 @@ export async function handler(event, context) {
 
   const topicContext = lessonContext || "General C# programming assistance.";
   
-  const prompt = `You are a Senior Software Architect mentoring a professional developer.
+  // Build code context section if student has code
+  const codeSection = studentCode 
+    ? `\nSTUDENT'S CURRENT CODE:\n\`\`\`csharp\n${studentCode}\n\`\`\`\n`
+    : '';
+
+  const prompt = `You are a friendly, encouraging tutor helping a college freshman learn C# programming.
 Topic: ${topicContext}
+${codeSection}
+TUTORING GUIDELINES:
+1. Be warm and encouraging - these are beginners who may feel overwhelmed.
+2. NEVER give the complete answer or write their code for them.
+3. Use the Socratic method: Ask guiding questions to help them discover the solution.
+4. If they have a bug, point to the AREA of the problem but don't fix it for them.
+5. Give ONE small hint at a time, not multiple hints.
+6. Use simple, clear language - avoid jargon unless you explain it.
+7. Celebrate small wins with encouragement like "You're on the right track!" or "Good thinking!"
+8. If they're stuck, ask: "What do you think this line is doing?" or "What error are you seeing?"
+9. Keep responses to 2-4 sentences max. Be concise but supportive.
+10. If they ask for the answer directly, say: "I want to help you figure this out yourself! Let me give you a hint..."
 
-PROFESSIONAL STANDARDS:
-1. No slang or sci-fi metaphors. Address the user as "Developer" or by name (${name}).
-2. Socratic Coaching: Use technical questions to guide them (e.g., "How does the runtime differentiate between instructions?").
-3. Validate technical logic with: "✅ TECHNICAL CONCEPT VALIDATED."
-4. TERMINOLOGY: Use industry-standard terms: "CLR/Runtime" instead of "Engine", "Build/Compile" instead of "Ignition".
-5. SCOPE: If asked about non-course topics, say: "That is outside the current project scope. Let's focus on the technical implementation."
-6. BREVITY: Keep responses to 2-3 sentences max. Be concise and technical.
+${name} asks: "${message}"
 
-${name} says: "${message}"
-
-Respond as the Senior Architect:`;
+Respond as a helpful tutor (remember: guide, don't solve):`;
 
   try {
     const result = await model.generateContent(prompt);

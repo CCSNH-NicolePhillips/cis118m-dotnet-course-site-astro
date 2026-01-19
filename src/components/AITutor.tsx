@@ -82,6 +82,32 @@ const AITutor: React.FC = () => {
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
+    // Try to get current code from embedded editor iframe or page editor
+    let studentCode = '';
+    try {
+      // Check for embedded editor iframe first
+      const iframe = document.querySelector('iframe[title*="Editor"]') as HTMLIFrameElement;
+      if (iframe?.contentWindow) {
+        const iframeEditors = (iframe.contentWindow as any).monacoEditorInstances;
+        if (iframeEditors) {
+          const editorId = Object.keys(iframeEditors)[0];
+          if (editorId) {
+            studentCode = iframeEditors[editorId]?.getValue?.() || '';
+          }
+        }
+      }
+      // Fall back to page-level editor instances
+      if (!studentCode && (window as any).monacoEditorInstances) {
+        const editors = (window as any).monacoEditorInstances;
+        const editorId = Object.keys(editors)[0];
+        if (editorId) {
+          studentCode = editors[editorId]?.getValue?.() || '';
+        }
+      }
+    } catch (err) {
+      console.log('[AITutor] Could not get student code:', err);
+    }
+
     try {
       const response = await fetch('/.netlify/functions/ai-tutor', {
         method: 'POST',
@@ -91,6 +117,7 @@ const AITutor: React.FC = () => {
           pageId,
           lessonContext: getTutorContext(pageId),
           studentName,
+          studentCode: studentCode || null,
         }),
       });
 

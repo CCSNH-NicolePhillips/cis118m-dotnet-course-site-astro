@@ -49,12 +49,13 @@ export function getLessonContext(assignmentId: string): LessonContext | null {
  */
 export const TUTOR_CONTEXTS: Record<string, string> = {
   // Week 1
-  'week-01': "Topic: Introduction to .NET. Focus: Understanding the relationship between C#, .NET, and the CLR.",
-  'week-01-start-here': "Topic: Syllabus and Setup. Focus: Course expectations, Sunday deadlines, and .NET environment.",
-  'week-01-lesson-1': "Topic: The Spark (.NET Intro). Focus: C# as blueprint, BCL as library, CLR as the engine executing instructions.",
-  'week-01-lesson-2': "Topic: Your First Command. Focus: Console.WriteLine as the communication protocol with the terminal.",
-  'week-01-lab-01': "Topic: Welcome Protocol. Mission: Printing 'System Online' and connection status to the terminal.",
-  'week-01-homework': "Topic: Reflection mission. Focus: Understanding why semicolons are mechanical requirements and how the CLR handles the blueprint.",
+  'week-01': "Week 1: Introduction to .NET and C#. Students are learning about Console.WriteLine to print text to the terminal. They need to understand quotes around text, semicolons at the end of statements, and that Console.WriteLine creates a new line. Variables are NOT taught yet - that's Week 2.",
+  'week-01-start-here': "Week 1 Start Here: First introduction to running C# code. Students are clicking Run for the first time. Keep it simple and encouraging!",
+  'week-01-lesson-1': "Week 1 Lesson: Learning Console.WriteLine(). Students should print text using Console.WriteLine(\"text\"); - make sure they have quotes around text and semicolons at the end. Variables are NOT taught yet.",
+  'week-01-lesson-2': "Topic: Your First Command. Focus: Console.WriteLine as the way to output text to the terminal.",
+  'week-01-lab-01': "Week 1 Lab: Welcome Program. Students need to write 4 Console.WriteLine statements to print: their name, the course (CIS 118M), their goal, and a fun fact. They also need a header comment with their name. NO variables yet - just simple Console.WriteLine(\"text\"); statements.",
+  'week-01-lab-1': "Week 1 Lab: Welcome Program. Students need to write 4 Console.WriteLine statements to print: their name, the course (CIS 118M), their goal, and a fun fact. They also need a header comment with their name. NO variables yet - just simple Console.WriteLine(\"text\"); statements.",
+  'week-01-homework': "Week 1 Homework: Technical Reflection. Students explain the build process - what Source Code is, what the Compiler does, and why missing semicolons cause errors. This is a written reflection, not code.",
   'week-01-extra-practice': "Topic: Extra drills. Focus: Additional Console.WriteLine practice exercises.",
   
   // Week 2
