@@ -94,36 +94,51 @@ export async function verifyAuth0Token(token) {
 }
 
 /**
- * Extract and verify token from request headers
- * @param {Request} request - The incoming request
- * @returns {Promise<{sub: string, email?: string}>} User info
- * @throws {Error} If authorization fails
+ * Extract and verify token from request/event headers
+ * @param {Request|object} requestOrEvent - The incoming request or Netlify event object
+ * @returns {Promise<{authorized: boolean, user?: {sub: string, email?: string}, error?: string}>} Auth result
  */
-export async function requireAuth(request) {
-  const authHeader = request.headers.get("Authorization");
-  
-  if (!authHeader) {
-    throw new Error("Missing Authorization header");
-  }
+export async function requireAuth(requestOrEvent) {
+  try {
+    // Handle both Netlify event object (headers as plain object) and Web Request (headers.get)
+    let authHeader;
+    if (requestOrEvent.headers?.get) {
+      // Web Request API style
+      authHeader = requestOrEvent.headers.get("Authorization");
+    } else if (requestOrEvent.headers) {
+      // Netlify event style - headers is a plain object (case-insensitive keys)
+      authHeader = requestOrEvent.headers.authorization || requestOrEvent.headers.Authorization;
+    }
+    
+    if (!authHeader) {
+      return { authorized: false, error: "Missing Authorization header" };
+    }
 
-  return await verifyAuth0Token(authHeader);
+    const user = await verifyAuth0Token(authHeader);
+    return { authorized: true, user };
+  } catch (error) {
+    return { authorized: false, error: error.message };
+  }
 }
 
 /**
  * Require instructor access (must be @ccsnh.edu but NOT @students.ccsnh.edu)
- * @param {Request} request - The incoming request
- * @returns {Promise<{sub: string, email: string}>} Instructor info
- * @throws {Error} If not an instructor
+ * @param {Request|object} requestOrEvent - The incoming request or Netlify event object
+ * @returns {Promise<{authorized: boolean, user?: {sub: string, email: string}, error?: string}>} Auth result
  */
-export async function requireInstructor(request) {
-  const user = await requireAuth(request);
+export async function requireInstructor(requestOrEvent) {
+  const authResult = await requireAuth(requestOrEvent);
   
-  const email = user.email || "";
+  if (!authResult.authorized) {
+    return authResult;
+  }
+  
+  const email = authResult.user.email || "";
   const isInstructor = email.endsWith("@ccsnh.edu") && !email.includes("@students.");
   
   if (!isInstructor) {
-    throw new Error("Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu).");
+    return { authorized: false, error: "Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu)." };
   }
   
-  return user;
+  return authResult;
 }

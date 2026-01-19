@@ -27,13 +27,18 @@ const AITutor: React.FC = () => {
       .replace(/-$/, '');
     setPageId(id);
 
-    // Get student name from Auth0
+    // Get student name - prefer display name from onboarding, fallback to Auth0
     const getStudentName = async () => {
       try {
-        if (window.__auth?.getUser) {
+        // First, check for display name set during onboarding
+        const onboardingName = localStorage.getItem('cis118m:displayName');
+        
+        let displayName: string | null = onboardingName;
+        
+        // If no onboarding name, try Auth0
+        if (!displayName && window.__auth?.getUser) {
           const user = await window.__auth.getUser();
           // Check for name first, but make sure it's not an email
-          let displayName: string | null = null;
           if (user?.name && !user.name.includes('@')) {
             displayName = user.name;
           } else if (user?.nickname && !user.nickname.includes('@')) {
@@ -41,18 +46,14 @@ const AITutor: React.FC = () => {
           } else if (user?.given_name) {
             displayName = user.given_name;
           }
+        }
           
-          if (displayName) {
-            setStudentName(displayName);
-            const firstName = displayName.split(' ')[0];
-            setMessages([
-              { role: 'assistant', content: `Secure connection active. Senior Architect online. Hello ${firstName}, how can I assist with your technical implementation?` }
-            ]);
-          } else {
-            setMessages([
-              { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
-            ]);
-          }
+        if (displayName) {
+          setStudentName(displayName);
+          const firstName = displayName.split(' ')[0];
+          setMessages([
+            { role: 'assistant', content: `Secure connection active. Senior Architect online. Hello ${firstName}, how can I assist with your technical implementation?` }
+          ]);
         } else {
           setMessages([
             { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
