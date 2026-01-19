@@ -95,15 +95,21 @@ export async function verifyAuth0Token(token) {
 
 /**
  * Extract and verify token from request/event headers
+ * For V2 Functions (Web Request): throws on error, returns user directly
+ * For Handler Functions (Netlify event): returns { authorized, user, error }
+ * 
  * @param {Request|object} requestOrEvent - The incoming request or Netlify event object
- * @returns {Promise<{authorized: boolean, user?: {sub: string, email?: string}, error?: string}>} Auth result
+ * @returns {Promise<{authorized: boolean, user?: {sub: string, email?: string}, error?: string} | {sub: string, email?: string}>}
  */
 export async function requireAuth(requestOrEvent) {
+  // Detect if this is a V2 Function (Web Request with headers.get method)
+  const isV2Function = typeof requestOrEvent.headers?.get === 'function';
+  
   try {
     // Handle both Netlify event object (headers as plain object) and Web Request (headers.get)
     let authHeader;
-    if (requestOrEvent.headers?.get) {
-      // Web Request API style
+    if (isV2Function) {
+      // Web Request API style (V2 Functions)
       authHeader = requestOrEvent.headers.get("Authorization");
     } else if (requestOrEvent.headers) {
       // Netlify event style - headers is a plain object (case-insensitive keys)
@@ -111,34 +117,66 @@ export async function requireAuth(requestOrEvent) {
     }
     
     if (!authHeader) {
+      if (isV2Function) {
+        throw new Error("No authorization header");
+      }
       return { authorized: false, error: "Missing Authorization header" };
     }
 
     const user = await verifyAuth0Token(authHeader);
+    
+    // V2 Functions expect user directly, handler functions expect { authorized, user }
+    if (isV2Function) {
+      return user;
+    }
     return { authorized: true, user };
   } catch (error) {
+    if (isV2Function) {
+      throw error;
+    }
     return { authorized: false, error: error.message };
   }
 }
 
 /**
  * Require instructor access (must be @ccsnh.edu but NOT @students.ccsnh.edu)
+ * For V2 Functions (Web Request): throws on error, returns user directly
+ * For Handler Functions (Netlify event): returns { authorized, user, error }
+ * 
  * @param {Request|object} requestOrEvent - The incoming request or Netlify event object
- * @returns {Promise<{authorized: boolean, user?: {sub: string, email: string}, error?: string}>} Auth result
+ * @returns {Promise<{authorized: boolean, user?: {sub: string, email: string}, error?: string} | {sub: string, email: string}>}
  */
 export async function requireInstructor(requestOrEvent) {
-  const authResult = await requireAuth(requestOrEvent);
+  // Detect if this is a V2 Function (Web Request with headers.get method)
+  const isV2Function = typeof requestOrEvent.headers?.get === 'function';
   
-  if (!authResult.authorized) {
-    return authResult;
+  try {
+    const authResult = await requireAuth(requestOrEvent);
+    
+    // For V2 functions, authResult is the user directly
+    // For handler functions, authResult is { authorized, user, error }
+    const user = isV2Function ? authResult : authResult.user;
+    
+    if (!isV2Function && !authResult.authorized) {
+      return authResult;
+    }
+    
+    const email = user?.email || "";
+    const isInstructor = email.endsWith("@ccsnh.edu") && !email.includes("@students.");
+    
+    if (!isInstructor) {
+      if (isV2Function) {
+        throw new Error("Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu).");
+      }
+      return { authorized: false, error: "Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu)." };
+    }
+    
+    return isV2Function ? user : { authorized: true, user };
+  } catch (error) {
+    if (isV2Function) {
+      throw error;
+    }
+    return { authorized: false, error: error.message };
   }
-  
-  const email = authResult.user.email || "";
-  const isInstructor = email.endsWith("@ccsnh.edu") && !email.includes("@students.");
-  
-  if (!isInstructor) {
-    return { authorized: false, error: "Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu)." };
-  }
-  
-  return authResult;
+}
 }
