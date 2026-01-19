@@ -1,11 +1,35 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAccessToken } from '../lib/auth';
+import { WEEKS } from '../config/site';
 
 // Number of weeks in course
-const TOTAL_WEEKS = 16;
+const TOTAL_WEEKS = 15;
 
 // Assignment type
 type AssignmentType = 'participation' | 'quiz' | 'homework' | 'lab' | 'final';
+
+// Get due date for a week number (1-indexed)
+const getWeekDueDate = (weekNum: number): Date | null => {
+  const weekConfig = WEEKS.find(w => parseInt(w.slug) === weekNum);
+  if (weekConfig?.dueDate) {
+    return new Date(weekConfig.dueDate);
+  }
+  return null;
+};
+
+// Check if a week is past due
+const isWeekPastDue = (weekNum: number): boolean => {
+  const dueDate = getWeekDueDate(weekNum);
+  if (!dueDate) return false;
+  return new Date() > dueDate;
+};
+
+// Check if a week has started (is unlocked)
+const isWeekStarted = (weekNum: number): boolean => {
+  const weekConfig = WEEKS.find(w => parseInt(w.slug) === weekNum);
+  if (!weekConfig?.unlockDate) return false;
+  return new Date() >= new Date(weekConfig.unlockDate);
+};
 
 // Color scheme for each assignment type
 const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: string }> = {
@@ -107,6 +131,10 @@ const hasSyllabusQuizPassed = (parsed: { [pageId: string]: { score?: number } } 
 };
 
 // Calculate weighted totals by category and overall
+// Logic matches StudentGrades:
+// - If assignment is submitted: count the actual score
+// - If week is past due and not submitted: count as 0
+// - If week is current/future and not submitted: don't count at all
 const calculateWeightedTotals = (
   parsed: { [pageId: string]: { score?: number; status?: string } } | undefined,
   participationByWeek: { [week: number]: number },
@@ -139,19 +167,41 @@ const calculateWeightedTotals = (
   const participationScores: number[] = [];
   
   for (const assignment of assignments) {
-    const score = parsed[assignment.id]?.score;
+    const weekNum = assignment.week;
+    const weekPastDue = isWeekPastDue(weekNum);
+    const weekStarted = isWeekStarted(weekNum);
+    
     if (assignment.type === 'participation') {
       // Calculate per-week participation as 0-100 score
-      const weekCount = participationByWeek[assignment.week] || 0;
+      const weekCount = participationByWeek[weekNum] || 0;
       const weekScore = Math.min(100, (weekCount / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
+      
       if (weekCount > 0) {
+        // Student participated, count their score
         participationScores.push(weekScore);
+      } else if (weekPastDue) {
+        // Week is past due with no participation, count as 0
+        participationScores.push(0);
       }
-    } else if (score !== undefined && score !== null) {
-      if (assignment.type === 'lab') labScores.push(score);
-      else if (assignment.type === 'quiz') quizScores.push(score);
-      else if (assignment.type === 'homework') homeworkScores.push(score);
-      else if (assignment.type === 'final') finalScores.push(score);
+      // Otherwise: week not due yet, don't count
+    } else {
+      const score = parsed[assignment.id]?.score;
+      const hasScore = score !== undefined && score !== null;
+      
+      if (hasScore) {
+        // Assignment was submitted, count actual score
+        if (assignment.type === 'lab') labScores.push(score);
+        else if (assignment.type === 'quiz') quizScores.push(score);
+        else if (assignment.type === 'homework') homeworkScores.push(score);
+        else if (assignment.type === 'final') finalScores.push(score);
+      } else if (weekPastDue && weekStarted) {
+        // Week is past due with no submission, count as 0
+        if (assignment.type === 'lab') labScores.push(0);
+        else if (assignment.type === 'quiz') quizScores.push(0);
+        else if (assignment.type === 'homework') homeworkScores.push(0);
+        else if (assignment.type === 'final') finalScores.push(0);
+      }
+      // Otherwise: week not due yet, don't count
     }
   }
   
@@ -163,17 +213,42 @@ const calculateWeightedTotals = (
   const finalAvg = avg(finalScores);
   const participationAvg = avg(participationScores);
   
-  const labsWeighted = labsAvg * WEIGHTS.labs;
-  const quizzesWeighted = quizzesAvg * WEIGHTS.quizzes;
-  const homeworkWeighted = homeworkAvg * WEIGHTS.homework;
-  const participationWeighted = participationAvg * WEIGHTS.participation;
-  const finalWeighted = finalAvg * WEIGHTS.final;
-  
-  const courseTotal = labsWeighted + quizzesWeighted + homeworkWeighted + participationWeighted + finalWeighted;
+  // Calculate weighted totals, but only include categories that have countable assignments
+  // If a category has no assignments (past due or submitted), don't penalize the student
+  let totalWeight = 0;
+  let weightedSum = 0;
+
+  if (labScores.length > 0) {
+    totalWeight += WEIGHTS.labs;
+    weightedSum += labsAvg * WEIGHTS.labs;
+  }
+  if (quizScores.length > 0) {
+    totalWeight += WEIGHTS.quizzes;
+    weightedSum += quizzesAvg * WEIGHTS.quizzes;
+  }
+  if (homeworkScores.length > 0) {
+    totalWeight += WEIGHTS.homework;
+    weightedSum += homeworkAvg * WEIGHTS.homework;
+  }
+  if (participationScores.length > 0) {
+    totalWeight += WEIGHTS.participation;
+    weightedSum += participationAvg * WEIGHTS.participation;
+  }
+  if (finalScores.length > 0) {
+    totalWeight += WEIGHTS.final;
+    weightedSum += finalAvg * WEIGHTS.final;
+  }
+
+  // Normalize to 100% scale (scale up to what grades would be if all categories had data)
+  const courseTotal = totalWeight > 0 ? (weightedSum / totalWeight) : 0;
   
   return {
     courseTotal,
-    labsWeighted, quizzesWeighted, homeworkWeighted, participationWeighted, finalWeighted,
+    labsWeighted: labScores.length > 0 ? labsAvg * WEIGHTS.labs : 0, 
+    quizzesWeighted: quizScores.length > 0 ? quizzesAvg * WEIGHTS.quizzes : 0, 
+    homeworkWeighted: homeworkScores.length > 0 ? homeworkAvg * WEIGHTS.homework : 0, 
+    participationWeighted: participationScores.length > 0 ? participationAvg * WEIGHTS.participation : 0, 
+    finalWeighted: finalScores.length > 0 ? finalAvg * WEIGHTS.final : 0,
     labsAvg, quizzesAvg, homeworkAvg, participationAvg, finalAvg
   };
 };
