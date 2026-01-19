@@ -13,16 +13,23 @@ const { title = "Embedded Editor" } = Astro.props;
     <!-- Apply theme before render to prevent flash -->
     <script is:inline>
       (function() {
+        var theme = 'dark';
         // Try to get theme from parent window first
         try {
           var parentTheme = window.parent?.document?.documentElement?.getAttribute('data-theme');
           if (parentTheme) {
-            document.documentElement.setAttribute('data-theme', parentTheme);
-            return;
+            theme = parentTheme;
           }
         } catch (e) {}
-        var theme = localStorage.getItem('cis118m:theme') || 'dark';
+        if (theme === 'dark') {
+          theme = localStorage.getItem('cis118m:theme') || 'dark';
+        }
         document.documentElement.setAttribute('data-theme', theme);
+        document.body?.setAttribute('data-theme', theme);
+        // Also set it once body is available
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.setAttribute('data-theme', theme);
+        });
       })();
     </script>
     
