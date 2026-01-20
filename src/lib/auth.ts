@@ -53,35 +53,21 @@ export async function login(returnTo = "/") {
 export async function logout() {
   const c = await getClient();
   
-  // Clear user-specific cached data from localStorage
-  // These are keys that store data that should not persist across user sessions
-  const userSpecificKeys = [
-    'cis118m:displayName',
-    'cis118m:onboardingComplete',
-    'cis118m:siteTourComplete',
-    'cis118m:isPrivilegedUser',
-    'cis118m:progress',
-    'cis118m_progress_v1',
-  ];
-  
-  userSpecificKeys.forEach(key => {
-    try { localStorage.removeItem(key); } catch {}
-  });
-  
-  // Also clear any saved code (starts with cis118m: and ends with :Program.cs)
+  // Clear ALL user-specific cached data from localStorage
+  // Keep only theme preference which is harmless
   try {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('cis118m:') && key.endsWith(':Program.cs')) {
-        keysToRemove.push(key);
-      }
-      // Also clear lab tour keys
-      if (key && key.startsWith('cis118m:lab-tour-completed:')) {
+      if (key && key.startsWith('cis118m:') && key !== 'cis118m:theme') {
         keysToRemove.push(key);
       }
     }
     keysToRemove.forEach(key => localStorage.removeItem(key));
+    
+    // Also remove these non-prefixed keys
+    localStorage.removeItem('cis118m_progress_v1');
+    localStorage.removeItem('access_token');
   } catch {}
   
   // Clear the cached Auth0 client
