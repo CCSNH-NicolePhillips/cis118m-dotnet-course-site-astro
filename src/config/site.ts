@@ -39,7 +39,15 @@ export const WEEKS: WeekConfig[] = [
       { title: '06. Weekly Assessment (Graded)', href: '/week-01/weekly-assessment/' }
     ]
   },
-  { slug: '02', title: 'Week 02: First C# Program', unlockDate: '2026-01-26T00:00:00-05:00', dueDate: '2026-02-01T23:59:59-05:00', pages: [] },
+  { slug: '02', title: 'Week 02: First C# Program', unlockDate: '2026-01-26T00:00:00-05:00', dueDate: '2026-02-01T23:59:59-05:00', pages: [
+      { title: '2.1 Namespaces & Classes', href: '/week-02/2-1-namespaces/' },
+      { title: '2.2 The Main Method', href: '/week-02/2-2-main-method/' },
+      { title: '2.3 Compilation Pipeline', href: '/week-02/2-3-compilation/' },
+      { title: '2.4 Code Style & Conventions', href: '/week-02/2-4-style/' },
+      { title: 'Lab: Build a Program (Graded)', href: '/week-02/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-02/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-02/weekly-assessment/' }
+    ] },
   { slug: '03', title: 'Week 03: Variables & Data Types', unlockDate: '2026-02-02T00:00:00-05:00', dueDate: '2026-02-08T23:59:59-05:00', pages: [] },
   { slug: '04', title: 'Week 04: Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00', pages: [] },
   { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [] },

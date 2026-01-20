@@ -1,0 +1,280 @@
+---
+/**
+ * KnowledgeCheck Component - Quick participation check
+ * 
+ * A single-question check that awards participation points when answered correctly.
+ * Tracks completion in Redis for the 10% Participation grade.
+ */
+
+interface Props {
+  checkId: string;
+  question: string;
+  correctAnswer: string;
+  explanation?: string;
+}
+
+const { checkId, question, correctAnswer, explanation } = Astro.props;
+---
+
+<div class="knowledge-check" data-check-id={checkId} data-correct={correctAnswer}>
+  <div class="knowledge-check-header">
+    <span class="knowledge-check-icon">🧠</span>
+    <h4>Knowledge Check</h4>
+  </div>
+  
+  <div class="knowledge-check-content">
+    <p class="knowledge-check-question">{question}</p>
+    
+    <div class="knowledge-check-input">
+      <textarea 
+        class="knowledge-check-answer" 
+        placeholder="Type your answer here..."
+        rows="3"
+      ></textarea>
+      <button type="button" class="knowledge-check-submit vscode-button">
+        Check Answer
+      </button>
+    </div>
+    
+    <div class="knowledge-check-feedback" style="display: none;">
+      <div class="feedback-correct" style="display: none;">
+        <span class="feedback-icon">✅</span>
+        <span class="feedback-text">Correct! +1 Participation Point</span>
+      </div>
+      <div class="feedback-incorrect" style="display: none;">
+        <span class="feedback-icon">💡</span>
+        <span class="feedback-text">Not quite. Review the material above and try again.</span>
+      </div>
+      {explanation && (
+        <div class="feedback-explanation" style="display: none;">
+          <strong>Explanation:</strong> {explanation}
+        </div>
+      )}
+    </div>
+    
+    <div class="knowledge-check-completed" style="display: none;">
+      <span class="completed-icon">🏆</span>
+      <span class="completed-text">You've already completed this knowledge check!</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize knowledge checks
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.knowledge-check').forEach(initKnowledgeCheck);
+  });
+
+  async function initKnowledgeCheck(container: Element) {
+    const checkId = container.getAttribute('data-check-id');
+    const correctAnswer = container.getAttribute('data-correct') || '';
+    const submitBtn = container.querySelector('.knowledge-check-submit') as HTMLButtonElement;
+    const textarea = container.querySelector('.knowledge-check-answer') as HTMLTextAreaElement;
+    const feedbackDiv = container.querySelector('.knowledge-check-feedback') as HTMLElement;
+    const completedDiv = container.querySelector('.knowledge-check-completed') as HTMLElement;
+    const inputDiv = container.querySelector('.knowledge-check-input') as HTMLElement;
+    const correctFeedback = container.querySelector('.feedback-correct') as HTMLElement;
+    const incorrectFeedback = container.querySelector('.feedback-incorrect') as HTMLElement;
+    const explanationDiv = container.querySelector('.feedback-explanation') as HTMLElement;
+
+    // Check if already completed
+    const completed = await checkCompletion(checkId);
+    if (completed) {
+      inputDiv.style.display = 'none';
+      completedDiv.style.display = 'flex';
+      return;
+    }
+
+    submitBtn?.addEventListener('click', async () => {
+      const userAnswer = textarea.value.trim().toLowerCase();
+      const correct = correctAnswer.toLowerCase();
+      
+      // Simple fuzzy matching - check if key phrases are present
+      const keyPhrases = correct.split(/[,.]/).map(p => p.trim()).filter(p => p.length > 3);
+      const matchCount = keyPhrases.filter(phrase => 
+        userAnswer.includes(phrase) || phrase.split(' ').every(word => userAnswer.includes(word))
+      ).length;
+      
+      // Consider correct if user mentions organization AND conflicts/collisions
+      const mentionsOrganize = /organiz|structure|group|container|separate/i.test(userAnswer);
+      const mentionsConflicts = /conflict|collision|clash|duplicate|same name/i.test(userAnswer);
+      const isCorrect = (matchCount >= 1) || (mentionsOrganize && mentionsConflicts);
+      
+      feedbackDiv.style.display = 'block';
+      
+      if (isCorrect) {
+        correctFeedback.style.display = 'flex';
+        incorrectFeedback.style.display = 'none';
+        if (explanationDiv) explanationDiv.style.display = 'block';
+        
+        // Record participation
+        await recordParticipation(checkId);
+        
+        // After a moment, show completed state
+        setTimeout(() => {
+          inputDiv.style.display = 'none';
+          feedbackDiv.style.display = 'none';
+          completedDiv.style.display = 'flex';
+        }, 3000);
+      } else {
+        correctFeedback.style.display = 'none';
+        incorrectFeedback.style.display = 'flex';
+        if (explanationDiv) explanationDiv.style.display = 'none';
+      }
+    });
+  }
+
+  async function checkCompletion(checkId: string | null): Promise<boolean> {
+    if (!checkId) return false;
+    try {
+      if (!window.__auth) return false;
+      const authed = await window.__auth.isAuthed();
+      if (!authed) return false;
+      
+      const token = await window.__auth.getToken();
+      const res = await fetch('/api/progress-get', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return false;
+      
+      const data = await res.json();
+      return data.progress?.[`knowledge-check:${checkId}`] === true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function recordParticipation(checkId: string | null) {
+    if (!checkId) return;
+    try {
+      if (!window.__auth) return;
+      const authed = await window.__auth.isAuthed();
+      if (!authed) return;
+      
+      const token = await window.__auth.getToken();
+      await fetch('/api/progress-update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          pageId: `knowledge-check:${checkId}`,
+          status: true,
+          type: 'participation'
+        })
+      });
+    } catch (e) {
+      console.error('[KnowledgeCheck] Failed to record participation:', e);
+    }
+  }
+</script>
+
+<style>
+  .knowledge-check {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+  }
+
+  .knowledge-check-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .knowledge-check-icon {
+    font-size: 1.5rem;
+  }
+
+  .knowledge-check-header h4 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .knowledge-check-question {
+    color: #e0e0e0;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .knowledge-check-answer {
+    width: 100%;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    margin-bottom: 12px;
+  }
+
+  .knowledge-check-answer:focus {
+    outline: none;
+    border-color: #4ec9b0;
+    box-shadow: 0 0 0 2px rgba(78, 201, 176, 0.2);
+  }
+
+  .knowledge-check-submit {
+    padding: 10px 24px;
+    font-weight: 600;
+  }
+
+  .knowledge-check-feedback {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+  }
+
+  .feedback-correct, .feedback-incorrect {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+  }
+
+  .feedback-correct {
+    color: #4ec9b0;
+  }
+
+  .feedback-incorrect {
+    color: #f0ad4e;
+  }
+
+  .feedback-icon {
+    font-size: 1.2rem;
+  }
+
+  .feedback-explanation {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .knowledge-check-completed {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(78, 201, 176, 0.1);
+    border-radius: 8px;
+    color: #4ec9b0;
+    font-weight: 500;
+  }
+
+  .completed-icon {
+    font-size: 1.5rem;
+  }
+</style>

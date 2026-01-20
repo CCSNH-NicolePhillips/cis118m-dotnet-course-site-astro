@@ -1,0 +1,171 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 02 • First C# Program"
+description: "Understanding the anatomy and structure of a C# program"
+---
+
+# Week 02: First C# Program
+
+<div class="mission-brief">
+  <h2>🎯 Mission Objective</h2>
+  <p>
+    This week you transition from <strong>observer</strong> to <strong>architect</strong>. You will dissect the anatomy of a C# program—understanding exactly why every line exists and what role it plays in the execution pipeline.
+  </p>
+  <p>
+    <em>Focus: Anatomy and Structure. Variables and User Input are covered in later weeks.</em>
+  </p>
+</div>
+
+---
+
+## 📋 Week Overview
+
+| Section | Topic | Focus |
+|---------|-------|-------|
+| **2.1** | [Namespaces & Classes](/week-02/2-1-namespaces/) | Organizational containers and blueprints |
+| **2.2** | [The Main Method](/week-02/2-2-main-method/) | Program entry point and execution flow |
+| **2.3** | [Compilation Pipeline](/week-02/2-3-compilation/) | From source code to running program |
+| **2.4** | [Code Style & Conventions](/week-02/2-4-style/) | Professional formatting standards |
+
+---
+
+## 🏗️ The Structural Foundation
+
+Every C# program follows a strict hierarchy:
+
+```
+Namespace (Organization)
+  └── Class (Blueprint)
+        └── Method (Action)
+              └── Statements (Instructions)
+```
+
+Think of it like a corporation:
+- **Namespace** = The company (prevents name collisions with other companies)
+- **Class** = A department (contains related functionality)
+- **Method** = An employee's job role (performs specific tasks)
+- **Statements** = The actual work being done
+
+---
+
+## 🎓 Learning Objectives
+
+By the end of this week, you will be able to:
+
+1. **Explain** why namespaces prevent naming conflicts in large systems
+2. **Identify** the required components of a minimal C# program
+3. **Describe** the compilation process from `.cs` to executable
+4. **Apply** professional code formatting conventions
+5. **Write** a complete, well-structured C# console application
+
+---
+
+## 📚 This Week's Content
+
+<div class="week-nav-cards">
+  <a href="/week-02/2-1-namespaces/" class="nav-card">
+    <span class="nav-card-number">2.1</span>
+    <span class="nav-card-title">Namespaces & Classes</span>
+    <span class="nav-card-desc">Organizational structure for enterprise code</span>
+  </a>
+  
+  <a href="/week-02/2-2-main-method/" class="nav-card">
+    <span class="nav-card-number">2.2</span>
+    <span class="nav-card-title">The Main Method</span>
+    <span class="nav-card-desc">Where your program begins execution</span>
+  </a>
+  
+  <a href="/week-02/2-3-compilation/" class="nav-card">
+    <span class="nav-card-number">2.3</span>
+    <span class="nav-card-title">Compilation Pipeline</span>
+    <span class="nav-card-desc">How code becomes a running program</span>
+  </a>
+  
+  <a href="/week-02/2-4-style/" class="nav-card">
+    <span class="nav-card-number">2.4</span>
+    <span class="nav-card-title">Code Style & Conventions</span>
+    <span class="nav-card-desc">Writing code like a professional</span>
+  </a>
+</div>
+
+---
+
+## 📅 Schedule
+
+| Activity | Points | Due |
+|----------|--------|-----|
+| Section Readings (2.1–2.4) | Participation | Throughout week |
+| Knowledge Checks | 10% of participation | After each section |
+| Lab: Build a Program | 40 pts | Sunday 11:59 PM |
+| Technical Reflection | 20 pts | Sunday 11:59 PM |
+| Weekly Assessment | 40 pts | Sunday 11:59 PM |
+
+---
+
+<div class="next-step">
+  <h3>🚀 Ready to Begin?</h3>
+  <p>Start with <strong>Section 2.1: Namespaces & Classes</strong> to understand how professional C# code is organized.</p>
+  <a href="/week-02/2-1-namespaces/" class="vscode-button">Begin Section 2.1 →</a>
+</div>
+
+<style>
+{`
+  .week-nav-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .nav-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: linear-gradient(135deg, #1e1e2e 0%, #252536 100%);
+    border: 1px solid #3d3d5c;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-card:hover {
+    border-color: #4ec9b0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 201, 176, 0.15);
+  }
+  
+  .nav-card-number {
+    font-size: 0.85rem;
+    color: #4ec9b0;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .nav-card-title {
+    font-size: 1.1rem;
+    color: #e0e0e0;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .nav-card-desc {
+    font-size: 0.9rem;
+    color: #888;
+    line-height: 1.4;
+  }
+  
+  .next-step {
+    background: linear-gradient(135deg, #1a2a1a 0%, #1e2e1e 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 32px;
+    text-align: center;
+  }
+  
+  .next-step h3 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+`}
+</style>

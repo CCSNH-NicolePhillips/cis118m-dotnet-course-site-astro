@@ -1,0 +1,406 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 2.1 • Namespaces & Classes"
+description: "Understanding the organizational hierarchy of C# programs"
+---
+
+import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 2.1: Namespaces & Classes
+
+<div class="section-header">
+  <div class="section-badge">📦 Structural Foundation</div>
+  <p class="section-time">⏱️ Estimated Time: 20 minutes</p>
+</div>
+
+---
+
+## 🏛️ The Senior Architect's Perspective
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>From the Field: Enterprise Systems</h4>
+    <p>
+      In my 15 years building enterprise systems—airline reservation platforms like Amadeus, banking cores, healthcare records—I've seen what happens when code organization fails. Imagine two teams independently creating a class called <code>Customer</code>. Without namespaces, the compiler wouldn't know which one you meant. The entire build fails.
+    </p>
+    <p>
+      <strong>Namespaces aren't optional in professional development. They're the foundation that prevents chaos.</strong>
+    </p>
+  </div>
+</div>
+
+---
+
+## 📦 What is a Namespace?
+
+A **namespace** is a container that organizes your code and prevents naming conflicts.
+
+Think of it like a **postal system**:
+- "John Smith" might be a common name
+- But "John Smith, 123 Oak Street, Boston, MA" is unique
+- The address (namespace) makes the name unambiguous
+
+```csharp
+namespace Airline.Reservations
+{
+    class Customer { /* booking info */ }
+}
+
+namespace Airline.Loyalty
+{
+    class Customer { /* points, status */ }
+}
+
+// Both "Customer" classes can coexist because they're in different namespaces
+```
+
+### Real-World Example: Amadeus GDS
+
+The Amadeus Global Distribution System handles **millions** of flight bookings daily. Their codebase includes:
+
+| Namespace | Purpose |
+|-----------|---------|
+| `Amadeus.Flights.Search` | Finding available flights |
+| `Amadeus.Flights.Booking` | Reserving seats |
+| `Amadeus.Flights.Pricing` | Calculating fares |
+| `Amadeus.Hotels.Search` | Finding hotels |
+| `Amadeus.Hotels.Booking` | Reserving rooms |
+
+Without namespaces, a `Search` class in Flights would collide with `Search` in Hotels.
+
+---
+
+## 🏗️ What is a Class?
+
+A **class** is a blueprint that contains your code logic. Every piece of executable code in C# lives inside a class.
+
+Think of it like an **architectural blueprint**:
+- The blueprint (class) defines what a house could be
+- The actual house (object) is built from that blueprint
+- You can build many houses from one blueprint
+
+```csharp
+namespace MyProgram
+{
+    class Program  // The blueprint
+    {
+        // All your code goes inside here
+    }
+}
+```
+
+### The Minimum Structure
+
+Every C# program requires at least:
+
+```csharp
+namespace ProgramName      // 1. Container for organization
+{
+    class Program          // 2. Blueprint for logic
+    {
+        static void Main() // 3. Entry point (covered in 2.2)
+        {
+            // Your code here
+        }
+    }
+}
+```
+
+---
+
+## 🔍 Anatomy Breakdown
+
+Let's dissect each piece:
+
+<div class="anatomy-diagram">
+  <div class="anatomy-line">
+    <code>namespace MyCompany.ProjectName</code>
+    <span class="anatomy-label">📁 Namespace: Organizational container</span>
+  </div>
+  <div class="anatomy-line indent-1">
+    <code>{`{`}</code>
+    <span class="anatomy-label">Opening brace: Start of namespace scope</span>
+  </div>
+  <div class="anatomy-line indent-2">
+    <code>class Program</code>
+    <span class="anatomy-label">📋 Class: Blueprint for your program</span>
+  </div>
+  <div class="anatomy-line indent-2">
+    <code>{`{`}</code>
+    <span class="anatomy-label">Opening brace: Start of class scope</span>
+  </div>
+  <div class="anatomy-line indent-3">
+    <code>// Methods and code go here</code>
+    <span class="anatomy-label">💻 Class body: Where logic lives</span>
+  </div>
+  <div class="anatomy-line indent-2">
+    <code>{`}`}</code>
+    <span class="anatomy-label">Closing brace: End of class scope</span>
+  </div>
+  <div class="anatomy-line indent-1">
+    <code>{`}`}</code>
+    <span class="anatomy-label">Closing brace: End of namespace scope</span>
+  </div>
+</div>
+
+---
+
+## 💡 The `using` Directive
+
+Instead of typing the full namespace path every time, you can import it:
+
+```csharp
+// Without using:
+System.Console.WriteLine("Hello!");
+
+// With using:
+using System;
+Console.WriteLine("Hello!");
+```
+
+The `using` directive at the top of your file says: *"I'll be using classes from this namespace, so let me reference them by short name."*
+
+### Common Using Directives
+
+```csharp
+using System;                    // Console, Math, String, etc.
+using System.Collections.Generic; // List<T>, Dictionary<K,V>
+using System.IO;                 // File operations
+using System.Linq;               // Query operations
+```
+
+---
+
+## 🎯 Try It: Namespace Organization
+
+<TryItNowRunner
+  starterId="week-02-namespaces-demo"
+  title="Explore Namespaces"
+  starterCode={`using System;
+
+namespace University.Registration
+{
+    class Student
+    {
+        public static void Enroll()
+        {
+            Console.WriteLine("Student enrolled in courses!");
+        }
+    }
+}
+
+namespace University.Finance
+{
+    class Student
+    {
+        public static void Pay()
+        {
+            Console.WriteLine("Student paid tuition!");
+        }
+    }
+}
+
+// Main program
+namespace University
+{
+    class Program
+    {
+        static void Main()
+        {
+            // Both Student classes exist - no conflict!
+            Registration.Student.Enroll();
+            Finance.Student.Pay();
+        }
+    }
+}`}
+  height="450px"
+/>
+
+---
+
+## 📋 Key Takeaways
+
+<div class="takeaways">
+  <div class="takeaway">
+    <span class="takeaway-icon">📦</span>
+    <div>
+      <strong>Namespaces organize code</strong>
+      <p>They group related classes and prevent naming collisions in large systems.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">🏗️</span>
+    <div>
+      <strong>Classes are blueprints</strong>
+      <p>All executable code must live inside a class. Classes define what your program can do.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">🔗</span>
+    <div>
+      <strong>`using` imports namespaces</strong>
+      <p>The <code>using</code> directive lets you reference classes by their short names.</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
+
+<KnowledgeCheck
+  checkId="week-02-2-1-namespaces"
+  question="Why do professional C# projects require Namespaces?"
+  correctAnswer="To organize code and prevent naming conflicts in large systems."
+  explanation="In enterprise systems with thousands of classes, namespaces prevent two classes with the same name from colliding. They also logically group related functionality, making codebases easier to navigate and maintain."
+/>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 2.2 - The Main Method</strong></p>
+  <p>Learn where your program starts executing and why <code>Main()</code> is special.</p>
+  <a href="/week-02/2-2-main-method/" class="vscode-button">Continue to Section 2.2 →</a>
+</div>
+
+<style>
+{`
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .section-badge {
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .section-time {
+    color: #888;
+    margin: 0;
+  }
+  
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-left: 4px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .architect-avatar {
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  
+  .architect-content h4 {
+    margin-top: 0;
+    color: #f0ad4e;
+  }
+  
+  .architect-content p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  
+  .architect-content p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .anatomy-diagram {
+    background: #0d1117;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  
+  .anatomy-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #21262d;
+  }
+  
+  .anatomy-line:last-child {
+    border-bottom: none;
+  }
+  
+  .anatomy-line code {
+    color: #79c0ff;
+  }
+  
+  .anatomy-label {
+    color: #8b949e;
+    font-size: 0.85rem;
+    font-family: system-ui, sans-serif;
+  }
+  
+  .indent-1 { padding-left: 20px; }
+  .indent-2 { padding-left: 40px; }
+  .indent-3 { padding-left: 60px; }
+  
+  .takeaways {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .takeaway {
+    display: flex;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+  }
+  
+  .takeaway-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .takeaway strong {
+    color: #4ec9b0;
+  }
+  
+  .takeaway p {
+    margin: 4px 0 0;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, #1e2e1e 0%, #1a2a1a 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+  }
+  
+  .next-section a {
+    margin-top: 16px;
+  }
+`}
+</style>
