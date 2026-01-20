@@ -141,7 +141,10 @@ Return JSON:
     // Also add to submission history (keep last 5 attempts)
     const historyKey = `submissions:${sub}:${assignmentId}:history`;
     const existingHistory = await redis.get(historyKey);
-    let history = existingHistory ? JSON.parse(existingHistory) : [];
+    // Handle both string and object responses from Redis
+    let history = existingHistory 
+      ? (typeof existingHistory === 'string' ? JSON.parse(existingHistory) : existingHistory)
+      : [];
     history.unshift(submission); // Add to front
     if (history.length > 5) history = history.slice(0, 5); // Keep max 5
     await redis.set(historyKey, JSON.stringify(history));
