@@ -115,21 +115,22 @@
     padding: 20px 24px;
     max-width: 400px;
     min-width: 320px;
-    max-height: 80vh;
-    overflow-y: auto;
     color: #f1f5f9;
     box-shadow: 
       0 20px 50px rgba(0, 0, 0, 0.5),
       0 0 30px rgba(78, 201, 176, 0.2);
     z-index: 10002;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: visible !important;
   }
 
   .tour-step-indicator {
-    display: flex;
+    display: flex !important;
     gap: 8px;
     margin-bottom: 16px;
     justify-content: center;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   .tour-step-dot {
@@ -138,6 +139,8 @@
     border-radius: 50%;
     background: #334155;
     transition: all 0.3s ease;
+    display: block !important;
+    visibility: visible !important;
   }
 
   .tour-step-dot.active {
@@ -153,17 +156,23 @@
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 20px;
+    display: block !important;
+    visibility: visible !important;
   }
 
   .tour-content h4 {
     margin: 0 0 10px 0;
-    font-size: 1.15rem;
-    color: #4ec9b0;
+    font-size: 1.15rem !important;
+    color: #4ec9b0 !important;
+    display: block !important;
+    visibility: visible !important;
   }
 
   .tour-content p {
     margin: 0;
-    color: #cbd5e1;
+    color: #cbd5e1 !important;
+    display: block !important;
+    visibility: visible !important;
   }
 
   .tour-buttons {
