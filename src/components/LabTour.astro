@@ -204,11 +204,6 @@
     box-shadow: 0 4px 20px rgba(78, 201, 176, 0.4);
   }
 
-  /* Cutout effect for backdrop */
-  .tour-backdrop.with-cutout {
-    clip-path: var(--cutout-path);
-  }
-
   /* Elevate highlighted elements above the backdrop during tour */
   :global(.tour-highlighted) {
     position: relative !important;
@@ -344,38 +339,17 @@
             spotlight.style.top = `${rect.top - padding}px`;
             spotlight.style.left = `${rect.left - padding}px`;
             
-            // Create backdrop cutout
-            const cutoutRect = {
-              top: rect.top - padding,
-              left: rect.left - padding,
-              width: rect.width + padding * 2,
-              height: rect.height + padding * 2
-            };
-            
-            backdrop.style.clipPath = `polygon(
-              0% 0%, 0% 100%, 
-              ${cutoutRect.left}px 100%, 
-              ${cutoutRect.left}px ${cutoutRect.top}px, 
-              ${cutoutRect.left + cutoutRect.width}px ${cutoutRect.top}px, 
-              ${cutoutRect.left + cutoutRect.width}px ${cutoutRect.top + cutoutRect.height}px, 
-              ${cutoutRect.left}px ${cutoutRect.top + cutoutRect.height}px, 
-              ${cutoutRect.left}px 100%, 
-              100% 100%, 100% 0%
-            )`;
-            
             // Position tooltip
             positionTooltip(rect, step.position);
           }, 400);
         } else {
           // Element not found, show tooltip in center
           spotlight.style.display = 'none';
-          backdrop.style.clipPath = 'none';
           positionTooltipCenter();
         }
       } else {
         // No selector, center everything
         spotlight.style.display = 'none';
-        backdrop.style.clipPath = 'none';
         positionTooltipCenter();
       }
     }
@@ -458,8 +432,7 @@
         currentHighlightedElement = null;
       }
       
-      // Reset backdrop and spotlight
-      backdrop.style.clipPath = '';
+      // Reset spotlight
       spotlight.style.display = 'none';
       
       // Mark tour as completed for this page
