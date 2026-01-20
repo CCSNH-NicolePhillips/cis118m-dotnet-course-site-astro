@@ -1,0 +1,665 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 2.3 • Compilation Pipeline"
+description: "Understanding how C# source code becomes a running program"
+---
+
+import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+
+# Section 2.3: The Compilation Pipeline
+
+<div class="section-header">
+  <div class="section-badge">⚙️ Build Process</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+## 🔄 From Text to Running Program
+
+When you write C# code, you're writing **human-readable text**. But your computer's CPU doesn't understand C#—it only understands machine code (binary instructions specific to your processor). The compilation pipeline bridges this gap.
+
+<div class="callout-info">
+  <span class="callout-icon">💡</span>
+  <div>
+    <strong>The Key Insight</strong>
+    <p>C# uses a <strong>two-stage compilation</strong> process. This is what makes .NET applications portable across different operating systems.</p>
+  </div>
+</div>
+
+---
+
+## 📊 The Complete Pipeline
+
+<div class="pipeline-diagram">
+  <div class="pipeline-stage source">
+    <div class="stage-icon">📝</div>
+    <div class="stage-content">
+      <h4>Source Code</h4>
+      <p>Your <code>.cs</code> files</p>
+      <code class="stage-example">Program.cs</code>
+    </div>
+  </div>
+  
+  <div class="pipeline-arrow">
+    <span class="arrow-label">Roslyn Compiler</span>
+    <span class="arrow-icon">→</span>
+  </div>
+  
+  <div class="pipeline-stage msil">
+    <div class="stage-icon">📦</div>
+    <div class="stage-content">
+      <h4>MSIL</h4>
+      <p>Microsoft Intermediate Language</p>
+      <code class="stage-example">.dll / .exe</code>
+    </div>
+  </div>
+  
+  <div class="pipeline-arrow">
+    <span class="arrow-label">CLR (at runtime)</span>
+    <span class="arrow-icon">→</span>
+  </div>
+  
+  <div class="pipeline-stage native">
+    <div class="stage-icon">⚡</div>
+    <div class="stage-content">
+      <h4>Machine Code</h4>
+      <p>CPU-specific instructions</p>
+      <code class="stage-example">Binary</code>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🔬 Stage 1: Roslyn Compiler
+
+**Roslyn** is the official C# compiler developed by Microsoft. When you build your project, Roslyn:
+
+1. **Parses** your source code into an Abstract Syntax Tree (AST)
+2. **Analyzes** the code for errors (type mismatches, missing semicolons, etc.)
+3. **Transforms** the C# into **MSIL** (Microsoft Intermediate Language)
+4. **Packages** the MSIL into an assembly (`.dll` or `.exe`)
+
+```bash
+# When you run this command:
+dotnet build
+
+# Roslyn compiles your .cs files into MSIL
+# Output: bin/Debug/net8.0/YourApp.dll
+```
+
+<div class="tech-detail">
+  <h4>🔍 What is Roslyn?</h4>
+  <p>Roslyn is more than a compiler—it's a <strong>compiler-as-a-service</strong>. It powers:</p>
+  <ul>
+    <li>IntelliSense (code completion)</li>
+    <li>Real-time error detection (red squiggles)</li>
+    <li>Code refactoring tools</li>
+    <li>Code analyzers and fixers</li>
+  </ul>
+</div>
+
+---
+
+## 📦 Stage 2: MSIL (The Secret Sauce)
+
+**MSIL** (Microsoft Intermediate Language), also called **IL** or **CIL** (Common Intermediate Language), is a CPU-independent instruction set.
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>Why MSIL Makes C# Cross-Platform</h4>
+    <p>
+      Here's the magic: when you compile C# on Windows, you get MSIL. That same MSIL file can run on:
+    </p>
+    <ul>
+      <li>🪟 Windows (x64, ARM)</li>
+      <li>🐧 Linux (x64, ARM)</li>
+      <li>🍎 macOS (x64, Apple Silicon)</li>
+    </ul>
+    <p>
+      <strong>Compile once, run anywhere.</strong> The local machine's CLR handles the final translation to native code.
+    </p>
+  </div>
+</div>
+
+### What Does MSIL Look Like?
+
+Your C# code:
+```csharp
+Console.WriteLine("Hello, World!");
+```
+
+Becomes MSIL:
+```
+IL_0000: ldstr "Hello, World!"
+IL_0005: call void [System.Console]System.Console::WriteLine(string)
+IL_000a: ret
+```
+
+You don't write MSIL directly—the compiler generates it. But understanding it exists helps you grasp how .NET achieves portability.
+
+---
+
+## ⚡ Stage 3: CLR (Common Language Runtime)
+
+The **CLR** is the execution engine that runs your MSIL at runtime. It performs:
+
+<div class="clr-features">
+  <div class="clr-feature">
+    <span class="feature-icon">🔄</span>
+    <div>
+      <strong>JIT Compilation</strong>
+      <p>Just-In-Time: Converts MSIL to native machine code as needed</p>
+    </div>
+  </div>
+  
+  <div class="clr-feature">
+    <span class="feature-icon">🧹</span>
+    <div>
+      <strong>Garbage Collection</strong>
+      <p>Automatically frees memory when objects are no longer used</p>
+    </div>
+  </div>
+  
+  <div class="clr-feature">
+    <span class="feature-icon">🔒</span>
+    <div>
+      <strong>Type Safety</strong>
+      <p>Ensures type rules are enforced at runtime</p>
+    </div>
+  </div>
+  
+  <div class="clr-feature">
+    <span class="feature-icon">🛡️</span>
+    <div>
+      <strong>Exception Handling</strong>
+      <p>Manages errors and stack unwinding</p>
+    </div>
+  </div>
+</div>
+
+### JIT Compilation Explained
+
+When your program runs:
+
+1. CLR loads the MSIL assembly
+2. When a method is **first called**, the JIT compiler translates it to native code
+3. The native code is **cached** in memory
+4. Subsequent calls use the cached native code (fast!)
+
+```
+First call to PrintMessage():
+  MSIL → JIT Compile → Native Code → Execute → Cache
+
+Second call to PrintMessage():
+  Use Cached Native Code → Execute (no recompilation!)
+```
+
+---
+
+## 🌍 Why This Architecture Matters
+
+<div class="comparison-table">
+  <div class="comparison-row header">
+    <div class="comp-cell">Approach</div>
+    <div class="comp-cell">Compile To</div>
+    <div class="comp-cell">Portability</div>
+  </div>
+  <div class="comparison-row">
+    <div class="comp-cell"><strong>C/C++</strong></div>
+    <div class="comp-cell">Native machine code directly</div>
+    <div class="comp-cell">❌ Must recompile for each OS/CPU</div>
+  </div>
+  <div class="comparison-row">
+    <div class="comp-cell"><strong>C# (.NET)</strong></div>
+    <div class="comp-cell">MSIL (intermediate)</div>
+    <div class="comp-cell">✅ Same binary runs everywhere</div>
+  </div>
+  <div class="comparison-row">
+    <div class="comp-cell"><strong>Java</strong></div>
+    <div class="comp-cell">Bytecode (similar concept)</div>
+    <div class="comp-cell">✅ JVM handles translation</div>
+  </div>
+</div>
+
+---
+
+## 🎯 The Build Process in Action
+
+Here's what happens when you run `dotnet run`:
+
+<div class="build-steps">
+  <div class="build-step">
+    <span class="step-number">1</span>
+    <div class="step-content">
+      <strong>dotnet run</strong>
+      <p>You execute the command</p>
+    </div>
+  </div>
+  
+  <div class="build-step">
+    <span class="step-number">2</span>
+    <div class="step-content">
+      <strong>Restore Dependencies</strong>
+      <p>NuGet packages are downloaded if needed</p>
+    </div>
+  </div>
+  
+  <div class="build-step">
+    <span class="step-number">3</span>
+    <div class="step-content">
+      <strong>Roslyn Compiles</strong>
+      <p>.cs files → MSIL assembly (.dll)</p>
+    </div>
+  </div>
+  
+  <div class="build-step">
+    <span class="step-number">4</span>
+    <div class="step-content">
+      <strong>CLR Loads Assembly</strong>
+      <p>Runtime initializes and loads your code</p>
+    </div>
+  </div>
+  
+  <div class="build-step">
+    <span class="step-number">5</span>
+    <div class="step-content">
+      <strong>Find Main()</strong>
+      <p>Runtime locates the entry point</p>
+    </div>
+  </div>
+  
+  <div class="build-step">
+    <span class="step-number">6</span>
+    <div class="step-content">
+      <strong>JIT & Execute</strong>
+      <p>Methods are JIT-compiled and run</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🛠️ Seeing the Output
+
+When you build a .NET project, check the output folder:
+
+```
+📁 bin/
+  📁 Debug/
+    📁 net8.0/
+      📄 YourApp.dll      ← Your MSIL assembly
+      📄 YourApp.exe      ← Windows launcher (calls the DLL)
+      📄 YourApp.deps.json ← Dependency manifest
+      📄 YourApp.runtimeconfig.json ← Runtime settings
+```
+
+The `.dll` file contains your compiled MSIL. It's portable across all platforms with a compatible .NET runtime.
+
+---
+
+## 📋 Key Takeaways
+
+<div class="takeaways">
+  <div class="takeaway">
+    <span class="takeaway-icon">📝</span>
+    <div>
+      <strong>Roslyn compiles C# to MSIL</strong>
+      <p>The first stage transforms human-readable code into intermediate language.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">🌍</span>
+    <div>
+      <strong>MSIL enables cross-platform</strong>
+      <p>The same compiled binary runs on Windows, Linux, and macOS.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">⚡</span>
+    <div>
+      <strong>CLR JIT-compiles at runtime</strong>
+      <p>The Common Language Runtime translates MSIL to native code when methods are first called.</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
+
+<KnowledgeCheck
+  checkId="week-02-2-3-compilation"
+  question="What is the intermediate format created by the Roslyn compiler before it becomes machine code?"
+  correctAnswer="MSIL - Microsoft Intermediate Language"
+  explanation="When you compile C# code, Roslyn produces MSIL (Microsoft Intermediate Language), not native machine code. MSIL is a CPU-independent instruction set that gets translated to native code by the CLR's JIT compiler at runtime. This two-stage process is what makes .NET applications portable across different platforms."
+/>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 2.4 - Code Style & Conventions</strong></p>
+  <p>Learn professional formatting standards that make your code readable and maintainable.</p>
+  <a href="/week-02/2-4-style/" class="vscode-button">Continue to Section 2.4 →</a>
+</div>
+
+<style>
+{`
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .section-badge {
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .section-time {
+    color: #888;
+    margin: 0;
+  }
+  
+  .callout-info {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, #1a2a3a 0%, #1a1a2e 100%);
+    border-left: 4px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+  
+  .callout-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .callout-info strong {
+    color: #4ec9b0;
+  }
+  
+  .callout-info p {
+    margin: 8px 0 0;
+  }
+  
+  .pipeline-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 32px;
+    background: #0d1117;
+    border-radius: 16px;
+    margin: 24px 0;
+  }
+  
+  .pipeline-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #1e1e2e;
+    border-radius: 12px;
+    min-width: 140px;
+    text-align: center;
+  }
+  
+  .pipeline-stage.source {
+    border: 2px solid #61afef;
+  }
+  
+  .pipeline-stage.msil {
+    border: 2px solid #c678dd;
+  }
+  
+  .pipeline-stage.native {
+    border: 2px solid #98c379;
+  }
+  
+  .stage-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+  }
+  
+  .stage-content h4 {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 1rem;
+  }
+  
+  .stage-content p {
+    margin: 4px 0;
+    color: #888;
+    font-size: 0.8rem;
+  }
+  
+  .stage-example {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 8px;
+    background: #0d1117;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #4ec9b0;
+  }
+  
+  .pipeline-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .arrow-label {
+    font-size: 0.75rem;
+    color: #888;
+    white-space: nowrap;
+  }
+  
+  .arrow-icon {
+    font-size: 1.5rem;
+    color: #4ec9b0;
+  }
+  
+  .tech-detail {
+    background: #1e1e2e;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  
+  .tech-detail h4 {
+    margin-top: 0;
+    color: #61afef;
+  }
+  
+  .tech-detail ul {
+    margin-bottom: 0;
+  }
+  
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-left: 4px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .architect-avatar {
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  
+  .architect-content h4 {
+    margin-top: 0;
+    color: #f0ad4e;
+  }
+  
+  .architect-content ul {
+    margin: 12px 0;
+  }
+  
+  .clr-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .clr-feature {
+    display: flex;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .feature-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .clr-feature strong {
+    color: #4ec9b0;
+    display: block;
+  }
+  
+  .clr-feature p {
+    margin: 4px 0 0;
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  .comparison-table {
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+  
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1.5fr;
+    gap: 1px;
+    background: #30363d;
+  }
+  
+  .comparison-row.header {
+    background: #4ec9b0;
+  }
+  
+  .comparison-row.header .comp-cell {
+    background: #4ec9b0;
+    color: #000;
+    font-weight: 600;
+  }
+  
+  .comp-cell {
+    padding: 12px 16px;
+    background: #1e1e2e;
+  }
+  
+  .build-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0;
+  }
+  
+  .build-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px 20px;
+    border-radius: 8px;
+  }
+  
+  .step-number {
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
+    color: #000;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .step-content strong {
+    color: #e0e0e0;
+    display: block;
+  }
+  
+  .step-content p {
+    margin: 4px 0 0;
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  .takeaways {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .takeaway {
+    display: flex;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+  }
+  
+  .takeaway-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  
+  .takeaway strong {
+    color: #4ec9b0;
+  }
+  
+  .takeaway p {
+    margin: 4px 0 0;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, #1e2e1e 0%, #1a2a1a 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+  }
+  
+  .next-section a {
+    margin-top: 16px;
+  }
+`}
+</style>
