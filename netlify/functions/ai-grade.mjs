@@ -43,7 +43,14 @@ export async function handler(event, context) {
     }
   });
 
-  const prompt = `You are a friendly programming instructor grading a student reflection.
+  const prompt = `You are a friendly, LENIENT programming instructor grading a student's work.
+
+IMPORTANT GRADING PHILOSOPHY:
+- Be GENEROUS with points. If they made an honest attempt, give credit.
+- Do NOT dock points for minor formatting differences (name variations, header wording, etc.)
+- Do NOT dock points for spelling/grammar in comments or strings
+- Focus on whether the CODE WORKS and meets the core requirements
+- If header comments exist with student name and assignment reference, give FULL points regardless of exact wording
 
 LESSON CONTEXT - What we taught:
 ${effectiveContext.taughtConcepts}

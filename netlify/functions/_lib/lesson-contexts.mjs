@@ -94,7 +94,7 @@ export const lessonContexts = {
     rubric: `
       Correctness - runs without errors (40pts): Code compiles and runs successfully
       Requirements - 4 lines of output with required info (30pts): Has 4 Console.WriteLine statements with name, course, goal, fun fact
-      Header Comments (10pts): Line 1 has // Name: [student name], Line 2 has // Assignment: [assignment name like "Lab 1" or "Welcome Program"]
+      Header Comments (10pts): Has a comment with student's name AND a comment mentioning the assignment. ANY reasonable format is acceptable ("Lab 1", "Welcome Program", "THE LAB", etc). Do NOT dock points for name format variations.
       Code Quality - readable, well-formatted (10pts): Clean indentation
       Submission - on time (10pts): Submitted by due date
     `,
