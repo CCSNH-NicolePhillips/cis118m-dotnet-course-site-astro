@@ -27,14 +27,16 @@ export default async function handler(request, context) {
     const redis = getRedis();
     const userId = user.sub;
 
-    // Get display name from Redis
+    // Get display name and onboarding status from Redis
     const displayName = await redis.get(`cis118m:displayName:${userId}`);
+    const onboardingComplete = await redis.get(`cis118m:onboardingComplete:${userId}`);
 
-    console.log('[get-user-profile] userId:', userId, 'displayName:', displayName);
+    console.log('[get-user-profile] userId:', userId, 'displayName:', displayName, 'onboardingComplete:', onboardingComplete);
 
     return new Response(
       JSON.stringify({ 
-        displayName: displayName || null
+        displayName: displayName || null,
+        onboardingComplete: onboardingComplete === 'true'
       }),
       {
         status: 200,

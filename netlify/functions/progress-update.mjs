@@ -40,7 +40,7 @@ export default async function handler(request, context) {
       );
     }
 
-    const { starterId, event, pageId, status, score, feedback, savedCode, type, displayName } = body;
+    const { starterId, event, pageId, status, score, feedback, savedCode, type, displayName, onboardingComplete } = body;
 
     // Handle display name update (from Onboarding)
     if (displayName && pageId === 'user-settings') {
@@ -54,6 +54,11 @@ export default async function handler(request, context) {
       
       // Also store in the legacy studentName key for instructor dashboard
       await redis.set(`cis118m:studentName:${userId}`, displayName);
+      
+      // If onboardingComplete flag is passed, save that too
+      if (onboardingComplete) {
+        await redis.set(`cis118m:onboardingComplete:${userId}`, 'true');
+      }
       
       // Track student in index for instructor dashboard
       await redis.sadd("cis118m:students", userId);

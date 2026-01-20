@@ -468,7 +468,8 @@
           body: JSON.stringify({
             pageId: 'user-settings',
             status: 'updated',
-            displayName: name
+            displayName: name,
+            onboardingComplete: true
           })
         });
       }
@@ -493,15 +494,19 @@
       
       if (res.ok) {
         const data = await res.json();
+        // If onboardingComplete is true on server, mark locally
+        if (data.onboardingComplete) {
+          localStorage.setItem(STORAGE_KEYS.onboardingComplete, 'true');
+        }
         if (data.displayName) {
           // Save to localStorage so it persists
           localStorage.setItem(STORAGE_KEYS.displayName, data.displayName);
           displayName = data.displayName;
-          // Also mark onboarding as complete since they've set a name before
-          localStorage.setItem(STORAGE_KEYS.onboardingComplete, 'true');
           updateUserChipDisplay();
           return data.displayName;
         }
+        // Return true if onboarding was complete even without display name
+        return data.onboardingComplete ? true : null;
       }
     } catch (err) {
       console.error('[Onboarding] Failed to load display name from server:', err);

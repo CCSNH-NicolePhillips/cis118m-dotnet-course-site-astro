@@ -1096,22 +1096,33 @@ const getWeekLockInfo = (weekSlug: string) => {
             // First try to load from server (for cross-computer sync)
             let displayName = window.__onboarding?.getDisplayName();
             
-            // If no local display name, try loading from server
-            if (!displayName && window.__onboarding?.loadFromServer) {
-              window.__onboarding.loadFromServer().then(serverName => {
-                if (serverName && userEmail) {
-                  userEmail.textContent = serverName;
-                }
-              });
-            }
-            
             if (userEmail) {
               userEmail.textContent = displayName || user.email;
             }
             
-            // Check if onboarding is needed (first-time user)
-            if (window.__onboarding?.checkNeeded()) {
-              // Show welcome modal after a short delay to let page settle
+            // Try loading from server first, then check if onboarding needed
+            if (window.__onboarding?.loadFromServer) {
+              window.__onboarding.loadFromServer().then(result => {
+                // Update display name if loaded from server
+                if (result && typeof result === 'string' && userEmail) {
+                  userEmail.textContent = result;
+                }
+                // Now check if onboarding is still needed (after server data loaded)
+                if (window.__onboarding?.checkNeeded()) {
+                  setTimeout(() => {
+                    window.__onboarding.showWelcome();
+                  }, 300);
+                }
+              }).catch(() => {
+                // If server load fails, still check localStorage
+                if (window.__onboarding?.checkNeeded()) {
+                  setTimeout(() => {
+                    window.__onboarding.showWelcome();
+                  }, 800);
+                }
+              });
+            } else if (window.__onboarding?.checkNeeded()) {
+              // Fallback if loadFromServer not available
               setTimeout(() => {
                 window.__onboarding.showWelcome();
               }, 800);
