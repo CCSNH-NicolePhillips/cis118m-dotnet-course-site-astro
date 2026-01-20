@@ -16,6 +16,22 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
 ---
 
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ C# Namespaces: The City Zoning Map for Your Code</h2>
+      <p>
+        Think of your code as a growing city. A <strong>Namespace</strong> is a 'Zone' (like Downtown or Industrial), while a <strong>Class</strong> is a 'Building' inside that zone. Without these boundaries, you couldn't have two buildings with the same name—namespaces allow you to organize your code and prevent 'name collisions' where the computer gets confused by identical names.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-2/lesson-2.1/cityzoning.png" alt="Aerial view of city zoning - representing namespace organization" />
+    </div>
+  </div>
+</div>
+
+---
+
 ## 🏛️ The Senior Architect's Perspective
 
 <div class="architect-note">
@@ -401,6 +417,58 @@ namespace University
   
   .next-section a {
     margin-top: 16px;
+  }
+  
+  .concept-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+  
+  .concept-header .header-content {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+  
+  .concept-header .header-text {
+    flex: 1;
+  }
+  
+  .concept-header .header-text h2 {
+    color: #4ec9b0;
+    margin-top: 0;
+    font-size: 1.5rem;
+  }
+  
+  .concept-header .header-text p {
+    color: #c0c0c0;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    margin-bottom: 0;
+  }
+  
+  .concept-header .header-image {
+    flex-shrink: 0;
+    width: 280px;
+  }
+  
+  .concept-header .header-image img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      flex-direction: column;
+    }
+    
+    .concept-header .header-image {
+      width: 100%;
+      max-width: 300px;
+    }
   }
 `}
 </style>
