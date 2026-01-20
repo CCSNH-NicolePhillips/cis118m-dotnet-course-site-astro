@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getLessonContext } from "./_lib/lesson-contexts.mjs";
 import { getRedis } from "./_lib/redis.mjs";
+import { getGradingPromptRules } from "./_lib/ai-rules.mjs";
 
 export async function handler(event, context) {
   if (event.httpMethod !== "POST") {
@@ -43,16 +44,9 @@ export async function handler(event, context) {
     }
   });
 
-  const prompt = `You are a friendly, LENIENT programming instructor grading a student's work.
+  const prompt = `You are a friendly programming instructor grading a student's work.
 
-IMPORTANT GRADING PHILOSOPHY:
-- Be GENEROUS with points. If they made an honest attempt, give credit.
-- Do NOT dock points for minor formatting differences (name variations, header wording, etc.)
-- Do NOT dock points for spelling/grammar in comments or strings
-- Focus on whether the CODE WORKS and meets the core requirements
-- If header comments exist with student name and assignment reference, give FULL points regardless of exact wording
-- NEVER question or comment on the student's name. Accept ANY name as valid (nicknames, handles, unusual names, names with numbers, etc.)
-- Do NOT suggest they use their "actual" or "real" name - whatever they wrote IS their name
+${getGradingPromptRules()}
 
 LESSON CONTEXT - What we taught:
 ${effectiveContext.taughtConcepts}

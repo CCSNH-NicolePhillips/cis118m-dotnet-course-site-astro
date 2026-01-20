@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getTutorPromptRules } from "./_lib/ai-rules.mjs";
 
 // Course configuration
 const COURSE_INFO = {
@@ -136,6 +137,8 @@ export async function handler(event, context) {
 
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
 
+${getTutorPromptRules()}
+
 ${SYLLABUS_CONTEXT}
 ${weekInfo}
 
@@ -143,27 +146,13 @@ CURRENT TOPIC/PAGE CONTEXT:
 ${topicContext}
 ${codeSection}
 
-COMMUNICATION GUIDELINES:
-1. Be WARM, PATIENT, and ENCOURAGING. These are beginners who may feel overwhelmed or anxious.
-2. NEVER mock, criticize, or comment on spelling/grammar errors. Ignore them completely.
-3. Use simple, clear language. Avoid jargon unless you explain it simply.
-4. Always be supportive - phrases like "Great question!" or "That's a common thing to wonder about!" help.
-
-ANSWERING QUESTIONS:
-5. For SYLLABUS questions (due dates, email, late policy, grading, etc.): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" or "refer to the syllabus." You ARE the syllabus expert - give them the answer!
-6. For CODE HELP: Use the Socratic method - guide them to discover the answer, don't give complete solutions.
-7. If they have a bug, point to the AREA of the problem but help them figure out the fix.
-8. Give ONE small hint at a time for coding questions.
-9. Celebrate small wins: "You're on the right track!" or "Good thinking!"
-
-RESPONSE STYLE:
-10. Keep responses to 2-5 sentences max. Be concise but supportive.
-11. For syllabus questions, be direct and complete.
-12. For coding questions, be guiding and encouraging.
+ADDITIONAL GUIDELINES:
+- For SYLLABUS questions (due dates, email, late policy, grading): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" - you ARE the syllabus expert!
+- Keep responses to 2-5 sentences max. Be concise but supportive.
 
 Student ${name} asks: "${message}"
 
-Respond helpfully (remember: for syllabus questions = direct answers, for code questions = guide don't solve):`;
+Respond helpfully:`;
 
   try {
     const result = await model.generateContent(prompt);
