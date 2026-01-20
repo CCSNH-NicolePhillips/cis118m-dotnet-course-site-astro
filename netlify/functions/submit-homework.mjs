@@ -105,10 +105,14 @@ Return JSON:
     const assignmentId = starterId.replace(/-\d+$/, '') || 'week-01-homework';
 
     // Update progress in the standard hash format used by gradebook
+    // Include savedCode and feedback so instructor dashboard can display them
     if (aiGrade !== null) {
       await redis.hset(`user:progress:data:${sub}`, {
         [`${assignmentId}:score`]: aiGrade,
-        [`${assignmentId}:status`]: 'completed'
+        [`${assignmentId}:status`]: 'completed',
+        [`${assignmentId}:feedback`]: aiFeedback || '',
+        [`${assignmentId}:savedCode`]: reflection || code || '',
+        [`${assignmentId}:gradedAt`]: new Date().toISOString()
       });
     }
 
@@ -130,9 +134,17 @@ Return JSON:
       aiFeedback
     };
 
-    // Store submission
-    const key = `submissions:${sub}:week01:homework`;
-    await redis.set(key, JSON.stringify(submission));
+    // Store latest submission for quick access
+    const latestKey = `submissions:${sub}:${assignmentId}:latest`;
+    await redis.set(latestKey, JSON.stringify(submission));
+    
+    // Also add to submission history (keep last 5 attempts)
+    const historyKey = `submissions:${sub}:${assignmentId}:history`;
+    const existingHistory = await redis.get(historyKey);
+    let history = existingHistory ? JSON.parse(existingHistory) : [];
+    history.unshift(submission); // Add to front
+    if (history.length > 5) history = history.slice(0, 5); // Keep max 5
+    await redis.set(historyKey, JSON.stringify(history));
 
     // Add to index for instructor view
     await redis.sadd('submissions:index:week01', sub);

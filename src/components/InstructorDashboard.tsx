@@ -88,12 +88,17 @@ interface StudentProgress {
   [key: string]: string | number;
 }
 
+interface RubricCategory {
+  points: number;
+  rationale: string;
+}
+
 interface Student {
   sub: string;
   email: string;
   name?: string;
   progress: StudentProgress;
-  parsedProgress?: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string } };
+  parsedProgress?: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string } };
 }
 
 interface SubmissionModalData {
@@ -287,7 +292,7 @@ const InstructorDashboard: React.FC = () => {
   }, [filteredAssignments]);
 
   const parseProgressData = (progress: StudentProgress) => {
-    const parsed: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string } } = {};
+    const parsed: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; gradedAt?: string } } = {};
     
     for (const [key, value] of Object.entries(progress || {})) {
       const parts = key.split(':');
@@ -301,6 +306,12 @@ const InstructorDashboard: React.FC = () => {
         else if (field === 'status') parsed[pageId].status = String(value);
         else if (field === 'feedback') parsed[pageId].feedback = String(value);
         else if (field === 'savedCode') parsed[pageId].savedCode = String(value);
+        else if (field === 'gradedAt') parsed[pageId].gradedAt = String(value);
+        else if (field === 'rubric') {
+          try {
+            parsed[pageId].rubric = typeof value === 'string' ? JSON.parse(value) : value;
+          } catch { parsed[pageId].rubric = {}; }
+        }
       }
     }
     return parsed;
@@ -855,6 +866,51 @@ const InstructorDashboard: React.FC = () => {
                    'No AI feedback available'}
                 </div>
               </details>
+
+              {/* AI Grading Rubric */}
+              {modalData.student.parsedProgress?.[modalData.assignmentId]?.rubric && (
+                <details style={{ marginBottom: '20px' }}>
+                  <summary style={{ cursor: 'pointer', color: '#a78bfa', fontWeight: 'bold', padding: '10px 0' }}>
+                    AI Grading Rubric (Detailed)
+                  </summary>
+                  <div style={{
+                    background: '#0d0d0d',
+                    padding: '15px',
+                    borderRadius: '8px',
+                    marginTop: '10px'
+                  }}>
+                    {Object.entries(modalData.student.parsedProgress?.[modalData.assignmentId]?.rubric || {}).map(([category, data]: [string, any]) => (
+                      <div key={category} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        padding: '10px 0',
+                        borderBottom: '1px solid #333'
+                      }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ color: '#4ec9b0', fontWeight: 'bold', textTransform: 'capitalize' }}>{category}</div>
+                          <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>{data?.rationale || 'N/A'}</div>
+                        </div>
+                        <div style={{
+                          background: (data?.points || 0) >= (category === 'correctness' ? 30 : category === 'requirements' ? 20 : 7) ? '#4ec9b0' : '#ce9178',
+                          color: '#000',
+                          padding: '4px 12px',
+                          borderRadius: '4px',
+                          fontWeight: 'bold',
+                          marginLeft: '15px'
+                        }}>
+                          {data?.points || 0} pts
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {modalData.student.parsedProgress?.[modalData.assignmentId]?.gradedAt && (
+                    <div style={{ color: '#666', fontSize: '0.8rem', marginTop: '8px' }}>
+                      Graded: {new Date(modalData.student.parsedProgress[modalData.assignmentId].gradedAt!).toLocaleString()}
+                    </div>
+                  )}
+                </details>
+              )}
 
               {/* Instructor Actions */}
               <div style={{ borderTop: '1px solid #333', paddingTop: '20px' }}>
