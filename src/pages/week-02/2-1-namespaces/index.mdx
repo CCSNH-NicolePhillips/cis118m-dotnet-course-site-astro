@@ -170,27 +170,27 @@ namespace ProgramName      // 1. Container for organization
 
 ## 🏙️ Visualizing the Containers
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center;">
+<div style={{display: "grid", gridTemplateColumns: "1fr 1fr", gap: "32px", alignItems: "center"}}>
   <div>
     <p>
       This diagram shows how namespaces (Zones) act as parent containers for classes (Buildings). Just as a "Main Street" can exist in both New York and London, a <code>User</code> class can exist in both your <code>Account</code> and <code>Security</code> namespaces without conflict.
     </p>
-    <div style="background: #1e1e1e; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.85rem;">
-      <div><span style="color: #569cd6;">namespace</span> <span style="color: #4ec9b0;">Airline.Reservations</span></div>
-      <div>{</div>
-      <div style="padding-left: 20px;"><span style="color: #569cd6;">class</span> <span style="color: #4ec9b0;">Customer</span> { <span style="color: #6a9955;">/* booking info */</span> }</div>
-      <div>}</div>
-      <br/>
-      <div><span style="color: #569cd6;">namespace</span> <span style="color: #4ec9b0;">Airline.Loyalty</span></div>
-      <div>{</div>
-      <div style="padding-left: 20px;"><span style="color: #569cd6;">class</span> <span style="color: #4ec9b0;">Customer</span> { <span style="color: #6a9955;">/* points, status */</span> }</div>
-      <div>}</div>
-      <br/>
-      <div style="color: #6a9955;">// Both "Customer" classes coexist in different namespaces</div>
+    <div style={{background: "#1e1e1e", padding: "16px", borderRadius: "8px", fontFamily: "monospace", fontSize: "0.85rem"}}>
+      <div><span style={{color: "#569cd6"}}>namespace</span> <span style={{color: "#4ec9b0"}}>Airline.Reservations</span></div>
+      <div>{"{"}</div>
+      <div style={{paddingLeft: "20px"}}><span style={{color: "#569cd6"}}>class</span> <span style={{color: "#4ec9b0"}}>Customer</span> {"{"} <span style={{color: "#6a9955"}}>/* booking info */</span> {"}"}</div>
+      <div>{"}"}</div>
+      <div style={{height: "12px"}}></div>
+      <div><span style={{color: "#569cd6"}}>namespace</span> <span style={{color: "#4ec9b0"}}>Airline.Loyalty</span></div>
+      <div>{"{"}</div>
+      <div style={{paddingLeft: "20px"}}><span style={{color: "#569cd6"}}>class</span> <span style={{color: "#4ec9b0"}}>Customer</span> {"{"} <span style={{color: "#6a9955"}}>/* points, status */</span> {"}"}</div>
+      <div>{"}"}</div>
+      <div style={{height: "12px"}}></div>
+      <div style={{color: "#6a9955"}}>// Both "Customer" classes coexist in different namespaces</div>
     </div>
   </div>
   <div>
-    <img src="/media/week-2/lesson-2.1/containerVisual.png" alt="3D city visualization showing buildings (classes) organized within different zones (namespaces)" style="width: 100%; border-radius: 8px;" />
+    <img src="/media/week-2/lesson-2.1/containerVisual.png" alt="3D city visualization showing buildings (classes) organized within different zones (namespaces)" style={{width: "100%", borderRadius: "8px"}} />
   </div>
 </div>
 
