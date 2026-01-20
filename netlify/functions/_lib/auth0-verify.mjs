@@ -139,13 +139,35 @@ export async function requireAuth(requestOrEvent) {
 }
 
 /**
- * Require instructor access (must be @ccsnh.edu but NOT @students.ccsnh.edu)
+ * Require instructor access - ONLY approved instructors can access
+ * This is a security feature to prevent students from using @ccsnh.edu emails
  * For V2 Functions (Web Request): throws on error, returns user directly
  * For Handler Functions (Netlify event): returns { authorized, user, error }
+ * 
+ * APPROVED INSTRUCTORS are defined below. Add new instructors to this list.
+ * You can also set APPROVED_INSTRUCTORS environment variable (comma-separated).
  * 
  * @param {Request|object} requestOrEvent - The incoming request or Netlify event object
  * @returns {Promise<{authorized: boolean, user?: {sub: string, email: string}, error?: string} | {sub: string, email: string}>}
  */
+
+// Hardcoded approved instructor emails - ONLY these can access instructor features
+const APPROVED_INSTRUCTORS = [
+  'nphillips@ccsnh.edu',
+  'nicole.phillips@ccsnh.edu',
+  // Add additional approved instructors below:
+];
+
+// Also allow instructors from environment variable (comma-separated)
+const envInstructors = (process.env.APPROVED_INSTRUCTORS || '').split(',').map(e => e.trim().toLowerCase()).filter(e => e);
+const ALL_APPROVED = [...APPROVED_INSTRUCTORS.map(e => e.toLowerCase()), ...envInstructors];
+
+function isApprovedInstructor(email) {
+  if (!email) return false;
+  const normalized = email.toLowerCase().trim();
+  return ALL_APPROVED.includes(normalized);
+}
+
 export async function requireInstructor(requestOrEvent) {
   // Detect if this is a V2 Function (Web Request with headers.get method)
   const isV2Function = typeof requestOrEvent.headers?.get === 'function';
@@ -162,15 +184,18 @@ export async function requireInstructor(requestOrEvent) {
     }
     
     const email = user?.email || "";
-    const isInstructor = email.endsWith("@ccsnh.edu") && !email.includes("@students.");
     
-    if (!isInstructor) {
+    // SECURITY: Only approved instructors can access - not just any @ccsnh.edu email
+    if (!isApprovedInstructor(email)) {
+      console.warn(`[instructor-auth] BLOCKED: ${email} attempted instructor access but is not approved`);
+      const errorMsg = "Access denied. You are not an approved instructor. Contact the system administrator if this is an error.";
       if (isV2Function) {
-        throw new Error("Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu).");
+        throw new Error(errorMsg);
       }
-      return { authorized: false, error: "Instructor access required. Must use @ccsnh.edu email (not @students.ccsnh.edu)." };
+      return { authorized: false, error: errorMsg };
     }
     
+    console.log(`[instructor-auth] Access granted for approved instructor: ${email}`);
     return isV2Function ? user : { authorized: true, user };
   } catch (error) {
     if (isV2Function) {

@@ -1,14 +1,18 @@
 import { getRedis } from "./_lib/redis.mjs";
 import { verifyAuth0Token } from "./_lib/auth0-verify.mjs";
 
-// Instructor domain (professors) - students use students.ccsnh.edu
-const INSTRUCTOR_DOMAIN = "ccsnh.edu";
-const STUDENT_DOMAIN = "students.ccsnh.edu";
+// Approved instructor emails - ONLY these can access instructor features
+// This must match the list in auth0-verify.mjs
+const APPROVED_INSTRUCTORS = [
+  'nphillips@ccsnh.edu',
+  'nicole.phillips@ccsnh.edu',
+];
+const envInstructors = (process.env.APPROVED_INSTRUCTORS || '').split(',').map(e => e.trim().toLowerCase()).filter(e => e);
+const ALL_APPROVED = [...APPROVED_INSTRUCTORS.map(e => e.toLowerCase()), ...envInstructors];
 
-function isInstructor(email) {
+function isApprovedInstructor(email) {
   if (!email) return false;
-  // Must be @ccsnh.edu but NOT @students.ccsnh.edu
-  return email.endsWith(`@${INSTRUCTOR_DOMAIN}`) && !email.endsWith(`@${STUDENT_DOMAIN}`);
+  return ALL_APPROVED.includes(email.toLowerCase().trim());
 }
 
 export const handler = async (event) => {
@@ -29,10 +33,11 @@ export const handler = async (event) => {
     const token = authHeader.replace("Bearer ", "");
     const user = await verifyAuth0Token(token);
     
-    if (!user || !isInstructor(user.email)) {
+    if (!user || !isApprovedInstructor(user.email)) {
+      console.warn(`[instructor-grades] BLOCKED: ${user?.email || 'no email'} attempted access`);
       return { 
         statusCode: 403, 
-        body: JSON.stringify({ error: "Instructor access only" }) 
+        body: JSON.stringify({ error: "Access denied. You are not an approved instructor." }) 
       };
     }
   } catch (err) {

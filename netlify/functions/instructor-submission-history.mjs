@@ -1,6 +1,26 @@
 import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 
+// SECURITY: Approved instructor allowlist - only these emails can access instructor features
+const APPROVED_INSTRUCTORS = [
+  'nphillips@ccsnh.edu',
+  'nicole.phillips@ccsnh.edu',
+];
+
+function isApprovedInstructor(email) {
+  if (!email) return false;
+  const normalizedEmail = email.toLowerCase().trim();
+  
+  // Check environment variable for additional approved instructors
+  const envInstructors = process.env.APPROVED_INSTRUCTORS;
+  if (envInstructors) {
+    const additionalInstructors = envInstructors.split(',').map(e => e.toLowerCase().trim());
+    if (additionalInstructors.includes(normalizedEmail)) return true;
+  }
+  
+  return APPROVED_INSTRUCTORS.map(e => e.toLowerCase()).includes(normalizedEmail);
+}
+
 /**
  * Netlify Function: Get submission history for a student (instructor only)
  * 
@@ -28,14 +48,12 @@ export async function handler(event, context) {
 
   const { email } = authResult.user;
 
-  // Check if user is instructor
-  const isInstructor = email === 'MCCCISOnline1@ccsnh.edu' || 
-                       (email.endsWith('@ccsnh.edu') && !email.includes('@students.'));
-  
-  if (!isInstructor) {
+  // SECURITY: Check against approved instructor allowlist
+  if (!isApprovedInstructor(email)) {
+    console.warn(`[SECURITY] Unauthorized instructor access attempt: ${email}`);
     return {
       statusCode: 403,
-      body: JSON.stringify({ error: 'Instructor access required' })
+      body: JSON.stringify({ error: 'You are not authorized as an instructor' })
     };
   }
 

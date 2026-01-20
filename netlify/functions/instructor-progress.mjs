@@ -1,6 +1,20 @@
 import { requireAuth } from "./_lib/auth0-verify.mjs";
 import { getRedis } from "./_lib/redis.mjs";
 
+// Approved instructor emails - ONLY these can access instructor features
+// This must match the list in auth0-verify.mjs
+const APPROVED_INSTRUCTORS = [
+  'nphillips@ccsnh.edu',
+  'nicole.phillips@ccsnh.edu',
+];
+const envInstructors = (process.env.APPROVED_INSTRUCTORS || '').split(',').map(e => e.trim().toLowerCase()).filter(e => e);
+const ALL_APPROVED = [...APPROVED_INSTRUCTORS.map(e => e.toLowerCase()), ...envInstructors];
+
+function isApprovedInstructor(email) {
+  if (!email) return false;
+  return ALL_APPROVED.includes(email.toLowerCase().trim());
+}
+
 /**
  * Netlify Function: Get all student progress (faculty only)
  * 
@@ -25,19 +39,19 @@ export default async function handler(request, context) {
     const user = await requireAuth(request);
     console.log('[instructor-progress] User from token:', JSON.stringify(user));
 
-    // Enforce faculty-only access: @ccsnh.edu but NOT @students.ccsnh.edu
-    const isInstructor = user.email?.endsWith("@ccsnh.edu") && !user.email?.includes("@students.");
-    console.log('[instructor-progress] Email:', user.email, 'isInstructor:', isInstructor);
-    
-    if (!user.email || !isInstructor) {
+    // SECURITY: Only approved instructors can access - not just any @ccsnh.edu email
+    if (!isApprovedInstructor(user.email)) {
+      console.warn(`[instructor-progress] BLOCKED: ${user.email || 'no email'} attempted access`);
       return new Response(
-        JSON.stringify({ error: "Forbidden: Faculty only" }),
+        JSON.stringify({ error: "Access denied. You are not an approved instructor." }),
         {
           status: 403,
           headers: { "Content-Type": "application/json" },
         }
       );
     }
+    
+    console.log('[instructor-progress] Access granted for:', user.email);
 
     // Get all student IDs from Redis
     const redis = getRedis();
