@@ -1,5 +1,82 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// Course configuration
+const COURSE_INFO = {
+  code: "CIS 118M",
+  title: "Introduction to C# Programming",
+  term: "Spring 2026",
+  instructor: "Nicole Phillips",
+  email: "MCCCISOnline1@ccsnh.edu",
+  officeHours: "Contact via email to schedule a Zoom meeting",
+  passingGrade: "C or higher (70%)"
+};
+
+// Week schedule with due dates
+const WEEKS = [
+  { week: 1, title: "Intro to Programming & C#", dueDate: "Sunday, January 25, 2026 at 11:59 PM EST" },
+  { week: 2, title: "First C# Program", dueDate: "Sunday, February 1, 2026 at 11:59 PM EST" },
+  { week: 3, title: "Variables & Data Types", dueDate: "Sunday, February 8, 2026 at 11:59 PM EST" },
+  { week: 4, title: "Strings & Text Processing", dueDate: "Sunday, February 15, 2026 at 11:59 PM EST" },
+  { week: 5, title: "User Input", dueDate: "Sunday, February 22, 2026 at 11:59 PM EST" },
+  { week: 6, title: "Decision Structures (if/else)", dueDate: "Sunday, March 1, 2026 at 11:59 PM EST" },
+  { week: 7, title: "Logic & Multiple Conditions", dueDate: "Sunday, March 8, 2026 at 11:59 PM EST" },
+  { week: 8, title: "While Loops", dueDate: "Sunday, March 15, 2026 at 11:59 PM EDT" },
+  // Spring Break: March 16-22
+  { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT" },
+  { week: 10, title: "Methods", dueDate: "Sunday, April 5, 2026 at 11:59 PM EDT" },
+  { week: 11, title: "Returning Values", dueDate: "Sunday, April 12, 2026 at 11:59 PM EDT" },
+  { week: 12, title: "Array Architectures", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
+  { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT" },
+  { week: 14, title: "Program Integration", dueDate: "Sunday, May 3, 2026 at 11:59 PM EDT" },
+  { week: 15, title: "Final Project", dueDate: "Sunday, May 10, 2026 at 11:59 PM EDT" }
+];
+
+// Build syllabus context for the AI
+const SYLLABUS_CONTEXT = `
+COURSE SYLLABUS - CIS 118M: Introduction to C# Programming
+
+INSTRUCTOR INFORMATION:
+- Instructor: ${COURSE_INFO.instructor}
+- Email: ${COURSE_INFO.email}
+- Office Hours: ${COURSE_INFO.officeHours}
+
+GRADING WEIGHTS:
+- Labs (Applied Skills): 40%
+- Quizzes (Checkpoint Quizzes): 20%
+- Homework (Auto-Checks): 20%
+- Participation (Activity): 10%
+- Final Capstone Project: 10%
+
+GRADING SCALE:
+- A: 90-100%
+- B: 80-89%
+- C: 70-79% (minimum passing grade)
+- D: 60-69%
+- F: Below 60%
+
+DUE DATES:
+All weekly assignments are due every SUNDAY by 11:59 PM.
+${WEEKS.map(w => `Week ${w.week} (${w.title}): Due ${w.dueDate}`).join('\n')}
+
+LATE POLICY:
+- Quizzes: Can be retaken until the due date. NO late submissions accepted.
+- Labs: 10% penalty per day late (up to 3 days maximum). After 3 days = 0 points.
+- Final Project: NO late submissions accepted.
+- Extensions: Contact instructor BEFORE the due date for documented emergencies or illness.
+
+ACADEMIC INTEGRITY:
+- All work must be your own
+- You may NOT use AI tools (ChatGPT, Copilot) to write your code
+- Violations result in zero on assignment and may lead to course failure
+
+HOW TO GET HELP:
+- Course questions: Post in Canvas discussion board (fastest) or email instructor
+- Technical issues: Email instructor with screenshots and error messages
+- Personal/grade questions: Email instructor directly
+
+SPRING BREAK: March 16-22, 2026 (No classes)
+`;
+
 export async function handler(event, context) {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
@@ -30,12 +107,12 @@ export async function handler(event, context) {
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: 400,
+      maxOutputTokens: 500,
     }
   });
 
-  // Use first name or "Developer" as fallback
-  const name = studentName ? studentName.split(' ')[0] : 'Developer';
+  // Use first name or "there" as fallback
+  const name = studentName ? studentName.split(' ')[0] : 'there';
 
   const topicContext = lessonContext || "General C# programming assistance.";
   
@@ -44,24 +121,49 @@ export async function handler(event, context) {
     ? `\nSTUDENT'S CURRENT CODE:\n\`\`\`csharp\n${studentCode}\n\`\`\`\n`
     : '';
 
-  const prompt = `You are a friendly, encouraging tutor helping a college freshman learn C# programming.
-Topic: ${topicContext}
+  // Extract week number from pageId if available
+  let weekInfo = '';
+  if (pageId) {
+    const weekMatch = pageId.match(/week-(\d+)/i);
+    if (weekMatch) {
+      const weekNum = parseInt(weekMatch[1]);
+      const week = WEEKS.find(w => w.week === weekNum);
+      if (week) {
+        weekInfo = `\nCURRENT PAGE: Week ${weekNum} - ${week.title}\nThis week's due date: ${week.dueDate}`;
+      }
+    }
+  }
+
+  const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
+
+${SYLLABUS_CONTEXT}
+${weekInfo}
+
+CURRENT TOPIC/PAGE CONTEXT:
+${topicContext}
 ${codeSection}
-TUTORING GUIDELINES:
-1. Be warm and encouraging - these are beginners who may feel overwhelmed.
-2. NEVER give the complete answer or write their code for them.
-3. Use the Socratic method: Ask guiding questions to help them discover the solution.
-4. If they have a bug, point to the AREA of the problem but don't fix it for them.
-5. Give ONE small hint at a time, not multiple hints.
-6. Use simple, clear language - avoid jargon unless you explain it.
-7. Celebrate small wins with encouragement like "You're on the right track!" or "Good thinking!"
-8. If they're stuck, ask: "What do you think this line is doing?" or "What error are you seeing?"
-9. Keep responses to 2-4 sentences max. Be concise but supportive.
-10. If they ask for the answer directly, say: "I want to help you figure this out yourself! Let me give you a hint..."
 
-${name} asks: "${message}"
+COMMUNICATION GUIDELINES:
+1. Be WARM, PATIENT, and ENCOURAGING. These are beginners who may feel overwhelmed or anxious.
+2. NEVER mock, criticize, or comment on spelling/grammar errors. Ignore them completely.
+3. Use simple, clear language. Avoid jargon unless you explain it simply.
+4. Always be supportive - phrases like "Great question!" or "That's a common thing to wonder about!" help.
 
-Respond as a helpful tutor (remember: guide, don't solve):`;
+ANSWERING QUESTIONS:
+5. For SYLLABUS questions (due dates, email, late policy, grading, etc.): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" or "refer to the syllabus." You ARE the syllabus expert - give them the answer!
+6. For CODE HELP: Use the Socratic method - guide them to discover the answer, don't give complete solutions.
+7. If they have a bug, point to the AREA of the problem but help them figure out the fix.
+8. Give ONE small hint at a time for coding questions.
+9. Celebrate small wins: "You're on the right track!" or "Good thinking!"
+
+RESPONSE STYLE:
+10. Keep responses to 2-5 sentences max. Be concise but supportive.
+11. For syllabus questions, be direct and complete.
+12. For coding questions, be guiding and encouraging.
+
+Student ${name} asks: "${message}"
+
+Respond helpfully (remember: for syllabus questions = direct answers, for code questions = guide don't solve):`;
 
   try {
     const result = await model.generateContent(prompt);
