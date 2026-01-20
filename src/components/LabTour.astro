@@ -217,11 +217,11 @@
       if (nextBtn) nextBtn.addEventListener('click', nextStep);
       if (skipBtn) skipBtn.addEventListener('click', endTour);
       
-      // Auto-start on first visit
-      const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
-      if (!localStorage.getItem(tourKey)) {
-        setTimeout(startTour, 1000);
-      }
+      // Auto-start disabled for now
+      // const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
+      // if (!localStorage.getItem(tourKey)) {
+      //   setTimeout(startTour, 1000);
+      // }
     }
 
     function startTour() {
