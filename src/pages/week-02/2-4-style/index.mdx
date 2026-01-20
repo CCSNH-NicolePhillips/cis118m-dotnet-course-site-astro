@@ -1,0 +1,639 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 2.4 • Code Style & Documentation"
+description: "Professional documentation standards and code formatting conventions"
+---
+
+import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 2.4: Code Style & Documentation
+
+<div class="section-header">
+  <div class="section-badge">📚 Professional Standards</div>
+  <p class="section-time">⏱️ Estimated Time: 20 minutes</p>
+</div>
+
+---
+
+## 🎯 Writing Code for Humans
+
+Here's a truth that surprises new developers: **you spend more time reading code than writing it**. In professional environments, you'll read your teammates' code, debug legacy systems, and revisit your own work months later.
+
+Code that only the computer understands is a liability. Code that *humans* understand is an asset.
+
+<div class="callout-insight">
+  <span class="callout-icon">💡</span>
+  <div>
+    <strong>The Real Audience</strong>
+    <p>The compiler doesn't care about style. It processes <code>int x=1+2;</code> the same as properly formatted code. But the next developer who reads it—often future you—absolutely cares.</p>
+  </div>
+</div>
+
+---
+
+## 📝 The Three Levels of C# Comments
+
+C# provides three distinct commenting mechanisms, each with a specific purpose:
+
+<div class="comment-levels">
+  <div class="comment-level">
+    <div class="level-header">
+      <span class="level-icon">1️⃣</span>
+      <h3>Single-Line Comments <code>//</code></h3>
+    </div>
+    <div class="level-content">
+      <p><strong>Purpose:</strong> Quick notes on specific logic lines</p>
+      <p><strong>Use when:</strong> Explaining <em>why</em> a particular approach was chosen</p>
+      
+```csharp
+// Calculate discount for loyalty members (business rule #247)
+double discount = basePrice * 0.15;
+
+int retryCount = 3; // Max retries before timeout (per SLA)
+```
+      
+      <div class="level-tip">
+        <strong>Pro Tip:</strong> Place on their own line for complex explanations, or at end of line for brief clarifications.
+      </div>
+    </div>
+  </div>
+  
+  <div class="comment-level">
+    <div class="level-header">
+      <span class="level-icon">2️⃣</span>
+      <h3>Multi-Line Comments <code>/* */</code></h3>
+    </div>
+    <div class="level-content">
+      <p><strong>Purpose:</strong> Longer explanations or temporarily disabling code blocks</p>
+      <p><strong>Use when:</strong> You need multiple lines, or you're debugging by commenting out sections</p>
+      
+```csharp
+/*
+ * Legacy pricing algorithm - DO NOT REMOVE
+ * This handles edge cases from the 2019 migration.
+ * Scheduled for refactoring in Q3 2026.
+ * Contact: architecture@company.com
+ */
+
+/* Temporarily disabled for testing
+double oldPrice = CalculateOldPrice(item);
+ApplyOldDiscount(ref oldPrice);
+*/
+```
+      
+      <div class="level-warning">
+        <strong>Caution:</strong> Multi-line comments cannot be nested. <code>/* outer /* inner */ */</code> will cause errors.
+      </div>
+    </div>
+  </div>
+  
+  <div class="comment-level highlight">
+    <div class="level-header">
+      <span class="level-icon">3️⃣</span>
+      <h3>XML Documentation <code>///</code></h3>
+    </div>
+    <div class="level-content">
+      <p><strong>Purpose:</strong> Formal documentation for methods, classes, and properties</p>
+      <p><strong>Use when:</strong> Defining public APIs, library code, or anything other developers will consume</p>
+      
+```csharp
+/// <summary>
+/// Calculates the final price after applying all discounts.
+/// </summary>
+/// <param name="basePrice">The original item price before discounts.</param>
+/// <param name="customerTier">The customer's loyalty tier (1-3).</param>
+/// <returns>The final price after tier-based discount is applied.</returns>
+/// <exception cref="ArgumentException">Thrown when tier is outside valid range.</exception>
+public double CalculateFinalPrice(double basePrice, int customerTier)
+{
+    // Implementation here
+}
+```
+      
+      <div class="level-special">
+        <strong>The Magic:</strong> XML comments are parsed by the compiler to generate:
+        <ul>
+          <li>IntelliSense tooltips in Visual Studio / VS Code</li>
+          <li>Automated API documentation (like Microsoft's docs)</li>
+          <li>Technical reference manuals</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🏛️ The Architect's Perspective: Self-Documenting Code
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>Comments Explain "Why," Not "What"</h4>
+    <p>
+      Here's a principle that separates junior developers from senior engineers: <strong>the code itself should explain what it does</strong>. Comments should explain <em>why</em>.
+    </p>
+    
+    <div class="bad-example">
+      <span class="example-label">❌ Bad: Restating the Code</span>
+```csharp
+// Add 1 to counter
+counter = counter + 1;
+
+// Set name to "John"
+string name = "John";
+```
+      <p>These comments add no value—they just repeat what's obvious from reading the code.</p>
+    </div>
+    
+    <div class="good-example">
+      <span class="example-label">✅ Good: Explaining Intent</span>
+```csharp
+// Increment to account for zero-based indexing in display
+counter = counter + 1;
+
+// Default name for anonymous checkout (GDPR compliance)
+string name = "John";
+```
+      <p>Now the reader understands the business logic behind the code.</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎨 Code Formatting Conventions
+
+Beyond comments, professional C# follows strict formatting rules:
+
+### Naming Conventions
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| **Classes** | PascalCase | `CustomerAccount`, `OrderProcessor` |
+| **Methods** | PascalCase | `CalculateTotal()`, `ProcessPayment()` |
+| **Variables** | camelCase | `customerName`, `orderCount` |
+| **Constants** | PascalCase or UPPER_CASE | `MaxRetries`, `DEFAULT_TIMEOUT` |
+| **Private fields** | _camelCase | `_connectionString`, `_logger` |
+| **Parameters** | camelCase | `void Process(int orderId)` |
+
+### Bracing Style
+
+C# uses the **Allman style** (braces on their own lines):
+
+```csharp
+// ✅ Correct: Allman style (C# standard)
+if (isValid)
+{
+    ProcessOrder();
+}
+
+// ❌ Avoid: K&R style (common in JavaScript, not C#)
+if (isValid) {
+    ProcessOrder();
+}
+```
+
+### Spacing and Indentation
+
+```csharp
+// ✅ Good: Clear spacing
+public void ProcessOrder(int orderId, string customerName)
+{
+    if (orderId > 0)
+    {
+        var order = GetOrder(orderId);
+        order.Process();
+    }
+}
+
+// ❌ Bad: Cramped, hard to read
+public void ProcessOrder(int orderId,string customerName){
+if(orderId>0){var order=GetOrder(orderId);order.Process();}}
+```
+
+---
+
+## 🎯 Try It: Documentation in Action
+
+<TryItNowRunner
+  starterId="week-02-documentation-demo"
+  title="Practice Documentation"
+  starterCode={`using System;
+
+namespace DocumentationDemo
+{
+    /// <summary>
+    /// Handles temperature conversions between measurement systems.
+    /// </summary>
+    class TemperatureConverter
+    {
+        /// <summary>
+        /// Converts Fahrenheit to Celsius.
+        /// </summary>
+        /// <param name="fahrenheit">Temperature in Fahrenheit.</param>
+        /// <returns>Temperature in Celsius.</returns>
+        public static double ToCelsius(double fahrenheit)
+        {
+            // Formula: (F - 32) × 5/9
+            return (fahrenheit - 32) * 5.0 / 9.0;
+        }
+        
+        static void Main()
+        {
+            double tempF = 98.6; // Human body temperature
+            double tempC = ToCelsius(tempF);
+            
+            Console.WriteLine($"{tempF}°F = {tempC:F1}°C");
+            
+            /*
+             * TODO: Add ToFahrenheit method
+             * TODO: Add ToKelvin method
+             */
+        }
+    }
+}`}
+  height="450px"
+/>
+
+---
+
+## 📋 Common XML Documentation Tags
+
+| Tag | Purpose | Example |
+|-----|---------|---------|
+| `<summary>` | Brief description | What the method/class does |
+| `<param>` | Parameter description | `<param name="id">The user ID</param>` |
+| `<returns>` | Return value description | What the method returns |
+| `<exception>` | Possible exceptions | `<exception cref="ArgumentException">` |
+| `<remarks>` | Additional details | Extended explanation |
+| `<example>` | Usage examples | Code samples |
+| `<see>` | Cross-reference | `<see cref="OtherMethod"/>` |
+
+---
+
+## 📋 Key Takeaways
+
+<div class="takeaways">
+  <div class="takeaway">
+    <span class="takeaway-icon">//</span>
+    <div>
+      <strong>Single-line comments for quick notes</strong>
+      <p>Use <code>//</code> for brief explanations of specific logic decisions.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">/**/</span>
+    <div>
+      <strong>Multi-line for blocks</strong>
+      <p>Use <code>/* */</code> for longer explanations or temporarily disabling code.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">///</span>
+    <div>
+      <strong>XML documentation for APIs</strong>
+      <p>Use <code>///</code> to generate IntelliSense tooltips and automated documentation.</p>
+    </div>
+  </div>
+  
+  <div class="takeaway">
+    <span class="takeaway-icon">💡</span>
+    <div>
+      <strong>Explain why, not what</strong>
+      <p>Good code is self-documenting. Comments explain the reasoning, not the mechanics.</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
+
+<KnowledgeCheck
+  checkId="week-02-2-4-documentation"
+  question="Which comment style is used by the compiler to generate automated technical documentation for other developers?"
+  correctAnswer="XML Documentation (///)"
+  explanation="XML documentation comments (///) are special because the C# compiler can parse them to generate IntelliSense tooltips, API documentation websites, and technical reference manuals. Single-line (//) and multi-line (/* */) comments are ignored by documentation generators."
+/>
+
+---
+
+## 📚 Week 02 Summary
+
+Congratulations! You've completed the structural foundation of C# programming:
+
+<div class="summary-grid">
+  <div class="summary-item">
+    <span class="summary-number">2.1</span>
+    <div>
+      <strong>Namespaces & Classes</strong>
+      <p>Organizational containers that prevent naming conflicts</p>
+    </div>
+  </div>
+  
+  <div class="summary-item">
+    <span class="summary-number">2.2</span>
+    <div>
+      <strong>The Main Method</strong>
+      <p>The exact entry point where execution begins</p>
+    </div>
+  </div>
+  
+  <div class="summary-item">
+    <span class="summary-number">2.3</span>
+    <div>
+      <strong>Compilation Pipeline</strong>
+      <p>Source → MSIL → Native code (cross-platform magic)</p>
+    </div>
+  </div>
+  
+  <div class="summary-item">
+    <span class="summary-number">2.4</span>
+    <div>
+      <strong>Documentation & Style</strong>
+      <p>Professional standards for maintainable code</p>
+    </div>
+  </div>
+</div>
+
+---
+
+<div class="lab-callout">
+  <h3>🔬 Ready to Apply Your Knowledge?</h3>
+  <p>
+    In <strong>Lab 02: The Structured System Report</strong>, you'll build a complete, well-documented C# program from scratch—applying namespaces, proper Main structure, and professional documentation standards.
+  </p>
+  <a href="/week-02/lab/" class="vscode-button">Begin Lab 02 →</a>
+</div>
+
+<style>
+{`
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  
+  .section-badge {
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .section-time {
+    color: #888;
+    margin: 0;
+  }
+  
+  .callout-insight {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, #1a2a3a 0%, #1a1a2e 100%);
+    border-left: 4px solid #61afef;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+  
+  .callout-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .callout-insight strong {
+    color: #61afef;
+  }
+  
+  .comment-levels {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 24px 0;
+  }
+  
+  .comment-level {
+    background: #1e1e2e;
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 4px solid #4ec9b0;
+  }
+  
+  .comment-level.highlight {
+    border-left-color: #c678dd;
+    background: linear-gradient(135deg, #1e1e2e 0%, #2d1e3e 100%);
+  }
+  
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .level-icon {
+    font-size: 1.5rem;
+  }
+  
+  .level-header h3 {
+    margin: 0;
+    color: #e0e0e0;
+  }
+  
+  .level-header code {
+    color: #4ec9b0;
+    font-size: 1.1rem;
+  }
+  
+  .level-content p {
+    margin: 8px 0;
+  }
+  
+  .level-tip {
+    background: rgba(78, 201, 176, 0.1);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    color: #4ec9b0;
+    font-size: 0.9rem;
+  }
+  
+  .level-warning {
+    background: rgba(240, 173, 78, 0.1);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    color: #f0ad4e;
+    font-size: 0.9rem;
+  }
+  
+  .level-special {
+    background: rgba(198, 120, 221, 0.1);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+  
+  .level-special strong {
+    color: #c678dd;
+  }
+  
+  .level-special ul {
+    margin: 8px 0 0;
+    padding-left: 20px;
+  }
+  
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-left: 4px solid #f0ad4e;
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .architect-avatar {
+    font-size: 3rem;
+    flex-shrink: 0;
+  }
+  
+  .architect-content h4 {
+    margin-top: 0;
+    color: #f0ad4e;
+  }
+  
+  .bad-example, .good-example {
+    margin: 16px 0;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  
+  .bad-example {
+    background: rgba(224, 108, 117, 0.1);
+    border: 1px solid rgba(224, 108, 117, 0.3);
+  }
+  
+  .good-example {
+    background: rgba(152, 195, 121, 0.1);
+    border: 1px solid rgba(152, 195, 121, 0.3);
+  }
+  
+  .example-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .bad-example .example-label {
+    color: #e06c75;
+  }
+  
+  .good-example .example-label {
+    color: #98c379;
+  }
+  
+  .takeaways {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .takeaway {
+    display: flex;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px 20px;
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+  }
+  
+  .takeaway-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    font-family: 'Fira Code', monospace;
+    color: #4ec9b0;
+    min-width: 40px;
+  }
+  
+  .takeaway strong {
+    color: #4ec9b0;
+  }
+  
+  .takeaway p {
+    margin: 4px 0 0;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+  }
+  
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  
+  .summary-item {
+    display: flex;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  
+  .summary-number {
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
+    color: #000;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .summary-item strong {
+    color: #e0e0e0;
+    display: block;
+  }
+  
+  .summary-item p {
+    margin: 4px 0 0;
+    color: #888;
+    font-size: 0.9rem;
+  }
+  
+  .lab-callout {
+    background: linear-gradient(135deg, #1a2a1a 0%, #1e2e1e 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .lab-callout h3 {
+    margin-top: 0;
+    color: #4ec9b0;
+    font-size: 1.4rem;
+  }
+  
+  .lab-callout p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+`}
+</style>
