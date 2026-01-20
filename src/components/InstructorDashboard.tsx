@@ -718,8 +718,8 @@ const InstructorDashboard: React.FC = () => {
                         {!syllabusOk && <span title="Syllabus quiz not passed" style={{ fontSize: '0.8rem' }}>[LOCKED]</span>}
                         {student.name || student.email?.split('@')[0] || 'Unknown'}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#666' }}>
-                        {student.email}
+                      <div style={{ fontSize: '0.75rem', color: student.email ? '#666' : '#f0ad4e' }}>
+                        {student.email || `ID: ${student.sub?.slice(-8) || 'No email on file'}`}
                       </div>
                     </td>
                     
