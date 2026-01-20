@@ -326,23 +326,44 @@
             const rect = element.getBoundingClientRect();
             const padding = 12;
             
-            // Position spotlight
+            // Position spotlight border around the element
             spotlight.style.display = 'block';
             spotlight.style.width = `${rect.width + padding * 2}px`;
             spotlight.style.height = `${rect.height + padding * 2}px`;
             spotlight.style.top = `${rect.top - padding}px`;
             spotlight.style.left = `${rect.left - padding}px`;
             
+            // Create a hole in the backdrop so the element shows through
+            const cutoutTop = rect.top - padding;
+            const cutoutLeft = rect.left - padding;
+            const cutoutRight = rect.right + padding;
+            const cutoutBottom = rect.bottom + padding;
+            
+            backdrop.style.clipPath = `polygon(
+              0% 0%, 
+              0% 100%, 
+              ${cutoutLeft}px 100%, 
+              ${cutoutLeft}px ${cutoutTop}px, 
+              ${cutoutRight}px ${cutoutTop}px, 
+              ${cutoutRight}px ${cutoutBottom}px, 
+              ${cutoutLeft}px ${cutoutBottom}px, 
+              ${cutoutLeft}px 100%, 
+              100% 100%, 
+              100% 0%
+            )`;
+            
             // Position tooltip
             positionTooltip(rect, step.position);
           }, 400);
         } else {
           // Element not found, show tooltip in center
+          backdrop.style.clipPath = 'none';
           spotlight.style.display = 'none';
           positionTooltipCenter();
         }
       } else {
         // No selector, center everything
+        backdrop.style.clipPath = 'none';
         spotlight.style.display = 'none';
         positionTooltipCenter();
       }
@@ -426,8 +447,9 @@
       document.body.style.overflow = '';
       currentStep = 0;
       
-      // Reset spotlight
+      // Reset spotlight and backdrop
       spotlight.style.display = 'none';
+      backdrop.style.clipPath = 'none';
       
       // Mark tour as completed for this page
       const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
