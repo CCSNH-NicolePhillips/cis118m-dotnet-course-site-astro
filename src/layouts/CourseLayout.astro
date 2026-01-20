@@ -157,6 +157,12 @@ const getWeekLockInfo = (weekSlug: string) => {
                               <span class="lesson-status" data-page-id={`week-${w.slug}-homework`}></span>
                             </a>
                           </li>
+                          <li>
+                            <a href={`/week-${w.slug}/weekly-assessment/`} data-page={`/week-${w.slug}/weekly-assessment/`}>
+                              <span class="lesson-text">06. Weekly Assessment (Graded)</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-weekly-assessment`}></span>
+                            </a>
+                          </li>
                         </>
                       ) : w.slug === '02' ? (
                         <>
