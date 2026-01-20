@@ -9,15 +9,14 @@
   </button>
 </div>
 
-<div class="tour-overlay" id="tour-overlay">
-  <div class="tour-backdrop"></div>
-  <div class="spotlight" id="spotlight"></div>
-  <div class="tour-tooltip" id="tour-tooltip">
-    <div class="tour-step-indicator" id="tour-step-indicator"></div>
-    <div class="tour-content" id="tour-content"></div>
+<div id="tour-overlay" class="tour-overlay">
+  <svg id="tour-backdrop" class="tour-backdrop"></svg>
+  <div id="tour-tooltip" class="tour-tooltip">
+    <div id="tour-step-indicator" class="tour-step-indicator"></div>
+    <div id="tour-content" class="tour-content"></div>
     <div class="tour-buttons">
-      <button class="tour-skip-btn" id="tour-skip-btn">Skip Tour</button>
-      <button class="tour-next-btn" id="tour-next-btn">Next →</button>
+      <button id="tour-skip-btn" class="tour-skip-btn">Skip Tour</button>
+      <button id="tour-next-btn" class="tour-next-btn">Next →</button>
     </div>
   </div>
 </div>
@@ -50,12 +49,11 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: 10000;
     display: none;
-    pointer-events: auto;
-    overflow: visible;
+    pointer-events: none;
   }
 
   .tour-overlay.active {
@@ -68,43 +66,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
     pointer-events: auto;
-  }
-
-  .spotlight {
-    position: fixed;
-    border: 3px solid #4ec9b0;
-    border-radius: 12px;
-    box-shadow: 
-      0 0 0 4px rgba(78, 201, 176, 0.3),
-      0 0 30px rgba(78, 201, 176, 0.4),
-      inset 0 0 20px rgba(78, 201, 176, 0.1);
-    background: transparent;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    z-index: 10001;
-  }
-
-  .spotlight::before {
-    content: '';
-    position: absolute;
-    top: -3px;
-    left: -3px;
-    right: -3px;
-    bottom: -3px;
-    border: 3px solid transparent;
-    border-radius: 14px;
-    background: linear-gradient(45deg, #4ec9b0, #22c55e, #4ec9b0) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: borderGlow 2s ease-in-out infinite;
-  }
-
-  @keyframes borderGlow {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
   }
 
   .tour-tooltip {
@@ -114,23 +76,18 @@
     border-radius: 16px;
     padding: 20px 24px;
     max-width: 400px;
-    min-width: 320px;
+    min-width: 300px;
     color: #f1f5f9;
-    box-shadow: 
-      0 20px 50px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(78, 201, 176, 0.2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(78, 201, 176, 0.2);
     z-index: 10002;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: visible !important;
+    pointer-events: auto;
   }
 
   .tour-step-indicator {
-    display: flex !important;
+    display: flex;
     gap: 8px;
     margin-bottom: 16px;
     justify-content: center;
-    visibility: visible !important;
-    opacity: 1 !important;
   }
 
   .tour-step-dot {
@@ -138,9 +95,6 @@
     height: 10px;
     border-radius: 50%;
     background: #334155;
-    transition: all 0.3s ease;
-    display: block !important;
-    visibility: visible !important;
   }
 
   .tour-step-dot.active {
@@ -156,23 +110,17 @@
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 20px;
-    display: block !important;
-    visibility: visible !important;
   }
 
-  .tour-content h4 {
+  .tour-content :global(h4) {
     margin: 0 0 10px 0;
-    font-size: 1.15rem !important;
-    color: #4ec9b0 !important;
-    display: block !important;
-    visibility: visible !important;
+    font-size: 1.15rem;
+    color: #4ec9b0;
   }
 
-  .tour-content p {
+  .tour-content :global(p) {
     margin: 0;
-    color: #cbd5e1 !important;
-    display: block !important;
-    visibility: visible !important;
+    color: #cbd5e1;
   }
 
   .tour-buttons {
@@ -219,9 +167,6 @@
 
 <script>
   (function() {
-    let currentStep = 0;
-    let overlay, spotlight, tooltip, content, stepIndicator, nextBtn, skipBtn, backdrop;
-    
     const tourSteps = [
       {
         selector: '#lab-editor',
@@ -255,37 +200,27 @@
       }
     ];
 
+    let currentStep = 0;
+    let overlay, backdrop, tooltip, content, stepIndicator, nextBtn, skipBtn;
+
     function init() {
       overlay = document.getElementById('tour-overlay');
-      spotlight = document.getElementById('spotlight');
+      backdrop = document.getElementById('tour-backdrop');
       tooltip = document.getElementById('tour-tooltip');
       content = document.getElementById('tour-content');
       stepIndicator = document.getElementById('tour-step-indicator');
       nextBtn = document.getElementById('tour-next-btn');
       skipBtn = document.getElementById('tour-skip-btn');
-      backdrop = document.querySelector('.tour-backdrop');
       
       const startBtn = document.getElementById('start-lab-tour-btn');
+      if (startBtn) startBtn.addEventListener('click', startTour);
+      if (nextBtn) nextBtn.addEventListener('click', nextStep);
+      if (skipBtn) skipBtn.addEventListener('click', endTour);
       
-      if (startBtn) {
-        startBtn.addEventListener('click', startTour);
-      }
-      
-      if (nextBtn) {
-        nextBtn.addEventListener('click', nextStep);
-      }
-      
-      if (skipBtn) {
-        skipBtn.addEventListener('click', endTour);
-      }
-      
-      // Auto-start tour on first visit
+      // Auto-start on first visit
       const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
       if (!localStorage.getItem(tourKey)) {
-        // Small delay to let page fully load
-        setTimeout(() => {
-          startTour();
-        }, 1000);
+        setTimeout(startTour, 1000);
       }
     }
 
@@ -293,144 +228,122 @@
       currentStep = 0;
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
-      renderStepIndicator();
       showStep();
-    }
-
-    function renderStepIndicator() {
-      stepIndicator.innerHTML = tourSteps.map((_, i) => 
-        `<div class="tour-step-dot ${i === currentStep ? 'active' : ''} ${i < currentStep ? 'completed' : ''}"></div>`
-      ).join('');
     }
 
     function showStep() {
       const step = tourSteps[currentStep];
       
-      // Update step indicator
-      renderStepIndicator();
+      // Update step dots
+      stepIndicator.innerHTML = tourSteps.map((_, i) => 
+        `<div class="tour-step-dot ${i === currentStep ? 'active' : ''} ${i < currentStep ? 'completed' : ''}"></div>`
+      ).join('');
       
       // Update content
       content.innerHTML = `<h4>${step.title}</h4><p>${step.text}</p>`;
       
-      // Update button text
+      // Update button
       nextBtn.textContent = currentStep === tourSteps.length - 1 ? 'Got it!' : 'Next →';
       
       if (step.selector) {
         const element = document.querySelector(step.selector);
-        
         if (element) {
-          // Scroll into view
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          
-          setTimeout(() => {
-            const rect = element.getBoundingClientRect();
-            const padding = 12;
-            
-            // Position spotlight border around the element
-            spotlight.style.display = 'block';
-            spotlight.style.width = `${rect.width + padding * 2}px`;
-            spotlight.style.height = `${rect.height + padding * 2}px`;
-            spotlight.style.top = `${rect.top - padding}px`;
-            spotlight.style.left = `${rect.left - padding}px`;
-            
-            // Create a hole in the backdrop so the element shows through
-            const cutoutTop = rect.top - padding;
-            const cutoutLeft = rect.left - padding;
-            const cutoutRight = rect.right + padding;
-            const cutoutBottom = rect.bottom + padding;
-            
-            backdrop.style.clipPath = `polygon(
-              0% 0%, 
-              0% 100%, 
-              ${cutoutLeft}px 100%, 
-              ${cutoutLeft}px ${cutoutTop}px, 
-              ${cutoutRight}px ${cutoutTop}px, 
-              ${cutoutRight}px ${cutoutBottom}px, 
-              ${cutoutLeft}px ${cutoutBottom}px, 
-              ${cutoutLeft}px 100%, 
-              100% 100%, 
-              100% 0%
-            )`;
-            
-            // Position tooltip
-            positionTooltip(rect, step.position);
-          }, 400);
+          setTimeout(() => highlightElement(element, step.position), 400);
         } else {
-          // Element not found, show tooltip in center
-          backdrop.style.clipPath = 'none';
-          spotlight.style.display = 'none';
-          positionTooltipCenter();
+          showCentered();
         }
       } else {
-        // No selector, center everything
-        backdrop.style.clipPath = 'none';
-        spotlight.style.display = 'none';
-        positionTooltipCenter();
+        showCentered();
       }
     }
 
+    function highlightElement(element, position) {
+      const rect = element.getBoundingClientRect();
+      const padding = 16;
+      
+      // Calculate hole dimensions
+      const holeX = rect.left - padding;
+      const holeY = rect.top - padding;
+      const holeW = rect.width + padding * 2;
+      const holeH = rect.height + padding * 2;
+      const cornerRadius = 12;
+      
+      // Create SVG mask with rounded rectangle hole
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      
+      backdrop.innerHTML = `
+        <defs>
+          <mask id="hole-mask">
+            <rect x="0" y="0" width="${w}" height="${h}" fill="white"/>
+            <rect x="${holeX}" y="${holeY}" width="${holeW}" height="${holeH}" rx="${cornerRadius}" fill="black"/>
+          </mask>
+        </defs>
+        <rect x="0" y="0" width="${w}" height="${h}" fill="rgba(0,0,0,0.75)" mask="url(#hole-mask)"/>
+        <rect x="${holeX}" y="${holeY}" width="${holeW}" height="${holeH}" rx="${cornerRadius}" 
+              fill="none" stroke="#4ec9b0" stroke-width="3"
+              style="filter: drop-shadow(0 0 10px rgba(78,201,176,0.5))"/>
+      `;
+      
+      // Position tooltip
+      positionTooltip(rect, position);
+    }
+
+    function showCentered() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      
+      backdrop.innerHTML = `
+        <rect x="0" y="0" width="${w}" height="${h}" fill="rgba(0,0,0,0.75)"/>
+      `;
+      
+      // Center tooltip
+      tooltip.style.top = '50%';
+      tooltip.style.left = '50%';
+      tooltip.style.transform = 'translate(-50%, -50%)';
+    }
+
     function positionTooltip(rect, position) {
-      // Reset any transform from centering
       tooltip.style.transform = 'none';
       
-      // Force a reflow to ensure we get accurate measurements after content change
-      tooltip.offsetHeight;
-      
       const tooltipRect = tooltip.getBoundingClientRect();
-      const padding = 20;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+      const gap = 20;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
       
       let top, left;
       
       switch (position) {
-        case 'top':
-          top = rect.top - tooltipRect.height - padding - 20;
+        case 'bottom':
+          top = rect.bottom + gap;
           left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
           break;
-        case 'bottom':
-          top = rect.bottom + padding + 20;
+        case 'top':
+          top = rect.top - tooltipRect.height - gap;
           left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
           break;
         case 'left':
           top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
-          left = rect.left - tooltipRect.width - padding - 20;
+          left = rect.left - tooltipRect.width - gap;
           break;
         case 'right':
           top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
-          left = rect.right + padding + 20;
+          left = rect.right + gap;
           break;
         default:
-          positionTooltipCenter();
+          showCentered();
           return;
       }
       
-      // Keep tooltip in viewport
-      if (left < padding) left = padding;
-      if (left + tooltipRect.width > viewportWidth - padding) {
-        left = viewportWidth - tooltipRect.width - padding;
-      }
-      if (top < padding) top = padding;
-      if (top + tooltipRect.height > viewportHeight - padding) {
-        top = viewportHeight - tooltipRect.height - padding;
-      }
+      // Keep in viewport
+      if (left < 10) left = 10;
+      if (left + tooltipRect.width > vw - 10) left = vw - tooltipRect.width - 10;
+      if (top < 10) top = 10;
+      if (top + tooltipRect.height > vh - 10) top = vh - tooltipRect.height - 10;
       
       tooltip.style.top = `${top}px`;
       tooltip.style.left = `${left}px`;
-    }
-
-    function positionTooltipCenter() {
-      tooltip.style.top = '50%';
-      tooltip.style.left = '50%';
-      tooltip.style.transform = 'translate(-50%, -50%)';
-      
-      // Reset transform after positioning
-      setTimeout(() => {
-        const tooltipRect = tooltip.getBoundingClientRect();
-        tooltip.style.top = `${(window.innerHeight - tooltipRect.height) / 2}px`;
-        tooltip.style.left = `${(window.innerWidth - tooltipRect.width) / 2}px`;
-        tooltip.style.transform = 'none';
-      }, 50);
     }
 
     function nextStep() {
@@ -445,21 +358,14 @@
     function endTour() {
       overlay.classList.remove('active');
       document.body.style.overflow = '';
-      currentStep = 0;
+      backdrop.innerHTML = '';
       
-      // Reset spotlight and backdrop
-      spotlight.style.display = 'none';
-      backdrop.style.clipPath = 'none';
-      
-      // Mark tour as completed for this page
       const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
       localStorage.setItem(tourKey, 'true');
       
-      // Dispatch event so StartTourFocus can hide
       window.dispatchEvent(new Event('tourCompleted'));
     }
 
-    // Initialize when DOM is ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
