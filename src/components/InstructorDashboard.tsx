@@ -2,6 +2,24 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAccessToken } from '../lib/auth';
 import { WEEKS } from '../config/site';
 
+// Test student patterns - emails that contain these patterns are filtered out
+// Add patterns for test accounts, instructor test accounts, etc.
+const TEST_STUDENT_PATTERNS = [
+  'test',           // any email containing 'test'
+  'demo',           // any email containing 'demo'
+  'instructor',     // instructor test accounts
+  'admin',          // admin accounts
+  'nphillips',      // instructor's own testing
+  'hanri',          // developer testing
+];
+
+// Check if an email matches test student patterns
+const isTestStudent = (email: string | undefined): boolean => {
+  if (!email) return false;
+  const lowerEmail = email.toLowerCase();
+  return TEST_STUDENT_PATTERNS.some(pattern => lowerEmail.includes(pattern.toLowerCase()));
+};
+
 // Number of weeks in course
 const TOTAL_WEEKS = 15;
 
@@ -268,6 +286,7 @@ const InstructorDashboard: React.FC = () => {
   const [weekFilter, setWeekFilter] = useState<number | 'all'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | AssignmentType>('all');
   const [showTotals, setShowTotals] = useState(true);
+  const [hideTestStudents, setHideTestStudents] = useState(true); // Default to hiding test students
   
   // Modal state
   const [modalData, setModalData] = useState<SubmissionModalData | null>(null);
@@ -292,6 +311,17 @@ const InstructorDashboard: React.FC = () => {
     filteredAssignments.forEach(a => weeks.add(a.week));
     return Array.from(weeks).sort((a, b) => a - b);
   }, [filteredAssignments]);
+
+  // Filter students based on test student toggle
+  const displayedStudents = useMemo(() => {
+    if (!hideTestStudents) return students;
+    return students.filter(s => !isTestStudent(s.email));
+  }, [students, hideTestStudents]);
+
+  // Count how many test students are hidden
+  const hiddenTestCount = useMemo(() => {
+    return students.filter(s => isTestStudent(s.email)).length;
+  }, [students]);
 
   const parseProgressData = (progress: StudentProgress) => {
     const parsed: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; gradedAt?: string } } = {};
@@ -606,6 +636,15 @@ const InstructorDashboard: React.FC = () => {
           />
           Show Weighted Totals
         </label>
+        
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: hideTestStudents ? '#4ade80' : '#888' }}>
+          <input
+            type="checkbox"
+            checked={hideTestStudents}
+            onChange={(e) => setHideTestStudents(e.target.checked)}
+          />
+          Hide Test Students {hiddenTestCount > 0 && `(${hiddenTestCount} hidden)`}
+        </label>
       </div>
 
       {/* Gradebook Table */}
@@ -646,14 +685,14 @@ const InstructorDashboard: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {students.length === 0 ? (
+            {displayedStudents.length === 0 ? (
               <tr>
                 <td colSpan={100} style={{ textAlign: 'center', color: '#888', padding: '40px' }}>
-                  No student data yet
+                  {students.length === 0 ? 'No student data yet' : 'No students to show (all filtered)'}
                 </td>
               </tr>
             ) : (
-              students.map(student => {
+              displayedStudents.map(student => {
                 const participationByWeek = countParticipationByWeek(student.progress);
                 const syllabusOk = hasSyllabusQuizPassed(student.parsedProgress);
                 const weighted = calculateWeightedTotals(student.parsedProgress, participationByWeek, ASSIGNMENTS);
