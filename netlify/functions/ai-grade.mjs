@@ -51,6 +51,8 @@ IMPORTANT GRADING PHILOSOPHY:
 - Do NOT dock points for spelling/grammar in comments or strings
 - Focus on whether the CODE WORKS and meets the core requirements
 - If header comments exist with student name and assignment reference, give FULL points regardless of exact wording
+- NEVER question or comment on the student's name. Accept ANY name as valid (nicknames, handles, unusual names, names with numbers, etc.)
+- Do NOT suggest they use their "actual" or "real" name - whatever they wrote IS their name
 
 LESSON CONTEXT - What we taught:
 ${effectiveContext.taughtConcepts}
