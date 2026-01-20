@@ -55,6 +55,7 @@
     z-index: 10000;
     display: none;
     pointer-events: auto;
+    overflow: visible;
   }
 
   .tour-overlay.active {
@@ -114,6 +115,8 @@
     padding: 20px 24px;
     max-width: 400px;
     min-width: 320px;
+    max-height: 80vh;
+    overflow-y: auto;
     color: #f1f5f9;
     box-shadow: 
       0 20px 50px rgba(0, 0, 0, 0.5),
@@ -355,6 +358,12 @@
     }
 
     function positionTooltip(rect, position) {
+      // Reset any transform from centering
+      tooltip.style.transform = 'none';
+      
+      // Force a reflow to ensure we get accurate measurements after content change
+      tooltip.offsetHeight;
+      
       const tooltipRect = tooltip.getBoundingClientRect();
       const padding = 20;
       const viewportWidth = window.innerWidth;
