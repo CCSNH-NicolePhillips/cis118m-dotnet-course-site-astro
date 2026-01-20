@@ -208,12 +208,20 @@
   .tour-backdrop.with-cutout {
     clip-path: var(--cutout-path);
   }
+
+  /* Elevate highlighted elements above the backdrop during tour */
+  :global(.tour-highlighted) {
+    position: relative !important;
+    z-index: 10001 !important;
+    background: inherit;
+  }
 </style>
 
 <script>
   (function() {
     let currentStep = 0;
     let overlay, spotlight, tooltip, content, stepIndicator, nextBtn, skipBtn, backdrop;
+    let currentHighlightedElement = null;
     
     const tourSteps = [
       {
@@ -299,6 +307,12 @@
     function showStep() {
       const step = tourSteps[currentStep];
       
+      // Remove highlight from previous element
+      if (currentHighlightedElement) {
+        currentHighlightedElement.classList.remove('tour-highlighted');
+        currentHighlightedElement = null;
+      }
+      
       // Update step indicator
       renderStepIndicator();
       
@@ -312,6 +326,10 @@
         const element = document.querySelector(step.selector);
         
         if (element) {
+          // Highlight the element (elevate above backdrop)
+          element.classList.add('tour-highlighted');
+          currentHighlightedElement = element;
+          
           // Scroll into view
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
           
@@ -433,6 +451,12 @@
       overlay.classList.remove('active');
       document.body.style.overflow = '';
       currentStep = 0;
+      
+      // Remove highlight from current element
+      if (currentHighlightedElement) {
+        currentHighlightedElement.classList.remove('tour-highlighted');
+        currentHighlightedElement = null;
+      }
       
       // Reset backdrop and spotlight
       backdrop.style.clipPath = '';
