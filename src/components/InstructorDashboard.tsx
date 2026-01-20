@@ -274,6 +274,8 @@ const InstructorDashboard: React.FC = () => {
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [manualGrade, setManualGrade] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
+  const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   // Filter assignments based on current filters
   const filteredAssignments = useMemo(() => {
@@ -360,16 +362,37 @@ const InstructorDashboard: React.FC = () => {
     loadGradebook();
   }, [loadGradebook]);
 
-  const openSubmissionModal = (student: Student, assignmentId: string, assignmentLabel: string) => {
+  const openSubmissionModal = async (student: Student, assignmentId: string, assignmentLabel: string) => {
     setModalData({ student, assignmentId, assignmentLabel });
     setActionFeedback(null);
     setManualGrade('');
     setOverrideReason('');
+    setSubmissionHistory([]);
+    
+    // Fetch submission history for this student/assignment
+    setHistoryLoading(true);
+    try {
+      const token = await getAccessToken();
+      if (token) {
+        const res = await fetch(`/.netlify/functions/instructor-submission-history?userId=${encodeURIComponent(student.sub)}&assignmentId=${encodeURIComponent(assignmentId)}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSubmissionHistory(data.history || []);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load submission history:', err);
+    } finally {
+      setHistoryLoading(false);
+    }
   };
 
   const closeModal = () => {
     setModalData(null);
     setActionFeedback(null);
+    setSubmissionHistory([]);
   };
 
   const handleUpdateGrade = async () => {
@@ -911,6 +934,64 @@ const InstructorDashboard: React.FC = () => {
                   )}
                 </details>
               )}
+
+              {/* Submission History */}
+              <details style={{ marginBottom: '20px' }}>
+                <summary style={{ cursor: 'pointer', color: '#fbbf24', fontWeight: 'bold', padding: '10px 0' }}>
+                  📜 Submission History ({historyLoading ? 'Loading...' : `${submissionHistory.length} attempts`})
+                </summary>
+                <div style={{
+                  background: '#0d0d0d',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  marginTop: '10px',
+                  maxHeight: '300px',
+                  overflowY: 'auto'
+                }}>
+                  {historyLoading ? (
+                    <div style={{ color: '#888', textAlign: 'center', padding: '20px' }}>Loading history...</div>
+                  ) : submissionHistory.length === 0 ? (
+                    <div style={{ color: '#888', textAlign: 'center', padding: '20px' }}>No submission history available</div>
+                  ) : (
+                    submissionHistory.map((submission: any, index: number) => (
+                      <details key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>
+                        <summary style={{ cursor: 'pointer', color: '#ddd', padding: '5px 0' }}>
+                          <span style={{ 
+                            display: 'inline-block',
+                            background: (submission.aiGrade || 0) >= 70 ? '#4ec9b0' : '#ce9178',
+                            color: '#000',
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            fontWeight: 'bold',
+                            fontSize: '0.8rem',
+                            marginRight: '10px'
+                          }}>
+                            {submission.aiGrade ?? '--'}%
+                          </span>
+                          Attempt {submissionHistory.length - index} — {new Date(submission.submittedAt).toLocaleString()}
+                        </summary>
+                        <div style={{ padding: '10px', background: '#1a1a1a', borderRadius: '4px', marginTop: '5px' }}>
+                          {submission.aiFeedback && (
+                            <p style={{ color: '#888', fontSize: '0.85rem', margin: '0 0 10px 0' }}>
+                              <strong style={{ color: '#4ec9b0' }}>Feedback:</strong> {submission.aiFeedback}
+                            </p>
+                          )}
+                          <pre style={{ 
+                            color: '#ddd', 
+                            fontSize: '0.8rem', 
+                            margin: 0,
+                            whiteSpace: 'pre-wrap',
+                            maxHeight: '150px',
+                            overflowY: 'auto'
+                          }}>
+                            {submission.code || submission.reflection || 'No code available'}
+                          </pre>
+                        </div>
+                      </details>
+                    ))
+                  )}
+                </div>
+              </details>
 
               {/* Instructor Actions */}
               <div style={{ borderTop: '1px solid #333', paddingTop: '20px' }}>
