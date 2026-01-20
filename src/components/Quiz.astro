@@ -74,7 +74,10 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       </div>
     ))}
     
-    <button type="submit" class="submit-button" id={`submit-${quizId}`}>Submit Quiz</button>
+    <div class="quiz-actions">
+      <button type="button" class="save-button" id={`save-${quizId}`}>💾 Save Progress</button>
+      <button type="submit" class="submit-button" id={`submit-${quizId}`}>Submit Quiz</button>
+    </div>
   </form>
   
   <div class="quiz-status" id={`status-${quizId}`} style="display: none;">
@@ -299,6 +302,97 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         console.error('[Quiz] Draft load failed:', err);
       }
     };
+
+    // Save draft to cloud (called by Save button)
+    const saveDraftToCloud = async (answers) => {
+      const saveBtn = document.getElementById(`save-${quizId}`);
+      try {
+        const authAvailable = await waitForAuth();
+        if (!authAvailable) return false;
+        
+        const authed = await window.__auth.isAuthed();
+        if (!authed) {
+          alert('Please log in to save your progress to the cloud.');
+          return false;
+        }
+        
+        saveBtn.classList.add('saving');
+        saveBtn.textContent = '💾 Saving...';
+        
+        const token = await window.__auth.getAccessToken();
+        const response = await fetch('/api/code-save', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            starterId: `quiz-draft-${quizId}`,
+            code: JSON.stringify(answers)
+          })
+        });
+        
+        if (response.ok) {
+          saveBtn.classList.remove('saving');
+          saveBtn.classList.add('saved');
+          saveBtn.textContent = '✓ Saved!';
+          setTimeout(() => {
+            saveBtn.classList.remove('saved');
+            saveBtn.textContent = '💾 Save Progress';
+          }, 2000);
+          return true;
+        } else {
+          throw new Error('Save failed');
+        }
+      } catch (err) {
+        console.error('[Quiz] Cloud save failed:', err);
+        saveBtn.classList.remove('saving');
+        saveBtn.textContent = '💾 Save Progress';
+        alert('Failed to save to cloud. Your answers are saved locally.');
+        return false;
+      }
+    };
+    
+    // Load draft from cloud
+    const loadDraftFromCloud = async () => {
+      try {
+        const authAvailable = await waitForAuth();
+        if (!authAvailable) return null;
+        
+        const authed = await window.__auth.isAuthed();
+        if (!authed) return null;
+        
+        const token = await window.__auth.getAccessToken();
+        const response = await fetch(`/api/code-get?starterId=quiz-draft-${quizId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.code) {
+            const answers = JSON.parse(data.code);
+            // Apply answers to form
+            Object.entries(answers).forEach(([qId, answer]) => {
+              if (Array.isArray(answer)) {
+                answer.forEach(val => {
+                  const input = form.querySelector(`input[name="q-${qId}"][value="${val}"]`);
+                  if (input) input.checked = true;
+                });
+              } else if (answer) {
+                const input = form.querySelector(`input[name="q-${qId}"][value="${answer}"]`);
+                if (input) input.checked = true;
+              }
+            });
+            // Also save to localStorage
+            localStorage.setItem(`quiz-draft-${quizId}`, JSON.stringify(answers));
+            return answers;
+          }
+        }
+      } catch (err) {
+        console.error('[Quiz] Cloud load failed:', err);
+      }
+      return null;
+    };
     
     // Save draft on any input change
     form.addEventListener('change', () => {
@@ -314,8 +408,31 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       saveDraft(answers);
     });
     
-    // Load draft on init
+    // Save button click handler
+    const saveBtn = document.getElementById(`save-${quizId}`);
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        const formData = new FormData(form);
+        const answers = {};
+        questions.forEach((q) => {
+          if (q.type === 'checkbox') {
+            answers[q.id] = formData.getAll(`q-${q.id}`);
+          } else {
+            answers[q.id] = formData.get(`q-${q.id}`);
+          }
+        });
+        // Save to localStorage
+        saveDraft(answers);
+        // Save to cloud
+        await saveDraftToCloud(answers);
+      });
+    }
+    
+    // Load draft on init (localStorage first, then cloud)
     loadDraft();
+    
+    // Try to load from cloud after auth is ready
+    loadDraftFromCloud();
     
     // Load progress on init
     loadProgress();
@@ -667,6 +784,42 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
   
   .option-label input {
     cursor: pointer;
+  }
+  
+  .quiz-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+  
+  .save-button {
+    background: var(--panel2);
+    color: var(--text);
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .save-button:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  
+  .save-button.saving {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  .save-button.saved {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
   }
   
   .submit-button, .retake-button {

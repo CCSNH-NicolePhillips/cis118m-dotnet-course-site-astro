@@ -1093,7 +1093,18 @@ const getWeekLockInfo = (weekSlug: string) => {
             userChip.style.display = "flex";
             
             // Check if user has set a display name, otherwise show email
-            const displayName = window.__onboarding?.getDisplayName();
+            // First try to load from server (for cross-computer sync)
+            let displayName = window.__onboarding?.getDisplayName();
+            
+            // If no local display name, try loading from server
+            if (!displayName && window.__onboarding?.loadFromServer) {
+              window.__onboarding.loadFromServer().then(serverName => {
+                if (serverName && userEmail) {
+                  userEmail.textContent = serverName;
+                }
+              });
+            }
+            
             if (userEmail) {
               userEmail.textContent = displayName || user.email;
             }

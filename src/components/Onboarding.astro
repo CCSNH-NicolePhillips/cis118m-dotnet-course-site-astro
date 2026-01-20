@@ -477,6 +477,38 @@
     }
   }
 
+  // Load display name from Redis (for cross-computer sync)
+  async function loadDisplayNameFromServer() {
+    try {
+      const token = window.__auth?.getAccessToken ? await window.__auth.getAccessToken() : null;
+      if (!token) return null;
+      
+      const res = await fetch('/.netlify/functions/get-user-profile', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        if (data.displayName) {
+          // Save to localStorage so it persists
+          localStorage.setItem(STORAGE_KEYS.displayName, data.displayName);
+          displayName = data.displayName;
+          // Also mark onboarding as complete since they've set a name before
+          localStorage.setItem(STORAGE_KEYS.onboardingComplete, 'true');
+          updateUserChipDisplay();
+          return data.displayName;
+        }
+      }
+    } catch (err) {
+      console.error('[Onboarding] Failed to load display name from server:', err);
+    }
+    return null;
+  }
+
   function updateUserChipDisplay() {
     const userEmail = document.querySelector('[data-auth="user-email"]');
     if (userEmail && displayName) {
@@ -700,7 +732,8 @@
     openSettings,
     closeSettings,
     updateUserChip: updateUserChipDisplay,
-    getDisplayName: () => localStorage.getItem(STORAGE_KEYS.displayName) || ''
+    getDisplayName: () => localStorage.getItem(STORAGE_KEYS.displayName) || '',
+    loadFromServer: loadDisplayNameFromServer
   };
 
   // Initialize when DOM is ready

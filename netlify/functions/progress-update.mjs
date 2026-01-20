@@ -40,7 +40,29 @@ export default async function handler(request, context) {
       );
     }
 
-    const { starterId, event, pageId, status, score, feedback, savedCode, type } = body;
+    const { starterId, event, pageId, status, score, feedback, savedCode, type, displayName } = body;
+
+    // Handle display name update (from Onboarding)
+    if (displayName && pageId === 'user-settings') {
+      const redis = getRedis();
+      const userId = user.sub;
+      
+      console.log(`[progress-update] Saving displayName for ${userId}:`, displayName);
+      
+      // Store display name with a dedicated key
+      await redis.set(`cis118m:displayName:${userId}`, displayName);
+      
+      // Also store in the legacy studentName key for instructor dashboard
+      await redis.set(`cis118m:studentName:${userId}`, displayName);
+      
+      // Track student in index for instructor dashboard
+      await redis.sadd("cis118m:students", userId);
+      
+      return new Response(
+        JSON.stringify({ ok: true, saved: 'displayName' }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // Handle participation events (from Checkpoint.astro, TryItNowRunner, etc.)
     if (pageId && status === 'participated' && (type === 'checkpoint' || type === 'tryit' || type === 'deepdive')) {
