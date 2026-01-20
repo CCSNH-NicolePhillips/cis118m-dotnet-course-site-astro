@@ -6,6 +6,7 @@ description: "Understanding the organizational hierarchy of C# programs"
 
 import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 2.1: Namespaces & Classes
 
@@ -46,6 +47,48 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
     </p>
   </div>
 </div>
+
+---
+
+<DeepDiveTabs
+  title="Why do we need containers?"
+  tabs={[
+    {
+      id: "problem-collisions",
+      label: "The Problem: Collisions",
+      content: `
+        <h3>The Chaos of a No-Zone City</h3>
+        <p>Imagine a city with no districts or zones. If two developers both build a house called 'The White House,' the mail carrier (the C# Compiler) won't know where to deliver the data.</p>
+        <ul>
+          <li><strong>Name Collision:</strong> This happens when two pieces of code have the same name in the same space.</li>
+          <li><strong>The Result:</strong> The code 'crashes' or won't even start because it's ambiguous.</li>
+        </ul>
+      `,
+      keyPoints: []
+    },
+    {
+      id: "solution-namespaces",
+      label: "The Solution: Namespaces",
+      content: `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+          <div>
+            <h3>Order Through Zoning</h3>
+            <p>By wrapping your code in a namespace, you give it a 'Last Name.'</p>
+            <ul>
+              <li><strong>Unique Identity:</strong> <code>MyProject.User</code> is distinct from <code>ExternalLibrary.User</code>.</li>
+              <li><strong>Discoverability:</strong> Just like searching for a store in a specific mall, developers can easily find related code by looking in the correct namespace.</li>
+            </ul>
+          </div>
+          <div>
+            <img src="/media/week-2/lesson-2.1/zoning.png" alt="Floor plan showing organized zones" style="border-radius: 8px; width: 100%;" />
+            <p style="font-size: 0.75rem; color: #888; text-align: right; margin-top: 4px;">Evgen Bobrov/Getty Images</p>
+          </div>
+        </div>
+      `,
+      keyPoints: []
+    }
+  ]}
+/>
 
 ---
 
