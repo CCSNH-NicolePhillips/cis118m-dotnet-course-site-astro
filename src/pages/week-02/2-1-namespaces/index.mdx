@@ -126,6 +126,22 @@ namespace ProgramName      // 1. Container for organization
 
 ---
 
+## 🏙️ Visualizing the Containers
+
+<div class="visual-concept">
+  <p>
+    This diagram shows how namespaces (Zones) act as parent containers for classes (Buildings). Just as a "Main Street" can exist in both New York and London, a <code>User</code> class can exist in both your <code>Account</code> and <code>Security</code> namespaces without conflict.
+  </p>
+  <div class="concept-image">
+    <img src="/media/week-2/lesson-2.1/containerVisual.png" alt="3D city visualization showing buildings (classes) organized within different zones (namespaces)" />
+    <p class="image-credit">Vadym Ivanchenko/Getty Images</p>
+  </div>
+</div>
+
+The key insight: **Namespaces give context.** A `Customer` in `Airline.Reservations` is fundamentally different from a `Customer` in `Airline.Loyalty`—even though they share the same class name.
+
+---
+
 ## 🔍 Anatomy Breakdown
 
 Let's dissect each piece:
