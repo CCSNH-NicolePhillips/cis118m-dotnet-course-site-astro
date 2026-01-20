@@ -434,9 +434,16 @@
       document.body.style.overflow = '';
       currentStep = 0;
       
+      // Reset backdrop and spotlight
+      backdrop.style.clipPath = '';
+      spotlight.style.display = 'none';
+      
       // Mark tour as completed for this page
       const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
       localStorage.setItem(tourKey, 'true');
+      
+      // Dispatch event so StartTourFocus can hide
+      window.dispatchEvent(new Event('tourCompleted'));
     }
 
     // Initialize when DOM is ready

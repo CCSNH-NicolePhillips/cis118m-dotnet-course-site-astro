@@ -47,18 +47,26 @@
 </style>
 
 <script>
-  // Check if tour was already completed
-  const tourCompleted = localStorage.getItem('cis118m:labTourCompleted');
+  (function() {
+  // Use the same key format as LabTour
+  const tourKey = 'cis118m:lab-tour-completed:' + window.location.pathname;
+  const tourCompleted = localStorage.getItem(tourKey);
   
   // Find the elements
   const overlay = document.getElementById('start-tour-focus-overlay');
   const arrowContainer = overlay?.querySelector('.arrow-container');
   const startButton = document.getElementById('start-lab-tour-btn');
   
+  // Helper to hide the focus overlay
+  function hideFocusOverlay() {
+    if (overlay) overlay.style.display = 'none';
+    if (startButton) startButton.classList.remove('pulsing-glow');
+  }
+  
   // Only show focus overlay if tour hasn't been completed
   if (tourCompleted) {
     // User already did the tour - hide the focus overlay
-    if (overlay) overlay.style.display = 'none';
+    hideFocusOverlay();
   } else if (startButton && overlay && arrowContainer) {
     // First time - show the focus overlay
     
@@ -76,15 +84,26 @@
     window.addEventListener('scroll', updateArrowPosition);
     window.addEventListener('resize', updateArrowPosition);
     
-    // 3. Add the glowing class to the button
+    // 3. Listen for tour completion (via storage event or custom event)
+    window.addEventListener('tourCompleted', hideFocusOverlay);
+    
+    // Also check for localStorage changes (in case tour ends)
+    const checkTourComplete = setInterval(() => {
+      if (localStorage.getItem(tourKey)) {
+        clearInterval(checkTourComplete);
+        hideFocusOverlay();
+      }
+    }, 500);
+    
+    // 4. Add the glowing class to the button
     startButton.classList.add('pulsing-glow');
     
-    // 4. Hide the effect when the button is clicked
+    // 5. Hide the effect when the button is clicked
     startButton.addEventListener('click', () => {
-      overlay.style.display = 'none';
-      startButton.classList.remove('pulsing-glow');
+      hideFocusOverlay();
       window.removeEventListener('scroll', updateArrowPosition);
       window.removeEventListener('resize', updateArrowPosition);
     });
   }
+  })();
 </script>
