@@ -904,9 +904,32 @@ const InstructorDashboard: React.FC = () => {
                   overflowY: 'auto',
                   marginTop: '10px'
                 }}>
-                  {modalData.student.progress?.[`${modalData.assignmentId}:savedCode`] ||
-                   modalData.student.parsedProgress?.[modalData.assignmentId]?.savedCode ||
-                   'No code available'}
+                  {(() => {
+                    const savedCode = modalData.student.progress?.[`${modalData.assignmentId}:savedCode`] ||
+                                     modalData.student.parsedProgress?.[modalData.assignmentId]?.savedCode;
+                    if (!savedCode) return 'No submission available';
+                    // If it's already a string, display it
+                    if (typeof savedCode === 'string') {
+                      // Try to parse as JSON for quiz answers and format nicely
+                      try {
+                        const parsed = JSON.parse(savedCode);
+                        if (typeof parsed === 'object' && parsed !== null) {
+                          // Format quiz answers nicely
+                          return Object.entries(parsed).map(([key, value]) => 
+                            `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`
+                          ).join('\n');
+                        }
+                        return savedCode;
+                      } catch {
+                        return savedCode; // Not JSON, just display as-is
+                      }
+                    }
+                    // If it's an object, stringify it
+                    if (typeof savedCode === 'object') {
+                      return JSON.stringify(savedCode, null, 2);
+                    }
+                    return String(savedCode);
+                  })()}
                 </pre>
               </details>
 
@@ -923,9 +946,14 @@ const InstructorDashboard: React.FC = () => {
                   marginTop: '10px',
                   whiteSpace: 'pre-wrap'
                 }}>
-                  {modalData.student.progress?.[`${modalData.assignmentId}:feedback`] ||
-                   modalData.student.parsedProgress?.[modalData.assignmentId]?.feedback ||
-                   'No AI feedback available'}
+                  {(() => {
+                    const feedback = modalData.student.progress?.[`${modalData.assignmentId}:feedback`] ||
+                                     modalData.student.parsedProgress?.[modalData.assignmentId]?.feedback;
+                    if (!feedback) return 'No AI feedback available';
+                    if (typeof feedback === 'string') return feedback;
+                    if (typeof feedback === 'object') return JSON.stringify(feedback, null, 2);
+                    return String(feedback);
+                  })()}
                 </div>
               </details>
 
@@ -951,7 +979,9 @@ const InstructorDashboard: React.FC = () => {
                       }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ color: '#4ec9b0', fontWeight: 'bold', textTransform: 'capitalize' }}>{category}</div>
-                          <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>{data?.rationale || 'N/A'}</div>
+                          <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>
+                            {typeof data?.rationale === 'string' ? data.rationale : (data?.rationale ? JSON.stringify(data.rationale) : 'N/A')}
+                          </div>
                         </div>
                         <div style={{
                           background: (data?.points || 0) >= (category === 'correctness' ? 30 : category === 'requirements' ? 20 : 7) ? '#4ec9b0' : '#ce9178',
@@ -1012,7 +1042,7 @@ const InstructorDashboard: React.FC = () => {
                         <div style={{ padding: '10px', background: '#1a1a1a', borderRadius: '4px', marginTop: '5px' }}>
                           {submission.aiFeedback && (
                             <p style={{ color: '#888', fontSize: '0.85rem', margin: '0 0 10px 0' }}>
-                              <strong style={{ color: '#4ec9b0' }}>Feedback:</strong> {submission.aiFeedback}
+                              <strong style={{ color: '#4ec9b0' }}>Feedback:</strong> {typeof submission.aiFeedback === 'string' ? submission.aiFeedback : JSON.stringify(submission.aiFeedback)}
                             </p>
                           )}
                           <pre style={{ 
@@ -1023,7 +1053,26 @@ const InstructorDashboard: React.FC = () => {
                             maxHeight: '150px',
                             overflowY: 'auto'
                           }}>
-                            {submission.code || submission.reflection || 'No code available'}
+                            {(() => {
+                              const content = submission.code || submission.reflection;
+                              if (!content) return 'No code available';
+                              if (typeof content === 'string') {
+                                // Try to parse as JSON for quiz answers
+                                try {
+                                  const parsed = JSON.parse(content);
+                                  if (typeof parsed === 'object' && parsed !== null) {
+                                    return Object.entries(parsed).map(([k, v]) => 
+                                      `${k}: ${typeof v === 'object' ? JSON.stringify(v) : v}`
+                                    ).join('\n');
+                                  }
+                                  return content;
+                                } catch {
+                                  return content;
+                                }
+                              }
+                              if (typeof content === 'object') return JSON.stringify(content, null, 2);
+                              return String(content);
+                            })()}
                           </pre>
                         </div>
                       </details>
