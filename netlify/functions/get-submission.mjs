@@ -33,9 +33,18 @@ export async function handler(event, context) {
     }
 
     const redis = getRedis();
-    const key = `submissions:${sub}:week${week}:${type}`;
     
-    const data = await redis.get(key);
+    // Build assignment ID from week and type (e.g., week-01-lab)
+    const weekPadded = week.padStart(2, '0');
+    const assignmentId = `week-${weekPadded}-${type}`;
+    
+    // Try new format first (latest submission)
+    let data = await redis.get(`submissions:${sub}:${assignmentId}:latest`);
+    
+    // Fall back to old format for backwards compatibility
+    if (!data) {
+      data = await redis.get(`submissions:${sub}:week${week}:${type}`);
+    }
 
     if (!data) {
       return {
@@ -44,7 +53,8 @@ export async function handler(event, context) {
       };
     }
 
-    const submission = JSON.parse(data);
+    // Handle both string and object responses from Redis
+    const submission = typeof data === 'string' ? JSON.parse(data) : data;
 
     return {
       statusCode: 200,
