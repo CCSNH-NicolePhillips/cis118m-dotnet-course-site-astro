@@ -31,11 +31,12 @@ export const WEEKS: WeekConfig[] = [
     unlockDate: '2026-01-19T00:00:00-05:00', // Monday 12:00 AM EST
     dueDate: '2026-01-25T23:59:59-05:00',    // Sunday 11:59 PM EST
     pages: [
-      { title: '01. Course Syllabus', href: '/week-01/syllabus/' },
+      { title: '01. Course Syllabus & Expectations', href: '/week-01/syllabus/' },
       { title: '02. Syllabus Assessment (Graded)', href: '/week-01/required-quiz/', isGatekeeper: true }, // 100% Required
       { title: '03. Lesson: The Spark', href: '/week-01/lesson-1/' },
       { title: '04. Lab: Console Logic (Graded)', href: '/week-01/lab-01/' },
-      { title: '05. Weekly Assessment (Graded)', href: '/week-01/weekly-assessment/' }
+      { title: '05. Technical Reflection (Graded)', href: '/week-01/homework/' },
+      { title: '06. Weekly Assessment (Graded)', href: '/week-01/weekly-assessment/' }
     ]
   },
   { slug: '02', title: 'Week 02: First C# Program', unlockDate: '2026-01-26T00:00:00-05:00', dueDate: '2026-02-01T23:59:59-05:00', pages: [] },
