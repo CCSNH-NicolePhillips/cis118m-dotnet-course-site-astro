@@ -584,6 +584,32 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
     color: rgba(0, 0, 0, 0.8);
   }
 
+  /* Table styling for light mode */
+  .explanation :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .explanation :global(div[style*="background:#1e2128"]),
+  .explanation :global(div[style*="background: #1e2128"]) {
+    background: #1e2128 !important;
+  }
+
+  body[data-theme="light"] .explanation :global(div[style*="background:#1e2128"]),
+  body[data-theme="light"] .explanation :global(div[style*="background: #1e2128"]) {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd;
+  }
+
+  body[data-theme="light"] .explanation :global(table td) {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  body[data-theme="light"] .explanation :global(table tr) {
+    border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+  }
+
   .media-slot {
     margin: 24px 0;
     text-align: center;
