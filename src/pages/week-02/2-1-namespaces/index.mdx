@@ -353,7 +353,7 @@ namespace University
   <a href="/week-02/2-2-main-method/" class="vscode-button">Continue to Section 2.2 →</a>
 </div>
 
-<style>
+<style is:global>
 {`
   .section-header {
     display: flex;
@@ -542,57 +542,57 @@ namespace University
   }
 
   /* Light mode overrides */
-  :global(body[data-theme="light"]) .architect-note {
-    background: linear-gradient(135deg, #f8f4e8 0%, #f0ebe0 100%);
+  body[data-theme="light"] .architect-note {
+    background: linear-gradient(135deg, #f8f4e8 0%, #f0ebe0 100%) !important;
   }
 
-  :global(body[data-theme="light"]) .architect-content p {
-    color: #333;
+  body[data-theme="light"] .architect-content p {
+    color: #333 !important;
   }
 
-  :global(body[data-theme="light"]) .architect-content p strong {
-    color: #b8860b;
+  body[data-theme="light"] .architect-content p strong {
+    color: #b8860b !important;
   }
 
-  :global(body[data-theme="light"]) .concept-header {
-    background: linear-gradient(135deg, #e8f4f8 0%, #e0f0f0 100%);
+  body[data-theme="light"] .concept-header {
+    background: linear-gradient(135deg, #e8f4f8 0%, #e0f0f0 100%) !important;
   }
 
-  :global(body[data-theme="light"]) .concept-header .header-text p {
-    color: #333;
+  body[data-theme="light"] .concept-header .header-text p {
+    color: #333 !important;
   }
 
-  :global(body[data-theme="light"]) .anatomy-diagram {
-    background: #f5f5f5;
+  body[data-theme="light"] .anatomy-diagram {
+    background: #f5f5f5 !important;
     border: 1px solid #ddd;
   }
 
-  :global(body[data-theme="light"]) .anatomy-line {
-    border-bottom-color: #ddd;
+  body[data-theme="light"] .anatomy-line {
+    border-bottom-color: #ddd !important;
   }
 
-  :global(body[data-theme="light"]) .anatomy-line code {
-    color: #0066cc;
+  body[data-theme="light"] .anatomy-line code {
+    color: #0066cc !important;
   }
 
-  :global(body[data-theme="light"]) .anatomy-label {
-    color: #555;
+  body[data-theme="light"] .anatomy-label {
+    color: #555 !important;
   }
 
-  :global(body[data-theme="light"]) .takeaway {
-    background: #f0f8f0;
+  body[data-theme="light"] .takeaway {
+    background: #f0f8f0 !important;
   }
 
-  :global(body[data-theme="light"]) .takeaway p {
-    color: #555;
+  body[data-theme="light"] .takeaway p {
+    color: #555 !important;
   }
 
-  :global(body[data-theme="light"]) .next-section {
-    background: linear-gradient(135deg, #e8f8e8 0%, #e0f0e0 100%);
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, #e8f8e8 0%, #e0f0e0 100%) !important;
   }
 
-  :global(body[data-theme="light"]) .next-section p {
-    color: #333;
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
   }
 `}
 </style>
