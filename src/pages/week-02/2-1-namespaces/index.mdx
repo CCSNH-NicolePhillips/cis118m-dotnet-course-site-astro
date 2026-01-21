@@ -95,10 +95,14 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 A **namespace** is a container that organizes your code and prevents naming conflicts.
 
-Think of it like a **postal system**:
-- "John Smith" might be a common name
-- But "John Smith, 123 Oak Street, Boston, MA" is unique
-- The address (namespace) makes the name unambiguous
+<div class="analogy-box">
+  <h4>📬 Think of it like a postal system:</h4>
+  <ul>
+    <li>"John Smith" might be a common name</li>
+    <li>But "John Smith, 123 Oak Street, Boston, MA" is unique</li>
+    <li>The address (namespace) makes the name unambiguous</li>
+  </ul>
+</div>
 
 ```csharp
 namespace Airline.Reservations
@@ -114,19 +118,47 @@ namespace Airline.Loyalty
 // Both "Customer" classes can coexist because they're in different namespaces
 ```
 
-### Real-World Example: Amadeus GDS
+### 🌐 Real-World Example: Amadeus GDS
 
 The Amadeus Global Distribution System handles **millions** of flight bookings daily. Their codebase includes:
 
-| Namespace | Purpose |
-|-----------|---------|
-| `Amadeus.Flights.Search` | Finding available flights |
-| `Amadeus.Flights.Booking` | Reserving seats |
-| `Amadeus.Flights.Pricing` | Calculating fares |
-| `Amadeus.Hotels.Search` | Finding hotels |
-| `Amadeus.Hotels.Booking` | Reserving rooms |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Namespace</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>Amadeus.Flights.Search</code></td>
+        <td>Finding available flights</td>
+      </tr>
+      <tr>
+        <td><code>Amadeus.Flights.Booking</code></td>
+        <td>Reserving seats</td>
+      </tr>
+      <tr>
+        <td><code>Amadeus.Flights.Pricing</code></td>
+        <td>Calculating fares</td>
+      </tr>
+      <tr>
+        <td><code>Amadeus.Hotels.Search</code></td>
+        <td>Finding hotels</td>
+      </tr>
+      <tr>
+        <td><code>Amadeus.Hotels.Booking</code></td>
+        <td>Reserving rooms</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-Without namespaces, a `Search` class in Flights would collide with `Search` in Hotels.
+<div class="insight-callout">
+  <span class="insight-icon">💡</span>
+  <p>Without namespaces, a <code>Search</code> class in Flights would collide with <code>Search</code> in Hotels!</p>
+</div>
 
 ---
 
@@ -592,6 +624,128 @@ namespace University
   }
 
   body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
+  }
+
+  /* Analogy box */
+  .analogy-box {
+    background: rgba(107, 159, 255, 0.1);
+    border-left: 4px solid #6b9fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+
+  .analogy-box h4 {
+    margin-top: 0;
+    color: #6b9fff;
+  }
+
+  .analogy-box ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+  }
+
+  .analogy-box li {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  body[data-theme="light"] .analogy-box {
+    background: rgba(107, 159, 255, 0.1) !important;
+  }
+
+  body[data-theme="light"] .analogy-box li {
+    color: #333 !important;
+  }
+
+  /* Insight callout */
+  .insight-callout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: rgba(240, 173, 78, 0.1);
+    border-left: 4px solid #f0ad4e;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+
+  .insight-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .insight-callout p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .insight-callout {
+    background: rgba(240, 173, 78, 0.1) !important;
+  }
+
+  body[data-theme="light"] .insight-callout p {
     color: #333 !important;
   }
 `}
