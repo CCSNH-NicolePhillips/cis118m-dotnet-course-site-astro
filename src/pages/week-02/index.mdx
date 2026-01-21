@@ -108,7 +108,7 @@ By the end of this week, you will be able to:
   <a href="/week-02/2-1-namespaces/" class="vscode-button">Begin Section 2.1 →</a>
 </div>
 
-<style>
+<style is:global>
 {`
   .week-nav-cards {
     display: grid;
@@ -166,6 +166,28 @@ By the end of this week, you will be able to:
   .next-step h3 {
     margin-top: 0;
     color: #4ec9b0;
+  }
+
+  /* Light mode overrides */
+  body[data-theme="light"] .nav-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border-color: #dee2e6 !important;
+  }
+
+  body[data-theme="light"] .nav-card-title {
+    color: #333 !important;
+  }
+
+  body[data-theme="light"] .nav-card-desc {
+    color: #555 !important;
+  }
+
+  body[data-theme="light"] .next-step {
+    background: linear-gradient(135deg, #e8f8e8 0%, #d8f0d8 100%) !important;
+  }
+
+  body[data-theme="light"] .next-step p {
+    color: #333 !important;
   }
 `}
 </style>
