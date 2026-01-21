@@ -575,6 +575,28 @@ pre {
   color: var(--text);
 }
 
+/* =============================================
+   LIGHT MODE: Code block overrides
+   Force light backgrounds on Shiki-styled code blocks
+   ============================================= */
+body:not([data-theme="dark"]) pre[style*="background:"],
+body:not([data-theme="dark"]) pre[style*="background-color:"] {
+  background: #f5f0e8 !important;
+  background-color: #f5f0e8 !important;
+  border: 1px solid #d4cfc6 !important;
+}
+
+body:not([data-theme="dark"]) pre[style*="background:"] code,
+body:not([data-theme="dark"]) pre[style*="background-color:"] code {
+  color: #2d2a26 !important;
+}
+
+/* Preserve syntax highlighting colors in light mode */
+body:not([data-theme="dark"]) pre[style*="background:"] .line span[style*="color:#"],
+body:not([data-theme="dark"]) pre[style*="background-color:"] .line span[style*="color:#"] {
+  filter: brightness(0.7) saturate(1.2);
+}
+
 /* Dark code blocks (inline styles) should always have light text */
 pre[style*="background: #1e1e1e"],
 pre[style*="background:#1e1e1e"] {
