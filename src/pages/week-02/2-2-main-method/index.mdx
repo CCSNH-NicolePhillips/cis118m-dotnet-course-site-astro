@@ -18,6 +18,14 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
 ## 🎯 The Master Switch
 
+<div class="concept-intro">
+  <div class="concept-text">
+    <h3>✦ Ignition: The static void Main Entry Point</h3>
+    <p>Every C# program is like a dormant machine waiting for a spark. While your project might contain thousands of files and millions of lines of code, the computer doesn't just read them all at once. It looks for <strong>one specific ignition switch</strong>: the <code>static void Main</code> method. Without this 'Master Switch,' the engine never starts.</p>
+  </div>
+  <img src="/media/week%202/lesson%202.2/gogreenbutton.png" alt="Control panel with ON/OFF buttons - representing the Main method as the program's ignition switch" class="concept-image" />
+</div>
+
 Every C# program has exactly **one** starting point—the `Main` method. When you run your program, the .NET runtime doesn't randomly pick a line to execute. It searches for a very specific method signature and begins there.
 
 <div class="callout-critical">
@@ -279,6 +287,51 @@ When you run a C# program, here's what happens:
 
 <style is:global>
 {`
+  .concept-intro {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+  
+  .concept-text {
+    flex: 1;
+  }
+  
+  .concept-text h3 {
+    color: #4ec9b0;
+    margin-top: 0;
+    font-size: 1.5rem;
+  }
+  
+  .concept-text p {
+    color: #c0c0c0;
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+  
+  .concept-image {
+    width: 280px;
+    height: auto;
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .concept-intro {
+      flex-direction: column;
+    }
+    
+    .concept-image {
+      width: 100%;
+      max-width: 320px;
+    }
+  }
+
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -531,6 +584,14 @@ When you run a C# program, here's what happens:
   }
 
   /* Light mode overrides */
+  body[data-theme="light"] .concept-intro {
+    background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fc 100%) !important;
+  }
+
+  body[data-theme="light"] .concept-text p {
+    color: #333 !important;
+  }
+
   body[data-theme="light"] .architect-note {
     background: linear-gradient(135deg, #f8f4e8 0%, #f0ebe0 100%) !important;
   }
