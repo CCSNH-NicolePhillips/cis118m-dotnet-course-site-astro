@@ -5,7 +5,8 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/copy-monaco.mjs && astro build",
+    "build": "node scripts/build-course-context.mjs && node scripts/copy-monaco.mjs && astro build",
+    "build:course-context": "node scripts/build-course-context.mjs",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest watch"
