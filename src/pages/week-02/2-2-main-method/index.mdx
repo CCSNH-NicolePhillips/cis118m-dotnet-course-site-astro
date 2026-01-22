@@ -38,51 +38,53 @@ Every C# program has exactly **one** starting point—the `Main` method. When yo
 
 ---
 
-## 🔬 Dissecting the Signature
+## The Anatomy of the Switch
 
-Let's break down the complete method signature:
-
-```csharp
-static void Main(string[] args)
-```
-
-<div class="signature-breakdown">
-  <div class="signature-part">
-    <code class="keyword">static</code>
-    <div class="part-explanation">
-      <h4>Static Modifier</h4>
-      <p>The method belongs to the <em>class itself</em>, not to an instance. The runtime can call it without creating an object first.</p>
-      <p class="analogy">🏭 <em>Analogy: A factory's emergency switch—you don't need to build a product first to hit it.</em></p>
+<div class="anatomy-carousel">
+  <button class="carousel-arrow carousel-arrow-left" aria-label="Scroll backward">‹</button>
+  <div class="anatomy-cards">
+    <div class="anatomy-card">
+      <h3>static</h3>
+      <p>The 'Master' modifier. It means the switch exists on the machine itself (the class), not on a specific part (an object). The runtime can flip this switch without needing to 'build' anything else first.</p>
+    </div>
+    <div class="anatomy-card">
+      <h3>void</h3>
+      <p>The return type. It tells the machine: 'Once you've run the sequence, you don't need to hand anything back to me.' You can also use <code>int</code> if the machine needs to report a success or failure code.</p>
+    </div>
+    <div class="anatomy-card">
+      <h3>Main</h3>
+      <p>The specific name. This isn't just a label; it's a hard-coded requirement. The .NET Runtime (the operator) is literally programmed to look for this exact word to start the process.</p>
+    </div>
+    <div class="anatomy-card">
+      <h3>string[] args</h3>
+      <p>The 'Input Dials.' These allow you to pass external instructions into the machine at the moment of ignition (e.g., file paths or configuration settings).</p>
     </div>
   </div>
-  
-  <div class="signature-part">
-    <code class="keyword">void</code>
-    <div class="part-explanation">
-      <h4>Return Type</h4>
-      <p>The method returns nothing. When Main finishes, the program ends.</p>
-      <p class="note">📝 <em>Alternative: You can use <code>int</code> to return an exit code (0 = success, non-zero = error).</em></p>
-    </div>
-  </div>
-  
-  <div class="signature-part">
-    <code class="method-name">Main</code>
-    <div class="part-explanation">
-      <h4>Method Name</h4>
-      <p><strong>Must be exactly "Main"</strong> with a capital M. Not <code>main</code>, not <code>Main1</code>, not <code>Start</code>.</p>
-      <p class="warning">⚠️ <em>This is case-sensitive. <code>main()</code> will NOT be recognized.</em></p>
-    </div>
-  </div>
-  
-  <div class="signature-part">
-    <code class="params">string[] args</code>
-    <div class="part-explanation">
-      <h4>Parameters</h4>
-      <p>An array of command-line arguments passed when the program starts.</p>
-      <p class="example">💻 <em>Example: <code>myapp.exe --verbose --file data.txt</code> passes ["--verbose", "--file", "data.txt"]</em></p>
-    </div>
-  </div>
+  <button class="carousel-arrow carousel-arrow-right" aria-label="Scroll forward">›</button>
 </div>
+
+<script>
+{`
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousel = document.querySelector('.anatomy-carousel');
+    if (!carousel) return;
+    
+    const cards = carousel.querySelector('.anatomy-cards');
+    const leftBtn = carousel.querySelector('.carousel-arrow-left');
+    const rightBtn = carousel.querySelector('.carousel-arrow-right');
+    
+    const scrollAmount = 300;
+    
+    leftBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    
+    rightBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+  });
+`}
+</script>
 
 ---
 
@@ -329,6 +331,98 @@ When you run a C# program, here's what happens:
     .concept-image {
       width: 100%;
       max-width: 320px;
+    }
+  }
+
+  /* Anatomy Carousel */
+  .anatomy-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0;
+    position: relative;
+  }
+  
+  .anatomy-cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 4px;
+    flex: 1;
+  }
+  
+  .anatomy-cards::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .anatomy-card {
+    background: #2a2a3a;
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 260px;
+    max-width: 280px;
+    flex-shrink: 0;
+  }
+  
+  .anatomy-card h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    margin: 0 0 12px 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+  }
+  
+  .anatomy-card p {
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .anatomy-card code {
+    background: #1a1a2e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .carousel-arrow {
+    background: #3a3a4a;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  
+  .carousel-arrow:hover {
+    background: #4a4a5a;
+    transform: scale(1.1);
+  }
+  
+  .carousel-arrow:active {
+    transform: scale(0.95);
+  }
+  
+  @media (max-width: 600px) {
+    .carousel-arrow {
+      width: 32px;
+      height: 32px;
+      font-size: 1.2rem;
+    }
+    
+    .anatomy-card {
+      min-width: 220px;
+      padding: 20px;
     }
   }
 
@@ -584,6 +678,33 @@ When you run a C# program, here's what happens:
   }
 
   /* Light mode overrides */
+  body[data-theme="light"] .anatomy-card {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd;
+  }
+  
+  body[data-theme="light"] .anatomy-card h3 {
+    color: #333 !important;
+  }
+  
+  body[data-theme="light"] .anatomy-card p {
+    color: #555 !important;
+  }
+  
+  body[data-theme="light"] .anatomy-card code {
+    background: #e8e8e8 !important;
+    color: #333 !important;
+  }
+  
+  body[data-theme="light"] .carousel-arrow {
+    background: #e0e0e0 !important;
+    color: #333 !important;
+  }
+  
+  body[data-theme="light"] .carousel-arrow:hover {
+    background: #d0d0d0 !important;
+  }
+
   body[data-theme="light"] .concept-intro {
     background: linear-gradient(135deg, #f0f8ff 0%, #e8f4fc 100%) !important;
   }
