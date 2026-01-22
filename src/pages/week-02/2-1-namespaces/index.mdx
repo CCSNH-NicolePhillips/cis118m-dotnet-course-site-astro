@@ -4,7 +4,7 @@ title: "Section 2.1 • Namespaces & Classes"
 description: "Understanding the organizational hierarchy of C# programs"
 ---
 
-import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
@@ -369,11 +369,35 @@ namespace University
 
 ## 🧠 Knowledge Check
 
-<KnowledgeCheck
-  checkId="week-02-2-1-namespaces"
-  question="Why do professional C# projects require Namespaces?"
-  correctAnswer="To organize code and prevent naming conflicts in large systems."
-  explanation="In enterprise systems with thousands of classes, namespaces prevent two classes with the same name from colliding. They also logically group related functionality, making codebases easier to navigate and maintain."
+<Checkpoint
+  checkpointId="week-02-2-1-checkpoint"
+  title="🔍 Section 2.1 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What is the primary purpose of namespaces in C#?",
+      options: ["To make code run faster", "To organize code and prevent naming conflicts", "To add comments to your code"],
+      correctAnswer: "To organize code and prevent naming conflicts",
+      explanation: "Namespaces group related classes together and prevent name collisions when two classes have the same name."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "If you have 'System.Console' and 'MyApp.Console', what allows both to exist?",
+      options: ["They're in different namespaces", "One is private", "C# ignores duplicates"],
+      correctAnswer: "They're in different namespaces",
+      explanation: "Namespaces give classes a 'last name' — so System.Console and MyApp.Console are distinct identities."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What does the 'using System;' statement do?",
+      options: ["Imports the System namespace so you can use its classes without the full path", "Creates a new namespace called System", "Deletes unused code"],
+      correctAnswer: "Imports the System namespace so you can use its classes without the full path",
+      explanation: "The 'using' directive imports a namespace, letting you write Console.WriteLine() instead of System.Console.WriteLine()."
+    }
+  ]}
 />
 
 ---
