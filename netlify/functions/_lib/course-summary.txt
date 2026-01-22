@@ -102,7 +102,7 @@ Key Concepts:
 - sensitive: Main works, main doesn't. Static is required.
 - CS5001
 
-Summary: # Section 2.2: The Main Method 🚀 Entry Point ⏱️ Estimated Time: 20 minutes --- ## 🎯 The Master Switch Every C# program has exactly **one** starting point—the Main method. When you run your program, the .NET runtime doesn't randomly pick a line to execute. It searches for a very specific method sig...
+Summary: # Section 2.2: The Main Method 🚀 Entry Point ⏱️ Estimated Time: 20 minutes --- ## 🎯 The Master Switch ✦ Ignition: The static void Main Entry Point Every C# program is like a dormant machine waiting for a spark. While your project might contain thousands of files and millions of lines of code, the ...
 
 ### 📖 Lesson: Section 2.3 • Compilation Pipeline
 Key Concepts:
