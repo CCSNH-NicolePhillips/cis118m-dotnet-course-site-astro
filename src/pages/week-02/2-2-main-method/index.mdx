@@ -283,9 +283,12 @@ When you run a C# program, here's what happens:
 ## 🧠 Checkpoint
 
 <Checkpoint
-  checkId="week-02-2-2-checkpoint"
+  checkpointId="week-02-2-2-checkpoint"
+  title="🔍 Section 2.2 Knowledge Check (Participation)"
   questions={[
     {
+      id: "cp1",
+      type: "multiple-choice",
       question: "What happens if you rename the Main method to Start?",
       options: [
         "The program runs normally",
@@ -293,9 +296,12 @@ When you run a C# program, here's what happens:
         "The compiler throws error CS5001 and the program won't run",
         "The runtime automatically finds the Start method"
       ],
-      correctIndex: 2
+      correctAnswer: "The compiler throws error CS5001 and the program won't run",
+      explanation: "The .NET runtime specifically searches for a method named 'Main' (case-sensitive). Without it, you get error CS5001."
     },
     {
+      id: "cp2",
+      type: "multiple-choice",
       question: "Why must Main be marked as 'static'?",
       options: [
         "To make the method run faster",
@@ -303,9 +309,12 @@ When you run a C# program, here's what happens:
         "To prevent other methods from calling it",
         "It's optional, not required"
       ],
-      correctIndex: 1
+      correctAnswer: "So the runtime can call it without creating an object first",
+      explanation: "Static means the method belongs to the class itself. The runtime can call it without instantiating an object."
     },
     {
+      id: "cp3",
+      type: "multiple-choice",
       question: "What does 'string[] args' allow you to do?",
       options: [
         "Define multiple Main methods",
@@ -313,7 +322,8 @@ When you run a C# program, here's what happens:
         "Return multiple values from Main",
         "Create string variables automatically"
       ],
-      correctIndex: 1
+      correctAnswer: "Pass command-line arguments to your program at startup",
+      explanation: "The args parameter captures any command-line arguments passed when you run the program (e.g., myapp.exe --verbose)."
     }
   ]}
 />
