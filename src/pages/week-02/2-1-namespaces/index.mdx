@@ -54,8 +54,6 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 <div class="video-container">
   <iframe 
-    width="100%" 
-    height="400" 
     src="https://www.youtube.com/embed/mw254_XAnGU" 
     title="C# Namespaces Explained"
     frameborder="0" 
@@ -829,14 +827,18 @@ namespace University
   }
 
   .video-container {
+    max-width: 640px;
+    margin: 24px auto;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    margin: 24px 0;
+    aspect-ratio: 16 / 9;
   }
 
   .video-container iframe {
     display: block;
+    width: 100%;
+    height: 100%;
   }
 `}
 </style>
