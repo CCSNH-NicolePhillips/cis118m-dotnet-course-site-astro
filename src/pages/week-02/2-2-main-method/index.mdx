@@ -111,6 +111,16 @@ Every C# program has exactly **one** starting point—the `Main` method. When yo
 
 ---
 
+## The Search Sequence
+
+When you click 'Run,' the .NET Runtime scans your compiled code. It ignores everything else—the complex gears, the wiring, the dormant classes—until it finds the `Main` method. Once found, control is handed over to that specific line, and the machine comes to life.
+
+<div class="cpu-diagram">
+  <img src="/media/week%202/lesson%202.2/cpuarch.png" alt="CPU Architecture diagram showing Input Unit, Central Processing Unit with Main Memory, Control Unit, ALU, and Register, connected to Output Unit, Secondary Memory, and Communication Devices" />
+</div>
+
+---
+
 ## ✅ Valid Main Signatures
 
 The runtime accepts these variations:
@@ -424,6 +434,22 @@ When you run a C# program, here's what happens:
       min-width: 220px;
       padding: 20px;
     }
+  }
+
+  /* CPU Diagram */
+  .cpu-diagram {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .cpu-diagram img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
 
   .section-header {
