@@ -16,6 +16,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PAGES_DIR = path.join(__dirname, '../src/pages');
 const OUTPUT_FILE = path.join(__dirname, '../netlify/functions/_lib/course-content.json');
+const JS_OUTPUT_FILE = path.join(__dirname, '../netlify/functions/_lib/course-summary.mjs');
 
 // Extract text content from MDX, removing code blocks and JSX
 function extractTextFromMDX(content) {
@@ -237,11 +238,23 @@ async function buildCourseContext() {
   console.log(`   Total weeks: ${Object.keys(weeks).length}`);
   console.log(`   Total sections: ${pages.length}`);
   
-  // Also generate a compact summary for the AI
+  // Also generate a compact summary for the AI as a JS module (for Netlify bundling)
   const compactSummary = generateCompactSummary(courseContext);
+  
+  // Write as text file (for reference)
   const SUMMARY_FILE = path.join(__dirname, '../netlify/functions/_lib/course-summary.txt');
   fs.writeFileSync(SUMMARY_FILE, compactSummary);
   console.log(`   Compact summary: ${SUMMARY_FILE}`);
+  
+  // Write as JS module (for Netlify Functions import)
+  const jsModule = `// Auto-generated course summary for AI tutor
+// Generated: ${new Date().toISOString()}
+// Do not edit manually - regenerate with: npm run build:course-context
+
+export const COURSE_CONTENT_SUMMARY = ${JSON.stringify(compactSummary)};
+`;
+  fs.writeFileSync(JS_OUTPUT_FILE, jsModule);
+  console.log(`   JS module: ${JS_OUTPUT_FILE}`);
 }
 
 function generateCompactSummary(courseContext) {
