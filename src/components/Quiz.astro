@@ -621,17 +621,32 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         }
       }
       
-      // Show retake button if score < 100% (students can always retake until perfect)
-      if (score < 100) {
+      // Show retake button based on attempt rules:
+      // - Unlimited attempts: can retake if score < 100
+      // - Limited attempts (quizzes): can retake if attempts < maxAttempts AND score < 100
+      const canRetake = score < 100 && (unlimitedAttempts || currentAttempts < maxAttempts);
+      
+      if (canRetake) {
         retakeBtn.style.display = 'block';
-        retakeBtn.textContent = `🔄 TRY AGAIN (Attempt ${currentAttempts + 1})`;
-      } else {
+        if (unlimitedAttempts) {
+          retakeBtn.textContent = `🔄 TRY AGAIN (Attempt ${currentAttempts + 1})`;
+        } else {
+          retakeBtn.textContent = `🔄 TRY AGAIN (Attempt ${currentAttempts + 1}/${maxAttempts})`;
+        }
+      } else if (score >= 100) {
         retakeBtn.style.display = 'none';
         // Show perfect score message
         const perfectMsg = document.createElement('div');
         perfectMsg.className = 'perfect-score-achieved';
         perfectMsg.innerHTML = '🏆 Perfect Score! No retake needed.';
         resultsDiv.appendChild(perfectMsg);
+      } else {
+        // Out of attempts but didn't get 100%
+        retakeBtn.style.display = 'none';
+        const noMoreAttemptsMsg = document.createElement('div');
+        noMoreAttemptsMsg.className = 'no-attempts-remaining';
+        noMoreAttemptsMsg.innerHTML = `⚠️ Maximum attempts (${maxAttempts}) reached. Your best score: ${bestScore}%`;
+        resultsDiv.appendChild(noMoreAttemptsMsg);
       }
     });
     

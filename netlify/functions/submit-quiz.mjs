@@ -23,7 +23,7 @@ export async function handler(event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { quizId, score, passed, answers } = body;
+    const { quizId, score, passed, answers, unlimitedAttempts, maxAttempts } = body;
 
     if (!quizId || score === undefined || !answers) {
       return {
@@ -40,14 +40,28 @@ export async function handler(event, context) {
     const attempts = parseInt(currentProgress?.[`${pageId}:attempts`] || "0");
     const previousBestScore = parseInt(currentProgress?.[`${pageId}:bestScore`] || "0");
     
-    // Only lock if they already have a perfect score (100%)
-    // Students can always retake unless they got 100%
+    // Lock if they already have a perfect score (100%)
     if (previousBestScore >= 100) {
       return {
         statusCode: 403,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           error: 'MISSION COMPLETE: You already achieved a perfect score!',
+          attempts: attempts,
+          locked: true,
+          bestScore: previousBestScore
+        })
+      };
+    }
+    
+    // For limited attempt quizzes: enforce attempt limit (default 2)
+    const effectiveMaxAttempts = maxAttempts || 2;
+    if (!unlimitedAttempts && attempts >= effectiveMaxAttempts) {
+      return {
+        statusCode: 403,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          error: `Maximum attempts (${effectiveMaxAttempts}) reached for this quiz.`,
           attempts: attempts,
           locked: true,
           bestScore: previousBestScore

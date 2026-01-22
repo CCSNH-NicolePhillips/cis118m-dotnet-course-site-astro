@@ -100,21 +100,31 @@ export default async function handler(request, context) {
       );
     }
 
-    // Handle graded submissions (from EngineeringLogEditor)
+    // Handle graded submissions (from EngineeringLogEditor, Quiz.astro, etc.)
     if (pageId && status) {
       const redis = getRedis();
       const userId = user.sub;
+      
+      // Get current progress to check attempts and best score
+      const currentProgress = await redis.hgetall(`user:progress:data:${userId}`);
+      const currentAttempts = parseInt(currentProgress?.[`${pageId}:attempts`] || "0");
+      const previousBestScore = parseInt(currentProgress?.[`${pageId}:bestScore`] || "0");
       
       // Calculate late penalty if applicable
       const submissionTime = new Date();
       const lateInfo = calculateLatePenalty(pageId, score || 0, submissionTime);
       const finalScore = lateInfo.finalScore;
       
+      // Calculate new best score (keep highest)
+      const newBestScore = Math.max(previousBestScore, finalScore);
+      
       // Build the hash fields to set
       await redis.hset(`user:progress:data:${userId}`, {
         [`${pageId}:status`]: status,
         [`${pageId}:score`]: finalScore,
         [`${pageId}:originalScore`]: score || 0,
+        [`${pageId}:bestScore`]: newBestScore,
+        [`${pageId}:attempts`]: currentAttempts + 1,
         [`${pageId}:feedback`]: feedback || "",
         [`${pageId}:isLate`]: lateInfo.isLate ? "true" : "false",
         [`${pageId}:daysLate`]: lateInfo.daysLate || 0,
@@ -139,6 +149,8 @@ export default async function handler(request, context) {
           ok: true,
           score: finalScore,
           originalScore: score || 0,
+          bestScore: newBestScore,
+          attempts: currentAttempts + 1,
           isLate: lateInfo.isLate,
           daysLate: lateInfo.daysLate,
           penalty: lateInfo.penalty
