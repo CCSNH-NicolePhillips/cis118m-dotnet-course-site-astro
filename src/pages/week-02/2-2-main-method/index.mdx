@@ -4,7 +4,7 @@ title: "Section 2.2 • The Main Method"
 description: "Understanding the entry point of every C# program"
 ---
 
-import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
 # Section 2.2: The Main Method
@@ -280,13 +280,42 @@ When you run a C# program, here's what happens:
 
 ---
 
-## 🧠 Knowledge Check
+## 🧠 Checkpoint
 
-<KnowledgeCheck
-  checkId="week-02-2-2-main-method"
-  question="What happens if you rename the Main method to Start?"
-  correctAnswer="The compiler will not find an entry point and the program won't run."
-  explanation="The .NET runtime specifically searches for a method named 'Main' (case-sensitive). If it can't find one with a valid signature, it throws error CS5001 and the program cannot execute. The name 'Start' has no special meaning to the runtime."
+<Checkpoint
+  checkId="week-02-2-2-checkpoint"
+  questions={[
+    {
+      question: "What happens if you rename the Main method to Start?",
+      options: [
+        "The program runs normally",
+        "The program compiles but runs slowly",
+        "The compiler throws error CS5001 and the program won't run",
+        "The runtime automatically finds the Start method"
+      ],
+      correctIndex: 2
+    },
+    {
+      question: "Why must Main be marked as 'static'?",
+      options: [
+        "To make the method run faster",
+        "So the runtime can call it without creating an object first",
+        "To prevent other methods from calling it",
+        "It's optional, not required"
+      ],
+      correctIndex: 1
+    },
+    {
+      question: "What does 'string[] args' allow you to do?",
+      options: [
+        "Define multiple Main methods",
+        "Pass command-line arguments to your program at startup",
+        "Return multiple values from Main",
+        "Create string variables automatically"
+      ],
+      correctIndex: 1
+    }
+  ]}
 />
 
 ---
