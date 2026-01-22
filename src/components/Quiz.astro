@@ -621,27 +621,22 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         }
       }
       
-      // Show retake button only if attempts remain and didn't pass (or unlimited attempts)
-      if ((unlimitedAttempts || currentAttempts < maxAttempts) && !passed) {
+      // Show retake button if score < 100% (students can always retake until perfect)
+      if (score < 100) {
         retakeBtn.style.display = 'block';
-        retakeBtn.textContent = unlimitedAttempts 
-          ? `🔄 TRY AGAIN` 
-          : `🔄 REQUEST RE-IGNITION (Attempt ${currentAttempts + 1}/${maxAttempts})`;
-      } else if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
+        retakeBtn.textContent = `🔄 TRY AGAIN (Attempt ${currentAttempts + 1})`;
+      } else {
         retakeBtn.style.display = 'none';
-        // Show locked message
-        const lockedMsg = document.createElement('div');
-        lockedMsg.className = 'attempts-exhausted';
-        lockedMsg.innerHTML = '🔒 Maximum attempts reached. Your best score has been recorded.';
-        resultsDiv.appendChild(lockedMsg);
+        // Show perfect score message
+        const perfectMsg = document.createElement('div');
+        perfectMsg.className = 'perfect-score-achieved';
+        perfectMsg.innerHTML = '🏆 Perfect Score! No retake needed.';
+        resultsDiv.appendChild(perfectMsg);
       }
     });
     
     retakeBtn.addEventListener('click', () => {
-      if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
-        alert('Maximum attempts reached. You cannot retake this quiz.');
-        return;
-      }
+      // Allow retakes - button is only shown if score < 100
       form.reset();
       form.style.display = 'block';
       resultsDiv.style.display = 'none';

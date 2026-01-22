@@ -35,26 +35,28 @@ export async function handler(event, context) {
     const redis = getRedis();
     const pageId = quizId; // e.g., "week-01-required-quiz"
     
-    // Check current attempt count
+    // Check current attempt count and best score
     const currentProgress = await redis.hgetall(`user:progress:data:${sub}`);
     const attempts = parseInt(currentProgress?.[`${pageId}:attempts`] || "0");
+    const previousBestScore = parseInt(currentProgress?.[`${pageId}:bestScore`] || "0");
     
-    // Enforce 2-attempt maximum
-    if (attempts >= 2) {
+    // Only lock if they already have a perfect score (100%)
+    // Students can always retake unless they got 100%
+    if (previousBestScore >= 100) {
       return {
         statusCode: 403,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          error: 'MISSION LOCKED: Maximum attempts reached.',
+          error: 'MISSION COMPLETE: You already achieved a perfect score!',
           attempts: attempts,
-          locked: true
+          locked: true,
+          bestScore: previousBestScore
         })
       };
     }
     
-    // Get best score so far
-    const previousBest = parseInt(currentProgress?.[`${pageId}:bestScore`] || "0");
-    const newBestScore = Math.max(previousBest, score);
+    // Calculate new best score (previousBestScore already fetched above)
+    const newBestScore = Math.max(previousBestScore, score);
     
     const submittedAt = new Date().toISOString();
 
