@@ -31,12 +31,15 @@ export default async function handler(request, context) {
     const displayName = await redis.get(`cis118m:displayName:${userId}`);
     const onboardingComplete = await redis.get(`cis118m:onboardingComplete:${userId}`);
 
-    console.log('[get-user-profile] userId:', userId, 'displayName:', displayName, 'onboardingComplete:', onboardingComplete);
+    // If user has a displayName, they've completed onboarding (even if flag wasn't set)
+    const isOnboardingComplete = onboardingComplete === 'true' || !!displayName;
+
+    console.log('[get-user-profile] userId:', userId, 'displayName:', displayName, 'onboardingComplete:', isOnboardingComplete);
 
     return new Response(
       JSON.stringify({ 
         displayName: displayName || null,
-        onboardingComplete: onboardingComplete === 'true'
+        onboardingComplete: isOnboardingComplete
       }),
       {
         status: 200,
