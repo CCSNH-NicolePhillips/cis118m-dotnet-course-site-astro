@@ -28,17 +28,22 @@ export default async function handler(request, context) {
     const userId = user.sub;
 
     // Get display name and onboarding status from Redis
+    // Check both new key (displayName) and legacy key (studentName)
     const displayName = await redis.get(`cis118m:displayName:${userId}`);
+    const studentName = await redis.get(`cis118m:studentName:${userId}`);
     const onboardingComplete = await redis.get(`cis118m:onboardingComplete:${userId}`);
 
-    // If user has a displayName, they've completed onboarding (even if flag wasn't set)
-    const isOnboardingComplete = onboardingComplete === 'true' || !!displayName;
+    // Use displayName if set, otherwise fall back to studentName
+    const effectiveDisplayName = displayName || studentName || null;
+    
+    // If user has a displayName or studentName, they've completed onboarding
+    const isOnboardingComplete = onboardingComplete === 'true' || !!effectiveDisplayName;
 
-    console.log('[get-user-profile] userId:', userId, 'displayName:', displayName, 'onboardingComplete:', isOnboardingComplete);
+    console.log('[get-user-profile] userId:', userId, 'displayName:', effectiveDisplayName, 'onboardingComplete:', isOnboardingComplete);
 
     return new Response(
       JSON.stringify({ 
-        displayName: displayName || null,
+        displayName: effectiveDisplayName,
         onboardingComplete: isOnboardingComplete
       }),
       {

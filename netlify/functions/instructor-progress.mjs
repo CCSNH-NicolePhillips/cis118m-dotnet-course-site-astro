@@ -73,7 +73,10 @@ export default async function handler(request, context) {
     for (const sub of studentSubs) {
       try {
         const email = await redis.get(`cis118m:studentEmail:${sub}`);
-        const name = await redis.get(`cis118m:studentName:${sub}`);
+        // Prefer displayName (user-set) over studentName (from Auth0, usually email)
+        const displayName = await redis.get(`cis118m:displayName:${sub}`);
+        const studentName = await redis.get(`cis118m:studentName:${sub}`);
+        const name = displayName || studentName;
         
         // Get quiz progress from user:progress:{sub} hash (attempts, bestScore, etc)
         const quizProgress = await redis.hgetall(`user:progress:${sub}`) || {};
