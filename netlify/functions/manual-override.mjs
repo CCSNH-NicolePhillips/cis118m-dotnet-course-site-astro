@@ -67,7 +67,8 @@ export default async function handler(request, context) {
       // Drop lowest attempt: decrement attempt count, keep best score
       // This allows student to retry while preserving their highest score
       
-      const progressHashKey = `user:progress:${userId}`;
+      // NOTE: submit-quiz stores attempts in user:progress:data:{userId}
+      const progressHashKey = `user:progress:data:${userId}`;
       const currentAttempts = parseInt(await redis.hget(progressHashKey, `${pageId}:attempts`) || "0");
       const bestScore = parseInt(await redis.hget(progressHashKey, `${pageId}:bestScore`) || "0");
       

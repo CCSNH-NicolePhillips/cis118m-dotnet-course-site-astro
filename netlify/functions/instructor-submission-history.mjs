@@ -70,24 +70,40 @@ export async function handler(event, context) {
 
     const redis = getRedis();
     
-    // Get submission history from new format
-    const historyKey = `submissions:${userId}:${assignmentId}:history`;
-    let history = await redis.get(historyKey);
+    // Try multiple storage formats used by different submission handlers
+    let history = [];
     
-    // Handle both string and object responses
-    if (history && typeof history === 'string') {
-      try {
-        history = JSON.parse(history);
-      } catch {
-        history = [];
+    // Format 1: Quiz submissions use lpush to a list (submissions:userId:quizId)
+    const listKey = `submissions:${userId}:${assignmentId}`;
+    const listHistory = await redis.lrange(listKey, 0, -1);
+    if (listHistory && listHistory.length > 0) {
+      history = listHistory.map(item => {
+        if (typeof item === 'string') {
+          try { return JSON.parse(item); } catch { return null; }
+        }
+        return item;
+      }).filter(Boolean);
+    }
+    
+    // Format 2: New format with :history suffix (submissions:userId:assignmentId:history)
+    if (history.length === 0) {
+      const historyKey = `submissions:${userId}:${assignmentId}:history`;
+      let historyData = await redis.get(historyKey);
+      
+      if (historyData && typeof historyData === 'string') {
+        try {
+          historyData = JSON.parse(historyData);
+          if (Array.isArray(historyData)) history = historyData;
+        } catch {}
+      } else if (Array.isArray(historyData)) {
+        history = historyData;
       }
     }
     
-    // If no new format history, try to get from old format (single submission)
-    if (!history || !Array.isArray(history) || history.length === 0) {
-      // Try old format keys
+    // Format 3: Old format keys (submissions:userId:weekXX:type)
+    if (history.length === 0) {
       const weekMatch = assignmentId.match(/week-(\d+)/);
-      const typeMatch = assignmentId.match(/-(lab|homework|quiz)$/);
+      const typeMatch = assignmentId.match(/-(lab|homework|quiz|weekly-assessment)/);
       
       if (weekMatch && typeMatch) {
         const week = weekMatch[1];
