@@ -458,8 +458,9 @@
   async function syncDisplayNameToServer(name) {
     try {
       const token = window.__auth?.getAccessToken ? await window.__auth.getAccessToken() : null;
+      console.log('[Onboarding] Syncing to server - token available:', !!token, 'name:', name);
       if (token) {
-        await fetch('/.netlify/functions/progress-update', {
+        const response = await fetch('/.netlify/functions/progress-update', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -472,6 +473,13 @@
             onboardingComplete: true
           })
         });
+        console.log('[Onboarding] Sync response:', response.status);
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[Onboarding] Sync failed:', response.status, errorText);
+        }
+      } else {
+        console.warn('[Onboarding] No token available for sync - data will only be saved locally');
       }
     } catch (err) {
       console.error('[Onboarding] Failed to sync display name:', err);
@@ -482,7 +490,11 @@
   async function loadDisplayNameFromServer() {
     try {
       const token = window.__auth?.getAccessToken ? await window.__auth.getAccessToken() : null;
-      if (!token) return null;
+      console.log('[Onboarding] loadFromServer - token available:', !!token);
+      if (!token) {
+        console.log('[Onboarding] No token, skipping server load');
+        return null;
+      }
       
       const res = await fetch('/.netlify/functions/get-user-profile', {
         method: 'GET',
@@ -492,14 +504,20 @@
         }
       });
       
+      console.log('[Onboarding] get-user-profile response status:', res.status);
+      
       if (res.ok) {
         const data = await res.json();
+        console.log('[Onboarding] Server data:', JSON.stringify(data));
+        
         // If onboardingComplete is true on server, mark locally
         if (data.onboardingComplete) {
+          console.log('[Onboarding] Setting onboardingComplete in localStorage');
           localStorage.setItem(STORAGE_KEYS.onboardingComplete, 'true');
         }
         if (data.displayName) {
           // Save to localStorage so it persists
+          console.log('[Onboarding] Setting displayName in localStorage:', data.displayName);
           localStorage.setItem(STORAGE_KEYS.displayName, data.displayName);
           displayName = data.displayName;
           updateUserChipDisplay();
@@ -507,6 +525,9 @@
         }
         // Return true if onboarding was complete even without display name
         return data.onboardingComplete ? true : null;
+      } else {
+        const errorText = await res.text();
+        console.error('[Onboarding] Server error:', res.status, errorText);
       }
     } catch (err) {
       console.error('[Onboarding] Failed to load display name from server:', err);
