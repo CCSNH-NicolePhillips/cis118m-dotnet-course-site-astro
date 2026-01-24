@@ -48,8 +48,10 @@ const { tokens, title } = Astro.props;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 12px;
     padding: 1.5rem;
+    padding-bottom: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    overflow: visible;
   }
 
   .annotated-title {
@@ -65,8 +67,9 @@ const { tokens, title } = Astro.props;
     background: #0d1117;
     border-radius: 8px;
     padding: 1.25rem 1.5rem;
-    overflow-x: auto;
+    overflow: visible;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
   }
 
   .code-line {
@@ -151,23 +154,23 @@ const { tokens, title } = Astro.props;
     pointer-events: none;
   }
 
-  /* Tooltip arrow */
+  /* Tooltip arrow - points UP now (tooltip below) */
   .token[data-tooltip]::before {
     content: '';
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     border: 8px solid transparent;
-    border-top-color: #2d3748;
-    margin-bottom: -1px;
+    border-bottom-color: #2d3748;
+    margin-top: -1px;
   }
 
-  /* Tooltip content */
+  /* Tooltip content - appears BELOW the token */
   .token[data-tooltip]::after {
     content: attr(data-tooltip);
-    bottom: calc(100% + 15px);
+    top: calc(100% + 15px);
     left: 50%;
-    transform: translateX(-50%) translateY(5px);
+    transform: translateX(-50%) translateY(-5px);
     background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
     color: #e2e8f0;
     padding: 0.75rem 1rem;
@@ -181,6 +184,7 @@ const { tokens, title } = Astro.props;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: normal;
   }
 
   .token[data-tooltip]:hover::before,
@@ -193,10 +197,10 @@ const { tokens, title } = Astro.props;
     transform: translateX(-50%) translateY(0);
   }
 
-  /* Adjust tooltip position for tokens near edges */
+  /* Adjust tooltip position for tokens near left edge */
   .token:first-child[data-tooltip]::after {
     left: 0;
-    transform: translateX(0) translateY(5px);
+    transform: translateX(0) translateY(-5px);
   }
 
   .token:first-child[data-tooltip]:hover::after {
@@ -207,10 +211,11 @@ const { tokens, title } = Astro.props;
     left: 20px;
   }
 
+  /* Adjust tooltip position for tokens near right edge */
   .token:last-child[data-tooltip]::after {
     left: auto;
     right: 0;
-    transform: translateX(0) translateY(5px);
+    transform: translateX(0) translateY(-5px);
   }
 
   .token:last-child[data-tooltip]:hover::after {

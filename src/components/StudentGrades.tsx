@@ -93,7 +93,15 @@ declare global {
     __auth?: {
       getAccessToken: () => Promise<string | null>;
       isAuthed: () => Promise<boolean>;
-      getUser: () => Promise<{ email?: string; sub?: string } | null>;
+      getUser: () => Promise<{
+        email?: string;
+        sub?: string;
+        name?: string;
+        nickname?: string;
+        given_name?: string;
+        family_name?: string;
+        picture?: string;
+      } | null>;
     };
   }
 }

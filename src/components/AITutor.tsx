@@ -1,6 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getTutorContext } from '../config/lesson-contexts';
 
+// Extend Auth0 user type with additional profile fields
+declare global {
+  interface Window {
+    __auth?: {
+      getAccessToken: () => Promise<string | null>;
+      isAuthed: () => Promise<boolean>;
+      getUser: () => Promise<{
+        email?: string;
+        sub?: string;
+        name?: string;
+        nickname?: string;
+        given_name?: string;
+        family_name?: string;
+        picture?: string;
+      } | null>;
+    };
+  }
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
