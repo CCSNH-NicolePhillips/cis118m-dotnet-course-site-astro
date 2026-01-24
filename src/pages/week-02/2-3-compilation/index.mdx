@@ -39,6 +39,56 @@ When you write C# code, you're writing **human-readable text**. But your compute
 
 ---
 
+## The Four Stages of the Pipeline
+
+<div class="pipeline-carousel">
+  <button class="carousel-arrow carousel-arrow-left" aria-label="Scroll backward">‹</button>
+  <div class="pipeline-cards">
+    <div class="pipeline-card">
+      <h3>1. Raw Materials: Source Code</h3>
+      <p>The journey begins with your <code>.cs</code> files. At this stage, the code is just text. The compiler performs <strong>Lexical Analysis</strong>, breaking your text into 'tokens' like keywords, names, and operators.</p>
+    </div>
+    <div class="pipeline-card">
+      <h3>2. The Factory: Roslyn Compiler</h3>
+      <p>Named after the 'Roslyn' platform, the C# compiler builds a complex digital map called an <strong>Abstract Syntax Tree (AST)</strong>. It checks for grammar errors and ensures your logic follows C# rules.</p>
+    </div>
+    <div class="pipeline-card">
+      <h3>3. Intermediate: MSIL Bytecode</h3>
+      <p>Instead of making machine code for one CPU, Roslyn outputs <strong>Microsoft Intermediate Language (MSIL)</strong>. This is the 'glowing' secret to C#'s cross-platform power—one set of instructions for all OSs.</p>
+    </div>
+    <div class="pipeline-card">
+      <h3>4. Finished Product: Native Code</h3>
+      <p>When you click 'Run,' the <strong>JIT (Just-In-Time) Compiler</strong> takes the MSIL and translates it into the specific language of your hardware (Windows, Mac, or Linux) right before it executes.</p>
+    </div>
+  </div>
+  <button class="carousel-arrow carousel-arrow-right" aria-label="Scroll forward">›</button>
+</div>
+
+<script>
+{`
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousel = document.querySelector('.pipeline-carousel');
+    if (!carousel) return;
+    
+    const cards = carousel.querySelector('.pipeline-cards');
+    const leftBtn = carousel.querySelector('.carousel-arrow-left');
+    const rightBtn = carousel.querySelector('.carousel-arrow-right');
+    
+    const scrollAmount = 340;
+    
+    leftBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    
+    rightBtn.addEventListener('click', () => {
+      cards.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+  });
+`}
+</script>
+
+---
+
 ## 📊 The Complete Pipeline
 
 <div class="pipeline-diagram">
@@ -406,6 +456,86 @@ The `.dll` file contains your compiled MSIL. It's portable across all platforms 
     }
   }
 
+  /* Pipeline Carousel */
+  .pipeline-carousel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0;
+    position: relative;
+  }
+  
+  .pipeline-cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 8px 4px;
+    flex: 1;
+  }
+  
+  .pipeline-cards::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .pipeline-card {
+    background: #2a2a3a;
+    border-radius: 12px;
+    padding: 24px;
+    min-width: 280px;
+    max-width: 300px;
+    flex-shrink: 0;
+  }
+  
+  .pipeline-card h3 {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+  
+  .pipeline-card p {
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .pipeline-card code {
+    background: #1a1a2e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #4ec9b0;
+  }
+  
+  .pipeline-card strong {
+    color: #fff;
+  }
+  
+  .carousel-arrow {
+    background: #3a3a4a;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  
+  .carousel-arrow:hover {
+    background: #4a4a5a;
+    transform: scale(1.1);
+  }
+
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -730,6 +860,37 @@ The `.dll` file contains your compiled MSIL. It's portable across all platforms 
   
   body[data-theme="light"] .concept-text p {
     color: #333 !important;
+  }
+
+  body[data-theme="light"] .pipeline-card {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd;
+  }
+
+  body[data-theme="light"] .pipeline-card h3 {
+    color: #333 !important;
+  }
+
+  body[data-theme="light"] .pipeline-card p {
+    color: #555 !important;
+  }
+
+  body[data-theme="light"] .pipeline-card strong {
+    color: #333 !important;
+  }
+
+  body[data-theme="light"] .pipeline-card code {
+    background: #e8e8e8 !important;
+    color: #0d7377 !important;
+  }
+
+  body[data-theme="light"] .carousel-arrow {
+    background: #e0e0e0 !important;
+    color: #333 !important;
+  }
+
+  body[data-theme="light"] .carousel-arrow:hover {
+    background: #d0d0d0 !important;
   }
 
   body[data-theme="light"] .architect-note {
