@@ -55,7 +55,7 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
             <h4>Key Points</h4>
             <ul>
               {tab.keyPoints.map((point) => (
-                <li>{point}</li>
+                <li set:html={point} />
               ))}
             </ul>
           </div>
