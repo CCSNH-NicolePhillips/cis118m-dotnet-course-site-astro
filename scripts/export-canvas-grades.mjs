@@ -27,18 +27,41 @@ const redis = new Redis({
 });
 
 // Assignment definitions - maps our internal IDs to Canvas assignment names
-// Update this as you create assignments in the course
+// The key format matches how grades are stored in Redis (e.g., "week-01-lab:score")
 const ASSIGNMENTS = {
   // Week 1
-  'week-01:lab': { name: 'Week 1 Lab: Welcome Program', points: 100 },
-  'week-01:homework': { name: 'Week 1 Homework', points: 100 },
-  'week-01:quiz': { name: 'Week 1 Quiz', points: 100 },
+  'week-01-participation': { name: 'Week 1 Participation', points: 100, isParticipation: true, week: 'week-01' },
+  'week-01-lab': { name: 'Week 1 Lab: Welcome Program', points: 100 },
+  'week-01-homework': { name: 'Week 1 Homework', points: 100 },
+  'week-01-quiz': { name: 'Week 1 Quiz', points: 100 },
+  'week-01-required-quiz': { name: 'Week 1 Syllabus Quiz', points: 100 },
   
-  // Week 2 - Update these to match your actual assignments
-  'week-02:lab': { name: 'Week 2 Lab', points: 100 },
-  'week-02:homework': { name: 'Week 2 Homework', points: 100 },
-  'week-02:quiz': { name: 'Week 2 Quiz', points: 100 },
+  // Week 2
+  'week-02-participation': { name: 'Week 2 Participation', points: 100, isParticipation: true, week: 'week-02' },
+  'week-02-lab': { name: 'Week 2 Lab', points: 100 },
+  'week-02-homework': { name: 'Week 2 Homework', points: 100 },
+  'week-02-quiz': { name: 'Week 2 Quiz', points: 100 },
 };
+
+// Count participation events for a week from progress data
+function countParticipation(progressData, weekPrefix) {
+  const participationKeys = Object.keys(progressData).filter(k => 
+    k.includes(':status') && 
+    progressData[k] === 'participated' &&
+    (k.includes(weekPrefix) || k.includes(`/${weekPrefix}`))
+  );
+  return participationKeys.length;
+}
+
+// Calculate participation score (0-100 based on number of activities)
+// Adjust thresholds as needed
+function calculateParticipationScore(count) {
+  if (count === 0) return null; // No participation yet
+  if (count >= 6) return 100;   // Full participation
+  if (count >= 4) return 90;    // Good participation
+  if (count >= 2) return 75;    // Some participation
+  return 50;                     // Minimal participation
+}
 
 // Escape CSV field
 function escapeCSV(value) {
@@ -90,24 +113,32 @@ async function main() {
       const completionsList = await redis.smembers(`completions:${linkedSub}`) || [];
 
       for (const assignmentId of assignmentIds) {
+        const assignmentDef = ASSIGNMENTS[assignmentId];
         let score = null;
 
-        // Check progress data
-        const progressKey = `${assignmentId}:score`;
-        if (progressData[progressKey] !== undefined) {
-          score = parseFloat(progressData[progressKey]);
-        }
+        // Handle participation grades specially
+        if (assignmentDef.isParticipation) {
+          const weekPrefix = assignmentDef.week;
+          const participationCount = countParticipation(progressData, weekPrefix);
+          score = calculateParticipationScore(participationCount);
+        } else {
+          // Check progress data for regular assignments
+          const progressKey = `${assignmentId}:score`;
+          if (progressData[progressKey] !== undefined) {
+            score = parseFloat(progressData[progressKey]);
+          }
 
-        // Check completions
-        if (score === null && completionsList.includes(assignmentId)) {
-          const completionData = await redis.get(`completion:${linkedSub}:${assignmentId}`);
-          if (completionData) {
-            try {
-              const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
-              if (parsed.score !== undefined) {
-                score = parseFloat(parsed.score);
-              }
-            } catch (e) {}
+          // Check completions
+          if (score === null && completionsList.includes(assignmentId)) {
+            const completionData = await redis.get(`completion:${linkedSub}:${assignmentId}`);
+            if (completionData) {
+              try {
+                const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
+                if (parsed.score !== undefined) {
+                  score = parseFloat(parsed.score);
+                }
+              } catch (e) {}
+            }
           }
         }
 
@@ -117,7 +148,7 @@ async function main() {
       // Show what we found
       const gradesList = Object.entries(studentRow.grades)
         .filter(([_, v]) => v !== null)
-        .map(([k, v]) => `${k.split(':')[1]}=${v}`)
+        .map(([k, v]) => `${ASSIGNMENTS[k]?.name?.split(' ').slice(-1)[0] || k}=${v}`)
         .join(', ');
       
       if (gradesList) {
