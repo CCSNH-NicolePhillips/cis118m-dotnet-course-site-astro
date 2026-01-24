@@ -6,6 +6,7 @@ description: "Understanding the entry point of every C# program"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 
 # Section 2.2: The Main Method
 
@@ -85,6 +86,25 @@ Every C# program has exactly **one** starting point—the `Main` method. When yo
   });
 `}
 </script>
+
+---
+
+## 🖱️ Interactive Breakdown
+
+Hover over each keyword below to see exactly what it does:
+
+<AnnotatedCode 
+  title="The Complete Main Signature"
+  tokens={[
+    { text: "static", type: "keyword", tooltip: "Belongs to the class itself, not an instance. The runtime can call this without creating an object." },
+    { text: "void", type: "type", tooltip: "Return type meaning 'nothing.' The method runs but doesn't hand back a value when finished." },
+    { text: "Main", type: "method", tooltip: "The exact name the runtime searches for. Case-sensitive! 'main' won't work." },
+    { text: "(", type: "punctuation" },
+    { text: "string[]", type: "type", tooltip: "An array of text strings—specifically for command-line arguments passed to your program." },
+    { text: "args", type: "parameter", tooltip: "The variable name holding command-line arguments. You can name this anything, but 'args' is convention." },
+    { text: ")", type: "punctuation" }
+  ]}
+/>
 
 ---
 
@@ -246,6 +266,54 @@ When you run a C# program, here's what happens:
       <p>When Main finishes, program terminates</p>
     </div>
   </div>
+</div>
+
+---
+
+## 🎯 Try It: Exit Codes
+
+Programs can report success or failure through **exit codes**. Change `void` to `int` and return a number:
+
+<TryItNowRunner
+  starterId="week-02-exit-codes"
+  title="Return an Exit Code"
+  code={`using System;
+
+namespace ExitCodeDemo
+{
+    class Program
+    {
+        // Changed 'void' to 'int' - now we MUST return a number
+        static int Main(string[] args)
+        {
+            Console.WriteLine("Checking system status...");
+            
+            bool everythingOk = true;
+            
+            if (everythingOk)
+            {
+                Console.WriteLine("✓ All systems operational!");
+                return 0; // Convention: 0 means success
+            }
+            else
+            {
+                Console.WriteLine("✗ Something went wrong!");
+                return 1; // Any non-zero means failure
+            }
+        }
+    }
+}`}
+  height={420}
+/>
+
+<div class="experiment-box">
+  <h4>🧪 Experiment</h4>
+  <ol>
+    <li>Run the code—notice the exit code in output</li>
+    <li>Change <code>everythingOk</code> to <code>false</code></li>
+    <li>Run again—see the different exit code</li>
+    <li>Try removing the <code>return</code> statement—compiler error!</li>
+  </ol>
 </div>
 
 ---

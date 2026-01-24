@@ -6,6 +6,7 @@ description: "Understanding how C# source code becomes a running program"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 
 # Section 2.3: The Compilation Pipeline
 
@@ -198,6 +199,51 @@ dotnet build
     <li>Code refactoring tools</li>
     <li>Code analyzers and fixers</li>
   </ul>
+</div>
+
+---
+
+## 🎯 Try It: Compile-Time vs Runtime Errors
+
+When Roslyn compiles your code, it catches **syntax errors** immediately. But some errors only appear when the program runs:
+
+<TryItNowRunner
+  starterId="week-02-compile-errors"
+  title="Spot the Error Type"
+  code={`using System;
+
+namespace ErrorTypes
+{
+    class Program
+    {
+        static void Main()
+        {
+            // This is a COMPILE-TIME error
+            // The compiler catches it before the program runs
+            // Console.WriteLin("Missing 'e' in WriteLine");
+            
+            // This compiles fine but causes a RUNTIME error
+            int[] numbers = { 1, 2, 3 };
+            Console.WriteLine("Array has 3 items");
+            
+            // Uncomment this to see a runtime error:
+            // Console.WriteLine(numbers[10]); // Index out of bounds!
+            
+            Console.WriteLine("Program completed successfully!");
+        }
+    }
+}`}
+  height={400}
+/>
+
+<div class="experiment-box">
+  <h4>🧪 Experiment</h4>
+  <ol>
+    <li>Run the code—it works!</li>
+    <li>Uncomment line 11 (WriteLin) — <strong>compile error</strong> appears instantly</li>
+    <li>Re-comment line 11, then uncomment line 18 (numbers[10])</li>
+    <li>Run again—the code <strong>compiles</strong> but crashes at <strong>runtime</strong></li>
+  </ol>
 </div>
 
 ---
@@ -397,6 +443,60 @@ When you build a .NET project, check the output folder:
 ```
 
 The `.dll` file contains your compiled MSIL. It's portable across all platforms with a compatible .NET runtime.
+
+---
+
+## 🎯 Try It: Watch the Pipeline
+
+Every time you click 'Run,' the entire compilation pipeline executes. This demo shows how different stages report issues:
+
+<TryItNowRunner
+  starterId="week-02-pipeline-demo"
+  title="The Full Journey: Source → MSIL → Native"
+  code={`using System;
+
+namespace PipelineDemo
+{
+    class Program
+    {
+        static void Main()
+        {
+            // Stage 1: ROSLYN reads this source code
+            // It checks syntax, types, and semantics
+            
+            string stage1 = "1. Your source code (.cs)";
+            string stage2 = "2. Roslyn compiles to MSIL";
+            string stage3 = "3. CLR loads the assembly";
+            string stage4 = "4. JIT compiles to native code";
+            
+            Console.WriteLine("=== C# Compilation Pipeline ===");
+            Console.WriteLine();
+            Console.WriteLine(stage1);
+            Console.WriteLine("   ↓");
+            Console.WriteLine(stage2);
+            Console.WriteLine("   ↓");
+            Console.WriteLine(stage3);
+            Console.WriteLine("   ↓");
+            Console.WriteLine(stage4);
+            Console.WriteLine("   ↓");
+            Console.WriteLine("5. YOUR CODE RUNS! ✓");
+            
+            // Try adding a syntax error to see Roslyn catch it!
+        }
+    }
+}`}
+  height={450}
+/>
+
+<div class="experiment-box">
+  <h4>🧪 Experiment</h4>
+  <ol>
+    <li>Run the code—watch the pipeline stages print</li>
+    <li>Delete a semicolon—Roslyn (Stage 2) catches it immediately</li>
+    <li>Fix it, then add <code>int x = "text";</code>—type error caught at compile time</li>
+    <li>The program never reaches runtime if Roslyn finds issues!</li>
+  </ol>
+</div>
 
 ---
 

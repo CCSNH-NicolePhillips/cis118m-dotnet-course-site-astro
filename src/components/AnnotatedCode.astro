@@ -1,0 +1,311 @@
+---
+/**
+ * AnnotatedCode - Interactive code block with hover tooltips
+ * Displays a code signature where each token has a tooltip explanation on hover.
+ */
+
+interface Token {
+  text: string;
+  tooltip?: string;
+  type?: 'keyword' | 'type' | 'method' | 'parameter' | 'punctuation' | 'plain';
+}
+
+interface Props {
+  tokens: Token[];
+  title?: string;
+}
+
+const { tokens, title } = Astro.props;
+---
+
+<div class="annotated-code-container">
+  {title && <div class="annotated-title">{title}</div>}
+  <div class="annotated-code">
+    <code class="code-line">
+      {tokens.map((token) => (
+        token.tooltip ? (
+          <span 
+            class={`token token-${token.type || 'plain'} has-tooltip`} 
+            data-tooltip={token.tooltip}
+          >
+            {token.text}
+          </span>
+        ) : (
+          <span class={`token token-${token.type || 'plain'}`}>{token.text}</span>
+        )
+      ))}
+    </code>
+  </div>
+  <div class="hover-hint">
+    <span class="hint-icon">👆</span>
+    <span>Hover over each keyword to learn what it does</span>
+  </div>
+</div>
+
+<style>
+  .annotated-code-container {
+    margin: 1.5rem 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .annotated-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64ffda;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .annotated-code {
+    background: #0d1117;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .code-line {
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15em;
+  }
+
+  .token {
+    position: relative;
+    padding: 0.15em 0.3em;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .token.has-tooltip {
+    cursor: help;
+    border-bottom: 2px dashed currentColor;
+  }
+
+  .token.has-tooltip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Token type colors */
+  .token-keyword {
+    color: #c586c0;
+    background: rgba(197, 134, 192, 0.1);
+  }
+
+  .token-keyword:hover {
+    background: rgba(197, 134, 192, 0.25);
+  }
+
+  .token-type {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.1);
+  }
+
+  .token-type:hover {
+    background: rgba(78, 201, 176, 0.25);
+  }
+
+  .token-method {
+    color: #dcdcaa;
+    background: rgba(220, 220, 170, 0.1);
+  }
+
+  .token-method:hover {
+    background: rgba(220, 220, 170, 0.25);
+  }
+
+  .token-parameter {
+    color: #9cdcfe;
+    background: rgba(156, 220, 254, 0.1);
+  }
+
+  .token-parameter:hover {
+    background: rgba(156, 220, 254, 0.25);
+  }
+
+  .token-punctuation {
+    color: #d4d4d4;
+  }
+
+  .token-plain {
+    color: #d4d4d4;
+  }
+
+  /* Tooltip styling */
+  .token[data-tooltip]::before,
+  .token[data-tooltip]::after {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+  }
+
+  /* Tooltip arrow */
+  .token[data-tooltip]::before {
+    content: '';
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #2d3748;
+    margin-bottom: -1px;
+  }
+
+  /* Tooltip content */
+  .token[data-tooltip]::after {
+    content: attr(data-tooltip);
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    color: #e2e8f0;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.5;
+    width: max-content;
+    max-width: 280px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .token[data-tooltip]:hover::before,
+  .token[data-tooltip]:hover::after {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .token[data-tooltip]:hover::after {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Adjust tooltip position for tokens near edges */
+  .token:first-child[data-tooltip]::after {
+    left: 0;
+    transform: translateX(0) translateY(5px);
+  }
+
+  .token:first-child[data-tooltip]:hover::after {
+    transform: translateX(0) translateY(0);
+  }
+
+  .token:first-child[data-tooltip]::before {
+    left: 20px;
+  }
+
+  .token:last-child[data-tooltip]::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(5px);
+  }
+
+  .token:last-child[data-tooltip]:hover::after {
+    transform: translateX(0) translateY(0);
+  }
+
+  .token:last-child[data-tooltip]::before {
+    left: auto;
+    right: 20px;
+    transform: none;
+  }
+
+  .hover-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #a0aec0;
+    font-style: italic;
+  }
+
+  .hint-icon {
+    font-size: 1rem;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  /* Light mode adjustments */
+  :global(.light-mode) .annotated-code-container {
+    background: linear-gradient(135deg, #f7f8fc 0%, #eef1f8 100%);
+    border-color: #d1d5db;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.light-mode) .annotated-code {
+    background: #ffffff;
+    border-color: #e5e7eb;
+  }
+
+  :global(.light-mode) .annotated-title {
+    color: #0d9488;
+  }
+
+  :global(.light-mode) .token-keyword {
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+  }
+
+  :global(.light-mode) .token-type {
+    color: #0d9488;
+    background: rgba(13, 148, 136, 0.1);
+  }
+
+  :global(.light-mode) .token-method {
+    color: #b45309;
+    background: rgba(180, 83, 9, 0.1);
+  }
+
+  :global(.light-mode) .token-parameter {
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.1);
+  }
+
+  :global(.light-mode) .token-punctuation,
+  :global(.light-mode) .token-plain {
+    color: #374151;
+  }
+
+  :global(.light-mode) .token[data-tooltip]::after {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    color: #f9fafb;
+  }
+
+  :global(.light-mode) .token[data-tooltip]::before {
+    border-top-color: #374151;
+  }
+
+  :global(.light-mode) .hover-hint {
+    color: #6b7280;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .code-line {
+      font-size: 1rem;
+    }
+
+    .token[data-tooltip]::after {
+      max-width: 200px;
+      font-size: 0.75rem;
+    }
+  }
+</style>
