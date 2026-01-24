@@ -6,6 +6,7 @@ description: "Professional documentation standards and code formatting conventio
 
 import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 2.4: Code Style & Documentation
 
@@ -29,6 +30,175 @@ Code that only the computer understands is a liability. Code that *humans* under
     <p>The compiler doesn't care about style. It processes <code>int x=1+2;</code> the same as properly formatted code. But the next developer who reads it—often future you—absolutely cares.</p>
   </div>
 </div>
+
+---
+
+## ✦ The Code Blueprint: Architecture vs. Sketches
+
+<div class="media-float-right">
+  <img src="/media/week%202/lesson%202.4/blueprint.png" alt="Architecture blueprint with compass" />
+</div>
+
+Writing code that 'just works' is a sketch; writing code that is **maintainable** is architecture. In the professional world, your code isn't just instructions for a machine—it's a shared document for your team. C# documentation standards, specifically **XML Comments (`///`)**, turn messy, mysterious logic into a clear, interactive blueprint.
+
+<div style={{clear: 'both'}}></div>
+
+---
+
+## Side-by-Side: Evolution of a Method
+
+<DeepDiveTabs
+  tabs={[
+    {
+      id: "amateur",
+      label: "The Amateur Sketch",
+      content: `
+<h3>The 'Napkin Sketch' (Messy)</h3>
+<p>This code works, but it's a nightmare to maintain. Variables are vaguely named, indentation is inconsistent, and there's no explanation of <em>why</em> the code exists.</p>
+
+<pre><code class="language-csharp">// calculates stuff
+public int do_Calc(int a,int b){
+int result=a+b; // add them
+return result;
+}</code></pre>
+      `,
+      keyPoints: [
+        "<strong>Vague Names:</strong> What are a and b? What is a 'Calc'?",
+        "<strong>No Structure:</strong> Cramped lines lead to 'visual fatigue.'",
+        "<strong>Dead Comments:</strong> Comments like <code>// add them</code> are useless noise."
+      ]
+    },
+    {
+      id: "professional",
+      label: "The Professional Blueprint",
+      content: `
+<h3>The 'Blueprint' (Professional)</h3>
+<p>This is the exact same logic, but written as a senior architect would. It uses <strong>XML Documentation</strong> and strict formatting rules.</p>
+
+<pre><code class="language-csharp">/// &lt;summary&gt;
+/// Calculates the total inventory value after tax.
+/// &lt;/summary&gt;
+/// &lt;param name="basePrice"&gt;The initial cost per unit.&lt;/param&gt;
+/// &lt;param name="taxRate"&gt;The current local tax as a decimal (e.g. 0.08).&lt;/param&gt;
+/// &lt;returns&gt;The rounded integer value of the final price.&lt;/returns&gt;
+public int CalculateTotalValue(int basePrice, double taxRate)
+{
+    var total = basePrice * (1 + taxRate);
+    return (int)total;
+}</code></pre>
+      `,
+      keyPoints: [
+        "<strong>Self-Documenting:</strong> Names explain the business context.",
+        "<strong>IntelliSense Ready:</strong> XML tags feed directly into the IDE's tooltips.",
+        "<strong>Visual Rhythm:</strong> Indentation makes the 'levels' of logic clear."
+      ]
+    }
+  ]}
+/>
+
+---
+
+## Anatomy of an XML Blueprint
+
+<div class="xml-anatomy-carousel">
+  <div class="carousel-track">
+    <div class="xml-card">
+      <h4>summary</h4>
+      <p>The high-level 'Headline.' It tells developers exactly what the code does in one sentence without them having to read the logic inside.</p>
+    </div>
+    <div class="xml-card">
+      <h4>param</h4>
+      <p>The 'Input Guide.' Every parameter needs an entry explaining its expected range, unit (e.g., USD, kg), or purpose.</p>
+    </div>
+    <div class="xml-card">
+      <h4>returns</h4>
+      <p>The 'Deliverable.' Explains the meaning of the output. Does it return -1 on error? A null object? A specific count?</p>
+    </div>
+    <div class="xml-card">
+      <h4>exception</h4>
+      <p>The 'Warning Label.' Lists the specific circumstances that might cause this 'building' to fail or throw an error.</p>
+    </div>
+  </div>
+</div>
+
+<style>{`
+  .xml-anatomy-carousel {
+    margin: 2rem 0;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.3) transparent;
+  }
+  
+  .xml-anatomy-carousel::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .xml-anatomy-carousel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .xml-anatomy-carousel::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+  }
+  
+  .carousel-track {
+    display: flex;
+    gap: 1rem;
+    min-width: max-content;
+    padding: 0.5rem;
+  }
+  
+  .xml-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    min-width: 250px;
+    max-width: 280px;
+    flex-shrink: 0;
+  }
+  
+  .xml-card h4 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+  
+  .xml-card p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+`}</style>
+
+---
+
+## The Hierarchy of Indentation
+
+Indentation isn't just about 'looking pretty.' It represents the logical depth of your code. Every time you open a brace `{`, you create a new 'floor' in your building hierarchy. Proper alignment allows the eye to skip unnecessary details and find the core logic instantly.
+
+---
+
+## Standards for Your City
+
+Professional C# follows the **Allman Style**: Braces always sit on their own lines. This creates white space that lets the code 'breathe.'
+
+```csharp
+// ❌ Amateur: Cramped and hidden
+if(isValid){ doStuff(); }
+
+// ✅ Professional: Clear hierarchy
+if (isValid) 
+{ 
+    doStuff(); 
+}
+```
+
+Consistency across your files means that a teammate can jump into any 'room' of your project and immediately understand the layout.
 
 ---
 
