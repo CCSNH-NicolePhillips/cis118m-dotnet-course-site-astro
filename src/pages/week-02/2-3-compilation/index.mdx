@@ -4,7 +4,7 @@ title: "Section 2.3 • Compilation Pipeline"
 description: "Understanding how C# source code becomes a running program"
 ---
 
-import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 2.3: The Compilation Pipeline
@@ -430,13 +430,52 @@ The `.dll` file contains your compiled MSIL. It's portable across all platforms 
 
 ---
 
-## 🧠 Knowledge Check
+## 🧠 Check Your Understanding
 
-<KnowledgeCheck
-  checkId="week-02-2-3-compilation"
-  question="What is the intermediate format created by the Roslyn compiler before it becomes machine code?"
-  correctAnswer="MSIL - Microsoft Intermediate Language"
-  explanation="When you compile C# code, Roslyn produces MSIL (Microsoft Intermediate Language), not native machine code. MSIL is a CPU-independent instruction set that gets translated to native code by the CLR's JIT compiler at runtime. This two-stage process is what makes .NET applications portable across different platforms."
+<Checkpoint
+  checkpointId="week-02-2-3-compilation"
+  title="Compilation Pipeline"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What intermediate format does the Roslyn compiler produce?",
+      options: [
+        "Binary machine code",
+        "JavaScript",
+        "MSIL (Microsoft Intermediate Language)",
+        "Assembly language"
+      ],
+      correctAnswer: "MSIL (Microsoft Intermediate Language)",
+      explanation: "Roslyn compiles C# into MSIL, a platform-independent format. The JIT compiler then converts MSIL to native machine code at runtime."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "When does the JIT (Just-In-Time) compiler run?",
+      options: [
+        "When you save your .cs file",
+        "When you run 'dotnet build'",
+        "At runtime, just before code executes",
+        "During installation of .NET SDK"
+      ],
+      correctAnswer: "At runtime, just before code executes",
+      explanation: "The JIT compiler runs at runtime, converting MSIL to native machine code right before it executes. This allows .NET to optimize for the specific hardware it's running on."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "Why is the two-stage compilation (Source → MSIL → Machine Code) beneficial?",
+      options: [
+        "It makes programs run faster",
+        "It reduces file size",
+        "It enables cross-platform portability",
+        "It eliminates all bugs"
+      ],
+      correctAnswer: "It enables cross-platform portability",
+      explanation: "The same MSIL can run on Windows, Mac, or Linux because the JIT compiler on each platform translates it to the appropriate native code. This is the 'compile once, run anywhere' advantage."
+    }
+  ]}
 />
 
 ---
