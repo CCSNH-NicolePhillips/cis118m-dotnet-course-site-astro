@@ -4,7 +4,7 @@ title: "Section 2.4 • Code Style & Documentation"
 description: "Professional documentation standards and code formatting conventions"
 ---
 
-import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
@@ -33,15 +33,13 @@ Code that only the computer understands is a liability. Code that *humans* under
 
 ---
 
-## ✦ The Code Blueprint: Architecture vs. Sketches
-
-<div class="media-float-right">
-  <img src="/media/week%202/lesson%202.4/blueprint.png" alt="Architecture blueprint with compass" />
+<div class="concept-intro">
+  <div class="concept-text">
+    <h2>✦ The Code Blueprint: Architecture vs. Sketches</h2>
+    <p>Writing code that 'just works' is a sketch; writing code that is <strong>maintainable</strong> is architecture. In the professional world, your code isn't just instructions for a machine—it's a shared document for your team. C# documentation standards, specifically <strong>XML Comments (<code>///</code>)</strong>, turn messy, mysterious logic into a clear, interactive blueprint.</p>
+  </div>
+  <img src="/media/week%202/lesson%202.4/blueprint.png" alt="Architecture blueprint with compass" class="concept-image" />
 </div>
-
-Writing code that 'just works' is a sketch; writing code that is **maintainable** is architecture. In the professional world, your code isn't just instructions for a machine—it's a shared document for your team. C# documentation standards, specifically **XML Comments (`///`)**, turn messy, mysterious logic into a clear, interactive blueprint.
-
-<div style={{clear: 'both'}}></div>
 
 ---
 
@@ -483,11 +481,50 @@ namespace DocumentationDemo
 
 ## 🧠 Knowledge Check
 
-<KnowledgeCheck
-  checkId="week-02-2-4-documentation"
-  question="Which comment style is used by the compiler to generate automated technical documentation for other developers?"
-  correctAnswer="XML Documentation (///)"
-  explanation="XML documentation comments (///) are special because the C# compiler can parse them to generate IntelliSense tooltips, API documentation websites, and technical reference manuals. Single-line (//) and multi-line (/* */) comments are ignored by documentation generators."
+<Checkpoint
+  checkpointId="week-02-2-4-documentation"
+  title="Code Style & Documentation Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Which comment style is used by the compiler to generate automated technical documentation for other developers?",
+      options: [
+        "Single-line comments (//)",
+        "Multi-line comments (/* */)",
+        "XML Documentation (///)",
+        "Hash comments (#)"
+      ],
+      correctAnswer: "XML Documentation (///)",
+      explanation: "XML documentation comments (///) are special because the C# compiler can parse them to generate IntelliSense tooltips, API documentation websites, and technical reference manuals."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What brace style does professional C# code follow?",
+      options: [
+        "K&R Style - opening brace on same line",
+        "Allman Style - braces on their own lines",
+        "GNU Style - braces indented half-way",
+        "No standard - developer's choice"
+      ],
+      correctAnswer: "Allman Style - braces on their own lines",
+      explanation: "Professional C# follows the Allman Style where braces sit on their own lines. This creates white space that lets the code 'breathe' and makes the hierarchy clear."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What should code comments primarily explain?",
+      options: [
+        "What the code does line by line",
+        "Why the code exists or a specific approach was chosen",
+        "The syntax of the programming language",
+        "The author's name and date"
+      ],
+      correctAnswer: "Why the code exists or a specific approach was chosen",
+      explanation: "The code itself should explain what it does through clear naming. Comments should explain WHY - the business logic, intent, or reasoning behind decisions."
+    }
+  ]}
 />
 
 ---
