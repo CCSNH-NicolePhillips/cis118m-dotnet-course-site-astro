@@ -5,6 +5,7 @@ description: "Understanding how C# source code becomes a running program"
 ---
 
 import KnowledgeCheck from '../../../components/KnowledgeCheck.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 2.3: The Compilation Pipeline
 
@@ -129,6 +130,45 @@ When you write C# code, you're writing **human-readable text**. But your compute
     </div>
   </div>
 </div>
+
+---
+
+## The 'Compile Once, Run Anywhere' Architecture
+
+This two-step process (Source → MSIL → Machine Code) is why a single .NET assembly can run on an Intel-based Windows PC, an ARM-based MacBook, or a Linux server without being recompiled.
+
+<DeepDiveTabs
+  title="Pipeline Secrets"
+  tabs={[
+    {
+      id: "intermediate-language",
+      label: "Why Intermediate Language?",
+      content: "Think of MSIL as <strong>Esperanto</strong> for computers. By targeting an intermediate language, .NET allows different languages (C#, F#, VB.NET) to talk to each other.",
+      keyPoints: [
+        "<strong>Interoperability:</strong> You can use a library written in F# from your C# code because they both end up as the same MSIL.",
+        "<strong>Hardware Agnostic:</strong> The developer doesn't need to know if the user is on a 64-bit or 32-bit system."
+      ]
+    },
+    {
+      id: "roslyn-service",
+      label: "Roslyn: Compiler as a Service",
+      content: "Old compilers were 'Black Boxes' (Source in, Binary out). <strong>Roslyn</strong> opened the box.",
+      keyPoints: [
+        "<strong>Analyzers:</strong> Visual Studio uses Roslyn to show you red squiggly lines while you type.",
+        "<strong>Code Fixes:</strong> When you click the 'lightbulb,' Roslyn is literally rewriting your code's syntax tree for you."
+      ]
+    },
+    {
+      id: "jit-speed",
+      label: "JIT: The Speed Secret",
+      content: "Because the JIT compiler runs at the last second, it knows <strong>exactly</strong> what hardware it's on.",
+      keyPoints: [
+        "<strong>Hardware Specific:</strong> It can use the latest instructions on a high-end CPU that weren't available when you wrote the code.",
+        "<strong>PGO (Profile-Guided Optimization):</strong> Modern JITs watch which paths your code takes most often and re-optimize while the program is running."
+      ]
+    }
+  ]}
+/>
 
 ---
 
