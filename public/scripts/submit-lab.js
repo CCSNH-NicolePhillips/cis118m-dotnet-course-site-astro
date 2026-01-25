@@ -30,6 +30,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const getStarterId = () => {
     // Check if on lab page - extract from URL
     const path = window.location.pathname;
+    if (path.includes('/week-02/lab')) {
+      return 'week-02-lab';
+    }
     if (path.includes('/week-01/lab')) {
       return 'week-01-lab-1';
     }
@@ -38,11 +41,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const starterId = getStarterId();
   
+  // Get week number from starterId
+  const getWeekNumber = (id) => {
+    const match = id.match(/week-(\d+)/);
+    return match ? match[1] : '01';
+  };
+  
+  const weekNumber = getWeekNumber(starterId);
+  
   // Check for existing submission
   try {
     const token = await getAccessToken();
     if (token) {
-      const response = await fetch(`/.netlify/functions/get-submission?week=01&type=lab`, {
+      const response = await fetch(`/.netlify/functions/get-submission?week=${weekNumber}&type=lab`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {

@@ -59,11 +59,11 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-01-extra-practice': "Topic: Extra drills. Focus: Additional Console.WriteLine practice exercises.",
   
   // Week 2
-  'week-02': "Topic: Variables and Data Types. Focus: Storing and managing data in your programs.",
-  'week-02-lesson-1': "Topic: Variables. Focus: Declaring variables as labeled containers for storing data.",
-  'week-02-lesson-2': "Topic: Data Types. Focus: int, string, double, bool - choosing the right container type.",
-  'week-02-lab': "Topic: Variable Operations. Mission: Creating and manipulating variables.",
-  'week-02-homework': "Topic: Reflection. Focus: Understanding how variables store and retrieve data.",
+  'week-02': "Week 2: Program Structure. Students are learning about namespaces, classes, the Main method, and code documentation. They understand Console.WriteLine from Week 1. This week focuses on: namespace declarations, class structure, static void Main vs static int Main, XML documentation comments (///), and the Allman brace style. NO variables yet - that's Week 3.",
+  'week-02-lesson-1': "Week 2 Section 2.1: Namespaces. Focus: Understanding namespaces as organizational containers, using directives, and how they prevent naming conflicts.",
+  'week-02-lesson-2': "Week 2 Section 2.2: The Main Method. Focus: Understanding Main() as the entry point, static keyword, void vs int return types, and exit codes.",
+  'week-02-lab': "Week 2 Lab: System Status Report. Students create a well-structured program with: namespace SystemDiagnostics, class StatusReport, XML documentation (///) above Main, static int Main() with return 0, and at least 5 Console.WriteLine statements for formatted output. NO variables - just structure, comments, and Console.WriteLine.",
+  'week-02-homework': "Week 2 Homework: Architecture Reflection. Students explain program structure - namespaces, classes, Main method, and documentation. Written reflection about why code organization matters.",
   
   // Week 3
   'week-03': "Topic: User Input and Conversion. Focus: Interactive programs that respond to users.",
