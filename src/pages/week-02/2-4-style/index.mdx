@@ -579,6 +579,53 @@ Congratulations! You've completed the structural foundation of C# programming:
 
 <style is:global>
 {`
+  /* Concept Intro with Image */
+  .concept-intro {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+  
+  .concept-text {
+    flex: 1;
+  }
+  
+  .concept-text h2 {
+    color: #4ec9b0;
+    margin-top: 0;
+    font-size: 1.5rem;
+  }
+  
+  .concept-text p {
+    color: #c0c0c0;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    margin-bottom: 0;
+  }
+  
+  .concept-image {
+    width: 280px;
+    height: auto;
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .concept-intro {
+      flex-direction: column;
+    }
+    
+    .concept-image {
+      width: 100%;
+      max-width: 320px;
+    }
+  }
+
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -844,6 +891,18 @@ Congratulations! You've completed the structural foundation of C# programming:
   }
 
   /* Light mode overrides */
+  body[data-theme="light"] .concept-intro {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  }
+
+  body[data-theme="light"] .concept-text h2 {
+    color: #2d7a6e !important;
+  }
+
+  body[data-theme="light"] .concept-text p {
+    color: #333 !important;
+  }
+
   body[data-theme="light"] .callout-insight {
     background: linear-gradient(135deg, #e8f4ff 0%, #f0f8ff 100%) !important;
   }
