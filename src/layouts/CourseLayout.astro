@@ -335,6 +335,7 @@ const getWeekLockInfo = (weekSlug: string) => {
         
         const applyTheme = (theme) => {
           currentTheme = theme;
+          document.documentElement.setAttribute("data-theme", theme);
           document.body.setAttribute("data-theme", theme);
           localStorage.setItem(themeKey, theme);
           const icon = document.getElementById("theme-icon");
