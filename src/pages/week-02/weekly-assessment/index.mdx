@@ -1,0 +1,210 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 02 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+
+# 🏁 Week 02 Technical Assessment
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> You are allowed <strong>2 attempts</strong></li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-02-quiz"
+  title="Week 02: Program Structure (Graded)"
+  passingScore={70}
+  maxAttempts={2}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the primary purpose of a namespace in C#?",
+      options: [
+        "To make the code run faster",
+        "To organize code and prevent naming conflicts",
+        "To store variables",
+        "To print output to the console"
+      ],
+      correctAnswer: "To organize code and prevent naming conflicts",
+      explanation: "Namespaces act like folders for your code, grouping related classes together and preventing conflicts when two classes have the same name."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the correct syntax to declare a namespace called 'MyApp'?",
+      options: [
+        "namespace = MyApp { }",
+        "namespace MyApp { }",
+        "class namespace MyApp { }",
+        "using MyApp { }"
+      ],
+      correctAnswer: "namespace MyApp { }",
+      explanation: "Namespaces are declared with the 'namespace' keyword followed by the name and curly braces containing the code."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What does 'static int Main()' return when a program runs successfully?",
+      options: [
+        "Nothing (void)",
+        "1",
+        "0",
+        "true"
+      ],
+      correctAnswer: "0",
+      explanation: "By convention, returning 0 from Main indicates successful execution. Non-zero values indicate errors."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "The Main method is where program execution begins in a C# application.",
+      correctAnswer: "True",
+      explanation: "Correct! Main is the entry point - when you run a C# program, the CLR looks for Main and starts executing there."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "Which of these is the correct XML documentation comment syntax?",
+      options: [
+        "// This is a summary",
+        "/* summary */",
+        "/// <summary>This describes the method</summary>",
+        "# Summary"
+      ],
+      correctAnswer: "/// <summary>This describes the method</summary>",
+      explanation: "XML documentation uses triple slashes (///) and XML tags like <summary> to create documentation that tools can extract."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What is a 'class' in C#?",
+      options: [
+        "A type of variable",
+        "A container that groups related methods and data together",
+        "A way to print output",
+        "A type of comment"
+      ],
+      correctAnswer: "A container that groups related methods and data together",
+      explanation: "A class is a blueprint that contains methods (actions) and can hold data. It's the fundamental building block of C# programs."
+    },
+    {
+      id: "q7",
+      type: "true-false",
+      question: "In the Allman brace style, the opening brace { goes on the same line as the statement.",
+      correctAnswer: "False",
+      explanation: "In Allman style (used in C#), the opening brace goes on its own line. K&R style puts it on the same line."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What happens if you use 'static void Main()' instead of 'static int Main()'?",
+      options: [
+        "The program won't compile",
+        "The program can't use Console.WriteLine",
+        "The program doesn't return an exit code",
+        "The program runs faster"
+      ],
+      correctAnswer: "The program doesn't return an exit code",
+      explanation: "'void' means the method returns nothing. 'int' means it returns a number (exit code). Both are valid for Main."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Why should developers add XML documentation comments to their code?",
+      options: [
+        "To make the code run faster",
+        "To help other developers (and your future self) understand what code does",
+        "To prevent compilation errors",
+        "To save memory"
+      ],
+      correctAnswer: "To help other developers (and your future self) understand what code does",
+      explanation: "Documentation helps anyone reading your code understand its purpose. IDEs like VS Code also show these comments in tooltips!"
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "Which keyword is used to indicate that a method belongs to the class itself, not an instance?",
+      options: [
+        "void",
+        "class",
+        "static",
+        "public"
+      ],
+      correctAnswer: "static",
+      explanation: "The 'static' keyword means the method belongs to the class itself. You don't need to create an object to call it (like Main)."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>After completing the assessment, you've finished <strong>Week 2</strong>!</p>
+  <a href="/week-03/" class="vscode-button">Continue to Week 3 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+  
+  .mission-brief ul {
+    margin-bottom: 0;
+  }
+  
+  .mission-brief li {
+    margin: 8px 0;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(241, 245, 249, 0.95) 0%, rgba(226, 232, 240, 0.95) 100%) !important;
+    border-color: rgba(78, 201, 176, 0.5) !important;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+`}</style>

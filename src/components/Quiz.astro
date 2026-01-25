@@ -14,9 +14,10 @@ interface Props {
   questions: QuizQuestion[];
   passingScore?: number;
   maxAttempts?: number; // Set to 0 or Infinity for unlimited
+  hideAnswersUntilFinal?: boolean; // Don't show correct answers until last attempt
 }
 
-const { quizId, title, questions, passingScore = 70, maxAttempts = 2 } = Astro.props;
+const { quizId, title, questions, passingScore = 70, maxAttempts = 2, hideAnswersUntilFinal = false } = Astro.props;
 // Use a large number for "unlimited" since Infinity can't be serialized to JSON
 const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
 ---
@@ -114,7 +115,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
   </div>
 </div>
 
-<script define:vars={{ quizId, questions, passingScore, effectiveMaxAttempts }}>
+<script define:vars={{ quizId, questions, passingScore, effectiveMaxAttempts, hideAnswersUntilFinal }}>
   (async () => {
     const form = document.getElementById(`quiz-form-${quizId}`);
     const resultsDiv = document.getElementById(`results-${quizId}`);
@@ -490,6 +491,13 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       const score = Math.round((correct / questions.length) * 100);
       const passed = score >= passingScore;
       
+      // Increment attempt count for this submission
+      const thisAttempt = currentAttempts + 1;
+      
+      // Determine if we should show answers (final attempt or not hiding answers)
+      const isFinalAttempt = thisAttempt >= maxAttempts;
+      const showAnswers = !hideAnswersUntilFinal || isFinalAttempt || passed;
+      
       // Display results
       form.style.display = 'none';
       resultsDiv.style.display = 'block';
@@ -502,24 +510,46 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         </div>
       `;
       
-      detailsDiv.innerHTML = details.map(d => `
-        <div class="result-item ${d.isCorrect ? 'correct' : 'incorrect'}">
-          <div class="result-header">
-            <span class="result-icon">${d.isCorrect ? '✓' : '✗'}</span>
-            <strong>Question ${d.questionNumber}</strong>
-          </div>
-          <p class="result-question">${d.question}</p>
-          <p class="result-answer">
-            <strong>Your answer:</strong> ${Array.isArray(d.userAnswer) ? d.userAnswer.join(', ') : d.userAnswer || '(no answer)'}
-          </p>
-          ${!d.isCorrect ? `
-            <p class="result-correct">
-              <strong>Correct answer:</strong> ${Array.isArray(d.correctAnswer) ? d.correctAnswer.join(', ') : d.correctAnswer}
+      // Show answers only if allowed
+      if (showAnswers) {
+        detailsDiv.innerHTML = details.map(d => `
+          <div class="result-item ${d.isCorrect ? 'correct' : 'incorrect'}">
+            <div class="result-header">
+              <span class="result-icon">${d.isCorrect ? '✓' : '✗'}</span>
+              <strong>Question ${d.questionNumber}</strong>
+            </div>
+            <p class="result-question">${d.question}</p>
+            <p class="result-answer">
+              <strong>Your answer:</strong> ${Array.isArray(d.userAnswer) ? d.userAnswer.join(', ') : d.userAnswer || '(no answer)'}
             </p>
-          ` : ''}
-          ${d.explanation ? `<p class="result-explanation">${d.explanation}</p>` : ''}
-        </div>
-      `).join('');
+            ${!d.isCorrect ? `
+              <p class="result-correct">
+                <strong>Correct answer:</strong> ${Array.isArray(d.correctAnswer) ? d.correctAnswer.join(', ') : d.correctAnswer}
+              </p>
+            ` : ''}
+            ${d.explanation ? `<p class="result-explanation">${d.explanation}</p>` : ''}
+          </div>
+        `).join('');
+      } else {
+        // Hide detailed answers - just show which ones were right/wrong
+        const attemptsLeft = maxAttempts - thisAttempt;
+        detailsDiv.innerHTML = `
+          <div class="answers-hidden-notice">
+            <p>📋 <strong>Answers will be revealed after your final attempt.</strong></p>
+            <p>You have <strong>${attemptsLeft} attempt${attemptsLeft !== 1 ? 's' : ''}</strong> remaining.</p>
+            <p>Review your notes and try again to improve your score!</p>
+          </div>
+          ${details.map(d => `
+            <div class="result-item ${d.isCorrect ? 'correct' : 'incorrect'} answer-hidden">
+              <div class="result-header">
+                <span class="result-icon">${d.isCorrect ? '✓' : '✗'}</span>
+                <strong>Question ${d.questionNumber}</strong>
+              </div>
+              <p class="result-question">${d.question}</p>
+            </div>
+          `).join('')}
+        `;
+      }
       
       // Save result
       const result = {
@@ -968,6 +998,28 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     padding: 8px;
     background: var(--panel);
     border-radius: 4px;
+  }
+  
+  .answers-hidden-notice {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.15) 0%, rgba(78, 201, 176, 0.15) 100%);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .answers-hidden-notice p {
+    margin: 8px 0;
+    color: var(--text);
+  }
+  
+  .result-item.answer-hidden {
+    padding: 12px;
+  }
+  
+  .result-item.answer-hidden .result-question {
+    margin-bottom: 0;
   }
   
   .retake-button {
