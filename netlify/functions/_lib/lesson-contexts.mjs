@@ -126,11 +126,71 @@ export const lessonContexts = {
     assignmentPrompt: "Verify understanding of course expectations and policies.",
     rubric: "100% required to unlock course content. Each question must be answered correctly.",
     requiredKeywords: []
-  }
+  },
 
-  // Add more weeks as content is created:
-  // "week-02-homework": { ... },
-  // "week-02-lab": { ... },
+  // ===== WEEK 02 =====
+  "week-02-lab": {
+    title: "Week 2: Lab - System Status Report",
+    type: "lab",
+    week: "02",
+    taughtConcepts: `
+      - Namespaces organize code and prevent naming conflicts (namespace MyApp { })
+      - Classes are containers for related methods (class Program { })
+      - The Main method is the program entry point: static int Main() or static void Main()
+      - XML documentation comments use /// and <summary> tags above methods
+      - static int Main() returns an exit code: 0 = success, non-zero = error
+      - Allman brace style: opening brace on its own line
+      - Console.WriteLine() from Week 1 for output
+      - NO variables yet - that's Week 3
+    `,
+    assignmentPrompt: `
+      Create a well-structured console program that displays a "System Status Report":
+      1. Header comments with your name and assignment name
+      2. Wrap code in namespace SystemDiagnostics
+      3. Create a class called StatusReport
+      4. Add XML documentation (/// <summary>) above Main
+      5. Use static int Main() and return 0 at the end
+      6. Print at least 5 lines of formatted output (header, status info, footer)
+    `,
+    rubric: `
+      Header comments - name + assignment (10pts): Has // Name: and // Assignment: comments at top
+      Namespace SystemDiagnostics (15pts): Code wrapped in namespace SystemDiagnostics { }
+      Class StatusReport (15pts): Has class StatusReport { } structure
+      XML documentation on Main (15pts): Has /// <summary> comment above Main method
+      static int Main with return 0 (15pts): Uses int return type and returns 0
+      Formatted output - 5+ lines (20pts): At least 5 Console.WriteLine statements with formatted report
+      Code compiles and runs (10pts): No syntax errors, produces expected output
+    `,
+    requiredKeywords: ["namespace", "class", "Main", "Console.WriteLine"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-02-homework": {
+    title: "Week 2: Architecture Reflection",
+    type: "homework",
+    week: "02",
+    taughtConcepts: `
+      - Namespaces organize code and prevent naming conflicts
+      - Classes group related functionality together
+      - The Main method is where execution starts
+      - XML documentation (///) helps other developers understand your code
+      - Exit codes communicate success (0) or failure (non-zero) to the operating system
+      - Good code organization makes programs easier to maintain
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, explain program structure:
+      1. Why do we use namespaces to organize code?
+      2. What is the purpose of the Main method?
+      3. Why is documentation (comments) important for professional code?
+    `,
+    rubric: `
+      Namespace purpose (35pts): Explains namespaces organize code and/or prevent naming conflicts
+      Main method role (35pts): Explains Main is the entry point where execution begins
+      Documentation importance (20pts): Explains why comments/documentation help readability or maintenance
+      Clarity and terminology (10pts): Clear writing using terms like namespace, Main, documentation
+    `,
+    requiredKeywords: ["namespace", "Main"]
+  }
 };
 
 export function getLessonContext(assignmentId) {
