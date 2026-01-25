@@ -53,10 +53,12 @@ function getExpectedSections(weekNum) {
   return EXPECTED_SECTIONS_PER_WEEK[weekNum] ?? 4;
 }
 
-// Count unique SECTIONS participated in for a week
-// e.g., Week 2 has 4 sections (2-1, 2-2, 2-3, 2-4)
+// Count participation for a week
+// Week 1: Counts every participation entry (original behavior - students already graded)
+// Week 2+: Counts unique sections (4 sections expected)
 function countParticipation(progressData, weekPrefix) {
   const uniqueSections = new Set();
+  let rawCount = 0;
   
   // Extract week number from prefix (e.g., "week-02" -> 2)
   const weekNumMatch = weekPrefix.match(/week-(\d+)/i);
@@ -67,28 +69,33 @@ function countParticipation(progressData, weekPrefix) {
         value === 'participated' &&
         (key.includes(weekPrefix) || key.includes(`/${weekPrefix}`))) {
       
-      // Extract the SECTION identifier (e.g., "2-1", "2-2", "lesson-1", etc.)
-      let section = null;
+      // Always count raw entries
+      rawCount++;
       
-      // Pattern 1: Numbered sections like "2-1", "2-2", "3-1", etc.
+      // Also track unique sections for Week 2+
+      let section = null;
       const numberedMatch = key.match(/(\d+-\d+)/);
       if (numberedMatch) {
         section = numberedMatch[1];
       } else {
-        // Pattern 2: Named sections like "lesson-1", "lesson-2", "extra-practice"
         const namedMatch = key.match(/(lesson-\d+|extra-practice)/i);
         if (namedMatch) {
           section = namedMatch[1].toLowerCase();
         }
       }
-      
       if (section) {
         uniqueSections.add(section);
       }
     }
   }
   
-  return uniqueSections.size;
+  // Week 1: use raw counts (original behavior - students already graded)
+  // Week 2+: use unique section counts
+  if (weekNum === 1) {
+    return rawCount;
+  } else {
+    return uniqueSections.size;
+  }
 }
 
 // Calculate participation score (0-100 based on sections completed)

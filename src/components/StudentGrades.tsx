@@ -133,17 +133,15 @@ const getAccessToken = async (): Promise<string | null> => {
 };
 
 // Count participation by week
-// Counts unique SECTIONS participated in (not individual activities within a section)
-// e.g., Week 2 has 4 sections (2-1, 2-2, 2-3, 2-4), so max 4 activities
+// Counts every participation entry (checkpoints, tryits, deepdives)
+// Week 1: 5 activities expected (original behavior)
+// Week 2+: 4 sections expected (uses unique section counting)
 const countParticipationByWeek = (progress: ProgressData): { [week: number]: number } => {
-  const counts: { [week: number]: number } = {};
-  for (let w = 1; w <= TOTAL_WEEKS; w++) {
-    counts[w] = 0;
-  }
-  
-  // Track unique SECTIONS per week (not individual checkpoints/tryits/deepdives)
+  const rawCounts: { [week: number]: number } = {};
   const uniqueSections: { [week: number]: Set<string> } = {};
+  
   for (let w = 1; w <= TOTAL_WEEKS; w++) {
+    rawCounts[w] = 0;
     uniqueSections[w] = new Set();
   }
   
@@ -153,24 +151,20 @@ const countParticipationByWeek = (progress: ProgressData): { [week: number]: num
       if (weekMatch) {
         const week = parseInt(weekMatch[1]);
         if (week >= 1 && week <= TOTAL_WEEKS) {
-          // Extract the SECTION identifier (e.g., "2-1", "2-2", "lesson-1", etc.)
-          // For "week-02-2-1-checkpoint:cp1" -> section = "2-1"
-          // For "/week-02/2-1-namespaces:deepdive:..." -> section = "2-1"
-          // For "week-01/lesson-1:tryit:..." -> section = "lesson-1"
-          let section: string | null = null;
+          // Always count raw entries
+          rawCounts[week] = (rawCounts[week] || 0) + 1;
           
-          // Pattern 1: Numbered sections like "2-1", "2-2", "3-1", etc.
+          // Also track unique sections for Week 2+
+          let section: string | null = null;
           const numberedMatch = pageId.match(/(\d+-\d+)/);
           if (numberedMatch) {
             section = numberedMatch[1];
           } else {
-            // Pattern 2: Named sections like "lesson-1", "lesson-2", "extra-practice"
             const namedMatch = pageId.match(/(lesson-\d+|extra-practice)/i);
             if (namedMatch) {
               section = namedMatch[1].toLowerCase();
             }
           }
-          
           if (section) {
             uniqueSections[week].add(section);
           }
@@ -179,9 +173,15 @@ const countParticipationByWeek = (progress: ProgressData): { [week: number]: num
     }
   }
   
-  // Convert sets to counts
+  // Week 1: use raw counts (original behavior - students already graded)
+  // Week 2+: use unique section counts
+  const counts: { [week: number]: number } = {};
   for (let w = 1; w <= TOTAL_WEEKS; w++) {
-    counts[w] = uniqueSections[w].size;
+    if (w === 1) {
+      counts[w] = rawCounts[w]; // Original behavior for Week 1
+    } else {
+      counts[w] = uniqueSections[w].size; // Unique sections for Week 2+
+    }
   }
   
   return counts;
