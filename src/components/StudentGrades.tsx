@@ -4,10 +4,10 @@ import { WEEKS } from '../config/site';
 const TOTAL_WEEKS = 15;
 
 // Expected sections per week for participation scoring
-// Week 1: lesson-1, lesson-2, extra-practice = 3 sections
+// Week 1: 5 checkpoints (original behavior - don't change, students already graded)
 // Week 2+: 4 numbered sections (e.g., 2-1, 2-2, 2-3, 2-4)
 const EXPECTED_SECTIONS_PER_WEEK: { [week: number]: number } = {
-  1: 3,  // lesson-1, lesson-2, extra-practice
+  1: 5,  // Original behavior - DO NOT CHANGE
   2: 4,  // 2-1, 2-2, 2-3, 2-4
   // Default to 4 for other weeks
 };
