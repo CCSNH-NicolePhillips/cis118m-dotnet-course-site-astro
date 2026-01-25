@@ -128,6 +128,17 @@ const AITutor: React.FC = () => {
       console.log('[AITutor] Could not get student code:', err);
     }
 
+    // Try to get homework text from EngineeringLogEditor
+    let homeworkText = '';
+    try {
+      const homeworkEditor = (window as any).__homeworkEditor;
+      if (homeworkEditor?.getText) {
+        homeworkText = homeworkEditor.getText() || '';
+      }
+    } catch (err) {
+      console.log('[AITutor] Could not get homework text:', err);
+    }
+
     try {
       const response = await fetch('/.netlify/functions/ai-tutor', {
         method: 'POST',
@@ -138,6 +149,7 @@ const AITutor: React.FC = () => {
           lessonContext: getTutorContext(pageId),
           studentName,
           studentCode: studentCode || null,
+          homeworkText: homeworkText || null,
         }),
       });
 

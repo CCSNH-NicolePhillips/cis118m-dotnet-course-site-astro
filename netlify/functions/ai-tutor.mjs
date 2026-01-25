@@ -95,7 +95,7 @@ export async function handler(event, context) {
     };
   }
 
-  const { message, pageId, lessonContext, studentName, studentCode } = body;
+  const { message, pageId, lessonContext, studentName, studentCode, homeworkText } = body;
 
   if (!message) {
     return {
@@ -121,6 +121,11 @@ export async function handler(event, context) {
   // Build code context section if student has code
   const codeSection = studentCode 
     ? `\nSTUDENT'S CURRENT CODE:\n\`\`\`csharp\n${studentCode}\n\`\`\`\n`
+    : '';
+
+  // Build homework text section if student has written homework
+  const homeworkSection = homeworkText 
+    ? `\nSTUDENT'S CURRENT HOMEWORK RESPONSE:\n---\n${homeworkText}\n---\n`
     : '';
 
   // Extract week number from pageId if available
@@ -169,6 +174,7 @@ ${weekInfo}
 CURRENT TOPIC/PAGE CONTEXT:
 ${topicContext}
 ${codeSection}
+${homeworkSection}
 ${requestedWeekContent}
 ${courseContextSection}
 
@@ -177,6 +183,8 @@ ADDITIONAL GUIDELINES:
 - You have COMPLETE knowledge of ALL course content from Week 1-15. When students ask about ANY week or lesson, use the course knowledge base above to give accurate summaries.
 - If a student asks "remind me about week X" or "summarize lesson X.Y", provide a helpful summary from the course content.
 - When summarizing lessons, mention: the main topic, key concepts, and what students should be able to do after completing it.
+- If the student has code or homework visible above, you can reference it when they ask for help. You can see what they've written!
+- For homework help: Guide them to improve their answer without giving the answer directly. Ask leading questions or point out what's missing.
 - Keep responses to 2-5 sentences max for quick questions, but you can expand to 5-8 sentences for summary requests.
 
 Student ${name} asks: "${message}"

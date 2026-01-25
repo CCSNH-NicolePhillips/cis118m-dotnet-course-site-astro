@@ -113,6 +113,20 @@ const EngineeringLogEditor = ({
     },
   }, [savedContent])
 
+  // Expose editor content to window for AI Tutor access
+  useEffect(() => {
+    if (editor) {
+      (window as any).__homeworkEditor = {
+        getText: () => editor.getText(),
+        getHTML: () => editor.getHTML(),
+        assignmentId,
+      };
+    }
+    return () => {
+      delete (window as any).__homeworkEditor;
+    };
+  }, [editor, assignmentId]);
+
   const submitForInspection = async () => {
     if (!editor) return;
     setIsGrading(true);
