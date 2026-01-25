@@ -31,6 +31,7 @@ export const WEEKS: WeekConfig[] = [
     unlockDate: '2026-01-19T00:00:00-05:00', // Monday 12:00 AM EST
     dueDate: '2026-01-25T23:59:59-05:00',    // Sunday 11:59 PM EST
     pages: [
+      { title: '00. Start Here', href: '/week-01/start-here/' },
       { title: '01. Course Syllabus & Expectations', href: '/week-01/syllabus/' },
       { title: '02. Syllabus Assessment (Graded)', href: '/week-01/required-quiz/', isGatekeeper: true }, // 100% Required
       { title: '03. Lesson: The Spark', href: '/week-01/lesson-1/' },
@@ -40,6 +41,7 @@ export const WEEKS: WeekConfig[] = [
     ]
   },
   { slug: '02', title: 'Week 02: First C# Program', unlockDate: '2026-01-26T00:00:00-05:00', dueDate: '2026-02-01T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-02/' },
       { title: '2.1 Namespaces & Classes', href: '/week-02/2-1-namespaces/' },
       { title: '2.2 The Main Method', href: '/week-02/2-2-main-method/' },
       { title: '2.3 Compilation Pipeline', href: '/week-02/2-3-compilation/' },
