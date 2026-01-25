@@ -1,0 +1,67 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "04. Homework: Reflection - (GRADED)"
+description: "Reflect on program structure and organization."
+---
+
+import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 02: Reflection - (GRADED)
+
+## 📝 Homework 02: The Architecture Patch
+
+<p>Now that you've built a structured program in Lab 2, it's time to prove you understand <strong>why</strong> we organize code the way we do.</p>
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🏗️ Architecture Reflection</h5>
+    <p>In 3-5 sentences, explain <strong>Program Structure</strong>:</p>
+    <ol>
+      <li>What is a <strong>namespace</strong> and why do we use it to organize code?</li>
+      <li>What is the purpose of the <strong>Main method</strong> in a C# program?</li>
+      <li>Why do professional developers add <strong>documentation comments</strong> (like <code>///</code>) to their code?</li>
+    </ol>
+    <p style="margin-top: 12px; padding: 10px; background: rgba(78, 201, 176, 0.1); border-radius: 6px; font-size: 0.9rem;">
+      <strong>Tip:</strong> Use the terms "namespace" and "Main" in your answer.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-02-homework" />
+
+---
+
+<div class="next-section">
+  <p>After submitting your homework, you're ready for <strong>Week 3</strong> where we'll learn about variables!</p>
+  <a href="/week-03/" class="vscode-button">Continue to Week 3 →</a>
+</div>
+
+<style>{`
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+`}</style>
