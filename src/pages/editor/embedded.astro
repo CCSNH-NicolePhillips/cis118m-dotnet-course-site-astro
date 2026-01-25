@@ -61,7 +61,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
       const starterTemplates = {
         "week-01-lab-1": `// Name: Your Name Here\n// Assignment: Lab 1 - Welcome Program\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        // TODO: Print 4 lines about yourself\n        // 1. Your name\n        // 2. The course (CIS 118M)\n        // 3. Your goal for this course\n        // 4. A fun fact about yourself\n        \n        Console.WriteLine("My name is ...");\n    }\n}\n`,
-        "week-02-lab": `// Name: Your Name Here\n// Assignment: Lab 2 - System Status Report\n//\n// Requirements:\n// 1. Create a namespace called SystemDiagnostics\n// 2. Create a class called StatusReport\n// 3. Add XML documentation (///) above your Main method\n// 4. Use static int Main() and return 0\n// 5. Print at least 5 lines using Console.WriteLine()\n//\n// Your report should include: header, system name, status info, separator, footer with your name\n\n`,
+        "week-02-lab": `// Name: Your Name Here\n// Assignment: Lab 2 - System Status Report\n\nnamespace YourNamespaceHere\n{\n    class YourClassHere\n    {\n        /// <summary>\n        /// Your description here.\n        /// </summary>\n        static int Main()\n        {\n            // TODO: Print at least 5 lines for your status report\n            // Include: header, system name, status, separator, footer with your name\n            \n            Console.WriteLine("Your first line here");\n            \n            return 0;\n        }\n    }\n}\n`,
       };
 
       const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
