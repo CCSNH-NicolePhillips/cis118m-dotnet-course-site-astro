@@ -233,6 +233,7 @@ internal static class CheckRunner
         {
             "week-01-lesson-1" => Week01Lesson1Checks(programCs),
             "week-01-lab-1" => Week01Lab1Checks(programCs),
+            "week-02-lab" => Week02LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -243,6 +244,7 @@ internal static class CheckRunner
         {
             "week-01-lesson-1" => Week01Lesson1Hint(checks),
             "week-01-lab-1" => Week01Lab1Hint(checks),
+            "week-02-lab" => Week02LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -366,6 +368,123 @@ internal static class CheckRunner
             "HasTwoWriteLines" => "Try adding a second Console.WriteLine() with your name or a greeting.",
             "HasStringLiteral" => "Make sure your WriteLine statements have text in quotes, like \"Hello!\"",
             _ => "Keep working on your solution."
+        };
+    }
+
+    private static List<CheckResult> Week02LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Add a header comment with your name (e.g., // Name: Jane Doe)"));
+
+        // Check 2: Has assignment comment
+        var hasAssignmentComment = Regex.IsMatch(programCs, @"//.*Assignment:\s*.+", RegexOptions.IgnoreCase) ||
+                                    Regex.IsMatch(programCs, @"//.*Lab\s*2", RegexOptions.IgnoreCase) ||
+                                    Regex.IsMatch(programCs, @"//.*Week\s*2.*Lab", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult(
+            Name: "HasAssignmentComment",
+            Passed: hasAssignmentComment,
+            Message: hasAssignmentComment
+                ? "Found assignment name in header comment."
+                : "Add an assignment comment (e.g., // Assignment: Lab 2 - System Status Report)"));
+
+        // Check 3: Has namespace SystemDiagnostics
+        var hasNamespace = Regex.IsMatch(programCs, @"namespace\s+SystemDiagnostics\s*\{", RegexOptions.IgnoreCase);
+        var hasPlaceholderNamespace = programCs.Contains("YourNamespaceHere");
+        checks.Add(new CheckResult(
+            Name: "HasNamespace",
+            Passed: hasNamespace && !hasPlaceholderNamespace,
+            Message: hasNamespace && !hasPlaceholderNamespace
+                ? "Found namespace SystemDiagnostics."
+                : "Rename the namespace to 'SystemDiagnostics' (replace YourNamespaceHere)"));
+
+        // Check 4: Has class StatusReport
+        var hasClass = Regex.IsMatch(programCs, @"class\s+StatusReport\s*\{", RegexOptions.IgnoreCase);
+        var hasPlaceholderClass = programCs.Contains("YourClassHere");
+        checks.Add(new CheckResult(
+            Name: "HasClass",
+            Passed: hasClass && !hasPlaceholderClass,
+            Message: hasClass && !hasPlaceholderClass
+                ? "Found class StatusReport."
+                : "Rename the class to 'StatusReport' (replace YourClassHere)"));
+
+        // Check 5: Has XML documentation (/// <summary>)
+        var hasXmlDoc = Regex.IsMatch(programCs, @"///\s*<summary>", RegexOptions.IgnoreCase);
+        var hasPlaceholderDoc = programCs.Contains("Describe what your program does");
+        checks.Add(new CheckResult(
+            Name: "HasXmlDocumentation",
+            Passed: hasXmlDoc && !hasPlaceholderDoc,
+            Message: hasXmlDoc && !hasPlaceholderDoc
+                ? "Found XML documentation on Main method."
+                : "Add an XML <summary> comment above Main describing what your program does"));
+
+        // Check 6: Has static int Main (not void)
+        var hasIntMain = Regex.IsMatch(programCs, @"static\s+int\s+Main\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasIntMain",
+            Passed: hasIntMain,
+            Message: hasIntMain
+                ? "Found static int Main() - correct signature!"
+                : "Use 'static int Main()' instead of 'static void Main()'"));
+
+        // Check 7: Has return 0
+        var hasReturn0 = Regex.IsMatch(programCs, @"return\s+0\s*;");
+        checks.Add(new CheckResult(
+            Name: "HasReturn0",
+            Passed: hasReturn0,
+            Message: hasReturn0
+                ? "Found 'return 0;' - exit code indicates success!"
+                : "Add 'return 0;' at the end of Main to indicate successful execution"));
+
+        // Check 8: Has at least 5 Console.WriteLine statements
+        var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
+        var hasFiveWriteLines = writeLineCount >= 5;
+        checks.Add(new CheckResult(
+            Name: "HasFiveWriteLines",
+            Passed: hasFiveWriteLines,
+            Message: hasFiveWriteLines
+                ? $"Found {writeLineCount} Console.WriteLine statements. Great formatting!"
+                : $"You need at least 5 Console.WriteLine statements for your report. Found {writeLineCount}."));
+
+        // Check 9: Has real content (not just placeholders)
+        var hasRealContent = !programCs.Contains("// TODO:") || 
+                             (writeLineCount >= 3 && !programCs.Contains("YourNamespaceHere"));
+        checks.Add(new CheckResult(
+            Name: "HasRealContent",
+            Passed: hasRealContent,
+            Message: hasRealContent
+                ? "Your report has real content."
+                : "Complete the TODO items and add your report content"));
+
+        return checks;
+    }
+
+    private static string Week02LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Add '// Name: Your Name' at the very top of your file.",
+            "HasAssignmentComment" => "Add '// Assignment: Lab 2 - System Status Report' after your name.",
+            "HasNamespace" => "Change 'namespace YourNamespaceHere' to 'namespace SystemDiagnostics'",
+            "HasClass" => "Change 'class YourClassHere' to 'class StatusReport'",
+            "HasXmlDocumentation" => "Above Main, add: /// <summary>Generates a system status report.</summary>",
+            "HasIntMain" => "Change 'static void Main()' to 'static int Main()' so you can return an exit code.",
+            "HasReturn0" => "At the end of Main, add: return 0;",
+            "HasFiveWriteLines" => "Add more Console.WriteLine statements - create a formatted report with header, content, and footer.",
+            "HasRealContent" => "Replace the TODO comments and placeholders with your actual report content.",
+            _ => "Keep working on your solution!"
         };
     }
 }
