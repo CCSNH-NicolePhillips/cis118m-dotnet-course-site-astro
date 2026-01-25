@@ -43,24 +43,59 @@ const ASSIGNMENTS = {
   'week-02-quiz': { name: 'Week 2 Quiz', points: 100 },
 };
 
-// Count participation events for a week from progress data
-function countParticipation(progressData, weekPrefix) {
-  const participationKeys = Object.keys(progressData).filter(k => 
-    k.includes(':status') && 
-    progressData[k] === 'participated' &&
-    (k.includes(weekPrefix) || k.includes(`/${weekPrefix}`))
-  );
-  return participationKeys.length;
+// Expected sections per week for participation scoring
+const EXPECTED_SECTIONS_PER_WEEK = {
+  1: 3,  // lesson-1, lesson-2, extra-practice
+  2: 4,  // 2-1, 2-2, 2-3, 2-4
+  // Default to 4 for other weeks
+};
+function getExpectedSections(weekNum) {
+  return EXPECTED_SECTIONS_PER_WEEK[weekNum] ?? 4;
 }
 
-// Calculate participation score (0-100 based on number of activities)
-// Adjust thresholds as needed
-function calculateParticipationScore(count) {
+// Count unique SECTIONS participated in for a week
+// e.g., Week 2 has 4 sections (2-1, 2-2, 2-3, 2-4)
+function countParticipation(progressData, weekPrefix) {
+  const uniqueSections = new Set();
+  
+  // Extract week number from prefix (e.g., "week-02" -> 2)
+  const weekNumMatch = weekPrefix.match(/week-(\d+)/i);
+  const weekNum = weekNumMatch ? parseInt(weekNumMatch[1]) : 0;
+  
+  for (const [key, value] of Object.entries(progressData)) {
+    if (key.includes(':status') && 
+        value === 'participated' &&
+        (key.includes(weekPrefix) || key.includes(`/${weekPrefix}`))) {
+      
+      // Extract the SECTION identifier (e.g., "2-1", "2-2", "lesson-1", etc.)
+      let section = null;
+      
+      // Pattern 1: Numbered sections like "2-1", "2-2", "3-1", etc.
+      const numberedMatch = key.match(/(\d+-\d+)/);
+      if (numberedMatch) {
+        section = numberedMatch[1];
+      } else {
+        // Pattern 2: Named sections like "lesson-1", "lesson-2", "extra-practice"
+        const namedMatch = key.match(/(lesson-\d+|extra-practice)/i);
+        if (namedMatch) {
+          section = namedMatch[1].toLowerCase();
+        }
+      }
+      
+      if (section) {
+        uniqueSections.add(section);
+      }
+    }
+  }
+  
+  return uniqueSections.size;
+}
+
+// Calculate participation score (0-100 based on sections completed)
+function calculateParticipationScore(count, weekNum) {
   if (count === 0) return null; // No participation yet
-  if (count >= 6) return 100;   // Full participation
-  if (count >= 4) return 90;    // Good participation
-  if (count >= 2) return 75;    // Some participation
-  return 50;                     // Minimal participation
+  const expected = getExpectedSections(weekNum);
+  return Math.min(100, Math.round((count / expected) * 100));
 }
 
 // Escape CSV field
@@ -119,8 +154,10 @@ async function main() {
         // Handle participation grades specially
         if (assignmentDef.isParticipation) {
           const weekPrefix = assignmentDef.week;
+          const weekNumMatch = weekPrefix.match(/week-(\d+)/i);
+          const weekNum = weekNumMatch ? parseInt(weekNumMatch[1]) : 1;
           const participationCount = countParticipation(progressData, weekPrefix);
-          score = calculateParticipationScore(participationCount);
+          score = calculateParticipationScore(participationCount, weekNum);
         } else {
           // Check progress data for regular assignments
           const progressKey = `${assignmentId}:score`;

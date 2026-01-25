@@ -2,6 +2,7 @@ import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -106,27 +107,49 @@ Return JSON:
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
         
-        // Store detailed grading for instructor review
+        // Calculate late penalty if applicable
+        // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
+        const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
+        const penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt));
+        
+        // Apply late penalty to the grade
+        let finalGrade = aiGrade;
+        let latePenaltyMessage = '';
+        if (penaltyInfo.daysLate > 0) {
+          finalGrade = penaltyInfo.finalScore;
+          latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
+          aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
+          console.log(`[submit-lab] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+        }
+        
+        // Store detailed grading for instructor review (include penalty info)
         const gradeKey = `grades:${sub}:${starterId}`;
         await redis.set(gradeKey, JSON.stringify({
           ...gradeData,
+          originalScore: aiGrade,
+          finalScore: finalGrade,
+          daysLate: penaltyInfo.daysLate,
+          penaltyPercent: penaltyInfo.penaltyPercent,
           gradedAt: new Date().toISOString(),
           starterId
         }));
-
-        // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
-        const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
         
         // Update progress in the standard hash format used by gradebook
         // Include savedCode and feedback so instructor dashboard can display them
         await redis.hset(`user:progress:data:${sub}`, {
-          [`${assignmentId}:score`]: aiGrade,
+          [`${assignmentId}:score`]: finalGrade,
+          [`${assignmentId}:originalScore`]: aiGrade,
+          [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
+          [`${assignmentId}:penaltyPercent`]: penaltyInfo.penaltyPercent,
           [`${assignmentId}:status`]: 'completed',
           [`${assignmentId}:feedback`]: aiFeedback || '',
           [`${assignmentId}:savedCode`]: code,
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
           [`${assignmentId}:gradedAt`]: new Date().toISOString()
         });
+        
+        // Update aiGrade to reflect final score for the response
+        aiGrade = finalGrade;
 
         // Also keep the old format for backwards compatibility
         const progressKey = `progress:${sub}`;
@@ -136,7 +159,9 @@ Return JSON:
           ? (typeof existingProgress === 'string' ? JSON.parse(existingProgress) : existingProgress)
           : {};
         progress[starterId] = {
-          score: aiGrade,
+          score: finalGrade,
+          originalScore: gradeData.score,
+          daysLate: penaltyInfo.daysLate,
           status: 'completed',
           type: 'lab',
           completedAt: submittedAt

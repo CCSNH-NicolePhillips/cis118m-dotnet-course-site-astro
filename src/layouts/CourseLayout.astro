@@ -811,8 +811,15 @@ const getWeekLockInfo = (weekSlug: string) => {
           const { week, slug } = info;
           const data = load();
           const w = ensureWeek(data, week);
-          const trackable = new Set(["lesson-1","lesson-2","extra-practice","lab","homework","index"]);
-          if (trackable.has(slug)) {
+          // Trackable slugs for progress badges
+          // Base trackable pages: lesson-1, lesson-2, extra-practice, lab, homework, index
+          // Also track numbered sections like 2-1-namespaces, 3-2-variables, etc.
+          const baseTrackable = new Set([
+            "lesson-1", "lesson-2", "extra-practice", "lab", "homework", "index"
+          ]);
+          // Track if it's a base trackable OR a numbered section (e.g., "2-1-something", "3-2-variables")
+          const isNumberedSection = /^\d+-\d+/.test(slug);
+          if (baseTrackable.has(slug) || isNumberedSection) {
             w.viewed[slug] = true;
             w.lastUpdated = new Date().toISOString();
             save(data);

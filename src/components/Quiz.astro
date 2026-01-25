@@ -106,6 +106,15 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     </div>
   </div>
 
+  <div class="quiz-past-due" id={`past-due-${quizId}`} style="display: none;">
+    <div class="past-due-content">
+      <h3>⏰ MISSION EXPIRED</h3>
+      <p>This quiz is past its due date and can no longer be submitted.</p>
+      <p>If you need an extension, please contact your instructor.</p>
+      <div class="due-date-info" id={`due-info-${quizId}`}></div>
+    </div>
+  </div>
+
   <div class="quiz-revision" id={`revision-${quizId}`} style="display: none;">
     <div class="revision-content">
       <h3>📝 Request Revision</h3>
@@ -124,6 +133,8 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     const retakeBtn = document.getElementById(`retake-${quizId}`);
     const statusDiv = document.getElementById(`status-${quizId}`);
     const lockedDiv = document.getElementById(`locked-${quizId}`);
+    const pastDueDiv = document.getElementById(`past-due-${quizId}`);
+    const dueInfoDiv = document.getElementById(`due-info-${quizId}`);
     const revisionDiv = document.getElementById(`revision-${quizId}`);
     const revisionBtn = document.getElementById(`revision-btn-${quizId}`);
     const maxAttempts = effectiveMaxAttempts;
@@ -132,6 +143,50 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     
     let currentAttempts = 0;
     let bestScore = 0;
+    let isQuizUnlocked = false; // Track if instructor has unlocked this quiz
+    
+    // Due dates per week (matches server-side due-dates.mjs)
+    const WEEK_DUE_DATES = {
+      1: '2026-01-25T23:59:59-05:00',
+      2: '2026-02-01T23:59:59-05:00',
+      3: '2026-02-08T23:59:59-05:00',
+      4: '2026-02-15T23:59:59-05:00',
+      5: '2026-02-22T23:59:59-05:00',
+      6: '2026-03-01T23:59:59-05:00',
+      7: '2026-03-08T23:59:59-05:00',
+      8: '2026-03-22T23:59:59-05:00',
+    };
+    
+    // Extract week number from quizId (e.g., "week-01-quiz" -> 1)
+    const getWeekFromQuizId = (id) => {
+      const match = id.match(/week-0?(\d+)/i);
+      return match ? parseInt(match[1], 10) : null;
+    };
+    
+    // Check if quiz is past due
+    const checkPastDue = () => {
+      const weekNum = getWeekFromQuizId(quizId);
+      if (!weekNum || !WEEK_DUE_DATES[weekNum]) return false;
+      
+      const dueDate = new Date(WEEK_DUE_DATES[weekNum]);
+      return new Date() > dueDate;
+    };
+    
+    // Get formatted due date for display
+    const getFormattedDueDate = () => {
+      const weekNum = getWeekFromQuizId(quizId);
+      if (!weekNum || !WEEK_DUE_DATES[weekNum]) return null;
+      
+      const dueDate = new Date(WEEK_DUE_DATES[weekNum]);
+      return dueDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+      });
+    };
     
     // Wait for auth
     const waitForAuth = async () => {
@@ -438,8 +493,24 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     // Load progress on init
     loadProgress();
     
+    // Check if quiz is past due on page load
+    if (checkPastDue() && !isQuizUnlocked) {
+      const dueDate = getFormattedDueDate();
+      if (pastDueDiv && dueInfoDiv) {
+        dueInfoDiv.innerHTML = `<p>Due date was: <strong>${dueDate}</strong></p>`;
+        pastDueDiv.style.display = 'block';
+        form.style.display = 'none';
+      }
+    }
+    
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      // Check if past due (unless instructor unlocked)
+      if (checkPastDue() && !isQuizUnlocked) {
+        alert('This quiz is past its due date. Please contact your instructor if you need an extension.');
+        return;
+      }
       
       // Check if attempts exhausted (skip if unlimited)
       if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
@@ -1102,6 +1173,33 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
   
   .final-score-value.failed {
     color: #ef4444;
+  }
+  
+  .quiz-past-due {
+    background: var(--panel2);
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .quiz-past-due h3 {
+    margin: 0 0 12px 0;
+    color: #f59e0b;
+  }
+  
+  .quiz-past-due p {
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  
+  .due-date-info {
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    color: #f59e0b;
   }
   
   .attempts-exhausted {

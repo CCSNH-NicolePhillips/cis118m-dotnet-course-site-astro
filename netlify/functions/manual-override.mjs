@@ -235,6 +235,114 @@ export default async function handler(request, context) {
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
       
+    } else if (action === 'UNLOCK_QUIZ') {
+      // Grant a student permission to submit a quiz past the due date
+      // This is a one-time unlock - they get to submit once
+      const unlockKey = `quiz:unlock:${userId}:${pageId}`;
+      
+      // Check if already unlocked
+      const alreadyUnlocked = await redis.get(unlockKey);
+      if (alreadyUnlocked) {
+        return new Response(
+          JSON.stringify({ 
+            ok: true, 
+            action: 'UNLOCK_QUIZ',
+            message: 'Quiz was already unlocked for this student',
+            alreadyUnlocked: true
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Set unlock flag (expires in 30 days to prevent clutter)
+      await redis.set(unlockKey, JSON.stringify({
+        unlockedBy: instructor.email || instructor.sub,
+        unlockedAt: overrideTime,
+        reason: reason || 'Instructor granted late access'
+      }), { ex: 30 * 24 * 60 * 60 }); // 30 day expiry
+      
+      // Log the unlock for audit
+      const auditEntry = JSON.stringify({
+        action: "UNLOCK_QUIZ",
+        userId,
+        pageId,
+        reason: reason || "Instructor granted late access",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[UNLOCK_QUIZ] ${instructor.email} unlocked ${pageId} for ${userId}`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'UNLOCK_QUIZ',
+          message: 'Quiz unlocked. Student can now submit once.'
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
+    } else if (action === 'WAIVE_PENALTY') {
+      // Remove late penalty from a lab/homework submission
+      // Restores the original score as the final score
+      
+      const originalScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:originalScore`);
+      const currentScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:score`);
+      const daysLate = await redis.hget(`user:progress:data:${userId}`, `${pageId}:daysLate`);
+      
+      if (!originalScore || originalScore === currentScore) {
+        return new Response(
+          JSON.stringify({ 
+            ok: true, 
+            action: 'WAIVE_PENALTY',
+            message: 'No late penalty to waive',
+            noChange: true
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Restore original score and mark penalty as waived
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${pageId}:score`]: originalScore,
+        [`${pageId}:penaltyWaived`]: 'true',
+        [`${pageId}:waivedBy`]: instructor.email || instructor.sub,
+        [`${pageId}:waivedAt`]: overrideTime,
+        [`${pageId}:waivedReason`]: reason || 'Instructor waived late penalty'
+      });
+      
+      // Log the waiver for audit
+      const auditEntry = JSON.stringify({
+        action: "WAIVE_PENALTY",
+        userId,
+        pageId,
+        originalScore: parseInt(originalScore),
+        penalizedScore: parseInt(currentScore),
+        daysLate: parseInt(daysLate || 0),
+        reason: reason || "Instructor waived late penalty",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[WAIVE_PENALTY] ${instructor.email} waived penalty for ${userId}/${pageId}: ${currentScore} -> ${originalScore}`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'WAIVE_PENALTY',
+          originalScore: parseInt(originalScore),
+          penalizedScore: parseInt(currentScore),
+          message: `Late penalty waived. Score restored from ${currentScore}% to ${originalScore}%.`
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
     } else {
       // UPDATE_GRADE action
       if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {

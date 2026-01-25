@@ -99,8 +99,15 @@ const WEIGHTS = {
   final: 0.10,          // 10%
 };
 
-// Expected checkpoints per week
-const EXPECTED_CHECKPOINTS_PER_WEEK = 5;
+// Expected sections per week for participation scoring
+// Week 1: lesson-1, lesson-2, extra-practice = 3 sections
+// Week 2+: 4 numbered sections (e.g., 2-1, 2-2, 2-3, 2-4)
+const EXPECTED_SECTIONS_PER_WEEK: { [week: number]: number } = {
+  1: 3,  // lesson-1, lesson-2, extra-practice
+  2: 4,  // 2-1, 2-2, 2-3, 2-4
+  // Default to 4 for other weeks
+};
+const getExpectedSections = (week: number): number => EXPECTED_SECTIONS_PER_WEEK[week] ?? 4;
 
 interface StudentProgress {
   [key: string]: string | number;
@@ -125,25 +132,56 @@ interface SubmissionModalData {
   assignmentLabel: string;
 }
 
-// Count participation checkpoints by week
+// Count participation by week
+// Counts unique SECTIONS participated in (not individual activities within a section)
+// e.g., Week 2 has 4 sections (2-1, 2-2, 2-3, 2-4), so max 4 activities
 const countParticipationByWeek = (progress: StudentProgress): { [week: number]: number } => {
   const counts: { [week: number]: number } = {};
   for (let w = 1; w <= TOTAL_WEEKS; w++) {
     counts[w] = 0;
   }
   
+  // Track unique SECTIONS per week (not individual checkpoints/tryits/deepdives)
+  const uniqueSections: { [week: number]: Set<string> } = {};
+  for (let w = 1; w <= TOTAL_WEEKS; w++) {
+    uniqueSections[w] = new Set();
+  }
+  
   for (const [key, value] of Object.entries(progress || {})) {
     if (key.endsWith(':status') && value === 'participated') {
-      // Try to extract week from checkpoint ID
+      // Try to extract week from key
       const weekMatch = key.match(/week-(\d+)/i);
       if (weekMatch) {
         const week = parseInt(weekMatch[1]);
         if (week >= 1 && week <= TOTAL_WEEKS) {
-          counts[week] = (counts[week] || 0) + 1;
+          // Extract the SECTION identifier (e.g., "2-1", "2-2", "lesson-1", etc.)
+          let section: string | null = null;
+          
+          // Pattern 1: Numbered sections like "2-1", "2-2", "3-1", etc.
+          const numberedMatch = key.match(/(\d+-\d+)/);
+          if (numberedMatch) {
+            section = numberedMatch[1];
+          } else {
+            // Pattern 2: Named sections like "lesson-1", "lesson-2", "extra-practice"
+            const namedMatch = key.match(/(lesson-\d+|extra-practice)/i);
+            if (namedMatch) {
+              section = namedMatch[1].toLowerCase();
+            }
+          }
+          
+          if (section) {
+            uniqueSections[week].add(section);
+          }
         }
       }
     }
   }
+  
+  // Convert sets to counts
+  for (let w = 1; w <= TOTAL_WEEKS; w++) {
+    counts[w] = uniqueSections[w].size;
+  }
+  
   return counts;
 };
 
@@ -197,7 +235,8 @@ const calculateWeightedTotals = (
     if (assignment.type === 'participation') {
       // Calculate per-week participation as 0-100 score
       const weekCount = participationByWeek[weekNum] || 0;
-      const weekScore = Math.min(100, (weekCount / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
+      const expectedSections = getExpectedSections(weekNum);
+      const weekScore = Math.min(100, (weekCount / expectedSections) * 100);
       
       if (weekCount > 0) {
         // Student participated, count their score
@@ -518,6 +557,66 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
+  const handleUnlockQuiz = async () => {
+    if (!modalData) return;
+    if (!confirm('Unlock this quiz for the student? They will be able to submit once past the due date.')) return;
+    
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/manual-override', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          pageId: modalData.assignmentId,
+          action: 'UNLOCK_QUIZ',
+          reason: overrideReason || 'Instructor granted late access'
+        })
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Unlock failed');
+      }
+      
+      const result = await res.json();
+      setActionFeedback({ type: 'success', message: result.message || 'Quiz unlocked for late submission' });
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    }
+  };
+
+  const handleWaivePenalty = async () => {
+    if (!modalData) return;
+    if (!confirm('Waive the late penalty for this submission? The original score will be restored.')) return;
+    
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/manual-override', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          pageId: modalData.assignmentId,
+          action: 'WAIVE_PENALTY',
+          reason: overrideReason || 'Instructor waived late penalty'
+        })
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Waive penalty failed');
+      }
+      
+      const result = await res.json();
+      setActionFeedback({ type: 'success', message: result.message || 'Late penalty waived' });
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    }
+  };
+
   // Get colors based on assignment type and score
   const getTypeColors = (type: AssignmentType, score: number | undefined) => {
     const colors = TYPE_COLORS[type];
@@ -729,13 +828,14 @@ const InstructorDashboard: React.FC = () => {
                       let score = progress?.score;
                       let cellContent = '-';
                       
-                      // For participation, count checkpoints for that week
+                      // For participation, count sections for that week
                       if (a.type === 'participation') {
                         const participationByWeek = countParticipationByWeek(student.progress);
                         const weekPart = participationByWeek[a.week] || 0;
-                        // Convert count to percentage (5 checkpoints = 100%)
-                        score = Math.min(100, (weekPart / EXPECTED_CHECKPOINTS_PER_WEEK) * 100);
-                        cellContent = `${weekPart}`;
+                        const expectedSections = getExpectedSections(a.week);
+                        // Convert count to percentage (sections completed / expected)
+                        score = Math.min(100, (weekPart / expectedSections) * 100);
+                        cellContent = `${weekPart}/${expectedSections}`;
                       } else {
                         if (score !== undefined && score !== null) {
                           cellContent = `${score}`;
@@ -1187,6 +1287,59 @@ const InstructorDashboard: React.FC = () => {
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
                       Wipes everything - fresh start.
                     </p>
+                  </div>
+                  
+                  {/* Late Submission Controls */}
+                  <div style={{ flex: 1 }}>
+                    <p style={{ color: '#ddd', marginTop: 0 }}>
+                      Late submission options:
+                    </p>
+                    {modalData?.assignmentId?.includes('quiz') && (
+                      <>
+                        <button
+                          onClick={handleUnlockQuiz}
+                          style={{
+                            background: '#4ec9b0',
+                            color: '#000',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            width: '100%',
+                            marginBottom: '10px'
+                          }}
+                        >
+                          🔓 Unlock Quiz
+                        </button>
+                        <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: '15px' }}>
+                          Allow late quiz submission past due date.
+                        </p>
+                      </>
+                    )}
+                    {(modalData?.assignmentId?.includes('lab') || modalData?.assignmentId?.includes('homework')) && (
+                      <>
+                        <button
+                          onClick={handleWaivePenalty}
+                          style={{
+                            background: '#569cd6',
+                            color: '#000',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            width: '100%',
+                            marginBottom: '10px'
+                          }}
+                        >
+                          💰 Waive Late Penalty
+                        </button>
+                        <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: 0 }}>
+                          Restore original score (remove penalty).
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
 

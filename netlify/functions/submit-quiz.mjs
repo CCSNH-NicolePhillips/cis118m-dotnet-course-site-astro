@@ -1,5 +1,6 @@
 import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
+import { isPastDue, getDueDateForPageId } from './_lib/due-dates.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -34,6 +35,29 @@ export async function handler(event, context) {
 
     const redis = getRedis();
     const pageId = quizId; // e.g., "week-01-required-quiz"
+    
+    // Check if quiz is past due date (quizzes cannot be submitted late)
+    const dueDate = getDueDateForPageId(pageId);
+    if (dueDate && isPastDue(pageId)) {
+      // Check if instructor has unlocked this quiz for this student
+      const unlockKey = `quiz:unlock:${sub}:${pageId}`;
+      const isUnlocked = await redis.get(unlockKey);
+      
+      if (!isUnlocked) {
+        return {
+          statusCode: 403,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            error: 'MISSION EXPIRED: This quiz is past its due date. Contact your instructor to request an extension.',
+            pastDue: true,
+            dueDate: dueDate.toISOString(),
+            locked: true
+          })
+        };
+      }
+      // If unlocked, log it and continue
+      console.log(`[submit-quiz] Quiz ${pageId} unlocked for ${sub} by instructor`);
+    }
     
     // Check current attempt count and best score
     const currentProgress = await redis.hgetall(`user:progress:data:${sub}`);

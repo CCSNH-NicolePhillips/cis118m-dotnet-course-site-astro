@@ -101,6 +101,7 @@ Summary: # Section 2.1: Namespaces & Classes 📦 Structural Foundation ⏱️ E
 Key Concepts:
 - sensitive: Main works, main doesn't. Static is required.
 - CS5001
+- exit codes
 
 Summary: # Section 2.2: The Main Method 🚀 Entry Point ⏱️ Estimated Time: 20 minutes --- ## 🎯 The Master Switch ✦ Ignition: The static void Main Entry Point Every C# program is like a dormant machine waiting for a spark. While your project might contain thousands of files and millions of lines of code, the ...
 
@@ -114,7 +115,7 @@ Key Concepts:
 - Analyzes
 - Transforms
 
-Summary: # Section 2.3: The Compilation Pipeline ⚙️ Build Process ⏱️ Estimated Time: 25 minutes --- ## 🔄 From Text to Running Program When you write C# code, you're writing **human-readable text**. But your computer's CPU doesn't understand C#—it only understands machine code (binary instructions specific t...
+Summary: # Section 2.3: The Compilation Pipeline ⚙️ Build Process ⏱️ Estimated Time: 25 minutes --- ✦ The C# Assembly Line: How Code Becomes Action The C# compilation pipeline is a multi-stage transformation. Your human-readable source code doesn't talk to the CPU directly; instead, it travels through a spec...
 
 ### 📖 Lesson: Section 2.4 • Code Style & Documentation
 Key Concepts:
@@ -122,10 +123,10 @@ Key Concepts:
 - line for blocks
 - documenting. Comments explain the reasoning, not the mechanics.
 - you spend more time reading code than writing it
+- Allman Style
 - Classes
 - Methods
 - Variables
-- Constants
 
 Summary: # Section 2.4: Code Style & Documentation 📚 Professional Standards ⏱️ Estimated Time: 20 minutes --- ## 🎯 Writing Code for Humans Here's a truth that surprises new developers: **you spend more time reading code than writing it**. In professional environments, you'll read your teammates' code, debu...
 
@@ -133,9 +134,9 @@ Summary: # Section 2.4: Code Style & Documentation 📚 Professional Standards �
 
 Summary: # Week 2 Extra Practice: Variables in real life Pick **1–2** items (optional). - Make a mini ‘profile’ output using 5 variables (mix types). - Make a mini receipt: item name, price, quantity, total. - Challenge: Print a short summary sentence using 3 variables in one line (interpolation). ## Open in...
 
-### 📝 Homework: Week 02 • Week 2 Homework: Personal Budget Snapshot
+### 📝 Homework: 04. Homework: Reflection - (GRADED)
 
-Summary: # Week 2 Homework: Personal Budget Snapshot ## Overview Build a small program that prints a budget snapshot (income, expenses, and what’s left). ## Requirements checklist (acceptance criteria) - [ ] Uses at least 1 income number and at least 3 expense numbers - [ ] Calculates total expenses - [ ] Ca...
+Summary: # Homework 02: Reflection - (GRADED) ## 📝 Homework 02: The Architecture Patch Now that you've built a structured program in Lab 2, it's time to prove you understand why we organize code the way we do. 🏗️ Architecture Reflection In 3-5 sentences, explain Program Structure : What is a namespace and ...
 
 ### 📚 Overview: Week 02 • First C# Program
 Key Concepts:
@@ -143,9 +144,15 @@ Key Concepts:
 
 Summary: # Week 02: First C# Program 🎯 Mission Objective This week you transition from observer to architect . You will dissect the anatomy of a C# program—understanding exactly why every line exists and what role it plays in the execution pipeline. Focus: Anatomy and Structure. Variables and User Input are...
 
-### 🔬 Lab: Week 02 • Week 2 Lab: Mini Calculator (variables + output)
+### 🔬 Lab: Week 02 • Lab 2: System Status Report
+Key Concepts:
+- Time: 45 minutes
+- Points: 100
+- namespaces
+- class structure
+- the Main method
 
-Summary: # Week 2 Lab: Mini Calculator (variables + output) ## Overview Create variables, do simple math, and print labeled results. ## Requirements checklist (acceptance criteria) - [ ] Uses at least 3 numeric variables - [ ] Performs at least 2 calculations (example: sum and product) - [ ] Prints results w...
+Summary: # Lab 2: System Status Report **Time: 45 minutes** **Points: 100** ## Objective Create a well-structured console program that simulates a "System Status Report" - demonstrating your understanding of **namespaces**, **class structure**, **the Main method**, and **professional documentation**. --- ## ...
 
 ### 📖 Lesson: Week 02 • Lesson 1
 Key Concepts:
@@ -193,6 +200,10 @@ int age = 18;
 Console.WriteLine($"Name: {name}");
 Console.WriteLine($"Age: {age}");
 ```
+
+### 📋 Quiz: Week 02 • Technical Assessment
+
+Summary: # 🏁 Week 02 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- After completing...
 
 ---
 

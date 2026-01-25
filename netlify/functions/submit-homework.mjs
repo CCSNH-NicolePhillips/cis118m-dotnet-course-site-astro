@@ -1,6 +1,7 @@
 import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -104,16 +105,38 @@ Return JSON:
     // Derive assignment ID from starterId (week-01-homework-1 -> week-01-homework)
     const assignmentId = starterId.replace(/-\d+$/, '') || 'week-01-homework';
 
+    // Calculate late penalty if we have a grade
+    let finalGrade = aiGrade;
+    let latePenaltyMessage = '';
+    let penaltyInfo = { daysLate: 0, penaltyPercent: 0, finalScore: aiGrade };
+    
+    if (aiGrade !== null) {
+      penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt));
+      
+      if (penaltyInfo.daysLate > 0) {
+        finalGrade = penaltyInfo.finalScore;
+        latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
+        aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
+        console.log(`[submit-homework] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+      }
+    }
+
     // Update progress in the standard hash format used by gradebook
     // Include savedCode and feedback so instructor dashboard can display them
     if (aiGrade !== null) {
       await redis.hset(`user:progress:data:${sub}`, {
-        [`${assignmentId}:score`]: aiGrade,
+        [`${assignmentId}:score`]: finalGrade,
+        [`${assignmentId}:originalScore`]: aiGrade,
+        [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
+        [`${assignmentId}:penaltyPercent`]: penaltyInfo.penaltyPercent,
         [`${assignmentId}:status`]: 'completed',
         [`${assignmentId}:feedback`]: aiFeedback || '',
         [`${assignmentId}:savedCode`]: reflection || code || '',
         [`${assignmentId}:gradedAt`]: new Date().toISOString()
       });
+      
+      // Update aiGrade to reflect final score for the response
+      aiGrade = finalGrade;
     }
 
     // Create submission object
