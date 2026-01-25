@@ -411,11 +411,33 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         });
       }
       
-      // Initialize Monaco editor - always use vs-dark for consistent styling
+      // Define light theme for Monaco
+      monaco.editor.defineTheme('vs-light-soft', {
+        base: 'vs',
+        inherit: true,
+        rules: [],
+        colors: {
+          'editor.background': '#f8f8f8',
+          'editor.lineHighlightBackground': '#f0f0f0',
+        }
+      });
+      
+      // Get current theme
+      const getCurrentTheme = () => {
+        return document.documentElement.getAttribute('data-theme') || 
+               document.body.getAttribute('data-theme') || 
+               'dark';
+      };
+      
+      const getMonacoTheme = () => {
+        return getCurrentTheme() === 'light' ? 'vs-light-soft' : 'vs-dark';
+      };
+      
+      // Initialize Monaco editor with theme awareness
       editor = monaco.editor.create(editorDiv, {
         value: originalCode,
         language: 'csharp',
-        theme: 'vs-dark',
+        theme: getMonacoTheme(),
         minimap: { enabled: false },
         fontSize: 14,
         lineNumbers: 'on',
@@ -435,7 +457,16 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         renderLineHighlight: 'all',
       });
       
-      // Theme sync removed - always use vs-dark for code snippets
+      // Listen for theme changes
+      const themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'data-theme') {
+            monaco.editor.setTheme(getMonacoTheme());
+          }
+        });
+      });
+      themeObserver.observe(document.documentElement, { attributes: true });
+      themeObserver.observe(document.body, { attributes: true });
       
     } catch (err) {
       console.error('[TryItNowRunner] Monaco init failed:', err);

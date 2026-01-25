@@ -341,6 +341,12 @@ const getWeekLockInfo = (weekSlug: string) => {
           if (icon) {
             icon.textContent = theme === "dark" ? "☀️" : "🌙";
           }
+          // Notify embedded iframes of theme change
+          document.querySelectorAll('iframe').forEach(iframe => {
+            try {
+              iframe.contentWindow?.postMessage({ type: 'theme-change', theme }, '*');
+            } catch {}
+          });
         };
         
         applyTheme(currentTheme);

@@ -342,6 +342,35 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           fontSize: 14,
         });
 
+        // Theme sync: listen for changes from parent window
+        const getMonacoTheme = () => {
+          try {
+            const currentTheme = window.parent?.document?.documentElement?.getAttribute('data-theme') || 
+                                 localStorage.getItem('cis118m:theme') || 'dark';
+            return currentTheme === 'light' ? 'vs-soft' : 'vs-dark';
+          } catch { return 'vs-dark'; }
+        };
+        
+        // Watch for theme changes via message from parent
+        window.addEventListener('message', (event) => {
+          if (event.data?.type === 'theme-change') {
+            monaco.editor.setTheme(event.data.theme === 'light' ? 'vs-soft' : 'vs-dark');
+          }
+        });
+        
+        // Poll for theme changes (fallback)
+        let lastTheme = theme;
+        setInterval(() => {
+          try {
+            const currentTheme = window.parent?.document?.documentElement?.getAttribute('data-theme') || 
+                                 localStorage.getItem('cis118m:theme') || 'dark';
+            if (currentTheme !== lastTheme) {
+              lastTheme = currentTheme;
+              monaco.editor.setTheme(currentTheme === 'light' ? 'vs-soft' : 'vs-dark');
+            }
+          } catch {}
+        }, 500);
+
         // Expose for submit
         window.monacoEditorInstances = window.monacoEditorInstances || {};
         window.monacoEditorInstances[starterId] = editorInstance;
