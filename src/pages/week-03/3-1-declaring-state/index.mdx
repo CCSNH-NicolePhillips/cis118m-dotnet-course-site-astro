@@ -451,55 +451,63 @@ class Program
   .vehicle-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    gap: 16px;
     margin: 24px 0;
   }
 
   .vehicle-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     background: #1e1e2e;
     border-radius: 12px;
-    overflow: hidden;
+    padding: 16px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .vehicle-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
 
   .vehicle-image {
-    background: linear-gradient(135deg, #2a2a3e 0%, #1e1e2e 100%);
-    padding: 24px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2a2a3e 100%);
+    border-radius: 8px;
+    padding: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    width: 100px;
+    height: 100px;
   }
 
   .vehicle-image img {
-    max-width: 120px;
-    max-height: 100px;
+    max-width: 70px;
+    max-height: 70px;
     object-fit: contain;
   }
 
   .vehicle-info {
-    padding: 16px 20px;
+    flex: 1;
   }
 
   .vehicle-info h4 {
-    margin: 0 0 8px 0;
-    color: #4ec9b0;
+    margin: 0 0 6px 0;
+    color: #ffffff;
     font-family: 'Fira Code', monospace;
+    font-size: 1rem;
   }
 
   .vehicle-info p {
     margin: 0;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.5;
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     .vehicle-grid {
       grid-template-columns: 1fr;
     }
