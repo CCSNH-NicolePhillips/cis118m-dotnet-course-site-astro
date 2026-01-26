@@ -828,6 +828,8 @@ const InstructorDashboard: React.FC = () => {
                       const progress = student.parsedProgress?.[a.id];
                       let score = progress?.score;
                       let cellContent = '-';
+                      const weekPastDue = isWeekPastDue(a.week);
+                      const weekStarted = isWeekStarted(a.week);
                       
                       // For participation, count sections for that week
                       if (a.type === 'participation') {
@@ -842,6 +844,10 @@ const InstructorDashboard: React.FC = () => {
                           cellContent = `${score}`;
                         } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
                           cellContent = '...';
+                        } else if (weekPastDue && weekStarted) {
+                          // Week is past due with no submission - show 0
+                          cellContent = '0';
+                          score = 0;
                         }
                       }
                       
