@@ -48,6 +48,23 @@ body[data-theme="light"] .quest-phase h3 {
   margin: 8px 0;
 }
 
+/* Week date styling */
+.week-dates {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85em;
+  margin-left: 8px;
+}
+
+body[data-theme="light"] .week-dates {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Spring break styling */
+.spring-break {
+  color: #64748b !important;
+  font-style: italic;
+}
+
 body[data-theme="light"] .quest-phase li {
   color: rgba(0, 0, 0, 0.85);
 }

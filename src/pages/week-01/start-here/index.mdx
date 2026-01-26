@@ -1,6 +1,6 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Start Here • Your 16-Week Journey"
+title: "Start Here • Your 15-Week Journey"
 description: "Welcome! This roadmap shows your complete journey from zero to building real C# applications."
 ---
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
@@ -8,11 +8,11 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 import { MarkCompleteButton } from '../../../components/progress/MarkCompleteButton';
 import '../../../styles/start-here.css';
 
-# Start Here • Your 16-Week Journey
+# Start Here • Your 15-Week Journey
 
-Welcome to **CIS118M: Introduction to .NET Development**! Over the next 16 weeks, you'll go from complete beginner to building real applications with C# and .NET.
+Welcome to **CIS118M: Introduction to .NET Development**! Over the next 15 weeks, you'll go from complete beginner to building real applications with C# and .NET.
 
-This roadmap breaks your learning into **five quest phases**. Each phase builds on the last, taking you from fundamentals to a fully working final project.
+This roadmap breaks your learning into **four quest phases**. Each phase builds on the last, taking you from fundamentals to a fully working final project.
 
 ---
 
@@ -20,60 +20,46 @@ This roadmap breaks your learning into **five quest phases**. Each phase builds 
 
 <div class="quest-map">
   <div class="quest-phase" style="border-left: 4px solid #4ec9b0;">
-    <h3>Phase I: Foundation (Weeks 1-3)</h3>
+    <h3>Phase I: Foundations (Weeks 1-5)</h3>
     <ul>
-      <li>💠 <strong>Week 1:</strong> The .NET Engine & CLR</li>
-      <li>📦 <strong>Week 2:</strong> Variables & Types</li>
-      <li>🧮 <strong>Week 3:</strong> Math & Input</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Calculator App</li>
+      <li>💠 <strong>Week 01:</strong> Intro to Programming & C# <span class="week-dates">(Jan 19 - Jan 25)</span></li>
+      <li>💠 <strong>Week 02:</strong> First C# Program <span class="week-dates">(Jan 26 - Feb 01)</span></li>
+      <li>💠 <strong>Week 03:</strong> Variables & Data Types <span class="week-dates">(Feb 02 - Feb 08)</span></li>
+      <li>💠 <strong>Week 04:</strong> Strings & Text Processing <span class="week-dates">(Feb 09 - Feb 15)</span></li>
+      <li>💠 <strong>Week 05:</strong> User Input <span class="week-dates">(Feb 16 - Feb 22)</span></li>
+      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> The Interactive Console App</li>
     </ul>
   </div>
 
   <div class="quest-phase" style="border-left: 4px solid #9cdcfe;">
-    <h3>Phase II: Control Flow (Weeks 4-6)</h3>
+    <h3>Phase II: Logic & Control (Weeks 6-9)</h3>
     <ul>
-      <li>🚦 <strong>Week 4:</strong> If/Else & Decisions</li>
-      <li>🔁 <strong>Week 5:</strong> Loops & Iteration</li>
-      <li>🎯 <strong>Week 6:</strong> Methods & Logic</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Number Guessing Game</li>
-    </ul>
-  </div>
-
-  <div class="quest-phase" style="border-left: 4px solid #9cdcfe;">
-    <h3>Phase II (cont): Collections (Weeks 7-8)</h3>
-    <ul>
-      <li>📚 <strong>Week 7:</strong> Arrays & Lists</li>
-      <li>🔀 <strong>Week 8:</strong> Sorting & Searching</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> To-Do List Manager</li>
+      <li>💠 <strong>Week 06:</strong> Decision Structures (if/else) <span class="week-dates">(Feb 23 - Mar 01)</span></li>
+      <li>💠 <strong>Week 07:</strong> Logic & Multiple Conditions <span class="week-dates">(Mar 02 - Mar 08)</span></li>
+      <li>💠 <strong>Week 08:</strong> While Loops <span class="week-dates">(Mar 09 - Mar 15)</span></li>
+      <li class="spring-break">🌴 <em>SPRING BREAK (Mar 16 - Mar 22)</em></li>
+      <li>💠 <strong>Week 09:</strong> For Loops <span class="week-dates">(Mar 23 - Mar 29)</span></li>
+      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Logic Engine Implementation</li>
     </ul>
   </div>
 
   <div class="quest-phase" style="border-left: 4px solid #ce9178;">
-    <h3>Phase III: Object-Oriented (Weeks 9-11)</h3>
+    <h3>Phase III: Architectures & Methods (Weeks 10-13)</h3>
     <ul>
-      <li>🏗️ <strong>Week 9:</strong> Classes & Objects</li>
-      <li>🔒 <strong>Week 10:</strong> Encapsulation & Properties</li>
-      <li>🛡️ <strong>Week 11:</strong> Exception Handling</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Inventory System</li>
+      <li>💠 <strong>Week 10:</strong> Methods <span class="week-dates">(Mar 30 - Apr 05)</span></li>
+      <li>💠 <strong>Week 11:</strong> Returning Values <span class="week-dates">(Apr 06 - Apr 12)</span></li>
+      <li>💠 <strong>Week 12:</strong> Array Architectures <span class="week-dates">(Apr 13 - Apr 19)</span></li>
+      <li>💠 <strong>Week 13:</strong> Lists & Collections <span class="week-dates">(Apr 20 - Apr 26)</span></li>
+      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Data Collection Manager</li>
     </ul>
   </div>
 
   <div class="quest-phase" style="border-left: 4px solid #c586c0;">
-    <h3>Phase IV: Real-World Skills (Weeks 12-14)</h3>
+    <h3>Phase IV: Integration & Final Quest (Weeks 14-15)</h3>
     <ul>
-      <li>💾 <strong>Week 12:</strong> File I/O</li>
-      <li>📋 <strong>Week 13:</strong> JSON & Data</li>
-      <li>🌐 <strong>Week 14:</strong> .NET Ecosystem</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Boss Fight:</strong> Contact Manager</li>
-    </ul>
-  </div>
-
-  <div class="quest-phase" style="border-left: 4px solid #c586c0;">
-    <h3>Phase V: Final Quest (Weeks 15-16)</h3>
-    <ul>
-      <li>🚀 <strong>Week 15:</strong> Final Project Planning</li>
-      <li>🏆 <strong>Week 16:</strong> Final Project Build & Demo</li>
-      <li><strong style="color: #dcdcaa;">⚔️ Final Boss:</strong> Capstone Project</li>
+      <li>💠 <strong>Week 14:</strong> Program Integration <span class="week-dates">(Apr 27 - May 03)</span></li>
+      <li>💠 <strong>Week 15:</strong> Final Project Build <span class="week-dates">(May 04 - May 10)</span></li>
+      <li><strong style="color: #dcdcaa;">⚔️ Final Boss:</strong> Capstone System Deployment</li>
     </ul>
   </div>
 </div>
