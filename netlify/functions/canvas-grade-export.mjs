@@ -63,37 +63,40 @@ function getExpectedSections(weekSlug) {
   return EXPECTED_SECTIONS[weekSlug] ?? 4;
 }
 
-// Generate assignment definitions dynamically
+// Generate assignment definitions in EXACT order to match Canvas columns
+// Order: Participation, Lab, Homework, Quiz, [Syllabus Quiz for Week 1]
 function generateAssignments() {
-  const assignments = {};
+  const assignments = [];
   
-  // Week 1 special - has syllabus quiz
-  assignments['week-01-participation'] = { name: 'Week 1 Participation', points: 100, isParticipation: true, week: '01' };
-  assignments['week-01-required-quiz'] = { name: 'Week 1 Syllabus Quiz', points: 100, week: '01' };
-  assignments['week-01-quiz'] = { name: 'Week 1 Quiz', points: 100, week: '01' };
-  assignments['week-01-homework'] = { name: 'Week 1 Homework', points: 100, week: '01' };
-  assignments['week-01-lab'] = { name: 'Week 1 Lab: Welcome Program', points: 100, week: '01' };
+  // Week 1 special - has syllabus quiz at the end
+  assignments.push({ id: 'week-01-participation', name: 'Week 1 Participation', points: 100, isParticipation: true, week: '01' });
+  assignments.push({ id: 'week-01-lab', name: 'Week 1 Lab: Welcome Program', points: 100, week: '01' });
+  assignments.push({ id: 'week-01-homework', name: 'Week 1 Homework', points: 100, week: '01' });
+  assignments.push({ id: 'week-01-quiz', name: 'Week 1 Quiz', points: 100, week: '01' });
+  assignments.push({ id: 'week-01-required-quiz', name: 'Week 1 Syllabus Quiz', points: 100, week: '01' });
   
-  // Weeks 2-14
+  // Weeks 2-14: Participation, Lab, Homework, Quiz
   for (let w = 2; w <= 14; w++) {
     const slug = w.toString().padStart(2, '0');
-    assignments[`week-${slug}-participation`] = { name: `Week ${w} Participation`, points: 100, isParticipation: true, week: slug };
-    assignments[`week-${slug}-quiz`] = { name: `Week ${w} Quiz`, points: 100, week: slug };
-    assignments[`week-${slug}-homework`] = { name: `Week ${w} Homework`, points: 100, week: slug };
-    assignments[`week-${slug}-lab`] = { name: `Week ${w} Lab`, points: 100, week: slug };
+    assignments.push({ id: `week-${slug}-participation`, name: `Week ${w} Participation`, points: 100, isParticipation: true, week: slug });
+    assignments.push({ id: `week-${slug}-lab`, name: `Week ${w} Lab`, points: 100, week: slug });
+    assignments.push({ id: `week-${slug}-homework`, name: `Week ${w} Homework`, points: 100, week: slug });
+    assignments.push({ id: `week-${slug}-quiz`, name: `Week ${w} Quiz`, points: 100, week: slug });
   }
   
-  // Week 15 - includes final
-  assignments['week-15-participation'] = { name: 'Week 15 Participation', points: 100, isParticipation: true, week: '15' };
-  assignments['week-15-quiz'] = { name: 'Week 15 Quiz', points: 100, week: '15' };
-  assignments['week-15-homework'] = { name: 'Week 15 Homework', points: 100, week: '15' };
-  assignments['week-15-lab'] = { name: 'Week 15 Lab', points: 100, week: '15' };
-  assignments['week-15-final'] = { name: 'Final Project', points: 100, week: '15' };
+  // Week 15 - includes final at the end
+  assignments.push({ id: 'week-15-participation', name: 'Week 15 Participation', points: 100, isParticipation: true, week: '15' });
+  assignments.push({ id: 'week-15-lab', name: 'Week 15 Lab', points: 100, week: '15' });
+  assignments.push({ id: 'week-15-homework', name: 'Week 15 Homework', points: 100, week: '15' });
+  assignments.push({ id: 'week-15-quiz', name: 'Week 15 Quiz', points: 100, week: '15' });
+  assignments.push({ id: 'week-15-final', name: 'Final Project', points: 100, week: '15' });
   
   return assignments;
 }
 
-const ASSIGNMENT_DEFINITIONS = generateAssignments();
+const ASSIGNMENTS_LIST = generateAssignments();
+// Also create a lookup map for quick access
+const ASSIGNMENT_MAP = Object.fromEntries(ASSIGNMENTS_LIST.map(a => [a.id, a]));
 
 // Count participation for a week
 function countParticipation(progressData, weekSlug) {
@@ -175,15 +178,12 @@ export default async function handler(request, context) {
     if (weekParam) {
       // Specific week requested
       const weekSlug = weekParam.padStart(2, '0');
-      assignmentsToExport = Object.keys(ASSIGNMENT_DEFINITIONS)
-        .filter(id => ASSIGNMENT_DEFINITIONS[id].week === weekSlug);
+      assignmentsToExport = ASSIGNMENTS_LIST.filter(a => a.week === weekSlug);
     } else {
       // Default: all assignments for past-due weeks only
-      assignmentsToExport = Object.keys(ASSIGNMENT_DEFINITIONS)
-        .filter(id => {
-          const def = ASSIGNMENT_DEFINITIONS[id];
-          return isWeekPastDue(def.week) && isWeekStarted(def.week);
-        });
+      assignmentsToExport = ASSIGNMENTS_LIST.filter(a => 
+        isWeekPastDue(a.week) && isWeekStarted(a.week)
+      );
     }
     
     if (assignmentsToExport.length === 0) {
@@ -227,30 +227,29 @@ export default async function handler(request, context) {
         completionsList = await redis.smembers(`completions:${linkedSub}`) || [];
       }
       
-      for (const assignmentId of assignmentsToExport) {
-        const def = ASSIGNMENT_DEFINITIONS[assignmentId];
-        const weekPastDue = isWeekPastDue(def.week);
-        const weekStarted = isWeekStarted(def.week);
+      for (const assignment of assignmentsToExport) {
+        const weekPastDue = isWeekPastDue(assignment.week);
+        const weekStarted = isWeekStarted(assignment.week);
         let score = null;
         
         if (linkedSub) {
           // Handle participation specially
-          if (def.isParticipation) {
-            const participationCount = countParticipation(progressData, def.week);
-            const expected = getExpectedSections(def.week);
+          if (assignment.isParticipation) {
+            const participationCount = countParticipation(progressData, assignment.week);
+            const expected = getExpectedSections(assignment.week);
             if (participationCount > 0) {
               score = Math.min(100, Math.round((participationCount / expected) * 100));
             }
           } else {
             // Check progress data
-            const progressKey = `${assignmentId}:score`;
+            const progressKey = `${assignment.id}:score`;
             if (progressData[progressKey] !== undefined) {
               score = parseFloat(progressData[progressKey]);
             }
 
             // Check completions
-            if (score === null && completionsList.includes(assignmentId)) {
-              const completionData = await redis.get(`completion:${linkedSub}:${assignmentId}`);
+            if (score === null && completionsList.includes(assignment.id)) {
+              const completionData = await redis.get(`completion:${linkedSub}:${assignment.id}`);
               if (completionData) {
                 try {
                   const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
@@ -268,7 +267,7 @@ export default async function handler(request, context) {
           score = 0;
         }
 
-        studentRow.grades[assignmentId] = score;
+        studentRow.grades[assignment.id] = score;
       }
 
       studentRows.push(studentRow);
@@ -281,10 +280,7 @@ export default async function handler(request, context) {
       return new Response(
         JSON.stringify({ 
           students: studentRows,
-          assignments: assignmentsToExport.map(id => ({
-            id,
-            ...ASSIGNMENT_DEFINITIONS[id]
-          })),
+          assignments: assignmentsToExport,
           summary: {
             totalStudents: studentRows.length,
             linkedStudents: studentRows.filter(s => s.isLinked).length,
@@ -295,19 +291,19 @@ export default async function handler(request, context) {
       );
     }
 
-    // Build CSV
-    const assignmentHeaders = assignmentsToExport.map(id => ASSIGNMENT_DEFINITIONS[id].name);
+    // Build CSV - use array order which matches Canvas column order
+    const assignmentHeaders = assignmentsToExport.map(a => a.name);
     
     // Header row
     const headers = ['Student', 'ID', 'SIS User ID', 'SIS Login ID', 'Section', ...assignmentHeaders];
     
     // Points row (Canvas format)
-    const pointsRow = ['    Points Possible', '', '', '', '', ...assignmentsToExport.map(id => ASSIGNMENT_DEFINITIONS[id].points)];
+    const pointsRow = ['    Points Possible', '', '', '', '', ...assignmentsToExport.map(a => a.points)];
     
     // Data rows
     const dataRows = studentRows.map(student => {
-      const gradeValues = assignmentsToExport.map(id => {
-        const score = student.grades[id];
+      const gradeValues = assignmentsToExport.map(a => {
+        const score = student.grades[a.id];
         return score !== null && score !== undefined ? score : '';
       });
       
