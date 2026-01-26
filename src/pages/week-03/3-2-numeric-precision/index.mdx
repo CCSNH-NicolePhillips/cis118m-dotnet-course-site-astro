@@ -190,6 +190,34 @@ class Program
   </p>
 </div>
 
+### The 'Penny Test': Double vs. Decimal
+
+<div class="penny-test-section">
+  <p class="penny-intro">
+    Watch what happens when you use the wrong container for money. The 'drift' in a double 
+    can literally lose your users money.
+  </p>
+  
+  <div class="code-comparison">
+    <div class="code-block danger">
+      <div class="code-label">❌ Using DOUBLE (Dangerous for money)</div>
+      <pre><code>double dSum = 0.1 + 0.2;
+Console.WriteLine(dSum == 0.3); // False! (It's actually 0.30000000000000004)</code></pre>
+    </div>
+    
+    <div class="code-block safe">
+      <div class="code-label">✅ Using DECIMAL (Safe for money)</div>
+      <pre><code>decimal mSum = 0.1m + 0.2m;
+Console.WriteLine(mSum == 0.3m); // True!</code></pre>
+    </div>
+  </div>
+  
+  <div class="penny-note">
+    <strong>Note:</strong> Always add the <code>m</code> suffix to your numbers (e.g., <code>10.99m</code>) to tell C# you want 
+    the high-security <strong>decimal</strong> vault instead of the default glass sphere.
+  </div>
+</div>
+
 ### The Famous 0.1 + 0.2 Problem
 
 <TryItNowRunner 
@@ -497,6 +525,112 @@ Console.WriteLine("Total: $" + totalCost);  // Exact to the penny
   .architect-content h4 {
     margin-top: 0;
     color: #ffc107;
+  }
+
+  /* Penny Test Section */
+  .penny-test-section {
+    background: linear-gradient(135deg, #1a1a2e 0%, #1e2128 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 24px 0;
+  }
+
+  .penny-intro {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .code-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .code-block {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .code-block.danger {
+    background: #1e1e2e;
+    border: 2px solid #ef4444;
+  }
+
+  .code-block.safe {
+    background: #1e1e2e;
+    border: 2px solid #22c55e;
+  }
+
+  .code-label {
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .code-block.danger .code-label {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+
+  .code-block.safe .code-label {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 16px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  .code-block code {
+    background: transparent;
+    color: #e0e0e0;
+  }
+
+  .penny-note {
+    background: rgba(78, 201, 176, 0.1);
+    border-left: 4px solid #4ec9b0;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+  }
+
+  .penny-note code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .code-comparison {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  body[data-theme="light"] .penny-test-section {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf0 100%);
+  }
+
+  body[data-theme="light"] .penny-intro {
+    color: #333;
+  }
+
+  body[data-theme="light"] .code-block pre {
+    background: #1e1e2e;
+  }
+
+  body[data-theme="light"] .penny-note {
+    background: rgba(78, 201, 176, 0.1);
+    color: #333;
   }
 
   .next-section {
