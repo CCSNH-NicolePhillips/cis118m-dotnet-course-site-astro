@@ -159,12 +159,39 @@ int  userCount  =  1500;
 
 ### The Four Parts:
 
-| Component | Description | Example |
-|-----------|-------------|---------|
-| **Type** | What kind of data can be stored | `int`, `string`, `bool` |
-| **Identifier** | The name you give the variable | `userCount`, `firstName` |
-| **Assignment** | The `=` operator stores the value | `=` |
-| **Value** | The actual data being stored | `1500`, `"Alice"`, `true` |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Description</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Type</strong></td>
+        <td>What kind of data can be stored</td>
+        <td><code>int</code>, <code>string</code>, <code>bool</code></td>
+      </tr>
+      <tr>
+        <td><strong>Identifier</strong></td>
+        <td>The name you give the variable</td>
+        <td><code>userCount</code>, <code>firstName</code></td>
+      </tr>
+      <tr>
+        <td><strong>Assignment</strong></td>
+        <td>The <code>=</code> operator stores the value</td>
+        <td><code>=</code></td>
+      </tr>
+      <tr>
+        <td><strong>Value</strong></td>
+        <td>The actual data being stored</td>
+        <td><code>1500</code>, <code>"Alice"</code>, <code>true</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -222,11 +249,34 @@ C# has strict rules about what you can name your variables:
 
 ### Naming Conventions (Best Practices)
 
-| Style | Use For | Example |
-|-------|---------|---------|
-| **camelCase** | Local variables, parameters | `userCount`, `firstName` |
-| **PascalCase** | Methods, classes, properties | `GetUserCount`, `FirstName` |
-| **UPPER_CASE** | Constants | `MAX_CONNECTIONS`, `PI` |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Style</th>
+        <th>Use For</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>camelCase</strong></td>
+        <td>Local variables, parameters</td>
+        <td><code>userCount</code>, <code>firstName</code></td>
+      </tr>
+      <tr>
+        <td><strong>PascalCase</strong></td>
+        <td>Methods, classes, properties</td>
+        <td><code>GetUserCount</code>, <code>FirstName</code></td>
+      </tr>
+      <tr>
+        <td><strong>UPPER_CASE</strong></td>
+        <td>Constants</td>
+        <td><code>MAX_CONNECTIONS</code>, <code>PI</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -597,5 +647,73 @@ class Program
 
   body[data-theme="light"] .hardware-code {
     background: #e2e8f0;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container td strong {
+    color: #fff;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container td strong {
+    color: #333;
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}</style>
