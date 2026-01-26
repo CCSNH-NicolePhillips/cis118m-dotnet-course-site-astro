@@ -128,9 +128,38 @@ export default async function handler(request, context) {
     
     console.log('[progress-get] Final mergedProgress:', JSON.stringify(mergedProgress));
 
+    // Check for any quiz unlocks for this user
+    // Pattern: quiz:unlock:{userId}:{pageId}
+    // We'll check for common quiz IDs
+    const quizIds = [
+      'week-01-quiz',
+      'week-01-required-quiz',
+      'week-01-syllabus-quiz',
+      'week-02-quiz',
+      'week-03-quiz',
+      'week-04-quiz',
+      'week-05-quiz',
+      'week-06-quiz',
+      'week-07-quiz',
+      'week-08-quiz'
+    ];
+    
+    const quizUnlocks = {};
+    for (const quizId of quizIds) {
+      const unlockKey = `quiz:unlock:${user.sub}:${quizId}`;
+      const unlockData = await redis.get(unlockKey);
+      if (unlockData) {
+        quizUnlocks[quizId] = true;
+        console.log('[progress-get] Quiz unlocked:', quizId);
+      }
+    }
+    
+    console.log('[progress-get] Quiz unlocks:', JSON.stringify(quizUnlocks));
+
     return new Response(
       JSON.stringify({ 
-        progress: mergedProgress 
+        progress: mergedProgress,
+        quizUnlocks: quizUnlocks
       }),
       {
         status: 200,
