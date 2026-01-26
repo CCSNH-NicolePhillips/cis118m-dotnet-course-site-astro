@@ -10,6 +10,16 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 3.2: Numeric Precision
 
+<div class="section-intro">
+  <h2>✦ Numeric Precision: Picking the Right Container</h2>
+  <p>
+    Choosing a numeric type in C# is a trade-off between <strong>storage size, range, and accuracy</strong>. 
+    Not every number is created equal—while an <code>int</code> is perfect for counting apples, using a 
+    <code>double</code> for banking could lead to missing pennies due to 'approximation drift.' 
+    Understanding your containers is the first step to building stable software.
+  </p>
+</div>
+
 <div class="section-header">
   <div class="section-badge">🔢 Numeric Types</div>
   <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
@@ -306,6 +316,42 @@ Console.WriteLine("Total: $" + totalCost);  // Exact to the penny
 </div>
 
 <style>{`
+  .section-intro {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .section-intro h2 {
+    color: #4ec9b0;
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.75rem;
+  }
+
+  .section-intro p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .section-intro code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .section-intro {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  }
+
+  body[data-theme="light"] .section-intro p {
+    color: #333;
+  }
+
   .type-comparison {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
