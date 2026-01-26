@@ -223,24 +223,24 @@ const getWeekLockInfo = (weekSlug: string) => {
                         </>
                       ) : (
                         <>
-                          <li>
-                            <a href={`/week-${w.slug}/lesson-1/`} data-page={`/week-${w.slug}/lesson-1/`} data-starter={`week-${w.slug}-lesson-1`}>
-                              <span class="lesson-text">Lesson 1</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`} data-page-id={`week-${w.slug}-lesson-1`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/lesson-2/`} data-page={`/week-${w.slug}/lesson-2/`} data-starter={`week-${w.slug}-lesson-2`}>
-                              <span class="lesson-text">Lesson 2</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-2`} data-page-id={`week-${w.slug}-lesson-2`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/extra-practice/`} data-page={`/week-${w.slug}/extra-practice/`} data-starter={`week-${w.slug}-extra-practice`}>
-                              <span class="lesson-text">Extra Practice</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-extra-practice`} data-page-id={`week-${w.slug}-extra-practice`}></span>
-                            </a>
-                          </li>
+                          {w.pages && w.pages.length > 0 ? (
+                            w.pages.map((page) => {
+                              // Extract page ID from href for status tracking
+                              const pageId = page.href.replace(/^\//, '').replace(/\/$/, '').replace(/\//g, '-');
+                              return (
+                                <li>
+                                  <a href={page.href} data-page={page.href}>
+                                    <span class="lesson-text">{page.title}</span>
+                                    <span class="lesson-status" data-page-id={pageId}></span>
+                                  </a>
+                                </li>
+                              );
+                            })
+                          ) : (
+                            <li>
+                              <span class="lesson-text" style="opacity: 0.5;">Content coming soon...</span>
+                            </li>
+                          )}
                         </>
                       )}
                     </ul>
