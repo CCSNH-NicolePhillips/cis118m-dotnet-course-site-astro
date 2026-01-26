@@ -1,0 +1,319 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 3.4 • Immutability"
+description: "Understanding constants and readonly values in C#"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 3.4: Immutability
+
+<div class="section-header">
+  <div class="section-badge">🔒 Constants & Readonly</div>
+  <p class="section-time">⏱️ Estimated Time: 20 minutes</p>
+</div>
+
+---
+
+## 🔐 Why Make Values Unchangeable?
+
+Some values should **never change** during program execution:
+
+- Mathematical constants (π = 3.14159...)
+- Configuration settings (MAX_CONNECTIONS = 100)
+- Fixed rates (TAX_RATE = 0.0725)
+
+Making these values **immutable** (unchangeable) prevents bugs and makes your intent clear.
+
+---
+
+## 🎯 The const Keyword
+
+Use `const` to create a compile-time constant—a value that is **baked into your program** when it's built.
+
+```csharp
+const double PI = 3.14159265359;
+const int MAX_ATTEMPTS = 3;
+const string APP_NAME = "SystemMonitor";
+```
+
+### Rules for const:
+1. Must be assigned at declaration
+2. Value must be known at compile time
+3. Cannot be changed after declaration
+
+<TryItNowRunner 
+  starterId="week-03-const-demo" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        const double PI = 3.14159;
+        const int MAX_USERS = 100;
+        
+        double radius = 5.0;
+        double area = PI * radius * radius;
+        
+        Console.WriteLine("Circle area: " + area);
+        Console.WriteLine("Max users allowed: " + MAX_USERS);
+        
+        // This would cause an error:
+        // PI = 3.14;  // ❌ Cannot assign to const
+    }
+}`}
+  instructions="Run this code. Try uncommenting the last line to see the compiler error!" 
+/>
+
+---
+
+## ⚠️ What Happens If You Try to Change a const?
+
+<div class="error-example">
+  <h4>❌ Compiler Error</h4>
+  <pre><code>const int MAX = 100;
+MAX = 200;  // Error CS0131: The left-hand side of an assignment must be a variable</code></pre>
+  <p>The compiler catches this mistake <strong>before</strong> your program even runs!</p>
+</div>
+
+---
+
+## 📝 Naming Convention: UPPER_CASE
+
+By convention, constants use `UPPER_CASE` with underscores:
+
+```csharp
+const int MAX_CONNECTIONS = 100;     // ✅ Clear it's a constant
+const double TAX_RATE = 0.0725;      // ✅ Clear it's a constant
+const string API_KEY = "abc123";     // ✅ Clear it's a constant
+
+const int maxConnections = 100;      // ⚠️ Works, but not conventional
+```
+
+This naming pattern immediately signals to developers: "This value never changes."
+
+---
+
+## 🔄 const vs Regular Variables
+
+<DeepDiveTabs
+  title="When to Use const"
+  tabs={[
+    {
+      id: "const",
+      label: "🔒 Use const When...",
+      content: `
+        <h3>const is Perfect For:</h3>
+        <ul>
+          <li><strong>Mathematical constants:</strong> PI, E, gravity</li>
+          <li><strong>Application settings:</strong> MAX_RETRIES, TIMEOUT_SECONDS</li>
+          <li><strong>Fixed values:</strong> Days in a week, months in a year</li>
+          <li><strong>Configuration:</strong> API endpoints, version numbers</li>
+        </ul>
+        <pre><code>const int DAYS_IN_WEEK = 7;
+const double GRAVITY = 9.81;
+const string VERSION = "1.0.0";</code></pre>
+      `
+    },
+    {
+      id: "variable",
+      label: "🔄 Use Variables When...",
+      content: `
+        <h3>Variables are Better For:</h3>
+        <ul>
+          <li><strong>User input:</strong> Values entered at runtime</li>
+          <li><strong>Calculated results:</strong> Values computed during execution</li>
+          <li><strong>State tracking:</strong> Score, count, position</li>
+          <li><strong>Anything that changes:</strong> If it might change, don't use const</li>
+        </ul>
+        <pre><code>int currentScore = 0;        // Changes during game
+string userName = "Guest";   // Changes after login
+double balance = 100.00;     // Changes with transactions</code></pre>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🎯 Practical Example: Configuration Constants
+
+<TryItNowRunner 
+  starterId="week-03-config-constants" 
+  height={400}
+  code={`using System;
+
+class Program
+{
+    // Configuration constants at the top
+    const string APP_NAME = "SystemMonitor";
+    const string VERSION = "2.1.0";
+    const int MAX_CONNECTIONS = 100;
+    const int TIMEOUT_SECONDS = 30;
+    
+    static void Main()
+    {
+        Console.WriteLine("=========================");
+        Console.WriteLine($"  {APP_NAME} v{VERSION}");
+        Console.WriteLine("=========================");
+        Console.WriteLine($"Max Connections: {MAX_CONNECTIONS}");
+        Console.WriteLine($"Timeout: {TIMEOUT_SECONDS}s");
+        Console.WriteLine("System initialized.");
+    }
+}`}
+  instructions="This shows a common pattern: configuration constants at the top of your program." 
+/>
+
+---
+
+## 💡 The Senior Architect's Perspective
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>From the Field: Magic Numbers</h4>
+    <p>
+      A "magic number" is a hardcoded value with no explanation:
+    </p>
+    <pre><code>if (attempts > 3)  // What is 3? Why 3?</code></pre>
+    <p>
+      Replace magic numbers with named constants:
+    </p>
+    <pre><code>const int MAX_ATTEMPTS = 3;
+if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
+    <p>
+      <strong>Rule:</strong> If a number appears in your code and isn't obviously self-explanatory (like 0 or 1), give it a name.
+    </p>
+  </div>
+</div>
+
+---
+
+## 📊 Quick Reference
+
+| Feature | `const` | Regular Variable |
+|---------|---------|------------------|
+| Can be changed | ❌ No | ✅ Yes |
+| When value is set | Compile time | Runtime |
+| Naming convention | UPPER_CASE | camelCase |
+| Use for | Fixed values, config | Changing data |
+
+---
+
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-03-3-4-checkpoint"
+  title="🔍 Section 3.4 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Which keyword makes a variable unchangeable after it is set?",
+      options: ["static", "const", "final", "fixed"],
+      correctAnswer: "const",
+      explanation: "The const keyword creates a compile-time constant that cannot be modified."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What is the conventional naming style for constants?",
+      options: ["camelCase", "PascalCase", "UPPER_CASE", "lowercase"],
+      correctAnswer: "UPPER_CASE",
+      explanation: "Constants typically use UPPER_CASE with underscores to clearly identify them as unchangeable values."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What happens if you try to assign a new value to a const?",
+      options: [
+        "The value changes normally",
+        "Nothing happens (ignored)",
+        "Compiler error before running",
+        "Runtime error while running"
+      ],
+      correctAnswer: "Compiler error before running",
+      explanation: "The compiler detects attempts to modify const values and prevents the program from compiling."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>✅ <strong>Reading Complete!</strong></p>
+  <p>You've learned all the data types for Week 03. Time to apply your knowledge!</p>
+  <a href="/week-03/lab/" class="vscode-button">Start Lab 03: Data Manifest →</a>
+</div>
+
+<style>{`
+  .error-example {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 20px 0;
+  }
+
+  .error-example h4 {
+    margin-top: 0;
+    color: #ef4444;
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .architect-content h4 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .architect-content pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .architect-note {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+`}</style>

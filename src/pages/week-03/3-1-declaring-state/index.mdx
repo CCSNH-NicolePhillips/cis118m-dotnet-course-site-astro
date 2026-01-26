@@ -1,0 +1,342 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 3.1 • Declaring State"
+description: "Understanding variables, identifiers, and how programs store data in memory"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 3.1: Declaring State
+
+<div class="section-header">
+  <div class="section-badge">🧠 Variables & Memory</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+## 🏗️ What is a Variable?
+
+A **variable** is a named storage location in your computer's memory (RAM). Think of it as a labeled box that holds a single piece of data.
+
+<div class="concept-highlight">
+  <h3>The Parking Lot Analogy</h3>
+  <p>Imagine your computer's memory as a giant parking garage:</p>
+  <ul>
+    <li><strong>Variable Name</strong> = The parking spot number (e.g., "A-42")</li>
+    <li><strong>Variable Type</strong> = What kind of vehicle can park there (car, motorcycle, truck)</li>
+    <li><strong>Variable Value</strong> = The actual vehicle parked in that spot</li>
+  </ul>
+</div>
+
+---
+
+## 📝 Declaration vs. Initialization
+
+There are two distinct steps when creating a variable:
+
+<DeepDiveTabs
+  title="Creating Variables"
+  tabs={[
+    {
+      id: "declaration",
+      label: "1️⃣ Declaration",
+      content: `
+        <h3>Declaration: Reserving the Spot</h3>
+        <p>A <strong>declaration</strong> reserves memory and assigns a name, but doesn't put a value in it yet.</p>
+        <pre><code>int systemPort;  // Reserved, but empty</code></pre>
+        <p><strong>⚠️ Warning:</strong> Using a variable before giving it a value causes a compiler error!</p>
+      `
+    },
+    {
+      id: "initialization",
+      label: "2️⃣ Initialization",
+      content: `
+        <h3>Initialization: Parking the Car</h3>
+        <p><strong>Initialization</strong> assigns the first value to a variable.</p>
+        <pre><code>systemPort = 8080;  // Now it has a value</code></pre>
+        <p>The variable is now ready to use in your program.</p>
+      `
+    },
+    {
+      id: "combined",
+      label: "✨ Combined (Best Practice)",
+      content: `
+        <h3>Declaration + Initialization</h3>
+        <p>Most developers combine both steps into a single line:</p>
+        <pre><code>int systemPort = 8080;  // Reserved AND initialized</code></pre>
+        <p><strong>✅ Recommended:</strong> This prevents accidental use of uninitialized variables.</p>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🔍 Anatomy of a Variable Declaration
+
+```csharp
+int  userCount  =  1500;
+│       │       │    │
+│       │       │    └── Value (the data stored)
+│       │       └── Assignment operator
+│       └── Identifier (the name)
+└── Type (what kind of data)
+```
+
+### The Four Parts:
+
+| Component | Description | Example |
+|-----------|-------------|---------|
+| **Type** | What kind of data can be stored | `int`, `string`, `bool` |
+| **Identifier** | The name you give the variable | `userCount`, `firstName` |
+| **Assignment** | The `=` operator stores the value | `=` |
+| **Value** | The actual data being stored | `1500`, `"Alice"`, `true` |
+
+---
+
+## 🎯 Try It: Your First Variables
+
+<TryItNowRunner 
+  starterId="week-03-variables-intro" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Declaration + Initialization
+        int systemPort = 8080;
+        string serverName = "Apollo";
+        
+        // Output the values
+        Console.WriteLine("Server: " + serverName);
+        Console.WriteLine("Port: " + systemPort);
+    }
+}`}
+  instructions="Run this code. Then try changing the port to 3000 and the server name to your own choice." 
+/>
+
+---
+
+## 📛 Naming Rules (Identifiers)
+
+C# has strict rules about what you can name your variables:
+
+<div class="rules-grid">
+  <div class="rule valid">
+    <h4>✅ Valid Names</h4>
+    <ul>
+      <li><code>userCount</code></li>
+      <li><code>firstName</code></li>
+      <li><code>_privateField</code></li>
+      <li><code>item1</code></li>
+      <li><code>MAX_SIZE</code></li>
+    </ul>
+  </div>
+  <div class="rule invalid">
+    <h4>❌ Invalid Names</h4>
+    <ul>
+      <li><code>1stPlace</code> — Can't start with number</li>
+      <li><code>user-count</code> — No hyphens</li>
+      <li><code>first name</code> — No spaces</li>
+      <li><code>class</code> — Reserved keyword</li>
+      <li><code>int</code> — Reserved keyword</li>
+    </ul>
+  </div>
+</div>
+
+### Naming Conventions (Best Practices)
+
+| Style | Use For | Example |
+|-------|---------|---------|
+| **camelCase** | Local variables, parameters | `userCount`, `firstName` |
+| **PascalCase** | Methods, classes, properties | `GetUserCount`, `FirstName` |
+| **UPPER_CASE** | Constants | `MAX_CONNECTIONS`, `PI` |
+
+---
+
+## 💡 The Senior Architect's Perspective
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>From the Field: Variable Naming</h4>
+    <p>
+      I've reviewed thousands of lines of code. The biggest mistake beginners make isn't syntax—it's <strong>terrible variable names</strong>. Names like <code>x</code>, <code>temp</code>, or <code>data</code> tell you nothing.
+    </p>
+    <p>
+      <strong>Good code reads like a story.</strong> When I see <code>int activeUserCount = 1500;</code>, I understand immediately what it means. When I see <code>int x = 1500;</code>, I have to waste time figuring it out.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🔄 Reassignment
+
+Once a variable is declared, you can change its value (unless it's a constant):
+
+<TryItNowRunner 
+  starterId="week-03-reassignment" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        int score = 0;
+        Console.WriteLine("Starting score: " + score);
+        
+        score = 100;  // Reassignment
+        Console.WriteLine("After bonus: " + score);
+        
+        score = score + 50;  // Using current value
+        Console.WriteLine("After quest: " + score);
+    }
+}`}
+  instructions="Watch how the score variable changes. Try adding another reassignment at the end." 
+/>
+
+---
+
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-03-3-1-checkpoint"
+  title="🔍 Section 3.1 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "In the line `int x = 5;`, what is 'x' called?",
+      options: ["The type", "The identifier", "The value", "The assignment"],
+      correctAnswer: "The identifier",
+      explanation: "The identifier is the name given to the variable. In this case, 'x' is the identifier, 'int' is the type, and '5' is the value."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What is the difference between declaration and initialization?",
+      options: [
+        "They are the same thing",
+        "Declaration reserves memory, initialization assigns a value",
+        "Initialization reserves memory, declaration assigns a value",
+        "Declaration is for strings only"
+      ],
+      correctAnswer: "Declaration reserves memory, initialization assigns a value",
+      explanation: "Declaration creates the variable (reserves the parking spot), while initialization assigns its first value (parks the car)."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "Which variable name is INVALID in C#?",
+      options: ["_count", "userAge", "2ndPlace", "firstName"],
+      correctAnswer: "2ndPlace",
+      explanation: "Variable names cannot start with a number. '2ndPlace' would cause a compiler error."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 3.2 - Numeric Precision</strong></p>
+  <p>Learn when to use int, double, and decimal for different scenarios.</p>
+  <a href="/week-03/3-2-numeric-precision/" class="vscode-button">Continue to Section 3.2 →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border-left: 4px solid #4ec9b0;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+  
+  .concept-highlight h3 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  .rule {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .rule.valid {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid #22c55e;
+  }
+
+  .rule.invalid {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+  }
+
+  .rule h4 {
+    margin-top: 0;
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .architect-content h4 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .rules-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .architect-note {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+`}</style>

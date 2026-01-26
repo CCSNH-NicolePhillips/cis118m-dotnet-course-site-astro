@@ -1,0 +1,221 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 03 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 03 Technical Assessment
+
+<DueDateBanner week={3} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> You are allowed <strong>2 attempts</strong></li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-03-quiz"
+  title="Week 03: Variables & Data Types (Graded)"
+  passingScore={70}
+  maxAttempts={2}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Which keyword makes a variable unchangeable after it is set?",
+      options: [
+        "static",
+        "readonly",
+        "const",
+        "final"
+      ],
+      correctAnswer: "const",
+      explanation: "The 'const' keyword creates a compile-time constant that cannot be modified after declaration."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the default value of a bool if not initialized?",
+      options: [
+        "true",
+        "false",
+        "null",
+        "0"
+      ],
+      correctAnswer: "false",
+      explanation: "In C#, uninitialized boolean fields default to 'false'."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "Which type is best for storing a single letter like 'A'?",
+      options: [
+        "string",
+        "char",
+        "int",
+        "byte"
+      ],
+      correctAnswer: "char",
+      explanation: "The 'char' type is specifically designed to store a single Unicode character."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Can an int store the value 10.5?",
+      options: [
+        "Yes, it stores as 10.5",
+        "Yes, but it rounds to 10",
+        "No, it causes a compiler error",
+        "Yes, but only with a cast"
+      ],
+      correctAnswer: "No, it causes a compiler error",
+      explanation: "An int cannot store decimal values. Attempting to assign 10.5 to an int causes a compiler error because of implicit conversion restrictions."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "In the line `int x = 5;`, what is 'x' called?",
+      options: [
+        "The type",
+        "The identifier",
+        "The value",
+        "The assignment operator"
+      ],
+      correctAnswer: "The identifier",
+      explanation: "The identifier is the name given to the variable. In this statement, 'int' is the type, 'x' is the identifier, '=' is the assignment operator, and '5' is the value."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "Why should you use 'decimal' instead of 'double' for currency?",
+      options: [
+        "decimal is faster than double",
+        "double cannot store negative numbers",
+        "decimal avoids binary floating-point rounding errors",
+        "double uses too much memory"
+      ],
+      correctAnswer: "decimal avoids binary floating-point rounding errors",
+      explanation: "The decimal type uses base-10 internally, avoiding the rounding errors that occur with binary floating-point (double) when representing decimal fractions like 0.1."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What suffix is required when assigning a decimal literal?",
+      options: [
+        "d (e.g., 45.99d)",
+        "f (e.g., 45.99f)",
+        "m (e.g., 45.99m)",
+        "No suffix required"
+      ],
+      correctAnswer: "m (e.g., 45.99m)",
+      explanation: "The 'm' suffix tells C# that the number should be treated as a decimal type. Without it, 45.99 is interpreted as a double."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What does 'string immutability' mean?",
+      options: [
+        "Strings can only contain letters",
+        "Strings cannot be created dynamically",
+        "Strings cannot be changed after creation",
+        "Strings must be uppercase"
+      ],
+      correctAnswer: "Strings cannot be changed after creation",
+      explanation: "Immutability means once a string object is created in memory, it cannot be modified. Any operation that appears to change a string actually creates a new string."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Which variable name is INVALID in C#?",
+      options: [
+        "_count",
+        "userName",
+        "2ndAttempt",
+        "MAX_VALUE"
+      ],
+      correctAnswer: "2ndAttempt",
+      explanation: "Variable names cannot start with a number. '2ndAttempt' would cause a compiler error. Valid alternatives include 'secondAttempt' or '_2ndAttempt'."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What is the difference between declaration and initialization?",
+      options: [
+        "They are the same thing",
+        "Declaration reserves memory; initialization assigns a value",
+        "Initialization reserves memory; declaration assigns a value",
+        "Declaration is for strings; initialization is for numbers"
+      ],
+      correctAnswer: "Declaration reserves memory; initialization assigns a value",
+      explanation: "Declaration creates the variable and reserves memory (like reserving a parking spot). Initialization assigns the first value to that variable (like parking the car)."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 03 Complete!</strong></p>
+  <p>You've mastered variables and data types. Next week: Strings & Text Processing!</p>
+  <a href="/week-04/" class="vscode-button">Preview Week 04 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #818cf8;
+  }
+
+  .mission-brief ul {
+    margin-bottom: 0;
+  }
+
+  .mission-brief li {
+    margin: 8px 0;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+`}</style>

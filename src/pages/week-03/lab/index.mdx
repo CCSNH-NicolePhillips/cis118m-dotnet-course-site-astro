@@ -1,0 +1,229 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 03 • Data Manifest"
+description: "Build a System Profile using the correct data types"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 03: The Data Manifest
+
+<DueDateBanner week={3} type="Lab" />
+
+**Time: 45 minutes**  
+**Points: 100**
+
+## 🎯 Mission Objective
+
+Build a **System Profile** console application that stores and displays system data using the **most memory-efficient and appropriate data types** for each piece of information.
+
+---
+
+## 📋 Requirements
+
+Your program must declare and use variables for the following data:
+
+| Variable | Description | Required Type |
+|----------|-------------|---------------|
+| `appVersion` | Application version (e.g., 1.2) | `double` |
+| `userCount` | Number of active users (e.g., 1500) | `int` |
+| `isSystemActive` | System status (True/False) | `bool` |
+| `serverCost` | Monthly server cost (e.g., 45.99) | `decimal` ⚠️ |
+| `systemName` | Name of the system | `string` |
+
+<div class="critical-note">
+  <h4>⚠️ Why decimal for serverCost?</h4>
+  <p>
+    The <code>serverCost</code> represents <strong>money</strong>. As you learned in Section 3.2, 
+    financial values must use <code>decimal</code> to avoid floating-point rounding errors.
+  </p>
+</div>
+
+---
+
+## 📤 Required Output
+
+Your program must print a formatted report like this:
+
+```
+=============================
+    SYSTEM PROFILE REPORT
+=============================
+System Name: Apollo
+Version: 1.2
+Active Users: 1500
+System Status: Active
+Monthly Cost: $45.99
+=============================
+```
+
+---
+
+## 🏗️ Starter Code
+
+<TryItNowRunner 
+  starterId="week-03-lab" 
+  height={500}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // TODO: Declare your variables here
+        // Remember to use the correct types!
+        
+        // string systemName = ???
+        // double appVersion = ???
+        // int userCount = ???
+        // bool isSystemActive = ???
+        // decimal serverCost = ???  // Don't forget the 'm' suffix!
+        
+        // TODO: Print the formatted report
+        Console.WriteLine("=============================");
+        Console.WriteLine("    SYSTEM PROFILE REPORT");
+        Console.WriteLine("=============================");
+        
+        // Add your Console.WriteLine statements here
+        
+    }
+}`}
+  instructions="Complete the program by declaring variables with correct types and printing the report." 
+/>
+
+---
+
+## ✅ Grading Rubric
+
+| Criteria | Points |
+|----------|--------|
+| Correct variable types used | 40 |
+| All 5 variables declared and initialized | 20 |
+| Output formatted correctly | 20 |
+| Uses `decimal` for money (with 'm' suffix) | 10 |
+| Code compiles without errors | 10 |
+| **Total** | **100** |
+
+---
+
+## 💡 Hints
+
+<details>
+<summary>Hint 1: Declaring a decimal</summary>
+
+```csharp
+decimal serverCost = 45.99m;  // The 'm' suffix is required!
+```
+
+Without the `m`, C# treats 45.99 as a `double` and won't let you assign it to a `decimal`.
+
+</details>
+
+<details>
+<summary>Hint 2: Displaying booleans nicely</summary>
+
+```csharp
+bool isActive = true;
+
+// Instead of printing "True" or "False":
+string status = isActive ? "Active" : "Inactive";
+Console.WriteLine("Status: " + status);
+```
+
+This uses a ternary operator (covered later) to show "Active" instead of "True".
+
+</details>
+
+<details>
+<summary>Hint 3: Formatting currency</summary>
+
+```csharp
+decimal cost = 45.99m;
+Console.WriteLine("Cost: $" + cost);
+// Or using string interpolation:
+Console.WriteLine($"Cost: ${cost}");
+```
+
+</details>
+
+---
+
+## 📝 Submission
+
+When your program runs correctly and displays the formatted report:
+
+1. Click the **Submit Lab** button below
+2. Your code will be automatically graded
+3. You'll receive feedback on your submission
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <div id="lab-feedback" style="display: none; padding: 16px; border-radius: 8px; margin-bottom: 16px;"></div>
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    🚀 Submit Lab
+  </button>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Technical Reflection</strong></p>
+  <p>Explain why type safety matters in professional development.</p>
+  <a href="/week-03/homework/" class="vscode-button">Continue to Homework →</a>
+</div>
+
+<style>{`
+  .critical-note {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 20px 0;
+  }
+
+  .critical-note h4 {
+    margin-top: 0;
+    color: #ef4444;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+`}</style>

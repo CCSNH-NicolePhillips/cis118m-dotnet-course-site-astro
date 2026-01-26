@@ -1,0 +1,375 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 3.3 • Logic & Text"
+description: "Understanding bool, char, and string types for logic and text data"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 3.3: Logic & Text
+
+<div class="section-header">
+  <div class="section-badge">🔤 Bool, Char & String</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+## ✅ bool: The Decision Type
+
+A `bool` (Boolean) stores only two possible values: `true` or `false`. 
+
+Named after mathematician George Boole, this type is the foundation of all computer logic.
+
+```csharp
+bool isSystemActive = true;
+bool hasPermission = false;
+bool isLoggedIn = true;
+```
+
+### Common Uses for bool:
+- **System states:** Is the server online? Is the user authenticated?
+- **Flags:** Should we enable this feature? Has the task completed?
+- **Conditions:** Results of comparisons (covered in Week 06)
+
+<TryItNowRunner 
+  starterId="week-03-bool-demo" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        bool isEngineRunning = true;
+        bool isMaintenanceMode = false;
+        
+        Console.WriteLine("Engine Running: " + isEngineRunning);
+        Console.WriteLine("Maintenance Mode: " + isMaintenanceMode);
+        
+        // Toggle the state
+        isMaintenanceMode = true;
+        Console.WriteLine("After toggle: " + isMaintenanceMode);
+    }
+}`}
+  instructions="Run this code. Try changing the boolean values!" 
+/>
+
+### Default Value
+
+If you declare a `bool` without initializing it (in a class field), its default value is `false`.
+
+```csharp
+bool isVerified;  // Default: false
+```
+
+---
+
+## 🔤 char: The Single Character
+
+A `char` stores exactly **one** Unicode character. Use single quotes!
+
+```csharp
+char grade = 'A';
+char initial = 'J';
+char symbol = '#';
+char newline = '\n';  // Special escape character
+```
+
+### char vs string:
+- `char` = Single quotes: `'A'`
+- `string` = Double quotes: `"A"` (even for one character)
+
+<TryItNowRunner 
+  starterId="week-03-char-demo" 
+  height={300}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        char letterGrade = 'A';
+        char plusMinus = '+';
+        
+        Console.WriteLine("Your grade: " + letterGrade + plusMinus);
+        
+        // Each char is a single character
+        char first = 'C';
+        char second = '#';
+        Console.WriteLine("Language: " + first + second);
+    }
+}`}
+  instructions="Run this code. Notice how chars combine when concatenated!" 
+/>
+
+---
+
+## 📝 string: The Text Type
+
+A `string` is a sequence of characters—any text from a single word to an entire document.
+
+```csharp
+string greeting = "Hello, World!";
+string empty = "";
+string userName = "Alice";
+```
+
+### String Basics
+
+<TryItNowRunner 
+  starterId="week-03-string-demo" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string firstName = "Jane";
+        string lastName = "Doe";
+        string fullName = firstName + " " + lastName;
+        
+        Console.WriteLine("Welcome, " + fullName + "!");
+        Console.WriteLine("Name length: " + fullName.Length);
+    }
+}`}
+  instructions="Run this code. Try changing the names!" 
+/>
+
+---
+
+## 🔒 String Immutability
+
+<div class="critical-concept">
+  <h3>⚡ Key Concept: Strings are Immutable</h3>
+  <p>
+    Once a string is created in memory, it <strong>cannot be changed</strong>. 
+    Any operation that appears to modify a string actually creates a <strong>new string</strong>.
+  </p>
+</div>
+
+### What Immutability Means
+
+```csharp
+string message = "Hello";
+message = message + " World";  // Creates a NEW string in memory
+```
+
+<DeepDiveTabs
+  title="String Immutability Explained"
+  tabs={[
+    {
+      id: "visual",
+      label: "📊 Visual Example",
+      content: `
+        <h3>Memory Before and After</h3>
+        <pre>
+Step 1: string message = "Hello";
+Memory: [Hello] ← message points here
+
+Step 2: message = message + " World";
+Memory: [Hello] ← orphaned (garbage collected)
+        [Hello World] ← message now points here
+        </pre>
+        <p>The original "Hello" isn't modified—a completely new string is created.</p>
+      `
+    },
+    {
+      id: "why",
+      label: "❓ Why Immutability?",
+      content: `
+        <h3>Benefits of Immutable Strings</h3>
+        <ul>
+          <li><strong>Thread Safety:</strong> Multiple parts of your program can safely read the same string</li>
+          <li><strong>Security:</strong> A string can't be changed after validation</li>
+          <li><strong>Caching:</strong> Identical strings can share memory</li>
+        </ul>
+        <p><strong>Trade-off:</strong> Heavy string manipulation can create many temporary objects.</p>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🔗 String Concatenation
+
+You can combine strings using the `+` operator:
+
+```csharp
+string first = "Hello";
+string second = "World";
+string combined = first + " " + second;  // "Hello World"
+```
+
+### String Interpolation (Modern C#)
+
+A cleaner way to build strings:
+
+<TryItNowRunner 
+  starterId="week-03-interpolation" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string name = "Engineer";
+        int level = 5;
+        
+        // Old way (concatenation)
+        Console.WriteLine("Welcome, " + name + "! Level: " + level);
+        
+        // Modern way (interpolation with $)
+        Console.WriteLine($"Welcome, {name}! Level: {level}");
+    }
+}`}
+  instructions="The $ before the string allows you to embed variables in {curly braces}!" 
+/>
+
+---
+
+## 📊 Type Summary
+
+| Type | Size | Values | Literal Syntax | Use Case |
+|------|------|--------|----------------|----------|
+| `bool` | 1 bit* | `true` / `false` | `true` | System states, flags |
+| `char` | 16-bit | Single Unicode char | `'A'` | Single characters, grades |
+| `string` | Variable | Text sequence | `"Hello"` | Names, messages, data |
+
+*bool uses at least 1 byte due to memory alignment
+
+---
+
+## 💡 The Senior Architect's Perspective
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>From the Field: Boolean Naming</h4>
+    <p>
+      Always name your boolean variables as questions that can be answered yes/no:
+    </p>
+    <ul>
+      <li><code>isActive</code> — Is it active? Yes/No</li>
+      <li><code>hasPermission</code> — Does it have permission? Yes/No</li>
+      <li><code>canExecute</code> — Can it execute? Yes/No</li>
+    </ul>
+    <p>
+      <strong>Avoid:</strong> <code>bool status</code> — Status of what? This tells you nothing.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-03-3-3-checkpoint"
+  title="🔍 Section 3.3 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What is the default value of a bool if not initialized?",
+      options: ["true", "false", "null", "0"],
+      correctAnswer: "false",
+      explanation: "Uninitialized boolean fields default to false in C#."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Which type is best for storing a single letter like 'A'?",
+      options: ["string", "char", "int", "bool"],
+      correctAnswer: "char",
+      explanation: "char is specifically designed to store a single Unicode character."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What does 'string immutability' mean?",
+      options: [
+        "Strings can't be created",
+        "Strings can't be changed after creation",
+        "Strings can only contain letters",
+        "Strings must be uppercase"
+      ],
+      correctAnswer: "Strings can't be changed after creation",
+      explanation: "Immutable means the string object itself cannot be modified. Any 'change' creates a new string."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 3.4 - Immutability</strong></p>
+  <p>Learn about constants and values that never change.</p>
+  <a href="/week-03/3-4-immutability/" class="vscode-button">Continue to Section 3.4 →</a>
+</div>
+
+<style>{`
+  .critical-concept {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .critical-concept h3 {
+    margin-top: 0;
+    color: #818cf8;
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .architect-content h4 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .architect-note {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+`}</style>

@@ -50,7 +50,16 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection (Graded)', href: '/week-02/homework/' },
       { title: 'Weekly Assessment (Graded)', href: '/week-02/weekly-assessment/' }
     ] },
-  { slug: '03', title: 'Week 03: Variables & Data Types', unlockDate: '2026-02-02T00:00:00-05:00', dueDate: '2026-02-08T23:59:59-05:00', pages: [] },
+  { slug: '03', title: 'Week 03: Variables & Data Types', unlockDate: '2026-02-02T00:00:00-05:00', dueDate: '2026-02-08T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-03/' },
+      { title: '3.1 Declaring State', href: '/week-03/3-1-declaring-state/' },
+      { title: '3.2 Numeric Precision', href: '/week-03/3-2-numeric-precision/' },
+      { title: '3.3 Logic & Text', href: '/week-03/3-3-logic-and-text/' },
+      { title: '3.4 Immutability', href: '/week-03/3-4-immutability/' },
+      { title: 'Lab: Data Manifest (Graded)', href: '/week-03/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-03/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-03/weekly-assessment/' }
+    ] },
   { slug: '04', title: 'Week 04: Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00', pages: [] },
   { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [] },
   { slug: '06', title: 'Week 06: Decision Structures (if/else)', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00', pages: [] },

@@ -1,0 +1,384 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 3.2 • Numeric Precision"
+description: "Understanding int, double, and decimal - choosing the right numeric type"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 3.2: Numeric Precision
+
+<div class="section-header">
+  <div class="section-badge">🔢 Numeric Types</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+## 🎯 The Core Question
+
+When storing numbers, you must choose the right container:
+
+<div class="type-comparison">
+  <div class="type-card">
+    <h3>int</h3>
+    <p class="type-bits">32-bit</p>
+    <p class="type-desc">Whole numbers only</p>
+    <code>int count = 1500;</code>
+  </div>
+  <div class="type-card">
+    <h3>double</h3>
+    <p class="type-bits">64-bit</p>
+    <p class="type-desc">Decimal numbers (scientific)</p>
+    <code>double temp = 98.6;</code>
+  </div>
+  <div class="type-card highlight-money">
+    <h3>decimal</h3>
+    <p class="type-bits">128-bit</p>
+    <p class="type-desc">High precision (money!)</p>
+    <code>decimal price = 45.99m;</code>
+  </div>
+</div>
+
+---
+
+## 🧮 int: The Counting Type
+
+Use `int` when you need **whole numbers** without decimals:
+
+```csharp
+int userCount = 1500;        // ✅ Perfect for counting
+int maxAttempts = 3;         // ✅ Perfect for limits
+int temperature = 72;        // ✅ Good enough for room temp
+
+int price = 19.99;           // ❌ COMPILER ERROR - can't store decimals
+```
+
+### int Facts:
+- **Range:** -2,147,483,648 to 2,147,483,647
+- **Memory:** 4 bytes (32 bits)
+- **Speed:** Fastest numeric operations
+- **Use for:** Counts, IDs, indexes, ages, quantities
+
+<TryItNowRunner 
+  starterId="week-03-int-demo" 
+  height={280}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        int playerScore = 0;
+        int bonusPoints = 500;
+        
+        playerScore = playerScore + bonusPoints;
+        Console.WriteLine("Score: " + playerScore);
+    }
+}`}
+  instructions="Run this code. Try adding more points to the score!" 
+/>
+
+---
+
+## 📐 double: The Scientific Type
+
+Use `double` when you need **decimal precision** for calculations:
+
+```csharp
+double distance = 384400.5;   // ✅ Great for measurements
+double pi = 3.14159265359;    // ✅ Mathematical constants
+double velocity = 299792.458; // ✅ Scientific data
+
+double price = 19.99;         // ⚠️ Works, but NOT for money!
+```
+
+### double Facts:
+- **Range:** ±5.0 × 10^−324 to ±1.7 × 10^308
+- **Memory:** 8 bytes (64 bits)
+- **Precision:** ~15-16 significant digits
+- **Use for:** Science, graphics, physics, measurements
+
+<TryItNowRunner 
+  starterId="week-03-double-demo" 
+  height={300}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        double moonDistance = 384400.5;  // kilometers
+        double lightSpeed = 299792.458;  // km per second
+        
+        double travelTime = moonDistance / lightSpeed;
+        Console.WriteLine("Light reaches the Moon in " + travelTime + " seconds");
+    }
+}`}
+  instructions="Run this code. This calculates how long light takes to reach the Moon!" 
+/>
+
+---
+
+## 💰 decimal: The Money Type
+
+<div class="critical-warning">
+  <h3>⚠️ CRITICAL: Never Use double for Money!</h3>
+  <p>
+    Binary floating-point (double) cannot accurately represent many decimal fractions. 
+    This leads to <strong>rounding errors</strong> that accumulate over time.
+  </p>
+</div>
+
+### The Famous 0.1 + 0.2 Problem
+
+<TryItNowRunner 
+  starterId="week-03-float-problem" 
+  height={300}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // The dangerous way (double)
+        double badPrice = 0.1 + 0.2;
+        Console.WriteLine("double: 0.1 + 0.2 = " + badPrice);
+        
+        // The safe way (decimal)
+        decimal goodPrice = 0.1m + 0.2m;
+        Console.WriteLine("decimal: 0.1 + 0.2 = " + goodPrice);
+    }
+}`}
+  instructions="Run this and see the difference! The 'm' suffix makes it a decimal literal." 
+/>
+
+### Why This Happens
+
+<DeepDiveTabs
+  title="Binary vs Decimal Arithmetic"
+  tabs={[
+    {
+      id: "binary",
+      label: "🔢 The Problem",
+      content: `
+        <h3>Binary Floating-Point</h3>
+        <p>Computers store numbers in binary (base 2). Just like 1/3 = 0.333... in decimal, some decimal fractions become infinite in binary.</p>
+        <p><strong>0.1 in binary:</strong> 0.0001100110011001100110011... (repeats forever)</p>
+        <p>The computer has to round, and those tiny errors add up in financial calculations!</p>
+      `
+    },
+    {
+      id: "solution",
+      label: "✅ The Solution",
+      content: `
+        <h3>Decimal Type</h3>
+        <p>The <code>decimal</code> type uses base-10 internally, so it represents decimal fractions exactly.</p>
+        <ul>
+          <li><strong>128-bit precision</strong> — 28-29 significant digits</li>
+          <li><strong>Exact decimal math</strong> — No binary rounding errors</li>
+          <li><strong>Required for finance</strong> — Banks, e-commerce, payroll</li>
+        </ul>
+        <p><strong>Note:</strong> Use the <code>m</code> suffix for decimal literals: <code>45.99m</code></p>
+      `
+    }
+  ]}
+/>
+
+### Using decimal Correctly
+
+```csharp
+decimal productPrice = 45.99m;     // Note the 'm' suffix!
+decimal taxRate = 0.0725m;
+decimal totalCost = productPrice * (1 + taxRate);
+
+Console.WriteLine("Total: $" + totalCost);  // Exact to the penny
+```
+
+---
+
+## 📊 Comparison Chart
+
+| Type | Size | Precision | Speed | Use Case |
+|------|------|-----------|-------|----------|
+| `int` | 32-bit | Exact (whole) | ⚡ Fastest | Counting, IDs, indexes |
+| `double` | 64-bit | ~15 digits | ⚡ Fast | Science, graphics, physics |
+| `decimal` | 128-bit | 28-29 digits | 🐢 Slower | Money, finance, commerce |
+
+---
+
+## 💡 The Senior Architect's Perspective
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>From the Field: The $0.01 Disaster</h4>
+    <p>
+      Early in my career, I saw a payroll system that used <code>double</code> for salary calculations. 
+      Over thousands of employees and months of paychecks, the rounding errors accumulated. 
+      The company was off by <strong>$47,000</strong> at year-end.
+    </p>
+    <p>
+      <strong>Rule:</strong> If it touches money, use <code>decimal</code>. No exceptions.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-03-3-2-checkpoint"
+  title="🔍 Section 3.2 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Which type is best for storing a product price like $45.99?",
+      options: ["int", "double", "decimal", "string"],
+      correctAnswer: "decimal",
+      explanation: "Decimal is the correct type for money because it avoids binary floating-point rounding errors."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Can an int store the value 10.5?",
+      options: ["Yes", "No - it will round to 10", "No - compiler error", "Only with a cast"],
+      correctAnswer: "No - compiler error",
+      explanation: "An int cannot store decimal values. The compiler will reject this assignment."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What does the 'm' suffix mean in '45.99m'?",
+      options: [
+        "It's a million", 
+        "It's a decimal literal", 
+        "It's meters", 
+        "It's a memory address"
+      ],
+      correctAnswer: "It's a decimal literal",
+      explanation: "The 'm' suffix tells C# that 45.99 should be treated as a decimal type, not a double."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 3.3 - Logic & Text</strong></p>
+  <p>Learn about booleans for true/false states and strings for text data.</p>
+  <a href="/week-03/3-3-logic-and-text/" class="vscode-button">Continue to Section 3.3 →</a>
+</div>
+
+<style>{`
+  .type-comparison {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .type-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .type-card h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #4ec9b0;
+  }
+
+  .type-bits {
+    color: #888;
+    font-size: 0.85rem;
+    margin: 4px 0;
+  }
+
+  .type-desc {
+    margin: 8px 0;
+  }
+
+  .type-card code {
+    font-size: 0.85rem;
+  }
+
+  .type-card.highlight-money {
+    border-color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .type-card.highlight-money h3 {
+    color: #22c55e;
+  }
+
+  .critical-warning {
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .critical-warning h3 {
+    margin-top: 0;
+    color: #ef4444;
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 20px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 48px;
+    flex-shrink: 0;
+  }
+
+  .architect-content h4 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .type-comparison {
+      grid-template-columns: 1fr;
+    }
+    
+    .architect-note {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+`}</style>
