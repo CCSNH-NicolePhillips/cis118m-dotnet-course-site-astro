@@ -27,30 +27,78 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
-## 🎯 The Core Question
+## 🎯 The Three Tiers of Storage
 
-When storing numbers, you must choose the right container:
-
-<div class="type-comparison">
-  <div class="type-card">
-    <h3>int</h3>
-    <p class="type-bits">32-bit</p>
-    <p class="type-desc">Whole numbers only</p>
-    <code>int count = 1500;</code>
-  </div>
-  <div class="type-card">
-    <h3>double</h3>
-    <p class="type-bits">64-bit</p>
-    <p class="type-desc">Decimal numbers (scientific)</p>
-    <code>double temp = 98.6;</code>
-  </div>
-  <div class="type-card highlight-money">
-    <h3>decimal</h3>
-    <p class="type-bits">128-bit</p>
-    <p class="type-desc">High precision (money!)</p>
-    <code>decimal price = 45.99m;</code>
-  </div>
+<div class="tiers-intro">
+  <p>
+    This visualization compares the three workhorses of C# math. From the simple efficiency of 
+    the <strong>int</strong> to the scientific vastness of the <strong>double</strong> and the 
+    financial lockdown of the <strong>decimal</strong>, each container is engineered for a 
+    specific scale of data.
+  </p>
 </div>
+
+## 📦 Detailed Container Specs
+
+<DeepDiveTabs
+  title=""
+  tabs={[
+    {
+      label: "int",
+      content: `
+### int: The Solid Counter
+
+The sturdy cardboard box. It stores whole numbers without any fractional 'noise.' It is the most performant type because modern CPUs are optimized to process 32-bit integers at lightning speed.
+
+- **Best for:** Counting, loop indices, and IDs.
+- **Weakness:** Cannot hold any decimal points. If you divide 5 / 2, you'll get 2, not 2.5.
+
+| Spec | Value |
+|------|-------|
+| **Size** | 32-bit (4 Bytes) |
+| **Range** | -2.1B to 2.1B |
+| **Precision** | Exact (Whole numbers) |
+| **Performance** | Max Speed |
+      `
+    },
+    {
+      label: "double",
+      content: `
+### double: The Scientific Sphere
+
+The glass sphere. It can hold astronomical numbers (and microscopic ones), but it does so by **approximation**. It uses base-2 math, which is incredibly fast but cannot represent certain fractions like \`0.1\` exactly.
+
+- **Best for:** Physics, graphics, and large-scale data science.
+- **Weakness:** 'Rounding errors' can accumulate over time. Never use this for money.
+
+| Spec | Value |
+|------|-------|
+| **Size** | 64-bit (8 Bytes) |
+| **Range** | ±1.7 × 10^308 |
+| **Precision** | 15-17 digits (Approximate) |
+| **Performance** | Very High (CPU native) |
+      `
+    },
+    {
+      label: "decimal",
+      content: `
+### decimal: The Financial Vault
+
+The titanium vault. It uses base-10 math (like humans do), ensuring that \`0.1 + 0.2\` equals exactly \`0.3\`. It is much slower than a double because it's processed in software, but it is unbeatably accurate.
+
+- **Best for:** Banking, tax calculations, and currency.
+- **Weakness:** Takes 4x more memory than an \`int\` and is 20x slower than a \`double\`.
+
+| Spec | Value |
+|------|-------|
+| **Size** | 128-bit (16 Bytes) |
+| **Range** | ±7.9 × 10^28 |
+| **Precision** | 28-29 digits (Exact) |
+| **Performance** | Low (Software based) |
+      `
+    }
+  ]}
+/>
 
 ---
 
@@ -349,6 +397,28 @@ Console.WriteLine("Total: $" + totalCost);  // Exact to the penny
   }
 
   body[data-theme="light"] .section-intro p {
+    color: #333;
+  }
+
+  .tiers-intro {
+    background: #1e1e2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .tiers-intro p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  body[data-theme="light"] .tiers-intro {
+    background: #f0f4f8;
+  }
+
+  body[data-theme="light"] .tiers-intro p {
     color: #333;
   }
 
