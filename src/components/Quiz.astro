@@ -264,13 +264,48 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
                 
                 const successMsg = document.createElement('div');
                 successMsg.className = 'gatekeeper-success';
+                
+                // Check if they can retake for a better score (not 100% and has attempts left)
+                const canRetake = bestScore < 100 && (unlimitedAttempts || currentAttempts < maxAttempts);
+                const attemptsText = unlimitedAttempts 
+                  ? 'Unlimited attempts' 
+                  : `${maxAttempts - currentAttempts} attempt(s) remaining`;
+                
                 successMsg.innerHTML = `
                   <h3>Quiz Passed</h3>
                   <p>Score: <strong>${bestScore}%</strong></p>
+                  ${canRetake ? `<p style="color: #888; font-size: 0.9rem; margin-top: 10px;">${attemptsText}</p>` : ''}
                 `;
                 statusDiv.appendChild(successMsg);
-                // Hide the form since already passed
-                form.style.display = 'none';
+                
+                // If they can retake, show a retake button instead of hiding the form
+                if (canRetake) {
+                  form.style.display = 'none';
+                  
+                  const retakeContainer = document.createElement('div');
+                  retakeContainer.className = 'retake-container';
+                  retakeContainer.style.textAlign = 'center';
+                  retakeContainer.style.marginTop = '20px';
+                  
+                  const retakeButton = document.createElement('button');
+                  retakeButton.className = 'retake-button';
+                  retakeButton.innerHTML = `🔄 Retake for Better Score (Attempt ${currentAttempts + 1}/${unlimitedAttempts ? '∞' : maxAttempts})`;
+                  retakeButton.style.display = 'inline-block';
+                  retakeButton.onclick = () => {
+                    form.style.display = 'block';
+                    retakeContainer.style.display = 'none';
+                    // Clear previous answers
+                    form.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                      input.checked = false;
+                    });
+                  };
+                  
+                  retakeContainer.appendChild(retakeButton);
+                  statusDiv.appendChild(retakeContainer);
+                } else {
+                  // Hide the form since already passed with 100% or no attempts left
+                  form.style.display = 'none';
+                }
               } else if (bestScore >= 70 && bestScore < passingScore) {
                 // Score is 70-99% (below passing threshold) - show revision option
                 form.style.display = 'none';
