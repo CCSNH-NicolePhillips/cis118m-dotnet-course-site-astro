@@ -24,12 +24,39 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
 
 ## 📋 Week Overview
 
-| Section | Topic | Focus |
-|---------|-------|-------|
-| **3.1** | [Declaring State](/week-03/3-1-declaring-state/) | Variables, identifiers, and memory |
-| **3.2** | [Numeric Precision](/week-03/3-2-numeric-precision/) | int, double, and decimal types |
-| **3.3** | [Logic & Text](/week-03/3-3-logic-and-text/) | bool, char, and string types |
-| **3.4** | [Immutability](/week-03/3-4-immutability/) | Constants and readonly values |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>3.1</strong></td>
+        <td><a href="/week-03/3-1-declaring-state/">Declaring State</a></td>
+        <td>Variables, identifiers, and memory</td>
+      </tr>
+      <tr>
+        <td><strong>3.2</strong></td>
+        <td><a href="/week-03/3-2-numeric-precision/">Numeric Precision</a></td>
+        <td>int, double, and decimal types</td>
+      </tr>
+      <tr>
+        <td><strong>3.3</strong></td>
+        <td><a href="/week-03/3-3-logic-and-text/">Logic & Text</a></td>
+        <td>bool, char, and string types</td>
+      </tr>
+      <tr>
+        <td><strong>3.4</strong></td>
+        <td><a href="/week-03/3-4-immutability/">Immutability</a></td>
+        <td>Constants and readonly values</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -94,12 +121,39 @@ When you declare a variable, you're telling the computer:
 
 ## 📊 Week 03 Deliverables
 
-| Assignment | Points | Due Date |
-|------------|--------|----------|
-| Section Readings (3.1–3.4) | Participation | Throughout week |
-| [Lab 03: Data Manifest](/week-03/lab/) | 100 pts | Sunday 11:59 PM |
-| [Reflection: Type Safety](/week-03/homework/) | 100 pts | Sunday 11:59 PM |
-| [Weekly Assessment 03](/week-03/weekly-assessment/) | 100 pts | Sunday 11:59 PM |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Assignment</th>
+        <th>Points</th>
+        <th>Due Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Section Readings (3.1–3.4)</td>
+        <td>Participation</td>
+        <td>Throughout week</td>
+      </tr>
+      <tr>
+        <td><a href="/week-03/lab/">Lab 03: Data Manifest</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+      <tr>
+        <td><a href="/week-03/homework/">Reflection: Type Safety</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+      <tr>
+        <td><a href="/week-03/weekly-assessment/">Weekly Assessment 03</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -146,5 +200,86 @@ Complete the sections in order:
 
   body[data-theme="light"] .next-section p {
     color: #333 !important;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container td strong {
+    color: #fff;
+  }
+
+  .styled-table-container a {
+    color: #4ec9b0;
+    text-decoration: none;
+  }
+
+  .styled-table-container a:hover {
+    text-decoration: underline;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container td strong {
+    color: #333;
+  }
+
+  body[data-theme="light"] .styled-table-container a {
+    color: #0a7c62;
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}</style>

@@ -106,16 +106,50 @@ Your output can be different, but it should be **formatted** and **professional*
 
 ## Grading Rubric
 
-| Criteria | Points |
-|----------|--------|
-| Header comments (name + assignment) | 10 |
-| Correct namespace (`SystemDiagnostics`) | 15 |
-| Correct class structure | 15 |
-| XML documentation on Main | 15 |
-| `static int Main()` with `return 0` | 15 |
-| At least 5 lines of formatted output | 20 |
-| Code compiles and runs | 10 |
-| **Total** | **100** |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Header comments (name + assignment)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Correct namespace (<code>SystemDiagnostics</code>)</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Correct class structure</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>XML documentation on Main</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td><code>static int Main()</code> with <code>return 0</code></td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>At least 5 lines of formatted output</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Code compiles and runs</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -200,5 +234,73 @@ Console.WriteLine("Status: All systems operational");
 
   body[data-theme="light"] .next-section p {
     color: #333 !important;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container td strong {
+    color: #fff;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container td strong {
+    color: #333;
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}</style>

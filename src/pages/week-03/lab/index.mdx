@@ -24,13 +24,44 @@ Build a **System Profile** console application that stores and displays system d
 
 Your program must declare and use variables for the following data:
 
-| Variable | Description | Required Type |
-|----------|-------------|---------------|
-| `appVersion` | Application version (e.g., 1.2) | `double` |
-| `userCount` | Number of active users (e.g., 1500) | `int` |
-| `isSystemActive` | System status (True/False) | `bool` |
-| `serverCost` | Monthly server cost (e.g., 45.99) | `decimal` ⚠️ |
-| `systemName` | Name of the system | `string` |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Description</th>
+        <th>Required Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>appVersion</code></td>
+        <td>Application version (e.g., 1.2)</td>
+        <td><code>double</code></td>
+      </tr>
+      <tr>
+        <td><code>userCount</code></td>
+        <td>Number of active users (e.g., 1500)</td>
+        <td><code>int</code></td>
+      </tr>
+      <tr>
+        <td><code>isSystemActive</code></td>
+        <td>System status (True/False)</td>
+        <td><code>bool</code></td>
+      </tr>
+      <tr>
+        <td><code>serverCost</code></td>
+        <td>Monthly server cost (e.g., 45.99)</td>
+        <td><code>decimal</code> ⚠️</td>
+      </tr>
+      <tr>
+        <td><code>systemName</code></td>
+        <td>Name of the system</td>
+        <td><code>string</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <div class="critical-note">
   <h4>⚠️ Why decimal for serverCost?</h4>
@@ -96,14 +127,42 @@ class Program
 
 ## ✅ Grading Rubric
 
-| Criteria | Points |
-|----------|--------|
-| Correct variable types used | 40 |
-| All 5 variables declared and initialized | 20 |
-| Output formatted correctly | 20 |
-| Uses `decimal` for money (with 'm' suffix) | 10 |
-| Code compiles without errors | 10 |
-| **Total** | **100** |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Correct variable types used</td>
+        <td>40</td>
+      </tr>
+      <tr>
+        <td>All 5 variables declared and initialized</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Output formatted correctly</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Uses <code>decimal</code> for money (with 'm' suffix)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Code compiles without errors</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -225,5 +284,73 @@ When your program runs correctly and displays the formatted report:
 
   body[data-theme="light"] .next-section p {
     color: #333 !important;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container td strong {
+    color: #fff;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container td strong {
+    color: #333;
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}</style>

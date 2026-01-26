@@ -195,12 +195,39 @@ if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
 
 ## 📊 Quick Reference
 
-| Feature | `const` | Regular Variable |
-|---------|---------|------------------|
-| Can be changed | ❌ No | ✅ Yes |
-| When value is set | Compile time | Runtime |
-| Naming convention | UPPER_CASE | camelCase |
-| Use for | Fixed values, config | Changing data |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th><code>const</code></th>
+        <th>Regular Variable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Can be changed</td>
+        <td>❌ No</td>
+        <td>✅ Yes</td>
+      </tr>
+      <tr>
+        <td>When value is set</td>
+        <td>Compile time</td>
+        <td>Runtime</td>
+      </tr>
+      <tr>
+        <td>Naming convention</td>
+        <td>UPPER_CASE</td>
+        <td>camelCase</td>
+      </tr>
+      <tr>
+        <td>Use for</td>
+        <td>Fixed values, config</td>
+        <td>Changing data</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -315,5 +342,65 @@ if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
       flex-direction: column;
       text-align: center;
     }
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}</style>

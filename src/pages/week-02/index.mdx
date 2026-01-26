@@ -20,12 +20,39 @@ description: "Understanding the anatomy and structure of a C# program"
 
 ## 📋 Week Overview
 
-| Section | Topic | Focus |
-|---------|-------|-------|
-| **2.1** | [Namespaces & Classes](/week-02/2-1-namespaces/) | Organizational containers and blueprints |
-| **2.2** | [The Main Method](/week-02/2-2-main-method/) | Program entry point and execution flow |
-| **2.3** | [Compilation Pipeline](/week-02/2-3-compilation/) | From source code to running program |
-| **2.4** | [Code Style & Conventions](/week-02/2-4-style/) | Professional formatting standards |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>2.1</strong></td>
+        <td><a href="/week-02/2-1-namespaces/">Namespaces & Classes</a></td>
+        <td>Organizational containers and blueprints</td>
+      </tr>
+      <tr>
+        <td><strong>2.2</strong></td>
+        <td><a href="/week-02/2-2-main-method/">The Main Method</a></td>
+        <td>Program entry point and execution flow</td>
+      </tr>
+      <tr>
+        <td><strong>2.3</strong></td>
+        <td><a href="/week-02/2-3-compilation/">Compilation Pipeline</a></td>
+        <td>From source code to running program</td>
+      </tr>
+      <tr>
+        <td><strong>2.4</strong></td>
+        <td><a href="/week-02/2-4-style/">Code Style & Conventions</a></td>
+        <td>Professional formatting standards</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -92,12 +119,39 @@ By the end of this week, you will be able to:
 
 ## 📅 Schedule & Deliverables
 
-| Activity | Points | Due |
-|----------|--------|-----|
-| Section Readings (2.1–2.4) | Participation | Throughout week |
-| [Lab 2: System Status Report](/week-02/lab/) | 100 pts | Sunday 11:59 PM |
-| [Homework: Architecture Reflection](/week-02/homework/) | 100 pts | Sunday 11:59 PM |
-| [Weekly Assessment](/week-02/weekly-assessment/) | 100 pts | Sunday 11:59 PM |
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Activity</th>
+        <th>Points</th>
+        <th>Due</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Section Readings (2.1–2.4)</td>
+        <td>Participation</td>
+        <td>Throughout week</td>
+      </tr>
+      <tr>
+        <td><a href="/week-02/lab/">Lab 2: System Status Report</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+      <tr>
+        <td><a href="/week-02/homework/">Homework: Architecture Reflection</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+      <tr>
+        <td><a href="/week-02/weekly-assessment/">Weekly Assessment</a></td>
+        <td>100 pts</td>
+        <td>Sunday 11:59 PM</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 ---
 
@@ -198,6 +252,87 @@ Complete these in order:
 
   body[data-theme="light"] .next-step p {
     color: #333 !important;
+  }
+
+  /* Styled table */
+  .styled-table-container {
+    background: #1e2128;
+    border-radius: 12px;
+    padding: 8px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styled-table-container th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #fff;
+    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .styled-table-container td {
+    padding: 16px;
+    text-align: left;
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container tr:last-child td {
+    border-bottom: none;
+  }
+
+  .styled-table-container td strong {
+    color: #fff;
+  }
+
+  .styled-table-container a {
+    color: #4ec9b0;
+    text-decoration: none;
+  }
+
+  .styled-table-container a:hover {
+    text-decoration: underline;
+  }
+
+  .styled-table-container code {
+    color: #4ec9b0;
+    background: rgba(78, 201, 176, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  body[data-theme="light"] .styled-table-container {
+    background: #f8f9fa !important;
+    border: 1px solid #e0e0e0;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    color: #333 !important;
+    border-bottom-color: rgba(78, 201, 176, 0.5);
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #333 !important;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+  }
+
+  body[data-theme="light"] .styled-table-container td strong {
+    color: #333;
+  }
+
+  body[data-theme="light"] .styled-table-container a {
+    color: #0a7c62;
+  }
+
+  body[data-theme="light"] .styled-table-container code {
+    color: #0a7c62;
+    background: rgba(78, 201, 176, 0.2);
   }
 `}
 </style>
