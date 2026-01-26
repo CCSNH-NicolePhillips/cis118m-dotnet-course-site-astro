@@ -1,0 +1,198 @@
+---
+/**
+ * DueDateBanner - Shows a prominent due date notice on graded assignments
+ * 
+ * Usage: <DueDateBanner week={1} type="Lab" />
+ *        <DueDateBanner week={2} type="Homework" />
+ *        <DueDateBanner week={1} type="Quiz" />
+ */
+
+interface Props {
+  week: number;
+  type: 'Lab' | 'Homework' | 'Quiz' | 'Participation';
+  showLatePolicy?: boolean;
+}
+
+const { week, type, showLatePolicy = true } = Astro.props;
+
+// Due dates per week (matches due-dates.mjs)
+const WEEK_DUE_DATES: Record<number, string> = {
+  1: '2026-01-25T23:59:59-05:00',
+  2: '2026-02-01T23:59:59-05:00',
+  3: '2026-02-08T23:59:59-05:00',
+  4: '2026-02-15T23:59:59-05:00',
+  5: '2026-02-22T23:59:59-05:00',
+  6: '2026-03-01T23:59:59-05:00',
+  7: '2026-03-08T23:59:59-05:00',
+  8: '2026-03-22T23:59:59-05:00',
+};
+
+const dueDateString = WEEK_DUE_DATES[week];
+const dueDate = dueDateString ? new Date(dueDateString) : null;
+
+// Format: "Saturday, January 25 at 11:59 PM"
+const formattedDate = dueDate 
+  ? dueDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric',
+      timeZone: 'America/New_York'
+    }) 
+  : 'TBD';
+
+const formattedTime = dueDate 
+  ? dueDate.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      timeZone: 'America/New_York'
+    }) 
+  : '';
+
+// Determine icon based on type
+const icons: Record<string, string> = {
+  'Lab': '🔬',
+  'Homework': '📝',
+  'Quiz': '📋',
+  'Participation': '✅'
+};
+const icon = icons[type] || '📅';
+
+// Determine if quiz (no late submissions allowed)
+const isQuiz = type === 'Quiz';
+---
+
+<div class="due-date-banner" data-week={week}>
+  <div class="due-date-content">
+    <span class="due-icon">{icon}</span>
+    <div class="due-text">
+      <span class="due-label">Due Date:</span>
+      <span class="due-date">{formattedDate} at {formattedTime} EST</span>
+    </div>
+  </div>
+  {showLatePolicy && (
+    <div class="late-policy">
+      {isQuiz ? (
+        <span class="policy-strict">⚠️ No late submissions — Quizzes lock after due date</span>
+      ) : (
+        <span class="policy-penalty">📉 Late penalty: -10 points per day (max 3 days)</span>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .due-date-banner {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%);
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .due-date-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .due-icon {
+    font-size: 1.5rem;
+  }
+
+  .due-text {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  .due-label {
+    font-weight: 600;
+    color: #ffc107;
+  }
+
+  .due-date {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary, #e0e0e0);
+  }
+
+  .late-policy {
+    font-size: 0.85rem;
+    padding-left: 36px;
+    opacity: 0.9;
+  }
+
+  .policy-strict {
+    color: #ff6b6b;
+  }
+
+  .policy-penalty {
+    color: #ffb347;
+  }
+
+  /* Light mode */
+  :global(body[data-theme="light"]) .due-date-banner {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 152, 0, 0.2) 100%);
+    border-color: #e6a700;
+  }
+
+  :global(body[data-theme="light"]) .due-label {
+    color: #b38600;
+  }
+
+  :global(body[data-theme="light"]) .due-date {
+    color: #333;
+  }
+
+  /* Past due styling - will be set by client-side JS */
+  .due-date-banner.past-due {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%);
+    border-color: #ef4444;
+  }
+
+  .due-date-banner.past-due .due-label {
+    color: #ef4444;
+  }
+
+  .due-date-banner.past-due .due-date::after {
+    content: ' (PAST DUE)';
+    color: #ef4444;
+    font-weight: 700;
+  }
+
+  @media (max-width: 600px) {
+    .due-date-banner {
+      padding: 12px 16px;
+    }
+    
+    .due-text {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .late-policy {
+      padding-left: 0;
+    }
+  }
+</style>
+
+<script define:vars={{ week, dueDateString }}>
+  // Check if past due on client side
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!dueDateString) return;
+    
+    const dueDate = new Date(dueDateString);
+    const now = new Date();
+    
+    if (now > dueDate) {
+      const banner = document.querySelector(`.due-date-banner[data-week="${week}"]`);
+      if (banner) {
+        banner.classList.add('past-due');
+      }
+    }
+  });
+</script>
