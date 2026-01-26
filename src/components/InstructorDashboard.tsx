@@ -1123,12 +1123,18 @@ const InstructorDashboard: React.FC = () => {
                   ) : submissionHistory.length === 0 ? (
                     <div style={{ color: '#888', textAlign: 'center', padding: '20px' }}>No submission history available</div>
                   ) : (
-                    submissionHistory.map((submission: any, index: number) => (
+                    submissionHistory.map((submission: any, index: number) => {
+                      // Handle both quiz and lab/homework submission formats
+                      const displayScore = submission.score ?? submission.aiGrade ?? 0;
+                      const displayFeedback = submission.aiFeedback;
+                      const isQuiz = submission.answers !== undefined || submission.quizId !== undefined;
+                      
+                      return (
                       <details key={index} style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '10px' }}>
                         <summary style={{ cursor: 'pointer', color: '#ddd', padding: '5px 0' }}>
                           <span style={{ 
                             display: 'inline-block',
-                            background: (submission.aiGrade || 0) >= 70 ? '#4ec9b0' : '#ce9178',
+                            background: displayScore >= 70 ? '#4ec9b0' : '#ce9178',
                             color: '#000',
                             padding: '2px 8px',
                             borderRadius: '4px',
@@ -1136,16 +1142,43 @@ const InstructorDashboard: React.FC = () => {
                             fontSize: '0.8rem',
                             marginRight: '10px'
                           }}>
-                            {submission.aiGrade ?? '--'}%
+                            {displayScore}%
                           </span>
-                          Attempt {submissionHistory.length - index} — {new Date(submission.submittedAt).toLocaleString()}
+                          {isQuiz && submission.passed !== undefined && (
+                            <span style={{
+                              color: submission.passed ? '#4ec9b0' : '#ce9178',
+                              marginRight: '10px',
+                              fontSize: '0.8rem'
+                            }}>
+                              {submission.passed ? '✓ Passed' : '✗ Failed'}
+                            </span>
+                          )}
+                          Attempt {submission.attempt || (submissionHistory.length - index)} — {new Date(submission.submittedAt).toLocaleString()}
                         </summary>
                         <div style={{ padding: '10px', background: '#1a1a1a', borderRadius: '4px', marginTop: '5px' }}>
-                          {submission.aiFeedback && (
+                          {displayFeedback && (
                             <p style={{ color: '#888', fontSize: '0.85rem', margin: '0 0 10px 0' }}>
-                              <strong style={{ color: '#4ec9b0' }}>Feedback:</strong> {typeof submission.aiFeedback === 'string' ? submission.aiFeedback : JSON.stringify(submission.aiFeedback)}
+                              <strong style={{ color: '#4ec9b0' }}>Feedback:</strong> {typeof displayFeedback === 'string' ? displayFeedback : JSON.stringify(displayFeedback)}
                             </p>
                           )}
+                          {isQuiz && submission.answers && (
+                            <div style={{ marginBottom: '10px' }}>
+                              <strong style={{ color: '#4ec9b0', fontSize: '0.85rem' }}>Answers:</strong>
+                              <pre style={{ 
+                                color: '#ddd', 
+                                fontSize: '0.8rem', 
+                                margin: '5px 0 0 0',
+                                whiteSpace: 'pre-wrap',
+                                maxHeight: '150px',
+                                overflowY: 'auto'
+                              }}>
+                                {typeof submission.answers === 'object' 
+                                  ? Object.entries(submission.answers).map(([q, a]) => `${q}: ${a}`).join('\n')
+                                  : String(submission.answers)}
+                              </pre>
+                            </div>
+                          )}
+                          {!isQuiz && (
                           <pre style={{ 
                             color: '#ddd', 
                             fontSize: '0.8rem', 
@@ -1175,9 +1208,10 @@ const InstructorDashboard: React.FC = () => {
                               return String(content);
                             })()}
                           </pre>
+                          )}
                         </div>
                       </details>
-                    ))
+                    );})
                   )}
                 </div>
               </details>
