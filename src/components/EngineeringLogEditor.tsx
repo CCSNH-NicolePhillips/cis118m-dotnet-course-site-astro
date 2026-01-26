@@ -6,6 +6,28 @@ import CharacterCount from '@tiptap/extension-character-count'
 import React, { useState, useEffect } from 'react'
 import { getAccessToken, getUser } from '../lib/auth'
 
+// Theme detection hook
+function useTheme() {
+  const [isDark, setIsDark] = useState(true);
+  
+  useEffect(() => {
+    const checkTheme = () => {
+      const theme = document.body.getAttribute('data-theme');
+      setIsDark(theme !== 'light');
+    };
+    
+    checkTheme();
+    
+    // Watch for theme changes
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
+    
+    return () => observer.disconnect();
+  }, []);
+  
+  return isDark;
+}
+
 interface EngineeringLogEditorProps {
   assignmentId?: string;
   /** Optional context to pass to AI grader (fallback if not in server config) */
@@ -241,13 +263,26 @@ const EngineeringLogEditor = ({
 
   if (!editor) return null;
 
+  // Use theme hook
+  const isDark = typeof document !== 'undefined' && document.body.getAttribute('data-theme') !== 'light';
+  
+  // Theme-aware colors
+  const colors = {
+    bg: isDark ? '#1e1e1e' : '#ffffff',
+    bgHover: isDark ? 'rgba(78, 201, 176, 0.2)' : 'rgba(78, 201, 176, 0.15)',
+    text: isDark ? '#d4d4d4' : '#333333',
+    textMuted: isDark ? '#888' : '#666',
+    border: isDark ? '#333' : '#e5e7eb',
+    feedbackBg: isDark ? '#000' : '#f8f9fa',
+  };
+
   const ToolbarButton = ({ onClick, isActive, children, title }: { onClick: () => void, isActive?: boolean, children: React.ReactNode, title: string }) => (
     <button
       onClick={onClick}
       title={title}
       style={{
-        color: isActive ? '#4ec9b0' : '#fff',
-        background: isActive ? 'rgba(78, 201, 176, 0.2)' : 'none',
+        color: isActive ? '#4ec9b0' : (isDark ? '#fff' : '#333'),
+        background: isActive ? colors.bgHover : 'none',
         border: '1px solid #4ec9b0',
         marginRight: '4px',
         padding: '4px 8px',
@@ -266,15 +301,15 @@ const EngineeringLogEditor = ({
 
   return (
     <div style={{ marginBottom: '20px' }}>
-      <div style={{ border: '2px solid #4ec9b0', borderRadius: '8px', padding: '10px', background: '#1e1e1e' }}>
+      <div style={{ border: '2px solid #4ec9b0', borderRadius: '8px', padding: '10px', background: colors.bg }}>
         {/* Toolbar */}
-        <div style={{ marginBottom: '10px', borderBottom: '1px solid #333', paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ marginBottom: '10px', borderBottom: `1px solid ${colors.border}`, paddingBottom: '8px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
             {/* Undo/Redo */}
             <ToolbarButton onClick={() => editor.chain().focus().undo().run()} title="Undo (Ctrl+Z)">↩</ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().redo().run()} title="Redo (Ctrl+Y)">↪</ToolbarButton>
             
-            <span style={{ borderLeft: '1px solid #333', margin: '0 6px' }}></span>
+            <span style={{ borderLeft: `1px solid ${colors.border}`, margin: '0 6px' }}></span>
             
             {/* Text formatting */}
             <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} isActive={editor.isActive('bold')} title="Bold (Ctrl+B)">
@@ -340,7 +375,7 @@ const EngineeringLogEditor = ({
         {/* Editor - with lock overlay when passed */}
         <div style={{ 
           minHeight: '150px', 
-          color: '#d4d4d4', 
+          color: colors.text, 
           padding: '10px',
           position: 'relative',
           opacity: isLocked ? 0.7 : 1,
@@ -354,14 +389,14 @@ const EngineeringLogEditor = ({
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'rgba(0,0,0,0.3)',
+              background: isDark ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.5)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               pointerEvents: 'auto'
             }}>
               <div style={{
-                background: '#1e1e1e',
+                background: colors.bg,
                 border: '2px solid #4ec9b0',
                 borderRadius: '8px',
                 padding: '15px 25px',
@@ -369,14 +404,14 @@ const EngineeringLogEditor = ({
               }}>
                 <div style={{ color: '#4ec9b0', fontSize: '1.5rem', marginBottom: '5px' }}>🔒</div>
                 <div style={{ color: '#4ec9b0', fontWeight: 'bold' }}>Submission Locked</div>
-                <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '5px' }}>Your passing submission has been recorded.</div>
+                <div style={{ color: colors.textMuted, fontSize: '0.85rem', marginTop: '5px' }}>Your passing submission has been recorded.</div>
               </div>
             </div>
           )}
         </div>
         
         {/* Word count footer */}
-        <div style={{ borderTop: '1px solid #333', paddingTop: '8px', marginTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#888' }}>
+        <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: '8px', marginTop: '8px', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: colors.textMuted }}>
           <span>{wordCount} words • {charCount} characters</span>
           <span style={{ color: wordCount >= 30 && wordCount <= 100 ? '#4ec9b0' : '#ce9178' }}>
             {wordCount < 30 ? 'Write a bit more (aim for 30-100 words)' : wordCount > 100 ? 'Good detail! Consider being more concise.' : 'Good length'}
@@ -388,7 +423,7 @@ const EngineeringLogEditor = ({
       {(feedback || score !== null) && (
         <div style={{ 
           marginTop: '15px', 
-          background: '#000', 
+          background: colors.feedbackBg, 
           border: `1px solid ${submissionStatus === 'passed' ? '#4ec9b0' : submissionStatus === 'needs-revision' ? '#ce9178' : '#4ec9b0'}`, 
           padding: '15px', 
           borderRadius: '4px', 
@@ -415,13 +450,13 @@ const EngineeringLogEditor = ({
               SCORE: {score}/100 {score >= PASSING_SCORE ? '✓ PASS' : '✗ NEEDS IMPROVEMENT'}
             </div>
           )}
-          <div style={{ color: '#fff', whiteSpace: 'pre-wrap' }}>{feedback}</div>
+          <div style={{ color: colors.text, whiteSpace: 'pre-wrap' }}>{feedback}</div>
           
           {submissionStatus === 'needs-revision' && (
             <div style={{
               marginTop: '15px',
               paddingTop: '15px',
-              borderTop: '1px solid #333',
+              borderTop: `1px solid ${colors.border}`,
               color: '#ce9178',
               fontSize: '0.85rem'
             }}>
