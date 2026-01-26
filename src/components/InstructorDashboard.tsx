@@ -335,6 +335,11 @@ const InstructorDashboard: React.FC = () => {
   const [overrideReason, setOverrideReason] = useState('');
   const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
+  
+  // Canvas import/export state
+  const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error' | 'loading'; message: string } | null>(null);
+  const [exportStatus, setExportStatus] = useState<{ type: 'success' | 'error' | 'loading'; message: string } | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Filter assignments based on current filters
   const filteredAssignments = useMemo(() => {
@@ -431,6 +436,148 @@ const InstructorDashboard: React.FC = () => {
   useEffect(() => {
     loadGradebook();
   }, [loadGradebook]);
+
+  // Parse Canvas CSV content
+  const parseCanvasCSV = (content: string) => {
+    const lines = content.split('\n');
+    const results: any[] = [];
+    let headers: string[] | null = null;
+
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      
+      const row: string[] = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      row.push(current.trim());
+      
+      if (!headers) {
+        headers = row;
+      } else {
+        const record: any = {};
+        for (let i = 0; i < headers.length; i++) {
+          record[headers[i]] = row[i] || '';
+        }
+        results.push(record);
+      }
+    }
+    return results;
+  };
+
+  // Handle Canvas roster import
+  const handleCanvasImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setImportStatus({ type: 'loading', message: 'Importing roster...' });
+    
+    try {
+      const content = await file.text();
+      const records = parseCanvasCSV(content);
+      
+      // Filter out points possible row and test students
+      const roster = records
+        .filter(r => r['Student'] && !r['Student'].includes('Points Possible'))
+        .filter(r => !r['Student']?.toLowerCase().includes('test'))
+        .map(r => ({
+          name: r['Student'] || '',
+          canvasId: r['ID'] || '',
+          sisUserId: r['SIS User ID'] || '',
+          sisLoginId: r['SIS Login ID'] || '',
+          section: r['Section'] || ''
+        }));
+      
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/canvas-roster-import', {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roster })
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Import failed');
+      }
+      
+      const result = await res.json();
+      setImportStatus({ 
+        type: 'success', 
+        message: `Imported ${result.imported} students (${result.matched} matched)` 
+      });
+      
+      // Refresh gradebook to show updated data
+      setTimeout(() => loadGradebook(), 1000);
+    } catch (err) {
+      setImportStatus({ 
+        type: 'error', 
+        message: `Import failed: ${err instanceof Error ? err.message : 'Unknown error'}` 
+      });
+    }
+    
+    // Clear file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Handle Canvas grade export
+  const handleCanvasExport = async () => {
+    setExportStatus({ type: 'loading', message: 'Generating export...' });
+    
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/canvas-grade-export', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Export failed');
+      }
+      
+      // Get the CSV content
+      const csvContent = await res.text();
+      
+      // Create and download file
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `canvas-grades-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      setExportStatus({ type: 'success', message: 'Export downloaded!' });
+      setTimeout(() => setExportStatus(null), 3000);
+    } catch (err) {
+      setExportStatus({ 
+        type: 'error', 
+        message: `Export failed: ${err instanceof Error ? err.message : 'Unknown error'}` 
+      });
+    }
+  };
 
   const openSubmissionModal = async (student: Student, assignmentId: string, assignmentLabel: string) => {
     setModalData({ student, assignmentId, assignmentLabel });
@@ -673,7 +820,52 @@ const InstructorDashboard: React.FC = () => {
       {/* Header */}
       <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
         <h1 style={{ margin: 0, color: '#4ec9b0' }}>Course Gradebook</h1>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Canvas Import */}
+          <input
+            type="file"
+            accept=".csv"
+            ref={fileInputRef}
+            onChange={handleCanvasImport}
+            style={{ display: 'none' }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={importStatus?.type === 'loading'}
+            style={{
+              background: '#3b82f6',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 14px',
+              borderRadius: '4px',
+              cursor: importStatus?.type === 'loading' ? 'wait' : 'pointer',
+              fontWeight: 'bold',
+              opacity: importStatus?.type === 'loading' ? 0.7 : 1
+            }}
+            title="Import Canvas roster CSV to map student IDs"
+          >
+            📥 Import Roster
+          </button>
+          
+          {/* Canvas Export */}
+          <button
+            onClick={handleCanvasExport}
+            disabled={exportStatus?.type === 'loading'}
+            style={{
+              background: '#22c55e',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 14px',
+              borderRadius: '4px',
+              cursor: exportStatus?.type === 'loading' ? 'wait' : 'pointer',
+              fontWeight: 'bold',
+              opacity: exportStatus?.type === 'loading' ? 0.7 : 1
+            }}
+            title="Export grades as Canvas-compatible CSV"
+          >
+            📤 Export Grades
+          </button>
+          
           <button
             onClick={loadGradebook}
             style={{
@@ -695,6 +887,54 @@ const InstructorDashboard: React.FC = () => {
           )}
         </div>
       </div>
+      
+      {/* Import/Export Status Messages */}
+      {(importStatus || exportStatus) && (
+        <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          {importStatus && (
+            <div style={{
+              padding: '8px 12px',
+              borderRadius: '4px',
+              background: importStatus.type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 
+                         importStatus.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : 
+                         'rgba(59, 130, 246, 0.2)',
+              color: importStatus.type === 'success' ? '#22c55e' : 
+                     importStatus.type === 'error' ? '#ef4444' : '#3b82f6',
+              border: `1px solid ${importStatus.type === 'success' ? '#22c55e' : 
+                                   importStatus.type === 'error' ? '#ef4444' : '#3b82f6'}`
+            }}>
+              {importStatus.message}
+              {importStatus.type !== 'loading' && (
+                <button 
+                  onClick={() => setImportStatus(null)}
+                  style={{ marginLeft: '10px', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                >×</button>
+              )}
+            </div>
+          )}
+          {exportStatus && (
+            <div style={{
+              padding: '8px 12px',
+              borderRadius: '4px',
+              background: exportStatus.type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 
+                         exportStatus.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : 
+                         'rgba(59, 130, 246, 0.2)',
+              color: exportStatus.type === 'success' ? '#22c55e' : 
+                     exportStatus.type === 'error' ? '#ef4444' : '#3b82f6',
+              border: `1px solid ${exportStatus.type === 'success' ? '#22c55e' : 
+                                   exportStatus.type === 'error' ? '#ef4444' : '#3b82f6'}`
+            }}>
+              {exportStatus.message}
+              {exportStatus.type !== 'loading' && (
+                <button 
+                  onClick={() => setExportStatus(null)}
+                  style={{ marginLeft: '10px', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                >×</button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Filters */}
       <div style={{ marginBottom: '15px', display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'center' }}>
