@@ -128,6 +128,12 @@ const getWeekLockInfo = (weekSlug: string) => {
                       {w.slug === '01' ? (
                         <>
                           <li>
+                            <a href={`/week-${w.slug}/start-here/`} data-page={`/week-${w.slug}/start-here/`}>
+                              <span class="lesson-text">00. Start Here</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-start-here`}></span>
+                            </a>
+                          </li>
+                          <li>
                             <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
                               <span class="lesson-text">01. Course Syllabus & Expectations</span>
                               <span class="lesson-status" data-page-id={`week-${w.slug}-syllabus`}></span>
@@ -166,6 +172,12 @@ const getWeekLockInfo = (weekSlug: string) => {
                         </>
                       ) : w.slug === '02' ? (
                         <>
+                          <li>
+                            <a href={`/week-${w.slug}/`} data-page={`/week-${w.slug}/`}>
+                              <span class="lesson-text">00. Week Overview</span>
+                              <span class="lesson-status" data-page-id={`week-${w.slug}-overview`}></span>
+                            </a>
+                          </li>
                           <li>
                             <a href={`/week-${w.slug}/2-1-namespaces/`} data-page={`/week-${w.slug}/2-1-namespaces/`}>
                               <span class="lesson-text">2.1 Namespaces & Classes</span>
