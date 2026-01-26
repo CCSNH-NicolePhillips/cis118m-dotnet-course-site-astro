@@ -17,6 +17,22 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Memory Grid: Variables as 'Parking Spots'</h2>
+      <p>
+        Every variable you create in C# is a <strong>reserved parking spot</strong> in your computer's RAM. While you see a friendly name like <code>systemPort</code>, the CPU sees a specific numeric 'address.' RAM is a vast grid of these storage units, and declaring a variable is simply the act of putting your name on one of those spots.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%203/3.1/chip.png" alt="Computer chip representing RAM memory grid" />
+    </div>
+  </div>
+</div>
+
+---
+
 ## 🏗️ What is a Variable?
 
 A **variable** is a named storage location in your computer's memory (RAM). Think of it as a labeled box that holds a single piece of data.
@@ -338,5 +354,42 @@ class Program
       flex-direction: column;
       text-align: center;
     }
+
+    .concept-header .header-content {
+      flex-direction: column;
+    }
+
+    .concept-header .header-image {
+      max-width: 100%;
+    }
+  }
+
+  .concept-header {
+    margin: 24px 0;
+  }
+
+  .concept-header .header-content {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .concept-header .header-text {
+    flex: 1;
+  }
+
+  .concept-header .header-text h2 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+
+  .concept-header .header-image {
+    max-width: 280px;
+    flex-shrink: 0;
+  }
+
+  .concept-header .header-image img {
+    width: 100%;
+    border-radius: 12px;
   }
 `}</style>
