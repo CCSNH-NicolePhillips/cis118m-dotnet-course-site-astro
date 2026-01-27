@@ -765,6 +765,44 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
+  const handleForceSetGrade = async () => {
+    if (!modalData) return;
+    const scoreStr = prompt('Enter the grade to set (0-100):');
+    if (scoreStr === null) return;
+    const score = parseInt(scoreStr);
+    if (isNaN(score) || score < 0 || score > 100) {
+      alert('Invalid score. Must be a number between 0 and 100.');
+      return;
+    }
+    if (!confirm(`Force set grade to ${score}% for ${modalData.student.name}? This creates a new grade record.`)) return;
+    
+    try {
+      const token = await getAccessToken();
+      const res = await fetch('/.netlify/functions/manual-override', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          pageId: modalData.assignmentId,
+          action: 'FORCE_SET_GRADE',
+          newScore: score,
+          reason: overrideReason || 'Instructor force-set grade'
+        })
+      });
+      
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Force set failed');
+      }
+      
+      const result = await res.json();
+      setActionFeedback({ type: 'success', message: result.message || `Grade set to ${score}%` });
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    }
+  };
+
   // Get colors based on assignment type and score
   const getTypeColors = (type: AssignmentType, score: number | undefined) => {
     const colors = TYPE_COLORS[type];
@@ -1565,8 +1603,26 @@ const InstructorDashboard: React.FC = () => {
                     >
                       Full Reset
                     </button>
-                    <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
+                    <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: '15px' }}>
                       Wipes everything - fresh start.
+                    </p>
+                    <button
+                      onClick={handleForceSetGrade}
+                      style={{
+                        background: '#22c55e',
+                        color: '#000',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold',
+                        width: '100%'
+                      }}
+                    >
+                      📝 Force Set Grade
+                    </button>
+                    <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
+                      Create/set grade from scratch.
                     </p>
                   </div>
                   

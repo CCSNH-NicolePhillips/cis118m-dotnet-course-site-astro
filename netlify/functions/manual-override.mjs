@@ -240,21 +240,10 @@ export default async function handler(request, context) {
       // This is a one-time unlock - they get to submit once
       const unlockKey = `quiz:unlock:${userId}:${pageId}`;
       
-      // Check if already unlocked
-      const alreadyUnlocked = await redis.get(unlockKey);
-      if (alreadyUnlocked) {
-        return new Response(
-          JSON.stringify({ 
-            ok: true, 
-            action: 'UNLOCK_QUIZ',
-            message: 'Quiz was already unlocked for this student',
-            alreadyUnlocked: true
-          }),
-          { status: 200, headers: { "Content-Type": "application/json" } }
-        );
-      }
+      console.log(`[UNLOCK_QUIZ] Setting unlock key: ${unlockKey}`);
       
       // Set unlock flag (expires in 30 days to prevent clutter)
+      // Always set it, even if already exists (in case we need to refresh)
       await redis.set(unlockKey, JSON.stringify({
         unlockedBy: instructor.email || instructor.sub,
         unlockedAt: overrideTime,
@@ -280,7 +269,71 @@ export default async function handler(request, context) {
         JSON.stringify({ 
           ok: true, 
           action: 'UNLOCK_QUIZ',
-          message: 'Quiz unlocked. Student can now submit once.'
+          message: 'Quiz unlocked. Student can now submit once.',
+          unlockKey: unlockKey
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
+    } else if (action === 'FORCE_SET_GRADE') {
+      // Force set a grade from scratch - useful when grade was accidentally deleted
+      // This creates all necessary fields for a "submitted" state
+      
+      if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {
+        return new Response(
+          JSON.stringify({ error: "Score must be a number between 0 and 100" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      const progressHashKey = `user:progress:data:${userId}`;
+      
+      // Set all necessary fields for a complete submission
+      await redis.hset(progressHashKey,
+        `${pageId}:score`, newScore,
+        `${pageId}:status`, 'completed',
+        `${pageId}:isOverride`, 'true',
+        `${pageId}:overrideReason`, reason || 'Instructor force-set grade',
+        `${pageId}:overrideBy`, instructor.email || instructor.sub,
+        `${pageId}:overrideAt`, overrideTime,
+        `${pageId}:submittedAt`, overrideTime,
+        `${pageId}:attempts`, '1'
+      );
+      
+      // Also set in the quiz progress pattern if it's a quiz
+      if (pageId.includes('quiz') || pageId.includes('assessment')) {
+        const quizProgressKey = `user:progress:${userId}`;
+        await redis.hset(quizProgressKey,
+          `${pageId}:bestScore`, newScore,
+          `${pageId}:lastScore`, newScore,
+          `${pageId}:attempts`, '1',
+          `${pageId}:passed`, newScore >= 70 ? 'true' : 'false',
+          `${pageId}:lastSubmit`, overrideTime
+        );
+      }
+      
+      // Log the action for audit
+      const auditEntry = JSON.stringify({
+        action: "FORCE_SET_GRADE",
+        userId,
+        pageId,
+        newScore,
+        reason: reason || "Instructor force-set grade",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[FORCE_SET_GRADE] ${instructor.email} set ${userId}/${pageId} to ${newScore}% (${reason || 'Force set'})`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'FORCE_SET_GRADE',
+          score: newScore,
+          message: `Grade set to ${newScore}%`
         }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
