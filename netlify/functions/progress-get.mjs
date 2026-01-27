@@ -134,9 +134,11 @@ export default async function handler(request, context) {
     const quizIds = [
       'week-01-quiz',
       'week-01-required-quiz',
-      'week-01-syllabus-quiz',
+      'week-01-syllabus-ack',
       'week-02-quiz',
+      'week-02-weekly-assessment',
       'week-03-quiz',
+      'week-03-weekly-assessment',
       'week-04-quiz',
       'week-05-quiz',
       'week-06-quiz',
