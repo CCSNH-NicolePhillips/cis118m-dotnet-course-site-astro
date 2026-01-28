@@ -12,6 +12,35 @@ Key Concepts:
 
 Summary: # Week 1 Checkpoint Quiz **Time: 20 minutes** Test your understanding of C#, .NET, variables, and output. This quiz is **auto-graded** and you can retake it if needed. **Passing score:** 70% (7 out of 10 correct) ## What's Next? **If you passed (70% or higher):** Great job! You're ready to move on t...
 
+Quiz Questions (9 questions):
+1. Q: What is C#?
+   A: A programming language
+   Why: C# is the programming language you write. .NET is the platform that runs it.
+2. Q: What does Console.WriteLine do?
+   A: Prints a line of text to the console
+   Why: Yes, statements in C# end with semicolons.
+3. Q: Which is the correct way to create a string variable?
+   A: string name = \
+   Why: String variables need quotes around the text. The type (string) comes first, then the name, then = and the value.
+4. Q: What will this code print? int age = 20; Console.WriteLine(age + 5);
+   A: 25
+   Why: The code does the math (20 + 5 = 25) and prints the result.
+5. Q: What's wrong with this code? string city = Boston;
+   A: Missing quotes around Boston
+   Why: String values must be in quotes: string city = \
+6. Q: Which is an example of string interpolation?
+   A: Console.WriteLine($\
+   Why: String interpolation uses $ before the quote and {} around variables.
+7. Q: You can do math with string variables.
+   A: False
+   Why: False. Math works with numbers (int, double, etc.), not strings. With strings, + concatenates (glues together) instead of adding.
+8. Q: What will this print? string x = \
+   A: 510
+   Why: When you use + with strings, it concatenates (glues) them together: \
+9. Q: Which of these is a good variable name?
+   A: firstName
+   Why: firstName uses camelCase and is descriptive. The others have errors: spaces aren't allowed, can't start with a number, and class is a reserved keyword.
+
 ### 📚 Overview: Week 01 • Extra Practice
 Key Concepts:
 - Time: 25 minutes
@@ -56,12 +85,29 @@ Summary: # Week 1 Lesson 1: .NET vs C# + Console Apps **Time: 50 minutes** ## Wh
 
 Summary: # 📋 Course Standards & Syllabus Assessment ⚠️ Gatekeeper Assessment This assessment ensures you understand the course policies before accessing technical modules. Attempts: Unlimited — keep trying until you pass Passing: 100% required to unlock all course content Source: All answers are found in th...
 
-### 📚 Overview: Start Here • Your 16-Week Journey
+Quiz Questions (5 questions):
+1. Q: What is the instructor's official contact email?
+   A: MCCCISOnline1@ccsnh.edu
+   Why: Always use the official MCCCISOnline1@ccsnh.edu address for course communications.
+2. Q: What percentage of your final grade is determined by Weekly Coding Labs?
+   A: 40%
+   Why: Coding Labs are the most significant part of your grade at 40%.
+3. Q: What is the weight of 'Participation & Progress' in this course?
+   A: 10%
+   Why: Participation through checkpoints and progress tracking counts for 10% of your grade.
+4. Q: Late submissions may receive reduced credit unless prior arrangements are made.
+   A: True
+   Why: Correct. Assignments are expected by the deadline, and late work is subject to point reduction.
+5. Q: How is attendance measured in this asynchronous online course?
+   A: Through active participation in weekly graded activities
+   Why: Attendance is verified through your regular submission of labs and assessments.
+
+### 📚 Overview: Start Here • Your 15-Week Journey
 Key Concepts:
 - CIS118M: Introduction to .NET Development
-- five quest phases
+- four quest phases
 
-Summary: # Start Here • Your 16-Week Journey Welcome to **CIS118M: Introduction to .NET Development**! Over the next 16 weeks, you'll go from complete beginner to building real applications with C# and .NET. This roadmap breaks your learning into **five quest phases**. Each phase builds on the last, taking y...
+Summary: # Start Here • Your 15-Week Journey Welcome to **CIS118M: Introduction to .NET Development**! Over the next 15 weeks, you'll go from complete beginner to building real applications with C# and .NET. This roadmap breaks your learning into **four quest phases**. Each phase builds on the last, taking y...
 
 ### 🔬 Lab: Syllabus
 Key Concepts:
@@ -84,6 +130,44 @@ Summary: # Syllabus Acknowledgement Quiz **Time: 10 minutes** (after reading the
 ### 📋 Quiz: Week 01 • Technical Assessment
 
 Summary: # 🏁 Week 01 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think ---...
+
+Quiz Questions (12 questions):
+1. Q: What is C# in the .NET ecosystem?
+   A: The programming language you write code in
+   Why: C# is the programming language — the 'blueprint' you write. The CLR is the 'engine' that executes it.
+2. Q: What does the CLR (Common Language Runtime) do?
+   A: Executes your compiled code at runtime
+   Why: The CLR is the 'engine' that actually runs your compiled code. It manages memory, security, and execution.
+3. Q: A missing semicolon in C# will cause a compile-time error, preventing the CLR from ever running the code.
+   A: True
+   Why: Correct! The compiler catches syntax errors like missing semicolons BEFORE the CLR ever sees your code.
+4. Q: What is the purpose of Console.WriteLine()?
+   A: To display output to the terminal/console
+   Why: Console.WriteLine() is your communication protocol — it sends messages to the terminal for the user to see.
+5. Q: In the 'Blueprint vs Engine' analogy, what does the semicolon represent?
+   A: A signal that one instruction is complete
+   Why: The semicolon tells the compiler 'this statement is finished' — like a period at the end of a sentence.
+6. Q: What does the BCL (Base Class Library) provide?
+   A: Pre-built classes for common tasks like File I/O and Collections
+   Why: The BCL is your 'toolbox' — thousands of pre-built classes so you don't have to write everything from scratch.
+7. Q: What does the Roslyn compiler produce when it compiles your C# code?
+   A: Intermediate Language (IL) that any .NET runtime can execute
+   Why: Roslyn compiles C# to IL (Intermediate Language). The JIT compiler then translates IL to native code at runtime.
+8. Q: When does the JIT (Just-In-Time) compiler run?
+   A: At runtime, when the program actually executes
+   Why: The JIT compiler runs at execution time, translating IL to native machine code for your specific CPU.
+9. Q: Console applications require a graphical user interface (GUI) to run.
+   A: False
+   Why: Console applications run in a terminal/command line — no GUI required. They're lightweight and great for learning.
+10. Q: What is wrong with this code: Console.WriteLine(Hello World);
+   A: Missing double quotes around the text
+   Why: String literals (text) must be wrapped in double quotes: Console.WriteLine(\
+11. Q: Which email should you use for technical help in this course?
+   A: MCCCISOnline1@ccsnh.edu
+   Why: For technical questions and course support, email MCCCISOnline1@ccsnh.edu.
+12. Q: When is the hard deadline for weekly missions?
+   A: Sunday at 11:59 PM
+   Why: Weekly assignments are due Sunday at 11:59 PM. Late submissions may have point deductions.
 
 ---
 
@@ -141,6 +225,9 @@ Summary: # Homework 02: Reflection - (GRADED) ## 📝 Homework 02: The Architect
 ### 📚 Overview: Week 02 • First C# Program
 Key Concepts:
 - Namespace
+- Method
+- Statements
+- Explain
 
 Summary: # Week 02: First C# Program 🎯 Mission Objective This week you transition from observer to architect . You will dissect the anatomy of a C# program—understanding exactly why every line exists and what role it plays in the execution pipeline. Focus: Anatomy and Structure. Variables and User Input are...
 
@@ -205,9 +292,73 @@ Console.WriteLine($"Age: {age}");
 
 Summary: # 🏁 Week 02 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- After completing...
 
+Quiz Questions (10 questions):
+1. Q: What is the primary purpose of a namespace in C#?
+   A: To organize code and prevent naming conflicts
+   Why: Namespaces act like folders for your code, grouping related classes together and preventing conflicts when two classes have the same name.
+2. Q: What is the correct syntax to declare a namespace called 'MyApp'?
+   A: namespace MyApp { }
+   Why: Namespaces are declared with the 'namespace' keyword followed by the name and curly braces containing the code.
+3. Q: What does 'static int Main()' return when a program runs successfully?
+   A: 0
+   Why: By convention, returning 0 from Main indicates successful execution. Non-zero values indicate errors.
+4. Q: The Main method is where program execution begins in a C# application.
+   A: True
+   Why: Correct! Main is the entry point - when you run a C# program, the CLR looks for Main and starts executing there.
+5. Q: Which of these is the correct XML documentation comment syntax?
+   A: /// <summary>This describes the method</summary>
+   Why: XML documentation uses triple slashes (///) and XML tags like <summary> to create documentation that tools can extract.
+6. Q: What is a 'class' in C#?
+   A: A container that groups related methods and data together
+   Why: A class is a blueprint that contains methods (actions) and can hold data. It's the fundamental building block of C# programs.
+7. Q: In the Allman brace style, the opening brace { goes on the same line as the statement.
+   A: False
+   Why: In Allman style (used in C#), the opening brace goes on its own line. K&R style puts it on the same line.
+8. Q: What happens if you use 'static void Main()' instead of 'static int Main()'?
+   A: The program doesn't return an exit code
+   Why: 'void' means the method returns nothing. 'int' means it returns a number (exit code). Both are valid for Main.
+9. Q: Why should developers add XML documentation comments to their code?
+   A: To help other developers (and your future self) understand what code does
+   Why: Documentation helps anyone reading your code understand its purpose. IDEs like VS Code also show these comments in tooltips!
+10. Q: Which keyword is used to indicate that a method belongs to the class itself, not an instance?
+   A: static
+   Why: The 'static' keyword means the method belongs to the class itself. You don't need to create an object to call it (like Main).
+
 ---
 
 ## Week 3: Variables & Data Types
+
+### 📚 Overview: Section 3.1 • Declaring State
+Key Concepts:
+- variable
+
+Summary: # Section 3.1: Declaring State 🧠 Variables & Memory ⏱️ Estimated Time: 25 minutes --- ✦ The Memory Grid: Variables as 'Parking Spots' Every variable you create in C# is a reserved parking spot in your computer's RAM. While you see a friendly name like systemPort , the CPU sees a specific numeric 'a...
+
+### 📚 Overview: Section 3.2 • Numeric Precision
+Key Concepts:
+- whole numbers
+- Range:
+- Memory:
+- Speed:
+- Use for:
+
+Summary: # Section 3.2: Numeric Precision ✦ Numeric Precision: Picking the Right Container Choosing a numeric type in C# is a trade-off between storage size, range, and accuracy . Not every number is created equal—while an int is perfect for counting apples, using a double for banking could lead to missing p...
+
+### 📚 Overview: Section 3.3 • Logic & Text
+Key Concepts:
+- System states:
+- Flags:
+- Conditions:
+
+Summary: # Section 3.3: Logic & Text 🔤 Bool, Char & String ⏱️ Estimated Time: 25 minutes --- ## ✅ bool: The Decision Type A bool (Boolean) stores only two possible values: true or false. Named after mathematician George Boole, this type is the foundation of all computer logic. ### Common Uses for bool: - **...
+
+### 📚 Overview: Section 3.4 • Immutability
+Key Concepts:
+- never change
+- immutable
+- baked into your program
+
+Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated Time: 20 minutes --- ## 🔐 Why Make Values Unchangeable? Some values should **never change** during program execution: - Mathematical constants (π = 3.14159...) - Configuration settings (MAX_CONNECTIONS = 100) - Fixed rates (TAX_RATE =...
 
 ### 📚 Overview: Week 03 • Extra Practice
 
@@ -217,15 +368,38 @@ Summary: # Week 3 Extra Practice: Input practice Pick **1–2** items (optional)
 
 Summary: # Week 3 Homework: Tip + Tax Calculator (with validation) ## Overview Ask for a bill amount, validate it, then calculate tip, tax, and total. ## Requirements checklist (acceptance criteria) - [ ] Prompts for bill amount and validates using double.TryParse - [ ] Uses a tip rate (example: 15%) and tax...
 
+### 📝 Homework: Homework 03 • Type Safety Reflection
+
+Summary: # Homework 03: Reflection - (GRADED) ## 📝 Homework 03: The Type Safety Patch Now that you understand data types and their purpose, it's time to demonstrate your understanding of why type safety matters in real-world applications. 💰 The Critical Question In a professional production environment, wh...
+
 ### 📚 Overview: Week 03
 Key Concepts:
 - Focus:
 
 Summary: # Week 3 **Focus:** User input with Console.ReadLine + safe conversions using TryParse. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/...
 
+### 📚 Overview: Week 03 • Variables & Data Types
+Key Concepts:
+- Reserve
+- Restrict
+- [Section 3.1](/week-03/3-1-declaring-state/)
+- [Section 3.2](/week-03/3-2-numeric-precision/)
+
+Summary: # Week 03: Variables & Data Types 🎯 Mission Objective Last week you learned the shell of a program—namespaces, classes, and the Main method. This week, you shift from structure to state . You will learn how programs remember information using variables and how different data types determine what ki...
+
 ### 🔬 Lab: Week 03 • Week 3 Lab: Input + Math (with validation)
 
 Summary: # Week 3 Lab: Input + Math (with validation) ## Overview Read a number from the user, validate it, and do a simple calculation. ## Requirements checklist (acceptance criteria) - [ ] Prompts the user clearly - [ ] Uses TryParse (int or double) to validate input - [ ] Re-prompts at least once when inp...
+
+### 🔬 Lab: Lab 03 • Data Manifest
+Key Concepts:
+- Time: 45 minutes
+- Points: 100
+- System Profile
+- most memory-efficient and appropriate data types
+- Submit Lab
+
+Summary: # Lab 03: The Data Manifest **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective Build a **System Profile** console application that stores and displays system data using the **most memory-efficient and appropriate data types** for each piece of information. --- ## 📋 Requirements Your progr...
 
 ### 📖 Lesson: Week 03 • Lesson 1
 Key Concepts:
@@ -269,6 +443,42 @@ else
     Console.WriteLine("That was not a whole number.");
 }
 ```
+
+### 📋 Quiz: Week 03 • Technical Assessment
+
+Summary: # 🏁 Week 03 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- 🎉 Week 03 Compl...
+
+Quiz Questions (10 questions):
+1. Q: Which keyword makes a variable unchangeable after it is set?
+   A: const
+   Why: The 'const' keyword creates a compile-time constant that cannot be modified after declaration.
+2. Q: What is the default value of a bool if not initialized?
+   A: false
+   Why: In C#, uninitialized boolean fields default to 'false'.
+3. Q: Which type is best for storing a single letter like 'A'?
+   A: char
+   Why: The 'char' type is specifically designed to store a single Unicode character.
+4. Q: Can an int store the value 10.5?
+   A: No, it causes a compiler error
+   Why: An int cannot store decimal values. Attempting to assign 10.5 to an int causes a compiler error because of implicit conversion restrictions.
+5. Q: In the line `int x = 5;`, what is 'x' called?
+   A: The identifier
+   Why: The identifier is the name given to the variable. In this statement, 'int' is the type, 'x' is the identifier, '=' is the assignment operator, and '5' is the value.
+6. Q: Why should you use 'decimal' instead of 'double' for currency?
+   A: decimal avoids binary floating-point rounding errors
+   Why: The decimal type uses base-10 internally, avoiding the rounding errors that occur with binary floating-point (double) when representing decimal fractions like 0.1.
+7. Q: What suffix is required when assigning a decimal literal?
+   A: m (e.g., 45.99m)
+   Why: The 'm' suffix tells C# that the number should be treated as a decimal type. Without it, 45.99 is interpreted as a double.
+8. Q: What does 'string immutability' mean?
+   A: Strings cannot be changed after creation
+   Why: Immutability means once a string object is created in memory, it cannot be modified. Any operation that appears to change a string actually creates a new string.
+9. Q: Which variable name is INVALID in C#?
+   A: 2ndAttempt
+   Why: Variable names cannot start with a number. '2ndAttempt' would cause a compiler error. Valid alternatives include 'secondAttempt' or '_2ndAttempt'.
+10. Q: What is the difference between declaration and initialization?
+   A: Declaration reserves memory; initialization assigns a value
+   Why: Declaration creates the variable and reserves memory (like reserving a parking spot). Initialization assigns the first value to that variable (like parking the car).
 
 ---
 

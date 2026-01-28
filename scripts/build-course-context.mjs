@@ -18,8 +18,34 @@ const PAGES_DIR = path.join(__dirname, '../src/pages');
 const OUTPUT_FILE = path.join(__dirname, '../netlify/functions/_lib/course-content.json');
 const JS_OUTPUT_FILE = path.join(__dirname, '../netlify/functions/_lib/course-summary.mjs');
 
+// Extract quiz questions from Quiz component
+function extractQuizQuestions(content) {
+  const quizMatch = content.match(/<Quiz[\s\S]*?questions=\{\[([\s\S]*?)\]\}/);
+  if (!quizMatch) return [];
+  
+  const questions = [];
+  const questionsBlock = quizMatch[1];
+  
+  // Extract each question object
+  const questionMatches = questionsBlock.matchAll(/\{\s*id:\s*"([^"]+)"[\s\S]*?question:\s*"([^"]+)"[\s\S]*?correctAnswer:\s*"([^"]+)"[\s\S]*?explanation:\s*"([^"]+)"/g);
+  
+  for (const match of questionMatches) {
+    questions.push({
+      id: match[1],
+      question: match[2],
+      correctAnswer: match[3],
+      explanation: match[4]
+    });
+  }
+  
+  return questions;
+}
+
 // Extract text content from MDX, removing code blocks and JSX
 function extractTextFromMDX(content) {
+  // First extract quiz questions before removing JSX
+  const quizQuestions = extractQuizQuestions(content);
+  
   // Remove frontmatter
   content = content.replace(/^---[\s\S]*?---/, '');
   
@@ -63,7 +89,7 @@ function extractTextFromMDX(content) {
   content = content.replace(/[ \t]+/g, ' ');
   content = content.trim();
   
-  return { text: content, codeExamples };
+  return { text: content, codeExamples, quizQuestions };
 }
 
 // Extract title from frontmatter or first heading
@@ -111,7 +137,7 @@ function extractKeyConcepts(text) {
 function processFile(filePath, relativePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
   const title = extractTitle(content);
-  const { text, codeExamples } = extractTextFromMDX(content);
+  const { text, codeExamples, quizQuestions } = extractTextFromMDX(content);
   const keyConcepts = extractKeyConcepts(text);
   
   // Create a summary (first ~500 chars of meaningful content)
@@ -127,6 +153,7 @@ function processFile(filePath, relativePath) {
     summary,
     keyConcepts,
     codeExamples: codeExamples.slice(0, 3), // Keep up to 3 examples
+    quizQuestions, // Include quiz questions
     fullText: text.slice(0, 3000) // Truncate very long content
   };
 }
@@ -280,6 +307,16 @@ function generateCompactSummary(courseContext) {
       
       if (section.codeExamples.length > 0) {
         summary += `\nCode Example:\n\`\`\`csharp\n${section.codeExamples[0]}\n\`\`\`\n`;
+      }
+      
+      // Include quiz questions for study help
+      if (section.quizQuestions && section.quizQuestions.length > 0) {
+        summary += `\nQuiz Questions (${section.quizQuestions.length} questions):\n`;
+        section.quizQuestions.forEach((q, i) => {
+          summary += `${i + 1}. Q: ${q.question}\n`;
+          summary += `   A: ${q.correctAnswer}\n`;
+          summary += `   Why: ${q.explanation}\n`;
+        });
       }
     }
     summary += '\n---\n\n';
