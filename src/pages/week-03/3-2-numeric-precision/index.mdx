@@ -46,55 +46,67 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
     {
       label: "int",
       content: `
-### int: The Solid Counter
-
-The sturdy cardboard box. It stores whole numbers without any fractional 'noise.' It is the most performant type because modern CPUs are optimized to process 32-bit integers at lightning speed.
-
-- **Best for:** Counting, loop indices, and IDs.
-- **Weakness:** Cannot hold any decimal points. If you divide 5 / 2, you'll get 2, not 2.5.
-
-| Spec | Value |
-|------|-------|
-| **Size** | 32-bit (4 Bytes) |
-| **Range** | -2.1B to 2.1B |
-| **Precision** | Exact (Whole numbers) |
-| **Performance** | Max Speed |
+<h3>int: The Solid Counter</h3>
+<p>The sturdy cardboard box. It stores whole numbers without any fractional 'noise.' It is the most performant type because modern CPUs are optimized to process 32-bit integers at lightning speed.</p>
+<ul>
+  <li><strong>Best for:</strong> Counting, loop indices, and IDs.</li>
+  <li><strong>Weakness:</strong> Cannot hold any decimal points. If you divide 5 / 2, you'll get 2, not 2.5.</li>
+</ul>
+<table>
+  <thead>
+    <tr><th>Spec</th><th>Value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Size</strong></td><td>32-bit (4 Bytes)</td></tr>
+    <tr><td><strong>Range</strong></td><td>-2.1B to 2.1B</td></tr>
+    <tr><td><strong>Precision</strong></td><td>Exact (Whole numbers)</td></tr>
+    <tr><td><strong>Performance</strong></td><td>Max Speed</td></tr>
+  </tbody>
+</table>
       `
     },
     {
       label: "double",
       content: `
-### double: The Scientific Sphere
-
-The glass sphere. It can hold astronomical numbers (and microscopic ones), but it does so by **approximation**. It uses base-2 math, which is incredibly fast but cannot represent certain fractions like \`0.1\` exactly.
-
-- **Best for:** Physics, graphics, and large-scale data science.
-- **Weakness:** 'Rounding errors' can accumulate over time. Never use this for money.
-
-| Spec | Value |
-|------|-------|
-| **Size** | 64-bit (8 Bytes) |
-| **Range** | ±1.7 × 10^308 |
-| **Precision** | 15-17 digits (Approximate) |
-| **Performance** | Very High (CPU native) |
+<h3>double: The Scientific Sphere</h3>
+<p>The glass sphere. It can hold astronomical numbers (and microscopic ones), but it does so by <strong>approximation</strong>. It uses base-2 math, which is incredibly fast but cannot represent certain fractions like <code>0.1</code> exactly.</p>
+<ul>
+  <li><strong>Best for:</strong> Physics, graphics, and large-scale data science.</li>
+  <li><strong>Weakness:</strong> 'Rounding errors' can accumulate over time. Never use this for money.</li>
+</ul>
+<table>
+  <thead>
+    <tr><th>Spec</th><th>Value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Size</strong></td><td>64-bit (8 Bytes)</td></tr>
+    <tr><td><strong>Range</strong></td><td>±1.7 × 10^308</td></tr>
+    <tr><td><strong>Precision</strong></td><td>15-17 digits (Approximate)</td></tr>
+    <tr><td><strong>Performance</strong></td><td>Very High (CPU native)</td></tr>
+  </tbody>
+</table>
       `
     },
     {
       label: "decimal",
       content: `
-### decimal: The Financial Vault
-
-The titanium vault. It uses base-10 math (like humans do), ensuring that \`0.1 + 0.2\` equals exactly \`0.3\`. It is much slower than a double because it's processed in software, but it is unbeatably accurate.
-
-- **Best for:** Banking, tax calculations, and currency.
-- **Weakness:** Takes 4x more memory than an \`int\` and is 20x slower than a \`double\`.
-
-| Spec | Value |
-|------|-------|
-| **Size** | 128-bit (16 Bytes) |
-| **Range** | ±7.9 × 10^28 |
-| **Precision** | 28-29 digits (Exact) |
-| **Performance** | Low (Software based) |
+<h3>decimal: The Financial Vault</h3>
+<p>The titanium vault. It uses base-10 math (like humans do), ensuring that <code>0.1 + 0.2</code> equals exactly <code>0.3</code>. It is much slower than a double because it's processed in software, but it is unbeatably accurate.</p>
+<ul>
+  <li><strong>Best for:</strong> Banking, tax calculations, and currency.</li>
+  <li><strong>Weakness:</strong> Takes 4x more memory than an <code>int</code> and is 20x slower than a <code>double</code>.</li>
+</ul>
+<table>
+  <thead>
+    <tr><th>Spec</th><th>Value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Size</strong></td><td>128-bit (16 Bytes)</td></tr>
+    <tr><td><strong>Range</strong></td><td>±7.9 × 10^28</td></tr>
+    <tr><td><strong>Precision</strong></td><td>28-29 digits (Exact)</td></tr>
+    <tr><td><strong>Performance</strong></td><td>Low (Software based)</td></tr>
+  </tbody>
+</table>
       `
     }
   ]}
