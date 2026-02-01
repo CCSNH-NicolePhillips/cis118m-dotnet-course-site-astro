@@ -17,6 +17,23 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
+## 🎬 Technical Briefing: Variables & Constants
+
+<div class="video-section">
+  <p class="video-intro">A concise guide on protecting system data using constants and avoiding common pitfalls during initialization.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/HLn_kBaZMBs" 
+      title="Variables & Constants in C# - Fundamentals"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
 ## 🔐 Why Make Values Unchangeable?
 
 Some values should **never change** during program execution:
@@ -402,5 +419,45 @@ if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
   body[data-theme="light"] .styled-table-container code {
     color: #0a7c62;
     background: rgba(78, 201, 176, 0.2);
+  }
+
+  /* Video Section */
+  .video-section {
+    background: linear-gradient(135deg, rgba(30, 33, 40, 0.8) 0%, rgba(20, 22, 28, 0.9) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .video-intro {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 20px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .video-container {
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    aspect-ratio: 16 / 9;
+  }
+
+  .video-container iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  body[data-theme="light"] .video-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-color: rgba(99, 102, 241, 0.2);
+  }
+
+  body[data-theme="light"] .video-intro {
+    color: #333;
   }
 `}</style>
