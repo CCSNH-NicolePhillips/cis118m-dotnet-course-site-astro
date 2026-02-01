@@ -34,6 +34,64 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Written in Stone: The 'const' Keyword</h2>
+      <p>
+        In C#, a <strong>constant</strong> is a value that is fixed forever the moment you compile your code. Unlike a regular variable which is a temporary parking spot, a constant is an <strong>engraved instruction</strong> baked directly into the machinery of your program. Once written, even the strongest digital 'laser' (your code) cannot overwrite it.
+      </p>
+    </div>
+  </div>
+</div>
+
+---
+
+<DeepDiveTabs
+  title="Architecture of a Constant"
+  tabs={[
+    {
+      id: "baking",
+      label: "The 'Baking' Process",
+      content: `
+<h3>Compile-Time Inlining</h3>
+<p>When you mark a value as <code>const</code>, the Roslyn compiler performs a <strong>'Find and Replace'</strong> across your entire project. It doesn't look up the value at runtime; it literally replaces every mention of your constant with the raw number or text.</p>
+<ul>
+  <li><strong>Performance:</strong> There is zero overhead. Your CPU doesn't 'fetch' a variable; the value is already there in the instruction.</li>
+  <li><strong>The Versioning Trap:</strong> If you change a <code>const</code> in Library A but don't recompile Library B that uses it, Library B will still be using the old, 'baked-in' value.</li>
+</ul>
+      `
+    },
+    {
+      id: "naming",
+      label: "Naming Rules",
+      content: `
+<h3>Engineering Conventions</h3>
+<p>Professional C# architects follow strict naming patterns to signal that a value is immutable. This allows teammates to know at a glance that they can't change the value.</p>
+<ul>
+  <li><strong>PascalCase:</strong> Standard .NET convention (e.g., <code>MaxConnectionsLimit</code>).</li>
+  <li><strong>SCREAMING_SNAKE:</strong> Common in older C++ influenced projects (e.g., <code>MAX_RETRY_COUNT</code>).</li>
+  <li><strong>Descriptive Nouns:</strong> Never use generic names. <code>SECONDS_PER_MINUTE</code> is architecture; <code>SIXTY</code> is just a number.</li>
+</ul>
+      `
+    },
+    {
+      id: "limits",
+      label: "Type Limits",
+      content: `
+<h3>What Can Be 'Stoned'?</h3>
+<p>Because the compiler must know the value <em>before</em> the program starts, you can only use <strong>built-in primitive types</strong> as constants.</p>
+<ul>
+  <li><strong>Allowed:</strong> <code>int</code>, <code>double</code>, <code>bool</code>, <code>char</code>, <code>string</code>, and <code>decimal</code>.</li>
+  <li><strong>Forbidden:</strong> Arrays, custom Classes, or anything that requires a <code>new</code> keyword (except for <code>null</code>). These must use the <code>readonly</code> keyword instead.</li>
+</ul>
+      `
+    }
+  ]}
+/>
+
+---
+
 ## 🔐 Why Make Values Unchangeable?
 
 Some values should **never change** during program execution:
@@ -459,5 +517,94 @@ if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
 
   body[data-theme="light"] .video-intro {
     color: #333;
+  }
+
+  /* Concept Header */
+  .concept-header {
+    background: linear-gradient(135deg, rgba(30, 33, 40, 0.9) 0%, rgba(20, 22, 28, 0.95) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 32px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .header-content {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .header-text {
+    flex: 1;
+  }
+
+  .header-text h2 {
+    background: linear-gradient(90deg, #a78bfa 0%, #6b9fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+  }
+
+  .header-text p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .header-text code {
+    background: rgba(78, 201, 176, 0.2);
+    color: #4ec9b0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .header-image {
+    flex-shrink: 0;
+    max-width: 280px;
+  }
+
+  .header-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  body[data-theme="light"] .concept-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-color: rgba(99, 102, 241, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  body[data-theme="light"] .header-text h2 {
+    background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  body[data-theme="light"] .header-text p {
+    color: #333;
+  }
+
+  body[data-theme="light"] .header-text code {
+    background: rgba(78, 201, 176, 0.15);
+    color: #0a7c62;
+  }
+
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+    }
+
+    .header-image {
+      max-width: 100%;
+    }
   }
 `}</style>
