@@ -387,10 +387,6 @@ Key Concepts:
 
 Summary: # Week 03: Variables & Data Types 🎯 Mission Objective Last week you learned the shell of a program—namespaces, classes, and the Main method. This week, you shift from structure to state . You will learn how programs remember information using variables and how different data types determine what ki...
 
-### 🔬 Lab: Week 03 • Week 3 Lab: Input + Math (with validation)
-
-Summary: # Week 3 Lab: Input + Math (with validation) ## Overview Read a number from the user, validate it, and do a simple calculation. ## Requirements checklist (acceptance criteria) - [ ] Prompts the user clearly - [ ] Uses TryParse (int or double) to validate input - [ ] Re-prompts at least once when inp...
-
 ### 🔬 Lab: Lab 03 • Data Manifest
 Key Concepts:
 - Time: 45 minutes

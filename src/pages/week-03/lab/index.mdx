@@ -215,7 +215,6 @@ When your program runs correctly and displays the formatted report:
 3. You'll receive feedback on your submission
 
 <div id="lab-submit-container" style="margin: 24px 0;">
-  <div id="lab-feedback" style="display: none; padding: 16px; border-radius: 8px; margin-bottom: 16px;"></div>
   <button id="submit-lab-btn" style="
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
@@ -231,6 +230,9 @@ When your program runs correctly and displays the formatted report:
   ">
     🚀 Submit Lab
   </button>
+  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
 <script src="/scripts/submit-lab.js"></script>

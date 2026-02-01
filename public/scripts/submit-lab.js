@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   const lastSubmittedDiv = document.getElementById("last-submitted");
   const aiFeedbackDiv = document.getElementById("ai-feedback");
   
+  // Bail early if required elements are missing
+  if (!submitBtn) {
+    console.log("[submit-lab] Submit button not found on this page, skipping.");
+    return;
+  }
+  
   // Due dates per week (matches server-side due-dates.mjs)
   const WEEK_DUE_DATES = {
     1: '2026-01-25T23:59:59-05:00',
@@ -119,7 +125,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const data = await response.json();
         if (data.submission) {
           const date = new Date(data.submission.submittedAt);
-          lastSubmittedDiv.textContent = "Last submitted: " + date.toLocaleString();
+          if (lastSubmittedDiv) {
+            lastSubmittedDiv.textContent = "Last submitted: " + date.toLocaleString();
+          }
           
           // Show previous AI feedback if available
           if (data.submission.aiFeedback && aiFeedbackDiv) {
