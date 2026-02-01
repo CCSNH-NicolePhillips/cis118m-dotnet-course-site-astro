@@ -104,18 +104,21 @@ Return JSON:
       data = JSON.parse(jsonResponse);
     } catch (parseError) {
       console.log('[ai-grade] Initial parse failed, attempting repair...');
+      console.log('[ai-grade] Raw JSON:', jsonResponse.substring(0, 500));
       
       // Fix trailing commas before } or ]
       jsonResponse = jsonResponse.replace(/,(\s*[}\]])/g, '$1');
       
-      // Fix unescaped newlines inside strings - replace with \n
-      jsonResponse = jsonResponse.replace(/"([^"]*)\n([^"]*)"/g, (match, before, after) => {
-        return `"${before}\\n${after}"`;
-      });
-      
-      // Fix unescaped tabs inside strings
-      jsonResponse = jsonResponse.replace(/"([^"]*)\t([^"]*)"/g, (match, before, after) => {
-        return `"${before}\\t${after}"`;
+      // More robust fix for unescaped characters in strings
+      // Replace actual newlines/tabs inside string values with escaped versions
+      jsonResponse = jsonResponse.replace(/"([^"]*)"/g, (match, content) => {
+        // Escape any unescaped control characters
+        const fixed = content
+          .replace(/\\/g, '\\\\')  // Escape backslashes first
+          .replace(/\n/g, '\\n')   // Escape newlines
+          .replace(/\r/g, '\\r')   // Escape carriage returns
+          .replace(/\t/g, '\\t');  // Escape tabs
+        return `"${fixed}"`;
       });
       
       // Try parsing again after repairs
@@ -124,8 +127,22 @@ Return JSON:
         console.log('[ai-grade] JSON repair successful');
       } catch (repairError) {
         console.error('[ai-grade] JSON repair failed:', repairError.message);
-        console.error('[ai-grade] Raw response:', text);
-        throw parseError; // Throw original error for better debugging
+        console.error('[ai-grade] Attempted repair:', jsonResponse.substring(0, 500));
+        
+        // Last resort: try to extract just score and feedback with regex
+        const scoreMatch = jsonResponse.match(/"score"\s*:\s*(\d+)/);
+        const feedbackMatch = jsonResponse.match(/"feedback"\s*:\s*"([^"]+)"/);
+        
+        if (scoreMatch) {
+          console.log('[ai-grade] Fallback extraction successful');
+          data = {
+            score: parseInt(scoreMatch[1]),
+            feedback: feedbackMatch ? feedbackMatch[1] : 'Grading completed.',
+            rubric: {}
+          };
+        } else {
+          throw parseError; // Throw original error for better debugging
+        }
       }
     }
 
