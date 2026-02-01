@@ -350,7 +350,7 @@ Key Concepts:
 - Flags:
 - Conditions:
 
-Summary: # Section 3.3: Logic & Text 🔤 Bool, Char & String ⏱️ Estimated Time: 25 minutes --- ## ✅ bool: The Decision Type A bool (Boolean) stores only two possible values: true or false. Named after mathematician George Boole, this type is the foundation of all computer logic. ### Common Uses for bool: - **...
+Summary: # Section 3.3: Logic & Text 🔤 Bool, Char & String ⏱️ Estimated Time: 25 minutes --- ✦ 3.3: Logic & Text: The Pulse and the Scroll Programming is a balance between Logic and Information . A bool is the engine's pulse—a simple, binary YES/NO that drives decision-making. A string is the engine's story...
 
 ### 📚 Overview: Section 3.4 • Immutability
 Key Concepts:
@@ -358,7 +358,7 @@ Key Concepts:
 - immutable
 - baked into your program
 
-Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated Time: 20 minutes --- ## 🔐 Why Make Values Unchangeable? Some values should **never change** during program execution: - Mathematical constants (π = 3.14159...) - Configuration settings (MAX_CONNECTIONS = 100) - Fixed rates (TAX_RATE =...
+Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated Time: 20 minutes --- ## 🎬 Technical Briefing: const vs readonly This Senior Architect briefing explains const as a "Universal Law" (compile-time) and compares it to readonly (runtime)—key concepts for writing safe, predictable code in...
 
 ### 📚 Overview: Week 03 • Extra Practice
 
