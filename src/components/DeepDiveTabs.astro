@@ -21,6 +21,8 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
 
 <section class="deep-dive-section">
   {title && <h2 class="deep-dive-title">{title}</h2>}
+  
+  <p class="tab-instruction">👆 <em>Click a tab below to explore that topic.</em></p>
 
   <div class="tabs-bar" role="tablist" data-component-id={componentId}>
     {tabs.map((tab) => (
@@ -227,6 +229,21 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .tab-instruction {
+    color: var(--accent, #4ec9b0);
+    font-size: 0.9rem;
+    margin: 0 0 16px 0;
+    opacity: 0.85;
+  }
+
+  .tab-instruction em {
+    font-style: italic;
+  }
+
+  body[data-theme="light"] .tab-instruction {
+    color: #0d9488;
   }
 
   .tabs-bar {
