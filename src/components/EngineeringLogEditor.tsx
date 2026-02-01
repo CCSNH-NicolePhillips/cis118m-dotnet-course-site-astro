@@ -132,10 +132,14 @@ const EngineeringLogEditor = ({
             if (savedScore !== undefined && savedScore !== null) {
               setScore(savedScore);
               
-              if (savedScore >= PASSING_SCORE) {
+              // Only lock at 100% - students can always improve their score
+              if (savedScore === 100) {
                 setIsLocked(true);
                 setSubmissionStatus('passed');
-                setFeedback('✓ This submission has been validated and committed to your record.');
+                setFeedback('✓ Perfect score! This submission has been validated and committed to your record.');
+              } else if (savedScore >= PASSING_SCORE) {
+                setSubmissionStatus('passed');
+                setFeedback(assignmentProgress.feedback || `✓ Passing score of ${savedScore}%. You can revise and resubmit to improve your grade.`);
               } else if (assignmentProgress.status === 'completed' || assignmentProgress.status === 'attempted') {
                 setSubmissionStatus('needs-revision');
                 setFeedback(assignmentProgress.feedback || 'Previous submission did not meet the passing threshold. You may revise and resubmit.');
@@ -322,10 +326,13 @@ const EngineeringLogEditor = ({
       setFeedback(data.feedback);
       
       // Determine submission status based on score
-      const passed = data.score >= PASSING_SCORE;
-      if (passed) {
+      // Only lock at 100% - students can always improve
+      if (data.score === 100) {
         setIsLocked(true);
         setSubmissionStatus('passed');
+      } else if (data.score >= PASSING_SCORE) {
+        setSubmissionStatus('passed');
+        // Keep unlocked so they can improve
       } else {
         setSubmissionStatus('needs-revision');
       }
