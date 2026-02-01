@@ -96,8 +96,38 @@ Return JSON:
     // We want to make sure we only send back the JSON part
     const jsonStart = text.indexOf('{');
     const jsonEnd = text.lastIndexOf('}') + 1;
-    const jsonResponse = text.substring(jsonStart, jsonEnd);
-    const data = JSON.parse(jsonResponse);
+    let jsonResponse = text.substring(jsonStart, jsonEnd);
+    
+    // Attempt to repair common JSON issues from AI output
+    let data;
+    try {
+      data = JSON.parse(jsonResponse);
+    } catch (parseError) {
+      console.log('[ai-grade] Initial parse failed, attempting repair...');
+      
+      // Fix trailing commas before } or ]
+      jsonResponse = jsonResponse.replace(/,(\s*[}\]])/g, '$1');
+      
+      // Fix unescaped newlines inside strings - replace with \n
+      jsonResponse = jsonResponse.replace(/"([^"]*)\n([^"]*)"/g, (match, before, after) => {
+        return `"${before}\\n${after}"`;
+      });
+      
+      // Fix unescaped tabs inside strings
+      jsonResponse = jsonResponse.replace(/"([^"]*)\t([^"]*)"/g, (match, before, after) => {
+        return `"${before}\\t${after}"`;
+      });
+      
+      // Try parsing again after repairs
+      try {
+        data = JSON.parse(jsonResponse);
+        console.log('[ai-grade] JSON repair successful');
+      } catch (repairError) {
+        console.error('[ai-grade] JSON repair failed:', repairError.message);
+        console.error('[ai-grade] Raw response:', text);
+        throw parseError; // Throw original error for better debugging
+      }
+    }
 
     // Save full grading record to Redis for instructor review
     if (userId) {
