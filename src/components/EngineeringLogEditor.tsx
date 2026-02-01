@@ -68,20 +68,54 @@ const EngineeringLogEditor = ({
       try {
         const token = await getAccessToken();
         if (!token) {
+          // No auth - try localStorage backup
+          const localBackup = localStorage.getItem(`homework_backup_${assignmentId}`);
+          if (localBackup) {
+            console.log('[EngineeringLog] Loading from localStorage backup (no auth)');
+            setSavedContent(localBackup);
+          }
           setIsLoading(false);
           return;
         }
         
-        // Load saved code
+        // Load saved code from cloud
         const codeResponse = await fetch(`/api/code-get?starterId=${assignmentId}`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         
+        let cloudContent: string | null = null;
         if (codeResponse.ok) {
           const data = await codeResponse.json();
           if (data?.code) {
-            setSavedContent(data.code);
+            cloudContent = data.code;
+            console.log('[EngineeringLog] Loaded from cloud:', cloudContent.substring(0, 50) + '...');
           }
+        }
+        
+        // Check localStorage backup
+        const localBackup = localStorage.getItem(`homework_backup_${assignmentId}`);
+        
+        // Use cloud if available, otherwise localStorage
+        if (cloudContent) {
+          setSavedContent(cloudContent);
+          // Update localStorage to match cloud
+          localStorage.setItem(`homework_backup_${assignmentId}`, cloudContent);
+        } else if (localBackup) {
+          console.log('[EngineeringLog] Cloud empty, using localStorage backup');
+          setSavedContent(localBackup);
+          // Sync localStorage to cloud
+          await fetch('/api/code-save', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              starterId: assignmentId,
+              code: localBackup
+            }),
+          });
+          console.log('[EngineeringLog] Synced localStorage backup to cloud');
         }
         
         // Load progress to check if already submitted/passed
@@ -127,13 +161,89 @@ const EngineeringLogEditor = ({
         placeholder: 'Write your reflection here... (3-5 sentences explaining Source Code, what the Compiler does, and why semicolons matter)',
       }),
     ],
-    content: savedContent || '',
+    content: '',
     editorProps: {
       attributes: {
         spellcheck: 'true',
       },
     },
-  }, [savedContent])
+  })
+
+  // Set editor content when savedContent loads from cloud
+  useEffect(() => {
+    if (editor && savedContent && !editor.getText().trim()) {
+      console.log('[EngineeringLog] Loading saved content into editor');
+      editor.commands.setContent(savedContent);
+    }
+  }, [editor, savedContent]);
+
+  // Auto-save to cloud every 30 seconds (debounced)
+  useEffect(() => {
+    if (!editor || isLocked) return;
+    
+    let saveTimeout: ReturnType<typeof setTimeout>;
+    let lastSavedContent = savedContent || '';
+    
+    const saveToCloud = async () => {
+      const currentContent = editor.getHTML();
+      // Only save if content has changed and is not empty
+      if (currentContent === lastSavedContent || !editor.getText().trim()) return;
+      
+      try {
+        const token = await getAccessToken();
+        if (!token) return;
+        
+        console.log('[EngineeringLog] Auto-saving to cloud...');
+        await fetch('/api/code-save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            starterId: assignmentId,
+            code: currentContent
+          }),
+        });
+        lastSavedContent = currentContent;
+        console.log('[EngineeringLog] Auto-save complete');
+      } catch (err) {
+        console.error('[EngineeringLog] Auto-save failed:', err);
+      }
+    };
+    
+    // Debounced save on content change
+    const handleUpdate = () => {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveToCloud, 3000); // Save 3 seconds after typing stops
+    };
+    
+    editor.on('update', handleUpdate);
+    
+    // Also save periodically every 30 seconds if there are changes
+    const intervalId = setInterval(saveToCloud, 30000);
+    
+    return () => {
+      editor.off('update', handleUpdate);
+      clearTimeout(saveTimeout);
+      clearInterval(intervalId);
+    };
+  }, [editor, assignmentId, isLocked, savedContent]);
+
+  // Save to localStorage on every change as backup (for page refresh recovery)
+  useEffect(() => {
+    if (!editor || isLocked) return;
+    
+    const handleUpdate = () => {
+      const content = editor.getHTML();
+      if (editor.getText().trim()) {
+        localStorage.setItem(`homework_backup_${assignmentId}`, content);
+      }
+    };
+    
+    editor.on('update', handleUpdate);
+    return () => editor.off('update', handleUpdate);
+  }, [editor, assignmentId, isLocked]);
 
   // Expose editor content to window for AI Tutor access
   useEffect(() => {
