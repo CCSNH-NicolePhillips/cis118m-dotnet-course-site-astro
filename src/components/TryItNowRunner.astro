@@ -457,6 +457,10 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         renderLineHighlight: 'all',
       });
       
+      // Register editor instance globally for submit-lab.js to access
+      window.monacoEditorInstances = window.monacoEditorInstances || {};
+      window.monacoEditorInstances[starterId] = editor;
+      
       // Listen for theme changes
       const themeObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {

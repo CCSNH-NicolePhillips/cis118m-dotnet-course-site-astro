@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-01T17:01:06.568Z",
+  "generatedAt": "2026-02-01T17:06:13.843Z",
   "courseInfo": {
     "code": "CIS 118M",
     "title": "Introduction to C# Programming",
@@ -605,15 +605,6 @@
           "fullText": "# Week 3 Extra Practice: Input practice\n\nPick **1–2** items (optional).\n\n- Ask for 2 numbers (use TryParse). Print their sum.\n- Ask for a price and a quantity. Print a total.\n- Challenge: Keep asking until the user enters a number between 1 and 10.\n\n## Open in Editor\n- Use: /editor/?week=03&starter=week-03-extra-practice"
         },
         {
-          "path": "week-03\\homework\\index.md",
-          "title": "Week 03 • Week 3 Homework: Tip + Tax Calculator (with validation)",
-          "summary": "# Week 3 Homework: Tip + Tax Calculator (with validation) ## Overview Ask for a bill amount, validate it, then calculate tip, tax, and total. ## Requirements checklist (acceptance criteria) - [ ] Prompts for bill amount and validates using double.TryParse - [ ] Uses a tip rate (example: 15%) and tax rate (example: 8.5%) - [ ] Calculates tip amount, tax amount, and final total - [ ] Prints labeled results clearly - [ ] Runs without errors ## Submit to Canvas - Submit code (paste/export) - Submit screenshot of output ## Open in Editor - Start here: /editor/?week=03&starter=week-03-lesson-1 Mark",
-          "keyConcepts": [],
-          "codeExamples": [],
-          "quizQuestions": [],
-          "fullText": "# Week 3 Homework: Tip + Tax Calculator (with validation)\n\n## Overview\nAsk for a bill amount, validate it, then calculate tip, tax, and total.\n\n## Requirements checklist (acceptance criteria)\n- [ ] Prompts for bill amount and validates using double.TryParse\n- [ ] Uses a tip rate (example: 15%) and tax rate (example: 8.5%)\n- [ ] Calculates tip amount, tax amount, and final total\n- [ ] Prints labeled results clearly\n- [ ] Runs without errors\n\n## Submit to Canvas\n- Submit code (paste/export)\n- Submit screenshot of output\n\n## Open in Editor\n- Start here: /editor/?week=03&starter=week-03-lesson-1\n\n \n Mark complete\n \n\n \n Status:"
-        },
-        {
           "path": "week-03\\homework\\index.mdx",
           "title": "Homework 03 • Type Safety Reflection",
           "summary": "# Homework 03: Reflection - (GRADED) ## 📝 Homework 03: The Type Safety Patch Now that you understand data types and their purpose, it's time to demonstrate your understanding of why type safety matters in real-world applications. 💰 The Critical Question In a professional production environment, why is it considered a 'critical failure' to use a double for currency calculations instead of a decimal ? Your response should address: What is the difference between Binary Floating-Point and Decimal Arithmetic ? Give a specific example of how using double could cause a financial error. Why does the",
@@ -621,17 +612,6 @@
           "codeExamples": [],
           "quizQuestions": [],
           "fullText": "# Homework 03: Reflection - (GRADED)\r\n\r\n\r\n\r\n## 📝 Homework 03: The Type Safety Patch\r\n\r\n Now that you understand data types and their purpose, it's time to demonstrate your understanding of why type safety matters in real-world applications. \r\n\r\n \r\n \r\n 💰 The Critical Question \r\n In a professional production environment, why is it considered a 'critical failure' to use a double for currency calculations instead of a decimal ? \r\n \r\n Your response should address: \r\n \r\n What is the difference between Binary Floating-Point and Decimal Arithmetic ? \r\n Give a specific example of how using double could cause a financial error. \r\n Why does the decimal type solve this problem? \r\n \r\n \r\n \r\n Tip: Think about the \"0.1 + 0.2 problem\" you saw in Section 3.2.\r\n \r\n \r\n \r\n\r\n\r\n\r\n---\r\n\r\n## 📚 Reference Material\r\n\r\nIf you need to review, revisit these sections:\r\n- [Section 3.2: Numeric Precision](/week-03/3-2-numeric-precision/) — The double vs decimal comparison\r\n- [The 0.1 + 0.2 Problem](/week-03/3-2-numeric-precision/#the-famous-01--02-problem) — Live demonstration\r\n\r\n---\r\n\r\n \r\n After submitting your homework, complete the Weekly Assessment to finish Week 3! \r\n Take Weekly Assessment →"
-        },
-        {
-          "path": "week-03\\index.md",
-          "title": "Week 03",
-          "summary": "# Week 3 **Focus:** User input with Console.ReadLine + safe conversions using TryParse. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/) — ## By the end of this week, you can: - Prompt the user and read input - Convert input to numbers safely (TryParse) - Handle invalid input without crashing ## Open the editor - /editor/?week=03&starter=week-03-lesson-1",
-          "keyConcepts": [
-            "Focus:"
-          ],
-          "codeExamples": [],
-          "quizQuestions": [],
-          "fullText": "# Week 3\n\n**Focus:** User input with Console.ReadLine + safe conversions using TryParse.\n\n## This week’s pages\n- Lesson 1: [./lesson-1/](./lesson-1/) — \n- Lesson 2: [./lesson-2/](./lesson-2/) — \n- Extra practice: [./extra-practice/](./extra-practice/) — \n- Lab: [./lab/](./lab/) — \n- Homework: [./homework/](./homework/) — \n\n## By the end of this week, you can:\n- Prompt the user and read input\n- Convert input to numbers safely (TryParse)\n- Handle invalid input without crashing\n\n## Open the editor\n- /editor/?week=03&starter=week-03-lesson-1"
         },
         {
           "path": "week-03\\index.mdx",

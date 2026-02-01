@@ -364,19 +364,9 @@ Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated 
 
 Summary: # Week 3 Extra Practice: Input practice Pick **1–2** items (optional). - Ask for 2 numbers (use TryParse). Print their sum. - Ask for a price and a quantity. Print a total. - Challenge: Keep asking until the user enters a number between 1 and 10. ## Open in Editor - Use: /editor/?week=03&starter=wee...
 
-### 📝 Homework: Week 03 • Week 3 Homework: Tip + Tax Calculator (with validation)
-
-Summary: # Week 3 Homework: Tip + Tax Calculator (with validation) ## Overview Ask for a bill amount, validate it, then calculate tip, tax, and total. ## Requirements checklist (acceptance criteria) - [ ] Prompts for bill amount and validates using double.TryParse - [ ] Uses a tip rate (example: 15%) and tax...
-
 ### 📝 Homework: Homework 03 • Type Safety Reflection
 
 Summary: # Homework 03: Reflection - (GRADED) ## 📝 Homework 03: The Type Safety Patch Now that you understand data types and their purpose, it's time to demonstrate your understanding of why type safety matters in real-world applications. 💰 The Critical Question In a professional production environment, wh...
-
-### 📚 Overview: Week 03
-Key Concepts:
-- Focus:
-
-Summary: # Week 3 **Focus:** User input with Console.ReadLine + safe conversions using TryParse. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/...
 
 ### 📚 Overview: Week 03 • Variables & Data Types
 Key Concepts:
