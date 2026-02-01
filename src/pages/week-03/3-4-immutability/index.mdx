@@ -92,7 +92,85 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
-## 🔐 Why Make Values Unchangeable?
+## �️ Choosing Your Shield: `const` vs. `readonly`
+
+<div class="comparison-cards">
+  <div class="comparison-card const-card">
+    <div class="card-header">
+      <div class="card-icon">🔒</div>
+      <h3>const</h3>
+    </div>
+    <div class="card-content">
+      <div class="comparison-row">
+        <span class="label">Evaluation</span>
+        <span class="value">Compile-time</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Memory</span>
+        <span class="value">None (Inlined)</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Scope</span>
+        <span class="value">Static only</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Flexibility</span>
+        <span class="value">Fixed at design-time</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="comparison-card readonly-card">
+    <div class="card-header">
+      <div class="card-icon">🔐</div>
+      <h3>readonly</h3>
+    </div>
+    <div class="card-content">
+      <div class="comparison-row">
+        <span class="label">Evaluation</span>
+        <span class="value">Runtime (Constructor)</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Memory</span>
+        <span class="value">Allocated on Heap/Stack</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Scope</span>
+        <span class="value">Instance or Static</span>
+      </div>
+      <div class="comparison-row">
+        <span class="label">Flexibility</span>
+        <span class="value">Settable during startup</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## ⚡ Enforcement in Action
+
+<div class="enforcement-example">
+  <div class="code-block">
+    <div class="code-header">
+      <span class="file-name">Program.cs</span>
+    </div>
+    <pre><code class="language-csharp">public const double PI = 3.14159;
+
+PI = 3.15;  // ← COMPILER ERROR</code></pre>
+  </div>
+  <div class="error-callout">
+    <div class="error-icon">❌</div>
+    <div class="error-content">
+      <strong>CS0131:</strong> The left-hand side of an assignment must be a variable, property or indexer
+      <p class="error-note">The compiler physically stops you from changing a constant. Your program won't even build if you try!</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## �🔐 Why Make Values Unchangeable?
 
 Some values should **never change** during program execution:
 
@@ -606,5 +684,226 @@ if (attempts > MAX_ATTEMPTS)  // Now it's clear!</code></pre>
     .header-image {
       max-width: 100%;
     }
+  }
+
+  /* Comparison Cards - const vs readonly */
+  .comparison-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin: 24px 0;
+  }
+
+  .comparison-card {
+    background: linear-gradient(135deg, rgba(30, 33, 40, 0.9) 0%, rgba(20, 22, 28, 0.95) 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .comparison-card.const-card {
+    border: 2px solid rgba(167, 139, 250, 0.4);
+  }
+
+  .comparison-card.readonly-card {
+    border: 2px solid rgba(78, 201, 176, 0.4);
+  }
+
+  .comparison-card .card-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .const-card .card-header {
+    background: linear-gradient(90deg, rgba(167, 139, 250, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+  }
+
+  .readonly-card .card-header {
+    background: linear-gradient(90deg, rgba(78, 201, 176, 0.2) 0%, rgba(45, 160, 140, 0.2) 100%);
+  }
+
+  .comparison-card .card-icon {
+    font-size: 1.8rem;
+  }
+
+  .comparison-card .card-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .const-card .card-header h3 {
+    color: #a78bfa;
+  }
+
+  .readonly-card .card-header h3 {
+    color: #4ec9b0;
+  }
+
+  .comparison-card .card-content {
+    padding: 24px;
+  }
+
+  .comparison-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .comparison-row:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-row .label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .comparison-row .value {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  body[data-theme="light"] .comparison-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  body[data-theme="light"] .const-card {
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+
+  body[data-theme="light"] .readonly-card {
+    border-color: rgba(45, 160, 140, 0.3);
+  }
+
+  body[data-theme="light"] .const-card .card-header {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  }
+
+  body[data-theme="light"] .readonly-card .card-header {
+    background: linear-gradient(90deg, rgba(45, 160, 140, 0.1) 0%, rgba(45, 160, 140, 0.05) 100%);
+  }
+
+  body[data-theme="light"] .const-card .card-header h3 {
+    color: #6366f1;
+  }
+
+  body[data-theme="light"] .readonly-card .card-header h3 {
+    color: #0a7c62;
+  }
+
+  body[data-theme="light"] .comparison-row {
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+  }
+
+  body[data-theme="light"] .comparison-row .label {
+    color: #666;
+  }
+
+  body[data-theme="light"] .comparison-row .value {
+    color: #333;
+  }
+
+  /* Enforcement Example */
+  .enforcement-example {
+    background: linear-gradient(135deg, rgba(30, 33, 40, 0.9) 0%, rgba(20, 22, 28, 0.95) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 24px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .enforcement-example .code-block {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  .enforcement-example .code-header {
+    background: linear-gradient(90deg, rgba(167, 139, 250, 0.2) 0%, rgba(99, 102, 241, 0.1) 100%);
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .enforcement-example .file-name {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .enforcement-example pre {
+    margin: 0;
+    padding: 20px;
+  }
+
+  .enforcement-example pre code {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .error-callout {
+    display: flex;
+    gap: 16px;
+    padding: 20px 24px;
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+    border-top: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .error-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .error-content {
+    flex: 1;
+  }
+
+  .error-content strong {
+    color: #f87171;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.9rem;
+  }
+
+  .error-content p.error-note {
+    margin: 8px 0 0 0;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  body[data-theme="light"] .enforcement-example {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-color: rgba(239, 68, 68, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  body[data-theme="light"] .enforcement-example .code-block {
+    background: #1e1e2e;
+  }
+
+  body[data-theme="light"] .enforcement-example .code-header {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+  }
+
+  body[data-theme="light"] .error-callout {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.02) 100%);
+  }
+
+  body[data-theme="light"] .error-content strong {
+    color: #dc2626;
+  }
+
+  body[data-theme="light"] .error-content p.error-note {
+    color: #555;
   }
 `}</style>

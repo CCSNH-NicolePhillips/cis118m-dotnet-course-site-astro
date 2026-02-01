@@ -382,7 +382,7 @@ const InstructorDashboard: React.FC = () => {
         if (field === 'score') parsed[pageId].score = parseFloat(String(value)) || 0;
         else if (field === 'originalScore') parsed[pageId].originalScore = parseFloat(String(value)) || 0;
         else if (field === 'daysLate') parsed[pageId].daysLate = parseInt(String(value)) || 0;
-        else if (field === 'isLate') parsed[pageId].isLate = value === true || value === 'true';
+        else if (field === 'isLate') parsed[pageId].isLate = String(value) === 'true';
         else if (field === 'penaltyPercent') parsed[pageId].penaltyPercent = parseFloat(String(value)) || 0;
         else if (field === 'status') parsed[pageId].status = String(value);
         else if (field === 'feedback') parsed[pageId].feedback = String(value);
