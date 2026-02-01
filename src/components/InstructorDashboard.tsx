@@ -123,7 +123,7 @@ interface Student {
   email: string;
   name?: string;
   progress: StudentProgress;
-  parsedProgress?: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string } };
+  parsedProgress?: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string } };
 }
 
 interface SubmissionModalData {
@@ -369,7 +369,7 @@ const InstructorDashboard: React.FC = () => {
   }, [students]);
 
   const parseProgressData = (progress: StudentProgress) => {
-    const parsed: { [pageId: string]: { score?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; gradedAt?: string } } = {};
+    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; gradedAt?: string } } = {};
     
     for (const [key, value] of Object.entries(progress || {})) {
       const parts = key.split(':');
@@ -380,6 +380,10 @@ const InstructorDashboard: React.FC = () => {
         if (!parsed[pageId]) parsed[pageId] = {};
         
         if (field === 'score') parsed[pageId].score = parseFloat(String(value)) || 0;
+        else if (field === 'originalScore') parsed[pageId].originalScore = parseFloat(String(value)) || 0;
+        else if (field === 'daysLate') parsed[pageId].daysLate = parseInt(String(value)) || 0;
+        else if (field === 'isLate') parsed[pageId].isLate = value === true || value === 'true';
+        else if (field === 'penaltyPercent') parsed[pageId].penaltyPercent = parseFloat(String(value)) || 0;
         else if (field === 'status') parsed[pageId].status = String(value);
         else if (field === 'feedback') parsed[pageId].feedback = String(value);
         else if (field === 'savedCode') parsed[pageId].savedCode = String(value);
@@ -1261,6 +1265,36 @@ const InstructorDashboard: React.FC = () => {
                     {modalData.student.parsedProgress?.[modalData.assignmentId]?.score ?? '--'}%
                   </div>
                 </div>
+                {/* Original Score - show if different from current (late penalty applied) */}
+                {(() => {
+                  const progress = modalData.student.parsedProgress?.[modalData.assignmentId];
+                  const originalScore = progress?.originalScore;
+                  const currentScore = progress?.score;
+                  const daysLate = progress?.daysLate;
+                  const isLate = progress?.isLate;
+                  const penaltyPercent = progress?.penaltyPercent;
+                  
+                  // Only show if there's an original score AND it's different from current
+                  if (originalScore !== undefined && originalScore !== currentScore) {
+                    return (
+                      <div style={{ flex: 1, minWidth: '150px', background: 'rgba(251, 191, 36, 0.15)', border: '1px solid #fbbf24', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ color: '#fbbf24', fontSize: '0.85rem', marginBottom: '5px' }}>Original Score</div>
+                        <div style={{
+                          fontSize: '2rem',
+                          fontWeight: 'bold',
+                          color: originalScore >= 70 ? '#4ec9b0' : '#ce9178'
+                        }}>
+                          {originalScore}%
+                        </div>
+                        <div style={{ color: '#fbbf24', fontSize: '0.75rem', marginTop: '5px' }}>
+                          {daysLate !== undefined && daysLate > 0 && `${daysLate} day${daysLate > 1 ? 's' : ''} late`}
+                          {penaltyPercent !== undefined && penaltyPercent > 0 && ` (−${penaltyPercent}%)`}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
                 <div style={{ flex: 1, minWidth: '150px', background: '#2d2d2d', padding: '15px', borderRadius: '8px', textAlign: 'center' }}>
                   <div style={{ color: '#888', fontSize: '0.85rem', marginBottom: '5px' }}>Status</div>
                   <div style={{
