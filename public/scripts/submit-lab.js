@@ -58,17 +58,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Get starterId from URL or default
+  // Get starterId from URL - dynamically extracts week number
   const getStarterId = () => {
-    // Check if on lab page - extract from URL
     const path = window.location.pathname;
-    if (path.includes('/week-02/lab')) {
-      return 'week-02-lab';
+    // Match patterns like /week-01/lab, /week-02/lab, /week-15/lab, etc.
+    const match = path.match(/\/week-(\d+)\/lab/);
+    if (match) {
+      const weekNum = match[1]; // e.g., "01", "02", "03", "15"
+      // Week 1 uses different ID format for backwards compatibility
+      if (weekNum === '01') {
+        return 'week-01-lab-1';
+      }
+      return `week-${weekNum}-lab`;
     }
-    if (path.includes('/week-01/lab')) {
-      return 'week-01-lab-1';
-    }
-    return 'week-01-lab-1'; // default
+    return 'week-01-lab-1'; // default fallback
   };
 
   const starterId = getStarterId();

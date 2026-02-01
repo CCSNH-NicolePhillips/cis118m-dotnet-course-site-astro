@@ -190,6 +190,79 @@ export const lessonContexts = {
       Clarity and terminology (10pts): Clear writing using terms like namespace, Main, documentation
     `,
     requiredKeywords: ["namespace", "Main"]
+  },
+
+  // ===== WEEK 03 =====
+  "week-03-lab": {
+    title: "Week 3: Lab - Data Manifest (System Profile)",
+    type: "lab",
+    week: "03",
+    taughtConcepts: `
+      - Variables are named storage locations in memory
+      - int stores whole numbers (integers) - use for counts
+      - double stores floating-point numbers - use for measurements, versions
+      - decimal stores exact decimal values - REQUIRED for money/currency (use 'm' suffix)
+      - bool stores true/false values - use for flags and conditions
+      - string stores text data - use for names and messages
+      - The 0.1 + 0.2 problem: doubles have rounding errors, decimals don't
+      - Variable declaration: type name = value; (e.g., int count = 5;)
+      - Decimal literals need 'm' suffix: 45.99m (not 45.99)
+    `,
+    assignmentPrompt: `
+      Build a System Profile console application that stores and displays system data using the correct data types:
+      1. appVersion (double) - Application version like 1.2
+      2. userCount (int) - Number of active users like 1500
+      3. isSystemActive (bool) - System status true/false
+      4. serverCost (decimal with 'm' suffix) - Monthly cost like 45.99m - THIS MUST BE DECIMAL FOR MONEY
+      5. systemName (string) - Name of the system
+      
+      Print a formatted System Profile Report showing all values.
+    `,
+    rubric: `
+      Correct variable types used (40pts): 
+        - appVersion is double
+        - userCount is int  
+        - isSystemActive is bool
+        - serverCost is decimal (CRITICAL - money must use decimal, not double)
+        - systemName is string
+      All 5 variables declared and initialized (20pts): All required variables are declared with values
+      Output formatted correctly (20pts): Prints a formatted report with labels and values
+      Uses decimal for money with 'm' suffix (10pts): serverCost uses decimal type AND 'm' suffix (e.g., 45.99m)
+      Code compiles without errors (10pts): No syntax errors, produces output
+    `,
+    requiredKeywords: ["double", "int", "bool", "decimal", "string"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-03-homework": {
+    title: "Week 3: Type Safety Reflection",
+    type: "homework",
+    week: "03",
+    taughtConcepts: `
+      - Binary Floating-Point (double/float): Stores numbers in base-2, causing rounding errors with decimal fractions
+      - The 0.1 + 0.2 Problem: In binary, 0.1 + 0.2 = 0.30000000000000004 due to representation limitations
+      - Decimal Arithmetic (decimal type): Stores numbers in base-10, exact for currency calculations
+      - Financial calculations MUST use decimal to avoid missing pennies or incorrect totals
+      - The 'm' suffix tells C# to treat a number as decimal (45.99m)
+      - Type safety prevents accidental data corruption and calculation errors
+    `,
+    assignmentPrompt: `
+      In a professional production environment, why is it considered a 'critical failure' to use a double for currency calculations instead of a decimal?
+      
+      Your response should address:
+      1. What is the difference between Binary Floating-Point and Decimal Arithmetic?
+      2. Give a specific example of how using double could cause a financial error.
+      3. Why does the decimal type solve this problem?
+      
+      Tip: Think about the "0.1 + 0.2 problem" from Section 3.2.
+    `,
+    rubric: `
+      Binary vs Decimal explanation (35pts): Explains that double uses binary (base-2) while decimal uses base-10 representation
+      Financial error example (35pts): Gives a concrete example of how double could cause money calculation errors (like 0.1+0.2 != 0.3, missing pennies, or incorrect totals)
+      Why decimal solves it (20pts): Explains that decimal provides exact representation for financial values
+      Clarity and terminology (10pts): Clear writing, uses terms like "floating-point", "decimal", "rounding"
+    `,
+    requiredKeywords: ["decimal", "double"]
   }
 };
 
@@ -210,6 +283,13 @@ export const TUTOR_CONTEXTS = {
   'week-02': "Week 2: Program Structure. Students are learning about namespaces, classes, the Main method, and code documentation. They understand Console.WriteLine from Week 1. This week focuses on: namespace declarations, class structure, static void Main vs static int Main, XML documentation comments (///), and the Allman brace style. NO variables yet - that's Week 3.",
   'week-02-lab': "Week 2 Lab: System Status Report. Students create a well-structured program with: namespace SystemDiagnostics, class StatusReport, XML documentation (///) above Main, static int Main() with return 0, and at least 5 Console.WriteLine statements for formatted output. NO variables - just structure, comments, and Console.WriteLine.",
   'week-02-homework': "Week 2 Homework: Architecture Reflection. Students explain program structure - namespaces, classes, Main method, and documentation. Written reflection about why code organization matters.",
+  'week-03': "Week 3: Variables & Data Types. Students are learning about storing data in variables using the correct types: int (whole numbers), double (floating-point), decimal (money - requires 'm' suffix), bool (true/false), string (text). They learn the 0.1+0.2 problem and why decimal is required for financial calculations. Key concepts: variable declaration syntax (type name = value;), choosing appropriate types.",
+  'week-03-3-1': "Week 3 Section 3.1: Declaring State. Focus on variables as 'parking spots' in memory. Syntax: type name = value; Examples: int count = 5; string name = \"Apollo\"; Students learn identifiers, assignment, and the idea of reserving memory.",
+  'week-03-3-2': "Week 3 Section 3.2: Numeric Precision. Three tiers: int (whole numbers, counting), double (measurements, scientific), decimal (MONEY - requires 'm' suffix like 45.99m). THE 0.1+0.2 PROBLEM: doubles have rounding errors! 0.1+0.2 != 0.3 in binary. Always use decimal for currency.",
+  'week-03-3-3': "Week 3 Section 3.3: Logic & Text. bool type stores true/false for decisions. char stores single characters in single quotes ('A'). string stores text in double quotes (\"Hello\"). Escape sequences: \\n newline, \\t tab.",
+  'week-03-3-4': "Week 3 Section 3.4: Immutability. const creates compile-time constants that NEVER change (like PI). readonly is for runtime constants set in constructors. const = carved in stone forever, readonly = set once at startup.",
+  'week-03-lab': "Week 3 Lab: Data Manifest. Students build a System Profile with 5 variables: appVersion (double), userCount (int), isSystemActive (bool), serverCost (decimal with 'm' suffix!), systemName (string). CRITICAL: serverCost MUST be decimal because it's money!",
+  'week-03-homework': "Week 3 Homework: Type Safety Reflection. Students explain WHY double is dangerous for money (the 0.1+0.2 problem), give an example of a financial error, and explain how decimal solves it. Written reflection about type safety.",
 };
 
 export function getTutorContext(pageId) {

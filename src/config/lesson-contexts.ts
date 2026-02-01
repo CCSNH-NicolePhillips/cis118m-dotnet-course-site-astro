@@ -66,11 +66,11 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-02-homework': "Week 2 Homework: Architecture Reflection. Students explain program structure - namespaces, classes, Main method, and documentation. Written reflection about why code organization matters.",
   
   // Week 3
-  'week-03': "Topic: User Input and Conversion. Focus: Interactive programs that respond to users.",
-  'week-03-lesson-1': "Topic: User Input. Focus: Console.ReadLine() to receive data from the user.",
-  'week-03-lesson-2': "Topic: Type Conversion. Focus: Parse methods to convert string input to numbers.",
-  'week-03-lab': "Topic: Interactive Programs. Mission: Building programs that respond to user input.",
-  'week-03-homework': "Topic: Reflection. Focus: Understanding the input-process-output pattern.",
+  'week-03': "Week 3: Variables & Data Types. Students are learning about storing data in variables using the correct types: int (whole numbers), double (floating-point), decimal (money - requires 'm' suffix), bool (true/false), string (text). They learn the 0.1+0.2 problem and why decimal is required for financial calculations.",
+  'week-03-lesson-1': "Week 3 Section 3.1: Declaring State. Focus on variables as 'parking spots' in memory. Syntax: type name = value;",
+  'week-03-lesson-2': "Week 3 Section 3.2: Numeric Precision. Three tiers: int (whole numbers), double (measurements), decimal (MONEY with 'm' suffix). The 0.1+0.2 problem shows why doubles are dangerous for currency.",
+  'week-03-lab': "Week 3 Lab: Data Manifest. Students build a System Profile with 5 variables: appVersion (double), userCount (int), isSystemActive (bool), serverCost (decimal with 'm' suffix!), systemName (string). CRITICAL: serverCost MUST be decimal because it's money!",
+  'week-03-homework': "Week 3 Homework: Type Safety Reflection. Students explain WHY double is dangerous for money, give an example of a financial error, and explain how decimal solves it.",
   
   // Week 4
   'week-04': "Topic: Operators and Expressions. Focus: Performing calculations and combining data.",
