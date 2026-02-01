@@ -612,24 +612,48 @@ const StudentGrades: React.FC = () => {
               
               const hwScore = progress[`week-${wStr}-homework`]?.score;
               const labScore = progress[`week-${wStr}-lab`]?.score;
+              
+              // Check if week is past due and started (for showing 0 on unsubmitted)
+              const weekPastDue = isWeekPastDue(week);
+              const weekStarted = isWeekStarted(week);
 
-              const renderScore = (score: number | undefined, color: string) => {
-                if (score === undefined || score === null) {
-                  return <span style={{ color: '#444' }}>—</span>;
+              const renderScore = (score: number | undefined, color: string, assignmentType: string) => {
+                // If score is defined, show it
+                if (score !== undefined && score !== null) {
+                  return (
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '4px 10px',
+                      borderRadius: '4px',
+                      background: score >= 70 ? 'rgba(78, 201, 176, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                      color: score >= 70 ? '#4ec9b0' : '#ef4444',
+                      fontSize: '0.9rem',
+                      fontWeight: 500
+                    }}>
+                      {score.toFixed(0)}
+                    </span>
+                  );
                 }
-                return (
-                  <span style={{
-                    display: 'inline-block',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    background: score >= 70 ? 'rgba(78, 201, 176, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                    color: score >= 70 ? '#4ec9b0' : '#ef4444',
-                    fontSize: '0.9rem',
-                    fontWeight: 500
-                  }}>
-                    {score.toFixed(0)}
-                  </span>
-                );
+                
+                // If no score but week is past due + started, show 0
+                if (weekPastDue && weekStarted) {
+                  return (
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '4px 10px',
+                      borderRadius: '4px',
+                      background: 'rgba(239, 68, 68, 0.15)',
+                      color: '#ef4444',
+                      fontSize: '0.9rem',
+                      fontWeight: 500
+                    }}>
+                      0
+                    </span>
+                  );
+                }
+                
+                // Week not due yet, show dash
+                return <span style={{ color: '#444' }}>—</span>;
               };
 
               return (
@@ -650,18 +674,30 @@ const StudentGrades: React.FC = () => {
                       }}>
                         {Math.min(100, partScore).toFixed(0)}
                       </span>
+                    ) : weekPastDue && weekStarted ? (
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '4px 10px',
+                        borderRadius: '4px',
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        color: '#ef4444',
+                        fontSize: '0.9rem',
+                        fontWeight: 500
+                      }}>
+                        0
+                      </span>
                     ) : (
                       <span style={{ color: '#444' }}>—</span>
                     )}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(quizScore, TYPE_COLORS.quiz.text)}
+                    {renderScore(quizScore, TYPE_COLORS.quiz.text, 'quiz')}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(hwScore, TYPE_COLORS.homework.text)}
+                    {renderScore(hwScore, TYPE_COLORS.homework.text, 'homework')}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(labScore, TYPE_COLORS.lab.text)}
+                    {renderScore(labScore, TYPE_COLORS.lab.text, 'lab')}
                   </td>
                 </tr>
               );
