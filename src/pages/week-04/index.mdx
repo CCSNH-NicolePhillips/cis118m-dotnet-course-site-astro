@@ -1,0 +1,194 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 04 • Strings & Text Processing"
+description: "Mastering text manipulation, immutability, and the data stream"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 04: Strings & Text Processing
+
+<DueDateBanner week={4} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>📡 Transmission Incoming</h2>
+  <p>
+    If variables are the fuel, <strong>strings</strong> are the communication lines. As a Senior Architect, you must understand that strings in C# are <em>immutable</em>—they cannot be changed once they are born in memory. Every "modification" creates an entirely new object.
+  </p>
+  <p>
+    This week, we master the logic of text manipulation and the tools required to build professional-grade output. You'll learn to parse, format, and sanitize text data like a systems engineer.
+  </p>
+</div>
+
+---
+
+## 📋 Week Overview
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>4.1</strong></td>
+        <td><a href="/week-04/4-1-immutability/">The Immutability Rule</a></td>
+        <td>Why strings create new objects on every "change"</td>
+      </tr>
+      <tr>
+        <td><strong>4.2</strong></td>
+        <td><a href="/week-04/4-2-interpolation/">Interpolation & Escape</a></td>
+        <td>Using $ and escape sequences for formatted output</td>
+      </tr>
+      <tr>
+        <td><strong>4.3</strong></td>
+        <td><a href="/week-04/4-3-string-methods/">Search & Parse Methods</a></td>
+        <td>IndexOf, Substring, Split, and Trim</td>
+      </tr>
+      <tr>
+        <td><strong>4.4</strong></td>
+        <td><a href="/week-04/4-4-stringbuilder/">Performance: StringBuilder</a></td>
+        <td>Mutable text for high-volume operations</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🧠 The Immutability Principle
+
+When you "change" a string, C# doesn't modify the original—it creates a **brand new object** in memory:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    HEAP MEMORY                          │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│   string name = "Hello";                                │
+│   ┌─────────┐                                          │
+│   │ "Hello" │ ← Original object                        │
+│   └─────────┘                                          │
+│                                                         │
+│   name = name + " World";                               │
+│   ┌─────────┐     ┌───────────────┐                    │
+│   │ "Hello" │     │ "Hello World" │ ← NEW object       │
+│   └─────────┘     └───────────────┘                    │
+│   (orphaned)       ↑ name now points here              │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+The old "Hello" string is left behind for garbage collection. This is **safe** but can be **slow** if you're building strings in a loop.
+
+---
+
+## 🔧 The Text Processing Toolkit
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🔍 IndexOf</h5>
+    <p>Find the position of a character or substring.</p>
+    <code>"architect".IndexOf('t') → 5</code>
+  </div>
+  <div class="component-card">
+    <h5>✂️ Substring</h5>
+    <p>Extract a portion of text by position.</p>
+    <code>"Hello World".Substring(6) → "World"</code>
+  </div>
+  <div class="component-card">
+    <h5>🔪 Split</h5>
+    <p>Break a string into an array by delimiter.</p>
+    <code>"a,b,c".Split(',') → ["a","b","c"]</code>
+  </div>
+  <div class="component-card">
+    <h5>🧹 Trim</h5>
+    <p>Remove whitespace from start and end.</p>
+    <code>"  clean  ".Trim() → "clean"</code>
+  </div>
+</div>
+
+---
+
+## 🎨 String Interpolation
+
+The modern way to embed variables in text—clean, readable, and type-safe:
+
+```csharp
+string name = "Architect";
+int level = 42;
+decimal rate = 125.50m;
+
+// The OLD way (concatenation) - messy
+Console.WriteLine("Welcome, " + name + "! Level: " + level);
+
+// The NEW way (interpolation) - clean
+Console.WriteLine($"Welcome, {name}! Level: {level}");
+
+// With formatting
+Console.WriteLine($"Your rate: {rate:C}");  // → "Your rate: $125.50"
+```
+
+---
+
+## 📋 Week 04 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>🔬 Lab 04:</strong> The Text Sanitizer</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Homework 04:</strong> String Operations Practice</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 04:</strong> Interpolation & Escape Syntax</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks:</strong> Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>💬 Participation:</strong> Class engagement</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## ⚡ Performance Warning
+
+When building strings in a loop, **use StringBuilder**:
+
+```csharp
+// ❌ BAD: Creates 1000 new string objects
+string result = "";
+for (int i = 0; i < 1000; i++)
+{
+    result += i.ToString();  // New object every iteration!
+}
+
+// ✅ GOOD: Uses a single mutable buffer
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++)
+{
+    sb.Append(i);  // Modifies the same buffer
+}
+string result = sb.ToString();
+```
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-04/4-1-immutability/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    INITIALIZE SECTION 4.1 →
+  </a>
+</div>
