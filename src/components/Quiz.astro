@@ -13,11 +13,11 @@ interface Props {
   title: string;
   questions: QuizQuestion[];
   passingScore?: number;
-  maxAttempts?: number; // Set to 0 or Infinity for unlimited
+  maxAttempts?: number; // Set to 0 for unlimited (default)
   hideAnswersUntilFinal?: boolean; // Don't show correct answers until last attempt
 }
 
-const { quizId, title, questions, passingScore = 70, maxAttempts = 2, hideAnswersUntilFinal = false } = Astro.props;
+const { quizId, title, questions, passingScore = 70, maxAttempts = 0, hideAnswersUntilFinal = false } = Astro.props;
 // Use a large number for "unlimited" since Infinity can't be serialized to JSON
 const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
 ---
