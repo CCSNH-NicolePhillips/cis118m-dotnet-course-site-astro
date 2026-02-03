@@ -1172,3 +1172,37 @@ body[data-theme="dark"] .mark-complete-button.completed {
   color: #18a0fb !important;
   font-weight: bold;
 }
+
+/* Next Section Navigation - Global Styles */
+.next-section {
+  background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+  border: 2px solid #4ec9b0;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  margin: 32px 0;
+}
+
+.next-section p {
+  margin: 8px 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.next-section a {
+  display: inline-block;
+  margin-top: 16px;
+}
+
+/* Light mode: Fix visibility */
+body:not([data-theme="dark"]) .next-section {
+  background: linear-gradient(135deg, rgba(78, 201, 176, 0.25) 0%, rgba(107, 159, 255, 0.25) 100%);
+  border-color: #2a9d8f;
+}
+
+body:not([data-theme="dark"]) .next-section p {
+  color: #1e3a5f;
+}
+
+body:not([data-theme="dark"]) .next-section p strong {
+  color: #0d5c4d;
+}
