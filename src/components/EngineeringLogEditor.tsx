@@ -349,12 +349,13 @@ const EngineeringLogEditor = ({
       });
 
       // Save the mission success to the database with savedCode for gradebook
+      const didPass = data.score >= PASSING_SCORE;
       await fetch('/.netlify/functions/progress-update', {
         method: 'POST',
         headers,
         body: JSON.stringify({ 
           pageId: assignmentId, 
-          status: passed ? 'completed' : 'attempted',
+          status: didPass ? 'completed' : 'attempted',
           score: data.score,
           feedback: data.feedback,
           savedCode: editor.getText() // Plain text for easy viewing in gradebook

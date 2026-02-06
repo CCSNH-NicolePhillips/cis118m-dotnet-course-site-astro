@@ -146,11 +146,12 @@ Return JSON:
       }
     }
 
-    // Save full grading record to Redis for instructor review
+    // Save full grading record to Redis for instructor review AND progress tracking
     if (userId) {
       const redis = getRedis();
+      const timestamp = new Date().toISOString();
       const gradeRecord = {
-        timestamp: new Date().toISOString(),
+        timestamp,
         assignmentId,
         userId,
         studentResponse: content,
@@ -159,10 +160,31 @@ Return JSON:
         rubric: data.rubric,
       };
       
-      // Store under instructor-accessible key
+      // Store under instructor-accessible key (backup/audit trail)
       await redis.lpush(`grades:${assignmentId}`, JSON.stringify(gradeRecord));
-      // Also store under student's record
+      // Also store under student's record (backup)
       await redis.hset(`user:${userId}:grades`, assignmentId, JSON.stringify(gradeRecord));
+      
+      // CRITICAL: Also save to the main progress store that the gradebook reads
+      // This ensures grades are recorded even if the client-side progress-update call fails
+      const currentProgress = await redis.hgetall(`user:progress:data:${userId}`) || {};
+      const currentAttempts = parseInt(currentProgress[`${assignmentId}:attempts`] || "0");
+      const previousBestScore = parseInt(currentProgress[`${assignmentId}:bestScore`] || "0");
+      const newBestScore = Math.max(previousBestScore, data.score);
+      
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${assignmentId}:score`]: data.score,
+        [`${assignmentId}:originalScore`]: data.score,
+        [`${assignmentId}:bestScore`]: newBestScore,
+        [`${assignmentId}:status`]: data.score >= 70 ? 'completed' : 'attempted',
+        [`${assignmentId}:feedback`]: data.feedback || '',
+        [`${assignmentId}:savedCode`]: content,
+        [`${assignmentId}:submittedAt`]: timestamp,
+        [`${assignmentId}:attempts`]: currentAttempts + 1,
+      });
+      
+      // Track student in index for instructor dashboard
+      await redis.sadd("cis118m:students", userId);
     }
 
     // Only return score and feedback to student (not rubric breakdown)
