@@ -45,6 +45,10 @@ const EngineeringLogEditor = ({
 }: EngineeringLogEditorProps) => {
   const [feedback, setFeedback] = useState('');
   const [score, setScore] = useState<number | null>(null);
+  const [originalScore, setOriginalScore] = useState<number | null>(null);
+  const [isLate, setIsLate] = useState(false);
+  const [daysLate, setDaysLate] = useState(0);
+  const [latePenalty, setLatePenalty] = useState(0);
   const [isGrading, setIsGrading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -350,7 +354,7 @@ const EngineeringLogEditor = ({
 
       // Save the mission success to the database with savedCode for gradebook
       const didPass = data.score >= PASSING_SCORE;
-      await fetch('/.netlify/functions/progress-update', {
+      const progressResponse = await fetch('/.netlify/functions/progress-update', {
         method: 'POST',
         headers,
         body: JSON.stringify({ 
@@ -361,6 +365,25 @@ const EngineeringLogEditor = ({
           savedCode: editor.getText() // Plain text for easy viewing in gradebook
         }),
       });
+      
+      // Check for late penalty and update display
+      if (progressResponse.ok) {
+        const progressData = await progressResponse.json();
+        if (progressData.isLate) {
+          setIsLate(true);
+          setDaysLate(progressData.daysLate || 0);
+          setLatePenalty(progressData.penalty || 0);
+          setOriginalScore(progressData.originalScore);
+          setScore(progressData.score); // Update to penalized score
+          
+          // Update submission status based on PENALIZED score
+          if (progressData.score >= PASSING_SCORE) {
+            setSubmissionStatus('passed');
+          } else {
+            setSubmissionStatus('needs-revision');
+          }
+        }
+      }
     } catch (err) {
       console.error('[AI Grade] Exception:', err);
       setFeedback('SYSTEM ERROR: Unable to process review. Please check your connection and try again.');
@@ -560,12 +583,44 @@ const EngineeringLogEditor = ({
                 : 'TECHNICAL REVIEW REPORT // ARCHITECT_V1'}
           </div>
           {score !== null && (
-            <div style={{ 
-              fontSize: '1.5rem', 
-              color: score >= PASSING_SCORE ? '#4ec9b0' : '#ce9178', 
-              marginBottom: '10px' 
-            }}>
-              SCORE: {score}/100 {score >= PASSING_SCORE ? '✓ PASS' : '✗ NEEDS IMPROVEMENT'}
+            <div style={{ marginBottom: '10px' }}>
+              {isLate && originalScore !== null && originalScore !== score ? (
+                <>
+                  <div style={{ 
+                    fontSize: '1.5rem', 
+                    color: score >= PASSING_SCORE ? '#4ec9b0' : '#ce9178'
+                  }}>
+                    FINAL SCORE: {score}/100 {score >= PASSING_SCORE ? '✓ PASS' : '✗ NEEDS IMPROVEMENT'}
+                  </div>
+                  <div style={{ 
+                    fontSize: '0.9rem', 
+                    color: '#f0ad4e',
+                    marginTop: '8px',
+                    padding: '10px',
+                    background: 'rgba(240, 173, 78, 0.1)',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(240, 173, 78, 0.3)'
+                  }}>
+                    ⚠️ <strong>Late Submission Penalty Applied</strong>
+                    <div style={{ marginTop: '5px', fontSize: '0.85rem' }}>
+                      • Original Score: <span style={{ color: '#4ec9b0' }}>{originalScore}/100</span>
+                      <br />
+                      • Days Late: {daysLate} day{daysLate !== 1 ? 's' : ''}
+                      <br />
+                      • Penalty: -{latePenalty}% ({daysLate <= 7 ? '10% per day' : 'max 70% after 7 days'})
+                      <br />
+                      • Final Score: <span style={{ color: score >= PASSING_SCORE ? '#4ec9b0' : '#ce9178' }}>{score}/100</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div style={{ 
+                  fontSize: '1.5rem', 
+                  color: score >= PASSING_SCORE ? '#4ec9b0' : '#ce9178'
+                }}>
+                  SCORE: {score}/100 {score >= PASSING_SCORE ? '✓ PASS' : '✗ NEEDS IMPROVEMENT'}
+                </div>
+              )}
             </div>
           )}
           <div style={{ color: colors.text, whiteSpace: 'pre-wrap' }}>{feedback}</div>

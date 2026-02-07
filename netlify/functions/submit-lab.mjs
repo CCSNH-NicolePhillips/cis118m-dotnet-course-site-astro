@@ -42,6 +42,8 @@ export async function handler(event, context) {
     const lessonContext = getLessonContext(starterId);
     let aiGrade = null;
     let aiFeedback = null;
+    let originalGrade = null;
+    let lateInfo = { daysLate: 0, penaltyPercent: 0, isLate: false };
 
     // Perform AI grading if we have context and API key
     if (lessonContext && process.env.GEMINI_API_KEY) {
@@ -104,6 +106,7 @@ Return JSON:
         const jsonResponse = text.substring(jsonStart, jsonEnd);
         const gradeData = JSON.parse(jsonResponse);
         
+        originalGrade = gradeData.score;
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
         
@@ -111,6 +114,11 @@ Return JSON:
         // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
         const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
         const penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt));
+        lateInfo = { 
+          daysLate: penaltyInfo.daysLate, 
+          penaltyPercent: penaltyInfo.penaltyPercent, 
+          isLate: penaltyInfo.daysLate > 0 
+        };
         
         // Apply late penalty to the grade
         let finalGrade = aiGrade;
@@ -122,11 +130,14 @@ Return JSON:
           console.log(`[submit-lab] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
         }
         
+        // Update aiGrade to the final penalized score
+        aiGrade = finalGrade;
+        
         // Store detailed grading for instructor review (include penalty info)
         const gradeKey = `grades:${sub}:${starterId}`;
         await redis.set(gradeKey, JSON.stringify({
           ...gradeData,
-          originalScore: aiGrade,
+          originalScore: originalGrade,
           finalScore: finalGrade,
           daysLate: penaltyInfo.daysLate,
           penaltyPercent: penaltyInfo.penaltyPercent,
@@ -218,7 +229,11 @@ Return JSON:
         success: true,
         submittedAt,
         score: aiGrade,
+        originalScore: originalGrade,
         feedback: aiFeedback,
+        isLate: lateInfo.isLate,
+        daysLate: lateInfo.daysLate,
+        penaltyPercent: lateInfo.penaltyPercent,
         message: aiGrade !== null 
           ? `Lab graded! Score: ${aiGrade}/100` 
           : 'Lab submission saved successfully'

@@ -213,13 +213,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (data.score !== null && data.score !== undefined) {
           statusDiv.textContent = `✓ Lab graded! Score: ${data.score}/100`;
           
-          // Show AI feedback
-          if (data.feedback && aiFeedbackDiv) {
+          // Show AI feedback with late penalty info if applicable
+          if (aiFeedbackDiv) {
             aiFeedbackDiv.style.display = "block";
-            aiFeedbackDiv.innerHTML = `
-              <strong style="color: #4ec9b0;">🎉 Score: ${data.score}/100</strong>
-              <p style="margin: 0.5rem 0 0 0;">${data.feedback}</p>
-            `;
+            
+            if (data.isLate && data.originalScore !== null && data.originalScore !== data.score) {
+              // Late submission - show both scores
+              aiFeedbackDiv.innerHTML = `
+                <strong style="color: #4ec9b0;">🎉 Final Score: ${data.score}/100</strong>
+                <div style="margin-top: 8px; padding: 10px; background: rgba(240, 173, 78, 0.1); border: 1px solid rgba(240, 173, 78, 0.3); border-radius: 4px;">
+                  <strong style="color: #f0ad4e;">⚠️ Late Submission Penalty Applied</strong>
+                  <div style="margin-top: 5px; font-size: 0.85rem; color: #f0ad4e;">
+                    • Original Score: <span style="color: #4ec9b0;">${data.originalScore}/100</span><br/>
+                    • Days Late: ${data.daysLate} day${data.daysLate !== 1 ? 's' : ''}<br/>
+                    • Penalty: -${data.penaltyPercent}% (${data.daysLate <= 7 ? '10% per day' : 'max 70% after 7 days'})<br/>
+                    • Final Score: <span style="color: ${data.score >= 70 ? '#4ec9b0' : '#ce9178'};">${data.score}/100</span>
+                  </div>
+                </div>
+                ${data.feedback ? `<p style="margin: 0.5rem 0 0 0;">${data.feedback}</p>` : ''}
+              `;
+            } else {
+              // On-time submission
+              aiFeedbackDiv.innerHTML = `
+                <strong style="color: #4ec9b0;">🎉 Score: ${data.score}/100</strong>
+                ${data.feedback ? `<p style="margin: 0.5rem 0 0 0;">${data.feedback}</p>` : ''}
+              `;
+            }
           }
         } else {
           statusDiv.textContent = "✓ Lab submitted successfully!";
