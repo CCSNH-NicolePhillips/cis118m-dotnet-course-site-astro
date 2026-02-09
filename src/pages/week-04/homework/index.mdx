@@ -1,159 +1,125 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Homework 04 • String Reflection"
-description: "Demonstrate your understanding of string immutability and efficient text processing"
+description: "Reflect on string immutability and efficient text processing"
 ---
 
 import DueDateBanner from '../../../components/DueDateBanner.astro';
 import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
 
-# Homework 04: String Reflection (GRADED)
+# Homework 04: Reflection - (GRADED)
 
 <DueDateBanner week={4} type="Homework" />
 
 ## 📝 Homework 04: The Immutability Patch
 
-Now that you understand how strings work in memory, it's time to demonstrate your knowledge of why immutability matters and when to use StringBuilder.
+<p>Now that you understand how strings work in memory, it's time to demonstrate your knowledge of <strong>why immutability matters</strong> in real-world applications.</p>
 
----
-
-## 🧠 The Critical Questions
-
-Answer BOTH questions in **3-5 sentences each**:
-
-### Question 1: The Memory Problem
-
-A junior developer writes this code to build a report with 1,000 lines:
-
-```csharp
-string report = "";
-for (int i = 0; i < 1000; i++)
-{
-    report += $"Line {i}: Data processing complete\n";
-}
-```
-
-**Explain:**
-1. Why is this code inefficient from a memory perspective?
-2. How many string objects are created during the loop?
-3. What happens to the old strings after each iteration?
-
-### Question 2: The Solution
-
-**Explain:**
-1. How would you rewrite the above code using StringBuilder?
-2. Why is StringBuilder more efficient for this use case?
-3. When should you use regular string concatenation vs. StringBuilder?
-
----
-
-## 📋 Grading Criteria
-
-<div class="grading-rubric">
-  <table>
-    <thead>
-      <tr>
-        <th>Criteria</th>
-        <th>Points</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Correctly explains string immutability and memory allocation</td>
-        <td>25</td>
-      </tr>
-      <tr>
-        <td>Accurately describes the number of objects created</td>
-        <td>25</td>
-      </tr>
-      <tr>
-        <td>Demonstrates understanding of garbage collection</td>
-        <td>15</td>
-      </tr>
-      <tr>
-        <td>Provides correct StringBuilder solution</td>
-        <td>20</td>
-      </tr>
-      <tr>
-        <td>Explains when to use each approach</td>
-        <td>15</td>
-      </tr>
-      <tr>
-        <td><strong>Total</strong></td>
-        <td><strong>100</strong></td>
-      </tr>
-    </tbody>
-  </table>
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🧵 String Immutability Reflection</h5>
+    <p>In 3-5 sentences, explain <strong>String Behavior in C#</strong>:</p>
+    <ol>
+      <li>What does it mean that strings are <strong>immutable</strong> in C#?</li>
+      <li>What happens in memory when you concatenate strings inside a loop?</li>
+      <li>When should you use <strong>StringBuilder</strong> instead of regular string concatenation?</li>
+    </ol>
+    <p style="margin-top: 12px; padding: 10px; background: rgba(78, 201, 176, 0.1); border-radius: 6px; font-size: 0.9rem;">
+      <strong>Tip:</strong> Think about the "Glass Mold" metaphor from Section 4.1 — strings can't be changed, only replaced.
+    </p>
+  </div>
 </div>
 
----
-
-## ✍️ Submit Your Response
-
-<EngineeringLogEditor 
-  client:load
-  assignmentId="week-04-homework"
-/>
+<EngineeringLogEditor client:load assignmentId="week-04-homework" />
 
 ---
 
-## 💡 Helpful References
+## � Reference Material
 
-<div class="reference-links">
-  <a href="/week-04/4-1-immutability/">Section 4.1: The Immutability Rule</a>
-  <a href="/week-04/4-4-stringbuilder/">Section 4.4: StringBuilder</a>
+If you need to review, revisit these sections:
+- [Section 4.1: The Immutability Rule](/week-04/4-1-immutability/) — Why strings can't be changed
+- [Section 4.4: StringBuilder](/week-04/4-4-stringbuilder/) — Efficient string assembly
+
+---
+
+<div class="next-section">
+  <p>After submitting your homework, complete the <strong>Weekly Assessment</strong> to finish Week 4!</p>
+  <a href="/week-04/weekly-assessment/" class="vscode-button">Take Weekly Assessment →</a>
 </div>
 
 <style>{`
-  .grading-rubric {
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .next-section a {
+    display: inline-block;
+    margin-top: 16px;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+
+  .component-cards {
+    display: grid;
+    gap: 1rem;
     margin: 1.5rem 0;
   }
-  
-  .grading-rubric table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #1e293b;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .grading-rubric th {
-    background: #0f172a;
-    color: #93c5fd;
-    padding: 1rem;
-    text-align: left;
-  }
-  
-  .grading-rubric td {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid #334155;
-    color: #e2e8f0;
-  }
-  
-  .grading-rubric tr:last-child td {
-    background: #1e3a5f;
-    font-weight: bold;
-  }
-  
-  .reference-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .reference-links a {
+
+  .component-card {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     border: 1px solid #475569;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-    color: #93c5fd;
-    text-decoration: none;
-    transition: border-color 0.2s, transform 0.2s;
+    border-radius: 12px;
+    padding: 1.5rem;
   }
-  
-  .reference-links a:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
+
+  .component-card h5 {
+    color: #93c5fd;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+  }
+
+  .component-card p {
+    color: #e2e8f0;
+    margin: 0.5rem 0;
+  }
+
+  .component-card ol {
+    color: #e2e8f0;
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  .component-card li {
+    margin: 0.5rem 0;
+  }
+
+  body[data-theme="light"] .component-card {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .component-card h5 {
+    color: #1e40af !important;
+  }
+
+  body[data-theme="light"] .component-card p,
+  body[data-theme="light"] .component-card ol {
+    color: #334155 !important;
   }
 `}</style>
