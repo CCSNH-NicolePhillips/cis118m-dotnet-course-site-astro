@@ -134,7 +134,7 @@ class Program
 }
 `,
         "week-04-lab": `// Name: Your Name Here
-// Assignment: Lab 4 - Employee Report
+// Assignment: Lab 4 - Text Sanitizer
 
 using System;
 
@@ -142,24 +142,28 @@ class Program
 {
     static void Main()
     {
-        string csvData = @"ID,Name,Department,Salary
-E001,Alice Johnson,Engineering,85000
-E002,Bob Smith,Marketing,72000
-E003,Charlie Brown,Engineering,91000
-E004,Diana Ross,Sales,68000";
+        // Messy user input that needs cleaning
+        string rawName = "   John Smith   ";
+        string rawEmail = "john.smith@email.com";
+        string rawPhone = "(555) 123-4567";
+        string rawCity = "   Boston   ";
+        string rawState = "ma";
+        string rawBio = "Loves coding and coffee";
 
-        // TODO: Parse the CSV data and display a formatted employee report
-        // Hints:
-        // - Use Split() to break the data into rows, then columns
-        // - Skip the header row
-        // - Convert salary from string to int
-        // - Track totals as you loop
+        // TODO: Clean up the data using string methods:
+        // 1. Use Trim() to remove extra spaces from name and city
+        // 2. Use ToUpper() to capitalize the state code
+        // 3. Use Replace() to remove ( ) and spaces from phone
+        // 4. Use Substring() to extract area code (first 3 chars of cleaned phone)
+        // 5. Use Length to get the bio character count
+
+        Console.WriteLine("=== SANITIZED USER PROFILE ===");
         
-        Console.WriteLine("=== EMPLOYEE REPORT ===");
+        // TODO: Print each cleaned field using string interpolation
+        // Example: Console.WriteLine($"Name: {cleanedName}");
         
-        // Your code here...
-        
-        Console.WriteLine("=======================");
+        Console.WriteLine("==============================");
+        Console.WriteLine("Profile sanitization complete!");
     }
 }
 `,

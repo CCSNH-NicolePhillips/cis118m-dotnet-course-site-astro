@@ -1,7 +1,7 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
 title: "Lab 04 • Text Sanitizer"
-description: "Parse CSV data and format it into a report"
+description: "Clean and format messy user input using string methods"
 ---
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
@@ -16,42 +16,58 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
 
 ## 🎯 Mission Objective
 
-Parse a **CSV data string** and display it as a formatted report using `Split()` and string interpolation.
+You've received **messy user input** that needs to be cleaned up and formatted before it can be stored in the database. Use **string methods** to sanitize the data.
+
+---
+
+## 📋 The Problem
+
+A user submitted their profile information, but it's full of problems:
+- Extra spaces everywhere
+- Inconsistent capitalization  
+- Unwanted characters in the phone number
+- Needs reformatting for display
+
+**Your job:** Clean it up using the string methods you learned this week!
 
 ---
 
 ## 📋 Requirements
 
-Your program must:
+Your program must use these string methods to clean the data:
 
 <div class="styled-table-container">
   <table>
     <thead>
       <tr>
-        <th>Requirement</th>
-        <th>Description</th>
+        <th>Method</th>
+        <th>What to Fix</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Split into rows</td>
-        <td>Use <code>Split('\n')</code> to break the CSV into lines</td>
+        <td><code>Trim()</code></td>
+        <td>Remove extra spaces from beginning/end of strings</td>
       </tr>
       <tr>
-        <td>Split into columns</td>
-        <td>Use <code>Split(',')</code> to extract each field</td>
+        <td><code>ToUpper()</code></td>
+        <td>Convert the state code to uppercase</td>
       </tr>
       <tr>
-        <td>Skip header</td>
-        <td>Start loop at index 1 to skip the header row</td>
+        <td><code>Replace()</code></td>
+        <td>Remove parentheses and spaces from phone number</td>
       </tr>
       <tr>
-        <td>Format output</td>
-        <td>Use string interpolation to display each record</td>
+        <td><code>Substring()</code></td>
+        <td>Extract the area code (first 3 digits) from phone</td>
       </tr>
       <tr>
-        <td>Calculate total</td>
-        <td>Sum all salaries and display the total</td>
+        <td><code>Length</code></td>
+        <td>Display the character count of the bio</td>
+      </tr>
+      <tr>
+        <td>String Interpolation</td>
+        <td>Format the final output using <code>$"..."</code></td>
       </tr>
     </tbody>
   </table>
@@ -61,15 +77,20 @@ Your program must:
 
 ## 📤 Required Output
 
+Your cleaned output should look **exactly** like this:
+
 ```
-=== EMPLOYEE REPORT ===
-E001 - Alice Johnson (Engineering) - $85,000
-E002 - Bob Smith (Marketing) - $72,000
-E003 - Charlie Brown (Engineering) - $91,000
-E004 - Diana Ross (Sales) - $68,000
-=======================
-Total Employees: 4
-Total Payroll: $316,000
+=== SANITIZED USER PROFILE ===
+Name: John Smith
+Email: john.smith@email.com
+Phone: 555-123-4567
+Area Code: 555
+City: Boston
+State: MA
+Bio: Loves coding and coffee
+Bio Length: 27 characters
+==============================
+Profile sanitization complete!
 ```
 
 ---
@@ -79,7 +100,7 @@ Total Payroll: $316,000
 <div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
   <iframe 
     src="/editor/embedded?starter=week-04-lab" 
-    style="width: 100%; height: 550px; border: none;"
+    style="width: 100%; height: 600px; border: none;"
     title="Lab 4 Code Editor"
   ></iframe>
 </div>
@@ -98,27 +119,31 @@ Total Payroll: $316,000
     </thead>
     <tbody>
       <tr>
-        <td>Correctly splits CSV into rows</td>
+        <td>Uses <code>Trim()</code> to remove extra whitespace</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Uses <code>ToUpper()</code> for state code</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Uses <code>Replace()</code> to clean phone number</td>
         <td>20</td>
       </tr>
       <tr>
-        <td>Correctly splits each row into columns</td>
+        <td>Uses <code>Substring()</code> to extract area code</td>
         <td>20</td>
       </tr>
       <tr>
-        <td>Skips header row (starts at index 1)</td>
+        <td>Uses <code>Length</code> property correctly</td>
         <td>10</td>
       </tr>
       <tr>
         <td>Uses string interpolation for output</td>
-        <td>20</td>
+        <td>10</td>
       </tr>
       <tr>
-        <td>Calculates and displays totals correctly</td>
-        <td>20</td>
-      </tr>
-      <tr>
-        <td>Code compiles without errors</td>
+        <td>Code compiles and runs without errors</td>
         <td>10</td>
       </tr>
       <tr>
@@ -134,38 +159,45 @@ Total Payroll: $316,000
 ## 💡 Hints
 
 <details>
-<summary>Hint 1: Splitting into rows</summary>
+<summary>Hint 1: Trim removes whitespace</summary>
 
 ```csharp
-string[] rows = csvData.Split('\n');
-// rows[0] = "ID,Name,Department,Salary" (header)
-// rows[1] = "E001,Alice Johnson,Engineering,85000"
+string messy = "   hello world   ";
+string clean = messy.Trim();  // "hello world"
 ```
 
 </details>
 
 <details>
-<summary>Hint 2: Splitting into columns</summary>
+<summary>Hint 2: Replace can remove characters</summary>
 
 ```csharp
-string[] cols = rows[i].Split(',');
-// cols[0] = "E001"
-// cols[1] = "Alice Johnson"
-// cols[2] = "Engineering"
-// cols[3] = "85000"
+string phone = "(555) 123-4567";
+string clean = phone.Replace("(", "").Replace(")", "").Replace(" ", "");
+// Result: "555-123-4567"
 ```
 
 </details>
 
 <details>
-<summary>Hint 3: Parsing and formatting salary</summary>
+<summary>Hint 3: Substring extracts part of a string</summary>
 
 ```csharp
-int salary = int.Parse(cols[3]);
-Console.WriteLine($"{id} - {name} ({dept}) - ${salary:N0}");
+string phone = "555-123-4567";
+string areaCode = phone.Substring(0, 3);  // "555"
+// Substring(startIndex, length)
 ```
 
-The `:N0` formats the number with commas (85000 → 85,000).
+</details>
+
+<details>
+<summary>Hint 4: String interpolation</summary>
+
+```csharp
+string name = "John";
+int age = 25;
+Console.WriteLine($"Name: {name}, Age: {age}");
+```
 
 </details>
 
@@ -173,11 +205,11 @@ The `:N0` formats the number with commas (85000 → 85,000).
 
 ## 📝 Submission
 
-When your program runs correctly and displays the formatted report:
+When your program runs correctly and displays the formatted profile:
 
-1. Click the **Submit Lab** button below
-2. Your code will be automatically graded
-3. You'll receive feedback on your submission
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
 
 <div id="lab-submit-container" style="margin: 24px 0;">
   <button id="submit-lab-btn" style="
@@ -206,7 +238,7 @@ When your program runs correctly and displays the formatted report:
 
 <div class="next-section">
   <p>Next up: <strong>Technical Reflection</strong></p>
-  <p>Explain the difference between string concatenation and StringBuilder.</p>
+  <p>Explain the concepts of string immutability and StringBuilder.</p>
   <a href="/week-04/homework/" class="vscode-button">Continue to Homework →</a>
 </div>
 
@@ -237,61 +269,22 @@ When your program runs correctly and displays the formatted report:
   body[data-theme="light"] .next-section p {
     color: #333 !important;
   }
-
-  .styled-table-container {
-    background: #1e2128;
-    border-radius: 12px;
-    padding: 8px 24px;
-    margin: 24px 0;
-    overflow-x: auto;
+  
+  details {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0;
   }
-
-  .styled-table-container table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .styled-table-container th {
-    padding: 16px;
-    text-align: left;
+  
+  details summary {
+    cursor: pointer;
     font-weight: 600;
-    color: #fff;
-    border-bottom: 2px solid rgba(78, 201, 176, 0.3);
-  }
-
-  .styled-table-container td {
-    padding: 16px;
-    text-align: left;
-    color: rgba(255, 255, 255, 0.9);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .styled-table-container tr:last-child td {
-    border-bottom: none;
-  }
-
-  .styled-table-container code {
     color: #4ec9b0;
-    background: rgba(78, 201, 176, 0.15);
-    padding: 2px 6px;
-    border-radius: 4px;
   }
-
-  body[data-theme="light"] .styled-table-container {
-    background: #f8f9fa !important;
-    border: 1px solid #e0e0e0;
-  }
-
-  body[data-theme="light"] .styled-table-container th {
-    color: #333 !important;
-  }
-
-  body[data-theme="light"] .styled-table-container td {
-    color: #333 !important;
-  }
-
-  body[data-theme="light"] .styled-table-container code {
-    color: #0a7c62;
-    background: rgba(78, 201, 176, 0.2);
+  
+  details[open] summary {
+    margin-bottom: 12px;
   }
 `}</style>

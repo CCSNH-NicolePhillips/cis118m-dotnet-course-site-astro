@@ -587,7 +587,7 @@ internal static class CheckRunner
     }
 
     // ===== WEEK 04 LAB CHECKS =====
-    // Lab 4: Text Sanitizer - Parse CSV data
+    // Lab 4: Text Sanitizer - Clean messy user input using string methods
     private static List<CheckResult> Week04LabChecks(string programCs)
     {
         var checks = new List<CheckResult>();
@@ -603,65 +603,69 @@ internal static class CheckRunner
                 ? "Found header comment with your name."
                 : "Add a header comment with your name (e.g., // Name: Jane Doe)"));
 
-        // Check 2: Uses Split to parse rows
-        var hasSplitNewline = Regex.IsMatch(programCs, @"\.Split\s*\(\s*['""]?\\n['""]?\s*\)") || 
-                              Regex.IsMatch(programCs, @"\.Split\s*\(\s*'\\n'\s*\)") ||
-                              programCs.Contains(".Split('\\n')") ||
-                              programCs.Contains(".Split(\"\\n\")");
+        // Check 2: Uses Trim() method
+        var hasTrim = Regex.IsMatch(programCs, @"\.Trim\s*\(\s*\)");
         checks.Add(new CheckResult(
-            Name: "HasSplitNewline",
-            Passed: hasSplitNewline,
-            Message: hasSplitNewline
-                ? "Found Split('\\n') to parse rows."
-                : "Use .Split('\\n') to split the CSV data into rows."));
+            Name: "HasTrim",
+            Passed: hasTrim,
+            Message: hasTrim
+                ? "Found Trim() to remove whitespace."
+                : "Use .Trim() to remove extra spaces from the name and city."));
 
-        // Check 3: Uses Split to parse columns
-        var hasSplitComma = Regex.IsMatch(programCs, @"\.Split\s*\(\s*['""],['""]\s*\)") ||
-                            programCs.Contains(".Split(',')");
+        // Check 3: Uses ToUpper() method
+        var hasToUpper = Regex.IsMatch(programCs, @"\.ToUpper\s*\(\s*\)");
         checks.Add(new CheckResult(
-            Name: "HasSplitComma",
-            Passed: hasSplitComma,
-            Message: hasSplitComma
-                ? "Found Split(',') to parse columns."
-                : "Use .Split(',') to split each row into columns."));
+            Name: "HasToUpper",
+            Passed: hasToUpper,
+            Message: hasToUpper
+                ? "Found ToUpper() for capitalization."
+                : "Use .ToUpper() to capitalize the state code."));
 
-        // Check 4: Has a for or foreach loop
-        var hasLoop = Regex.IsMatch(programCs, @"\bfor\s*\(") || Regex.IsMatch(programCs, @"\bforeach\s*\(");
+        // Check 4: Uses Replace() method
+        var hasReplace = Regex.IsMatch(programCs, @"\.Replace\s*\(");
         checks.Add(new CheckResult(
-            Name: "HasLoop",
-            Passed: hasLoop,
-            Message: hasLoop
-                ? "Found loop to iterate through rows."
-                : "Use a for or foreach loop to process each employee row."));
+            Name: "HasReplace",
+            Passed: hasReplace,
+            Message: hasReplace
+                ? "Found Replace() to clean characters."
+                : "Use .Replace() to remove parentheses and spaces from the phone number."));
 
-        // Check 5: Parses salary with int.Parse
-        var hasIntParse = programCs.Contains("int.Parse") || programCs.Contains("Int32.Parse");
+        // Check 5: Uses Substring() method
+        var hasSubstring = Regex.IsMatch(programCs, @"\.Substring\s*\(");
         checks.Add(new CheckResult(
-            Name: "HasIntParse",
-            Passed: hasIntParse,
-            Message: hasIntParse
-                ? "Found int.Parse to convert salary."
-                : "Use int.Parse() to convert the salary string to an integer."));
+            Name: "HasSubstring",
+            Passed: hasSubstring,
+            Message: hasSubstring
+                ? "Found Substring() to extract text."
+                : "Use .Substring(0, 3) to extract the area code from the phone number."));
 
-        // Check 6: Has running totals (totalEmployees, totalPayroll)
-        var hasTotalEmployees = Regex.IsMatch(programCs, @"totalEmployees\s*[\+\=]|totalEmployees\s*\+\+");
-        var hasTotalPayroll = Regex.IsMatch(programCs, @"totalPayroll\s*[\+\=]");
+        // Check 6: Uses Length property
+        var hasLength = Regex.IsMatch(programCs, @"\.Length\b");
         checks.Add(new CheckResult(
-            Name: "HasTotals",
-            Passed: hasTotalEmployees && hasTotalPayroll,
-            Message: hasTotalEmployees && hasTotalPayroll
-                ? "Found running totals for employees and payroll."
-                : "Update totalEmployees and totalPayroll inside the loop."));
+            Name: "HasLength",
+            Passed: hasLength,
+            Message: hasLength
+                ? "Found Length property."
+                : "Use .Length to get the character count of the bio."));
 
-        // Check 7: Has at least 4 Console.WriteLine (header, employees, footer totals)
+        // Check 7: Uses string interpolation ($"...")
+        var hasInterpolation = Regex.IsMatch(programCs, @"\$""[^""]*\{[^}]+\}");
+        checks.Add(new CheckResult(
+            Name: "HasInterpolation",
+            Passed: hasInterpolation,
+            Message: hasInterpolation
+                ? "Found string interpolation for output."
+                : "Use string interpolation like $\"Name: {name}\" for formatted output."));
+
+        // Check 8: Has enough output lines
         var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
-        var hasEnoughOutput = writeLineCount >= 4;
+        var hasEnoughOutput = writeLineCount >= 8;
         checks.Add(new CheckResult(
             Name: "HasEnoughOutput",
             Passed: hasEnoughOutput,
             Message: hasEnoughOutput
                 ? $"Found {writeLineCount} Console.WriteLine statements."
-                : $"Need more output - print each employee and the totals. Found {writeLineCount}."));
+                : $"Need more output lines to display all profile fields. Found {writeLineCount}, need at least 8."));
 
         return checks;
     }
@@ -674,12 +678,13 @@ internal static class CheckRunner
         return firstFailed.Name switch
         {
             "HasHeaderComment" => "Add '// Name: Your Name' at the very top of your file.",
-            "HasSplitNewline" => "Split the CSV into rows: string[] rows = csvData.Split('\\n');",
-            "HasSplitComma" => "Split each row into columns: string[] cols = rows[i].Split(',');",
-            "HasLoop" => "Loop through rows: for (int i = 1; i < rows.Length; i++) { ... }",
-            "HasIntParse" => "Convert salary to int: int salary = int.Parse(cols[3]);",
-            "HasTotals" => "Inside the loop, add: totalEmployees++; totalPayroll += salary;",
-            "HasEnoughOutput" => "Print each employee row and the final totals.",
+            "HasTrim" => "Use .Trim() on rawName and rawCity to remove extra spaces.",
+            "HasToUpper" => "Use rawState.ToUpper() to convert 'ma' to 'MA'.",
+            "HasReplace" => "Chain .Replace() calls: rawPhone.Replace(\"(\", \"\").Replace(\")\", \"\").Replace(\" \", \"\")",
+            "HasSubstring" => "After cleaning the phone, use .Substring(0, 3) to get the first 3 characters.",
+            "HasLength" => "Use rawBio.Length to get the number of characters in the bio.",
+            "HasInterpolation" => "Use $\"Name: {cleanedName}\" syntax for formatted output.",
+            "HasEnoughOutput" => "Print all fields: Name, Email, Phone, Area Code, City, State, Bio, and Bio Length.",
             _ => "Keep working on your solution!"
         };
     }

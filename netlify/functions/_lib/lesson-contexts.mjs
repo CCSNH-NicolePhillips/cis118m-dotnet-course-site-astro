@@ -271,39 +271,47 @@ export const lessonContexts = {
     type: "lab",
     week: "04",
     taughtConcepts: `
-      - Split('\\n') breaks a string into an array by newlines
-      - Split(',') breaks a string into an array by commas
-      - Array indexing: rows[0] is the first element, rows[1] is the second
-      - Skip header row by starting loop at i=1 instead of i=0
+      - Trim() removes whitespace from the start and end of a string
+      - ToUpper() converts all characters to uppercase
+      - ToLower() converts all characters to lowercase
+      - Replace(old, new) replaces all occurrences of old with new
+      - Substring(start, length) extracts a portion of a string
+      - Length property returns the number of characters in a string
       - String interpolation: $"text {variable}" embeds values in strings
-      - int.Parse() converts a string to an integer
-      - Format specifier :N0 adds thousand separators (85000 → 85,000)
+      - Method chaining: text.Trim().ToUpper() applies multiple methods
     `,
     assignmentPrompt: `
-      Parse a CSV data string and display it as a formatted employee report:
-      1. Split the CSV into rows using Split('\\n')
-      2. Loop through rows starting at index 1 (skip the header)
-      3. Split each row by comma to get columns (ID, Name, Department, Salary)
-      4. Display each employee in format: ID - Name (Department) - $Salary
-      5. Calculate and display total employees and total payroll
+      Clean up messy user input using string methods:
+      1. Use Trim() to remove extra spaces from name and city
+      2. Use ToUpper() to capitalize the state code (ma → MA)
+      3. Use Replace() to remove parentheses and spaces from phone: (555) 123-4567 → 555-123-4567
+      4. Use Substring(0, 3) to extract the area code from the cleaned phone
+      5. Use Length to display the character count of the bio
+      6. Use string interpolation $"..." to format all output
       
       Required output format:
-      === EMPLOYEE REPORT ===
-      E001 - Alice Johnson (Engineering) - $85,000
-      ...
-      =======================
-      Total Employees: 4
-      Total Payroll: $316,000
+      === SANITIZED USER PROFILE ===
+      Name: John Smith
+      Email: john.smith@email.com
+      Phone: 555-123-4567
+      Area Code: 555
+      City: Boston
+      State: MA
+      Bio: Loves coding and coffee
+      Bio Length: 27 characters
+      ==============================
+      Profile sanitization complete!
     `,
     rubric: `
-      Splits CSV into rows correctly (20pts): Uses Split('\\n') to break into lines
-      Splits rows into columns (20pts): Uses Split(',') to extract fields from each row
-      Skips header row (10pts): Loop starts at i=1, not i=0
-      Uses string interpolation (20pts): Uses $"..." syntax to format output
-      Calculates totals correctly (20pts): Counts employees and sums salaries
+      Uses Trim() correctly (15pts): Removes whitespace from name and city
+      Uses ToUpper() correctly (15pts): Capitalizes state code
+      Uses Replace() correctly (20pts): Removes ( ) and space from phone number
+      Uses Substring() correctly (20pts): Extracts area code (first 3 digits)
+      Uses Length property (10pts): Displays bio character count
+      Uses string interpolation (10pts): Uses $"..." syntax for formatted output
       Code compiles and runs (10pts): No syntax errors, produces expected output
     `,
-    requiredKeywords: ["Split", "for", "Console.WriteLine"],
+    requiredKeywords: ["Trim", "ToUpper", "Replace", "Substring", "Length"],
     gradingTone: "college-freshman-friendly"
   },
 
@@ -368,7 +376,7 @@ export const TUTOR_CONTEXTS = {
   'week-04-4-2': "Week 4 Section 4.2: String Interpolation. Using $\"text {variable}\" syntax to embed variables in strings. Format specifiers like :C for currency, :N2 for decimals, :P for percentages.",
   'week-04-4-3': "Week 4 Section 4.3: String Methods. ToUpper(), ToLower(), Trim(), Contains(), IndexOf(), Substring(), Split(), Replace(). Remember: these methods return NEW strings, they don't modify the original!",
   'week-04-4-4': "Week 4 Section 4.4: StringBuilder. For building strings in loops, use StringBuilder to avoid creating garbage. Methods: Append(), AppendLine(), Insert(), ToString(). Import with 'using System.Text;'",
-  'week-04-lab': "Week 4 Lab: Text Sanitizer. Students parse CSV data using Split('\\n') and Split(','), loop through rows (starting at i=1 to skip header), extract fields, and display formatted output with string interpolation.",
+  'week-04-lab': "Week 4 Lab: Text Sanitizer. Students clean messy user input using string methods: Trim() to remove whitespace, ToUpper() for state code, Replace() to clean phone number, Substring() to extract area code, Length for bio character count, and string interpolation for output. NO LOOPS - they haven't learned those yet.",
   'week-04-homework': "Week 4 Homework: String Reflection. Students explain what string immutability means, what happens when you concatenate in a loop (creates garbage), and when to use StringBuilder. Written reflection, no code.",
 };
 
