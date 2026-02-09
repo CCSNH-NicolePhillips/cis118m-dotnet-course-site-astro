@@ -35,8 +35,82 @@ export const lessonContexts: Record<string, LessonContext> = {
     `
   },
 
-  // Add more weeks as needed:
-  // "week-02-homework": { ... },
+  "week-02-homework": {
+    title: "Week 2: Program Structure",
+    taughtConcepts: `
+      - Namespaces organize code and prevent naming conflicts (like folders for code)
+      - Classes are containers that group related code together
+      - The Main method is the entry point - where the program starts running
+      - static means the method belongs to the class itself, not an instance
+      - void means the method doesn't return anything; int Main returns an exit code
+      - XML documentation comments (///) help other developers understand your code
+      - The Allman brace style puts opening braces on their own line
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, explain Program Structure:
+      1. What is a namespace and why do we use it to organize code?
+      2. What is the purpose of the Main method in a C# program?
+      3. Why do professional developers add documentation comments (like ///) to their code?
+    `,
+    rubric: `
+      Namespace explanation (30pts): Student explains namespaces organize code/prevent conflicts
+      Main method purpose (40pts): Student explains Main is the entry point where execution begins
+      Documentation comments (20pts): Student explains they help other developers understand the code
+      Clarity (10pts): Clear, understandable writing
+    `
+  },
+
+  "week-03-homework": {
+    title: "Week 3: Variables & Data Types",
+    taughtConcepts: `
+      - Variables store data in memory like labeled containers
+      - int stores whole numbers (no decimals)
+      - double stores floating-point numbers (with decimals) - uses binary
+      - decimal stores exact decimal values - uses base 10 (REQUIRED for money!)
+      - The 0.1 + 0.2 problem: double gives 0.30000000000000004, decimal gives 0.3
+      - Binary floating-point cannot exactly represent many decimal fractions
+      - Financial calculations MUST use decimal to avoid rounding errors
+      - The 'm' suffix is required for decimal literals: 10.99m
+    `,
+    assignmentPrompt: `
+      In a professional production environment, why is it considered a 'critical failure' to use a double for currency calculations instead of a decimal?
+      1. What is the difference between Binary Floating-Point and Decimal Arithmetic?
+      2. Give a specific example of how using double could cause a financial error.
+      3. Why does the decimal type solve this problem?
+    `,
+    rubric: `
+      Binary vs Decimal explanation (30pts): Student explains double uses binary (can't represent 0.1 exactly), decimal uses base-10
+      Financial error example (30pts): Student gives specific example like 0.1+0.2=0.30000004 causing wrong totals
+      Decimal solution (25pts): Student explains decimal stores exact decimal values without binary conversion
+      Clarity (15pts): Clear explanation with understanding of why this matters in production
+    `
+  },
+
+  "week-04-homework": {
+    title: "Week 4: Strings & Text Processing",
+    taughtConcepts: `
+      - Strings are IMMUTABLE - once created, they cannot be changed
+      - Every string operation (concatenation, ToUpper, Replace, etc.) creates a NEW string
+      - In a loop with 1000 iterations, string += creates 1000 garbage objects
+      - The old strings become garbage waiting for collection (memory waste)
+      - StringBuilder is MUTABLE - it modifies a buffer in place
+      - StringBuilder.Append() adds to the existing buffer without creating new objects
+      - Use StringBuilder for: loops, building large strings, many concatenations
+      - Use regular concatenation for: simple cases, 2-3 strings, readability
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, explain String Behavior in C#:
+      1. What does it mean that strings are immutable in C#?
+      2. What happens in memory when you concatenate strings inside a loop?
+      3. When should you use StringBuilder instead of regular string concatenation?
+    `,
+    rubric: `
+      Immutability explanation (35pts): Student explains strings cannot be changed after creation, operations create new strings
+      Loop memory problem (35pts): Student explains each concatenation creates a new string, old strings become garbage
+      StringBuilder use case (20pts): Student explains StringBuilder for loops/many concatenations, regular for simple cases
+      Clarity (10pts): Clear, understandable writing
+    `
+  },
 };
 
 export function getLessonContext(assignmentId: string): LessonContext | null {
@@ -73,11 +147,14 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-03-homework': "Week 3 Homework: Type Safety Reflection. Students explain WHY double is dangerous for money, give an example of a financial error, and explain how decimal solves it.",
   
   // Week 4
-  'week-04': "Topic: Operators and Expressions. Focus: Performing calculations and combining data.",
-  'week-04-lesson-1': "Topic: Operators. Focus: Arithmetic operators (+, -, *, /, %) for calculations.",
-  'week-04-lesson-2': "Topic: String Operations. Focus: Concatenation and string interpolation.",
-  'week-04-lab': "Topic: Calculator Logic. Mission: Building computational programs.",
-  'week-04-homework': "Topic: Reflection. Focus: Understanding operator precedence and expressions.",
+  'week-04': "Week 4: Strings & Text Processing. Students are learning about string immutability (strings cannot be changed after creation - like a glass mold), string interpolation ($\"Hello {name}\"), escape sequences (\\n, \\t, \\\\), string methods (ToUpper, ToLower, Trim, Contains, IndexOf, Substring, Split, Replace), and StringBuilder for efficient string building in loops. Key concept: every string operation creates a NEW string object.",
+  'week-04-4-1-immutability': "Week 4 Section 4.1: String Immutability. Focus: Strings are immutable - once created, they cannot be changed. The 'Glass Mold' metaphor: you can't reshape glass, only shatter it and cast a new one. Every string operation creates a new string object.",
+  'week-04-4-2-interpolation': "Week 4 Section 4.2: String Interpolation. Focus: Using $\"text {variable}\" syntax to embed variables in strings. Cleaner than concatenation. Format specifiers like :C for currency, :N2 for numbers with decimals, :P for percentages.",
+  'week-04-4-3-methods': "Week 4 Section 4.3: String Methods. Focus: ToUpper(), ToLower(), Trim(), Contains(), IndexOf(), Substring(), Split(), Replace(). Remember: these methods return NEW strings, they don't modify the original!",
+  'week-04-4-4-stringbuilder': "Week 4 Section 4.4: StringBuilder. Focus: For building strings in loops, use StringBuilder to avoid creating thousands of garbage strings. Methods: Append(), AppendLine(), Insert(), ToString(). Import with 'using System.Text;'",
+  'week-04-lab': "Week 4 Lab: Text Sanitizer. Students parse CSV data using Split('\\n') and Split(','), loop through rows (starting at index 1 to skip header), extract fields, and display formatted output with string interpolation. Calculate totals for employee count and payroll.",
+  'week-04-homework': "Week 4 Homework: String Reflection. Students explain what string immutability means, what happens when you concatenate in a loop (creates garbage), and when to use StringBuilder. Written reflection, no code.",
+  'week-04-weekly-assessment': "Week 4 Weekly Assessment: Quiz covering string immutability, interpolation, escape sequences, string methods, and StringBuilder.",
   
   // Week 5
   'week-05': "Topic: Conditional Logic. Focus: Making decisions in code.",
