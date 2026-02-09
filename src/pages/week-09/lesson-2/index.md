@@ -77,6 +77,5 @@ Returns the string starting at index 2 through the end.
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=09&starter=week-09-lesson-2)
 
-<a href="/editor/?week=09&starter=week-09-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

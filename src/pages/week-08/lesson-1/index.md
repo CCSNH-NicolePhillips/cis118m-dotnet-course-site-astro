@@ -63,6 +63,5 @@ A List can grow/shrink (arrays are fixed size).
 - Go to Lesson 2: [foreach + collection thinking](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=08&starter=week-08-lesson-1)
 
-<a href="/editor/?week=08&starter=week-08-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

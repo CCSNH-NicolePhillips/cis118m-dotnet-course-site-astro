@@ -72,6 +72,5 @@ Because they return a value without depending on user input or printing, so resu
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=12&starter=week-12-lesson-2)
 
-<a href="/editor/?week=12&starter=week-12-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

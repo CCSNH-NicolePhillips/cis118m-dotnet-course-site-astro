@@ -72,6 +72,5 @@ So `YES`, `Yes`, and `yes` all match the same rule.
 - Go to Lesson 2: [Substring + indexing basics](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=09&starter=week-09-lesson-1)
 
-<a href="/editor/?week=09&starter=week-09-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

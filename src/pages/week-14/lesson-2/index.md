@@ -67,6 +67,5 @@ So the caller can react (print a message, retry, etc.) without the class doing U
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=14&starter=week-14-lesson-2)
 
-<a href="/editor/?week=14&starter=week-14-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

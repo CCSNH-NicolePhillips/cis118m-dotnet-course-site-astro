@@ -61,6 +61,5 @@ Search for an ID that exists and one that doesn’t; also try empty input or ext
 - Go to Lesson 2: [Final submission checklist](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=16&starter=week-16-lesson-1)
 
-<a href="/editor/?week=16&starter=week-16-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

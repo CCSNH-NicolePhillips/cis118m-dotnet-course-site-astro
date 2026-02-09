@@ -46,6 +46,5 @@ Code, screenshots/output evidence, and a short reflection.
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=16&starter=week-16-lesson-2)
 
-<a href="/editor/?week=16&starter=week-16-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

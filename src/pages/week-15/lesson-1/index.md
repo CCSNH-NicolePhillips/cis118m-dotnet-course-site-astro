@@ -74,6 +74,5 @@ When you want it testable and reusable.
 - Go to Lesson 2: [Final project planning](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=15&starter=week-15-lesson-1)
 
-<a href="/editor/?week=15&starter=week-15-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

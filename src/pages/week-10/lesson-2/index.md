@@ -76,6 +76,5 @@ Automatically when you create an object with `new`.
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=10&starter=week-10-lesson-2)
 
-<a href="/editor/?week=10&starter=week-10-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

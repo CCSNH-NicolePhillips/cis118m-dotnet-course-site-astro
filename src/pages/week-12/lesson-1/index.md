@@ -77,6 +77,5 @@ Runs when an exception happens, so your program can respond instead of crashing.
 - Go to Lesson 2: [Thinking like a tester (Arrange–Act–Assert)](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=12&starter=week-12-lesson-1)
 
-<a href="/editor/?week=12&starter=week-12-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

@@ -67,6 +67,5 @@ Invalid data changes (like negative balance) and messy code spread everywhere.
 - Go to Lesson 2: [Designing class methods for clean apps](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=14&starter=week-14-lesson-1)
 
-<a href="/editor/?week=14&starter=week-14-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

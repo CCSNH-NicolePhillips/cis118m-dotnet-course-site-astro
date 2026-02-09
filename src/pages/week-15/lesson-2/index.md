@@ -59,6 +59,5 @@ To define exactly what ‘done’ means so grading is fair and students can self
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=15&starter=week-15-lesson-2)
 
-<a href="/editor/?week=15&starter=week-15-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

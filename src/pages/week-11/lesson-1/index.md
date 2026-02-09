@@ -71,6 +71,5 @@ A list that stores Student objects.
 - Go to Lesson 2: [Searching a list (find by ID)](../lesson-2/)
 - Open the editor: [Open the code editor](/editor/?week=11&starter=week-11-lesson-1)
 
-<a href="/editor/?week=11&starter=week-11-lesson-1" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

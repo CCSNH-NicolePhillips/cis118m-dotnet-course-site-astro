@@ -60,6 +60,5 @@ Not safely (it can cause errors). Use other approaches when we get there.
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=08&starter=week-08-lesson-2)
 
-<a href="/editor/?week=08&starter=week-08-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 

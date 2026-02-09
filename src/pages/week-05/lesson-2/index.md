@@ -65,6 +65,5 @@ When you know the number of repeats (like counting).
 - Optional extra practice: [Extra practice](../extra-practice/)
 - Open the editor: [Open the code editor](/editor/?week=05&starter=week-05-lesson-2)
 
-<a href="/editor/?week=05&starter=week-05-lesson-2" class="button" style="display:inline-block;margin-top:8px;">Open Code Editor</a>
 
 
