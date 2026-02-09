@@ -127,7 +127,7 @@ class Program
         Console.WriteLine("=============================");
         
         // Use Console.WriteLine to display each variable
-        // Example: Console.WriteLine($"System Name: {systemName}");
+        // Example: Console.WriteLine(\$"System Name: {systemName}");
         
         Console.WriteLine("=============================");
     }
@@ -163,14 +163,14 @@ E004,Diana Ross,Sales,68000";
         //   - Split by comma to get columns: string[] cols = rows[i].Split(',');
         //   - Extract: string id = cols[0]; string name = cols[1]; etc.
         //   - Parse salary: int salary = int.Parse(cols[3]);
-        //   - Print: Console.WriteLine($"{id} - {name} ({dept}) - ${salary:N0}");
+        //   - Print: Console.WriteLine(\$"{id} - {name} ({dept}) - \${salary:N0}");
         //   - Update counters
         
         
         // Print footer with totals
         Console.WriteLine("=======================");
-        Console.WriteLine($"Total Employees: {totalEmployees}");
-        Console.WriteLine($"Total Payroll: ${totalPayroll:N0}");
+        Console.WriteLine(\$"Total Employees: {totalEmployees}");
+        Console.WriteLine(\$"Total Payroll: \${totalPayroll:N0}");
     }
 }
 `,
