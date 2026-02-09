@@ -129,7 +129,7 @@ Summary: # Syllabus Acknowledgement Quiz **Time: 10 minutes** (after reading the
 
 ### 📋 Quiz: Week 01 • Technical Assessment
 
-Summary: # 🏁 Week 01 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think ---...
+Summary: # 🏁 Week 01 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think ---...
 
 Quiz Questions (12 questions):
 1. Q: What is C# in the .NET ecosystem?
@@ -290,7 +290,7 @@ Console.WriteLine($"Age: {age}");
 
 ### 📋 Quiz: Week 02 • Technical Assessment
 
-Summary: # 🏁 Week 02 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- After completing...
+Summary: # 🏁 Week 02 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
 
 Quiz Questions (10 questions):
 1. Q: What is the primary purpose of a namespace in C#?
@@ -432,7 +432,7 @@ else
 
 ### 📋 Quiz: Week 03 • Technical Assessment
 
-Summary: # 🏁 Week 03 Technical Assessment 📋 Assessment Parameters Attempts: You are allowed 2 attempts Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- 🎉 Week 03 Compl...
+Summary: # 🏁 Week 03 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
 
 Quiz Questions (10 questions):
 1. Q: Which keyword makes a variable unchangeable after it is set?
@@ -470,65 +470,71 @@ Quiz Questions (10 questions):
 
 ## Week 4: Strings & Text Processing
 
+### 📚 Overview: Section 4.1 • The Immutability Rule
+Key Concepts:
+- Immutable
+- brand new string
+- reference types
+
+Summary: # Section 4.1: The Immutability Rule 🔮 The Glass Mold ⏱️ Estimated Time: 25 minutes --- ✦ The Glass Mold: Why Strings Cannot Be Reshaped In C#, strings are immutable —once created, they cannot be changed. Think of a string as a glass sculpture : once the molten glass cools and hardens, you cannot r...
+
+### 📚 Overview: Section 4.2 • Formatting & Escape Sequences
+Key Concepts:
+- line support
+- String Interpolation
+- format specifiers
+- escape sequences
+- verbatim strings
+
+Summary: # Section 4.2: Formatting & Escape Sequences 💉 The Injection Pipeline ⏱️ Estimated Time: 25 minutes --- ✦ The Injection Pipeline: Beaming Data Into Text String formatting is like an injection system —you create a template with placeholders , then beam variable values directly into those slots. The ...
+
+### 📚 Overview: Section 4.3 • Search & Parse
+Key Concepts:
+- 1 if not found)
+- zero-based position
+- NEW string
+- array of substrings
+
+Summary: # Section 4.3: Search & Parse 🔪 The Digital Scalpel ⏱️ Estimated Time: 30 minutes --- ✦ The Digital Scalpel: Dissecting Data Streams Raw data rarely arrives in a usable format. Like a surgeon with precision instruments, you need tools to locate , extract , replace , and split text data. These strin...
+
+### 📚 Overview: Section 4.4 • StringBuilder
+Key Concepts:
+- mutable
+- Standard Pattern:
+
+Summary: # Section 4.4: StringBuilder 🏗️ The Dynamic Builder ⏱️ Estimated Time: 20 minutes --- ✦ The Dynamic Builder: Assembly Without Waste Remember the Glass Mold from Section 4.1? Strings are immutable—every concatenation shatters the old mold and casts a new one. In loops, this creates mountains of garb...
+
 ### 📚 Overview: Week 04 • Extra Practice
 
-Summary: # Week 4 Extra Practice: Decisions Pick **1–2** items (optional). - Ask for a number and print whether it’s positive, negative, or zero. - Ask for a score and print a letter grade. - Challenge: Validate input is between 1 and 5, otherwise re-prompt (TryParse + if/else). ## Open in Editor - Use: /edi...
+Summary: # Week 04 Extra Practice: Text Processing Pick **2-3** exercises to reinforce your string manipulation skills. These are optional but highly recommended! --- ## 🔬 Drill 1: Email Parser Extract the username and domain from an email address using IndexOf() and Substring(). 💡 Solution --- ## 🔬 Drill...
 
-### 📝 Homework: Week 04 • Week 4 Homework: Menu Choice Program
-
-Summary: # Week 4 Homework: Menu Choice Program ## Overview Create a simple menu (1–3 options). Use if/else to respond to the user’s choice. ## Requirements checklist (acceptance criteria) - [ ] Prints a menu with at least 3 options - [ ] Reads the user choice (as text or number) - [ ] Handles invalid choice...
-
-### 📚 Overview: Week 04
+### 📝 Homework: Homework 04 • String Reflection
 Key Concepts:
-- Focus:
+- 3-5 sentences each
+- Explain:
 
-Summary: # Week 4 **Focus:** Decisions with if/else: comparisons, ranges, and basic boolean logic. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homewor...
+Summary: # Homework 04: String Reflection (GRADED) ## 📝 Homework 04: The Immutability Patch Now that you understand how strings work in memory, it's time to demonstrate your knowledge of why immutability matters and when to use StringBuilder. --- ## 🧠 The Critical Questions Answer BOTH questions in **3-5 s...
+
+### 📚 Overview: Week 04 • Strings & Text Processing
+Key Concepts:
+- brand new object
+- use StringBuilder
+
+Summary: # Week 04: Strings & Text Processing 📡 System Data Streams If variables are the fuel, strings are the communication lines. As a Senior Architect, you must understand that strings in C# are immutable —once cast in memory, they cannot be reshaped. Every "modification" shatters the old mold and forges...
 
 ### 🔬 Lab: Week 04 • Week 4 Lab: Eligibility Checker
 
 Summary: # Week 4 Lab: Eligibility Checker ## Overview Use if/else to determine eligibility based on a value (like age or score). ## Requirements checklist (acceptance criteria) - [ ] Prompts the user for a value (age or score) - [ ] Validates the input (TryParse recommended but not required) - [ ] Uses if/e...
 
-### 📖 Lesson: Week 04 • Lesson 1
+### 🔬 Lab: Lab 04 • Text Sanitizer
 Key Concepts:
-- Condition
-- Comparison operators
-- 1) What does >= mean?
-- 2) Which one checks equality: = or ==?
+- Time: 60 minutes
+- Points: 100
+- raw CSV data stream
+- Split()
+- String Interpolation
 
-Summary: # Week 4 Lesson 1: if/else (making decisions) ## Goal - Use if to make a decision - Use else for the ‘otherwise’ case - Use else if for multiple options ## What to know - **Condition**: A true/false question your code asks (like: is age >= 18?). - **Comparison operators**: >, =, 80, otherwise “Not h...
-
-Code Example:
-```csharp
-int age = 17;
-
-if (age >= 18)
-{
-    Console.WriteLine("Adult");
-}
-else
-{
-    Console.WriteLine("Minor");
-}
-```
-
-### 📖 Lesson: Week 04 • Lesson 2
-Key Concepts:
-- Range check
-- && (and)
-- || (or)
-- 1) If n must be between 1 and 10, what operator connects the two checks?
-
-Summary: # Week 4 Lesson 2: Validation patterns (and simple boolean logic) ## Goal - Check if a value is in a valid range - Use && (and) and || (or) at a basic level - Print helpful messages when input is invalid ## What to know - **Range check**: Making sure a value is between two limits. - **&& (and)**: Bo...
-
-Code Example:
-```csharp
-int n = 7;
-
-if (n >= 1 && n <= 10)
-    Console.WriteLine("Valid: between 1 and 10");
-else
-    Console.WriteLine("Invalid: must be 1–10");
-```
+Summary: # Lab 04: The Text Sanitizer **Time: 60 minutes** **Points: 100** ## 🎯 Mission Objective You've intercepted a **raw CSV data stream** from a legacy system. Your mission: parse this comma-separated data using Split() and transform it into a clean, formatted report using string interpolation. This la...
 
 ---
 

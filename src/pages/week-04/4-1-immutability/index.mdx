@@ -1,0 +1,675 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 4.1 • The Immutability Rule"
+description: "Understanding why strings cannot be modified in place and how memory allocation works"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 4.1: The Immutability Rule
+
+<div class="section-header">
+  <div class="section-badge">🔮 The Glass Mold</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Glass Mold: Why Strings Cannot Be Reshaped</h2>
+      <p>
+        In C#, strings are <strong>immutable</strong>—once created, they cannot be changed. Think of a string as a <strong>glass sculpture</strong>: once the molten glass cools and hardens, you cannot reshape it. To make any change, you must <strong>shatter the old mold</strong> and <strong>cast an entirely new one</strong>.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-2/glass-mold.png" alt="Glass mold metaphor for string immutability" style="max-width: 200px;" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: Strings in C#
+
+<div class="video-section">
+  <p class="video-intro">This briefing explains how strings are stored in the Heap, why they're immutable, and what happens in memory when you "modify" a string.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/videoseries?list=PLdo4fOcmZ0oVxKLQCHpiUWun7vlJJvUiN" 
+      title="C# Strings - The Basics"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 What Is Immutability?
+
+**Immutable** means "cannot be changed." When you create a string in C#, it is permanently fixed in memory. Any operation that appears to modify a string actually creates a **brand new string** in a different memory location.
+
+<div class="concept-highlight glass-metaphor">
+  <h3>🔮 The Glass Mold Metaphor</h3>
+  <div class="metaphor-grid">
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🏭</div>
+      <div class="metaphor-text">
+        <strong>Creating a String</strong>
+        <p>Pouring molten glass into a mold. Once it cools, the shape is permanent.</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🔨</div>
+      <div class="metaphor-text">
+        <strong>"Modifying" a String</strong>
+        <p>You must shatter the old sculpture and cast a completely new one.</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🗑️</div>
+      <div class="metaphor-text">
+        <strong>The Old String</strong>
+        <p>Becomes garbage—abandoned in memory until the Garbage Collector cleans it up.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🏗️ Memory Architecture: Stack vs. Heap
+
+Strings are **reference types** stored on the **Heap**, with a pointer on the **Stack**:
+
+<div class="memory-diagram">
+  <div class="memory-section stack">
+    <h4>📦 Stack (Fast, Small)</h4>
+    <div class="memory-block">
+      <code>name</code> → <span class="pointer">0x7FFA2B10</span>
+    </div>
+    <p class="memory-note">Holds the <strong>reference</strong> (address) to the actual string</p>
+  </div>
+  <div class="memory-arrow">→</div>
+  <div class="memory-section heap">
+    <h4>🗄️ Heap (Large, Managed)</h4>
+    <div class="memory-block heap-block">
+      <span class="address">0x7FFA2B10:</span>
+      <code>"Alice"</code>
+    </div>
+    <p class="memory-note">Holds the <strong>actual character data</strong></p>
+  </div>
+</div>
+
+<DeepDiveTabs
+  title="Understanding String Storage"
+  tabs={[
+    {
+      id: "stack",
+      label: "📦 The Stack",
+      content: `
+        <h3>Stack: The Quick-Access Shelf</h3>
+        <p>The <strong>Stack</strong> is fast, organized memory where local variables live. For strings, the Stack holds a <strong>reference</strong> (memory address), NOT the actual text.</p>
+        <pre><code>string name = "Alice";
+// Stack: name → 0x7FFA2B10
+// The variable 'name' is just a pointer!</code></pre>
+        <p><strong>Key Point:</strong> The variable itself is tiny—just an address pointing elsewhere.</p>
+      `
+    },
+    {
+      id: "heap",
+      label: "🗄️ The Heap",
+      content: `
+        <h3>Heap: The Warehouse</h3>
+        <p>The <strong>Heap</strong> is a large, managed memory area where objects (including strings) actually live. The CLR's Garbage Collector monitors this area.</p>
+        <pre><code>// At address 0x7FFA2B10 in the Heap:
+// Character array: ['A', 'l', 'i', 'c', 'e']
+// Length: 5
+// Metadata: String type info</code></pre>
+        <p><strong>Key Point:</strong> Strings on the Heap are <strong>sealed</strong>—the CLR will not allow modification.</p>
+      `
+    },
+    {
+      id: "why",
+      label: "❓ Why Immutable?",
+      content: `
+        <h3>Why Did Microsoft Make Strings Immutable?</h3>
+        <ul>
+          <li><strong>Thread Safety:</strong> Multiple threads can read the same string without locks</li>
+          <li><strong>Security:</strong> Passwords and connection strings can't be altered unexpectedly</li>
+          <li><strong>Hashing:</strong> Strings can be used as dictionary keys (hash never changes)</li>
+          <li><strong>String Interning:</strong> The CLR can reuse identical strings to save memory</li>
+        </ul>
+        <p><strong>Trade-off:</strong> Immutability costs performance when building strings in loops (we'll solve this in Section 4.4 with StringBuilder).</p>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🔬 Proof: Strings Create New Objects
+
+Let's prove that "modifying" a string creates a new object. We'll use `Object.ReferenceEquals()` to check if two variables point to the same memory location:
+
+<TryItNowRunner 
+  starterId="week-04-immutability-proof" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string original = "Hello";
+        string modified = original;  // Same reference!
+        
+        Console.WriteLine("=== Before Modification ===");
+        Console.WriteLine($"original: {original}");
+        Console.WriteLine($"modified: {modified}");
+        Console.WriteLine($"Same object? {Object.ReferenceEquals(original, modified)}");
+        
+        // Now "modify" the string
+        modified = modified + " World";
+        
+        Console.WriteLine("\\n=== After Modification ===");
+        Console.WriteLine($"original: {original}");
+        Console.WriteLine($"modified: {modified}");
+        Console.WriteLine($"Same object? {Object.ReferenceEquals(original, modified)}");
+    }
+}`}
+  instructions="Run this code and observe: after concatenation, 'original' and 'modified' point to DIFFERENT memory locations. The original string was never changed!" 
+/>
+
+---
+
+## 🎯 What Happens When You Concatenate?
+
+When you write `name = name + " Smith"`, here's what actually happens in memory:
+
+<div class="timeline-container">
+  <div class="timeline-step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h4>Initial State</h4>
+      <code>string name = "Alice";</code>
+      <div class="mini-diagram">
+        <span class="var">name</span> → <span class="heap-val">"Alice"</span> @ 0x1000
+      </div>
+    </div>
+  </div>
+  <div class="timeline-step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h4>Concatenation Requested</h4>
+      <code>name = name + " Smith";</code>
+      <div class="mini-diagram">
+        <span class="action">CLR allocates NEW memory on Heap</span>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h4>New String Created</h4>
+      <div class="mini-diagram">
+        <span class="heap-val">"Alice Smith"</span> @ 0x2000 <span class="new-badge">NEW!</span>
+      </div>
+    </div>
+  </div>
+  <div class="timeline-step">
+    <div class="step-number">4</div>
+    <div class="step-content">
+      <h4>Reference Updated</h4>
+      <div class="mini-diagram">
+        <span class="var">name</span> → <span class="heap-val">"Alice Smith"</span> @ 0x2000
+      </div>
+      <p class="orphan-note">⚠️ "Alice" @ 0x1000 is now orphaned (garbage)</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 💀 The Hidden Cost: Memory Pressure
+
+Every string operation creates garbage. In a loop, this becomes **catastrophic**:
+
+<TryItNowRunner 
+  starterId="week-04-memory-pressure" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string result = "";
+        
+        // Each iteration creates a NEW string!
+        for (int i = 1; i <= 5; i++)
+        {
+            result = result + i + " ";
+            Console.WriteLine($"Iteration {i}: result = \\"{result}\\"");
+            // Behind the scenes: OLD result becomes garbage!
+        }
+        
+        Console.WriteLine($"\\nFinal: {result}");
+        Console.WriteLine("⚠️ This created 5 intermediate strings (all garbage now)!");
+    }
+}`}
+  instructions="Watch each iteration. Every += creates a NEW string and abandons the old one. Imagine doing this 10,000 times!" 
+/>
+
+<div class="warning-box">
+  <h4>⚠️ Performance Warning</h4>
+  <p>Building strings in a loop with <code>+</code> or <code>+=</code> is an <strong>O(n²)</strong> operation! Each concatenation copies all previous characters. For 1,000 iterations, you'd copy approximately <strong>500,000 characters total</strong>.</p>
+  <p><strong>Solution:</strong> Use <code>StringBuilder</code> (covered in Section 4.4)</p>
+</div>
+
+---
+
+## 🧪 String Methods Return NEW Strings
+
+Even methods like `ToUpper()` and `Replace()` don't modify the original—they return **new strings**:
+
+<TryItNowRunner 
+  starterId="week-04-methods-new-strings" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string greeting = "hello world";
+        
+        // These methods return NEW strings
+        string upper = greeting.ToUpper();
+        string replaced = greeting.Replace("world", "C#");
+        
+        Console.WriteLine($"Original:  \\"{greeting}\\"");
+        Console.WriteLine($"ToUpper:   \\"{upper}\\"");
+        Console.WriteLine($"Replace:   \\"{replaced}\\"");
+        
+        Console.WriteLine($"\\nOriginal unchanged? {greeting == "hello world"}");
+    }
+}`}
+  instructions="Notice: the original string 'greeting' is NEVER modified. Each method returns a brand new string." 
+/>
+
+---
+
+## ✅ Knowledge Check
+
+<Checkpoint
+  checkpointId="week-04-4-1-checkpoint"
+  title="🔍 Section 4.1 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What happens when you assign a new value to a string variable?",
+      options: ["The original string is modified in place", "A new string is created and the variable points to it", "The code throws an exception because strings are immutable", "Both strings share the same memory location"],
+      correctAnswer: "A new string is created and the variable points to it",
+      explanation: "Strings are immutable! When you concatenate or modify a string, a NEW string is created in a different memory location. The variable is updated to point to this new string."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Why are strings stored on the Heap instead of the Stack?",
+      options: ["The Stack is only for numbers", "Strings can be very large and need managed memory with garbage collection", "The Heap is faster than the Stack", "Microsoft made an arbitrary design decision"],
+      correctAnswer: "Strings can be very large and need managed memory with garbage collection",
+      explanation: "Strings are reference types that can vary greatly in size. The Heap provides managed memory where the Garbage Collector can clean up abandoned strings."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "Building a string with += in a loop that runs 1,000 times is inefficient because:",
+      options: ["The += operator is slower than the + operator", "Each iteration creates a new string and copies all previous content", "Loops are always slow in C#", "The string becomes too long for memory"],
+      correctAnswer: "Each iteration creates a new string and copies all previous content",
+      explanation: "Each += creates a brand new string containing all the accumulated content. This O(n squared) behavior creates massive memory churn and CPU waste."
+    }
+  ]}
+/>
+
+---
+
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>🔮 Key Takeaways: The Immutability Rule</h3>
+  <ul>
+    <li><strong>Strings are immutable:</strong> Once created, they cannot be modified</li>
+    <li><strong>Stack vs. Heap:</strong> Variables hold references (Stack), actual data lives on the Heap</li>
+    <li><strong>"Modification" creates new strings:</strong> Every operation returns a new object</li>
+    <li><strong>Memory pressure:</strong> Loop concatenation creates O(n²) garbage</li>
+    <li><strong>Methods return new strings:</strong> <code>ToUpper()</code>, <code>Replace()</code>, etc. never modify the original</li>
+  </ul>
+</div>
+
+<div class="next-section">
+  <a href="/week-04/4-2-formatting/">
+    Next: Section 4.2 — Formatting & Escape Sequences →
+  </a>
+</div>
+
+<style>{`
+  .section-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #8b5cf6;
+  }
+  
+  .section-badge {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #a78bfa;
+  }
+  
+  .section-time {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+  
+  .concept-header {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+  }
+  
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .header-text {
+    flex: 1;
+  }
+  
+  .header-text h2 {
+    color: #c4b5fd;
+    margin-bottom: 1rem;
+  }
+  
+  .header-text p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+  
+  .glass-metaphor {
+    background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 100%);
+    border: 2px solid #8b5cf6;
+  }
+  
+  .metaphor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  
+  .metaphor-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: rgba(0,0,0,0.2);
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .metaphor-icon {
+    font-size: 2rem;
+  }
+  
+  .metaphor-text strong {
+    color: #e9d5ff;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .metaphor-text p {
+    color: #d1d5db;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  
+  .memory-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: #0f172a;
+    border-radius: 12px;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+  
+  .memory-section {
+    padding: 1.5rem;
+    border-radius: 8px;
+    min-width: 200px;
+  }
+  
+  .memory-section.stack {
+    background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+    border: 2px solid #10b981;
+  }
+  
+  .memory-section.heap {
+    background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+    border: 2px solid #f97316;
+  }
+  
+  .memory-section h4 {
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .memory-block {
+    background: rgba(0,0,0,0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-family: monospace;
+    color: #fef3c7;
+  }
+  
+  .memory-arrow {
+    font-size: 2rem;
+    color: #60a5fa;
+  }
+  
+  .pointer {
+    color: #60a5fa;
+  }
+  
+  .address {
+    color: #94a3b8;
+  }
+  
+  .memory-note {
+    font-size: 0.8rem;
+    color: #d1d5db;
+    margin-top: 0.5rem;
+  }
+  
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .timeline-step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 3px solid #8b5cf6;
+  }
+  
+  .step-number {
+    width: 32px;
+    height: 32px;
+    background: #8b5cf6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #c4b5fd;
+  }
+  
+  .step-content code {
+    background: #1e1b4b;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
+  .mini-diagram {
+    margin-top: 0.5rem;
+    font-family: monospace;
+    color: #fcd34d;
+  }
+  
+  .var {
+    color: #60a5fa;
+  }
+  
+  .heap-val {
+    color: #34d399;
+  }
+  
+  .action {
+    color: #f472b6;
+  }
+  
+  .new-badge {
+    background: #059669;
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+  
+  .orphan-note {
+    color: #f87171;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  
+  .warning-box {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    border: 2px solid #f87171;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .warning-box h4 {
+    color: #fecaca;
+    margin-bottom: 0.5rem;
+  }
+  
+  .warning-box p {
+    color: #fef2f2;
+  }
+  
+  .summary-box {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border: 2px solid #3b82f6;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .summary-box h3 {
+    color: #93c5fd;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-box li {
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .next-section {
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  .next-section a {
+    display: inline-block;
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .next-section a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  }
+  
+  .video-section {
+    margin: 2rem 0;
+  }
+  
+  .video-intro {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+  
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #000;
+  }
+  
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .concept-highlight {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border-left: 4px solid #3b82f6;
+  }
+  
+  .concept-highlight h3 {
+    color: #93c5fd;
+    margin-bottom: 1rem;
+  }
+`}</style>

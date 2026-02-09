@@ -1,0 +1,744 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 4.4 • StringBuilder"
+description: "Efficient string assembly without memory pressure"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 4.4: StringBuilder
+
+<div class="section-header">
+  <div class="section-badge">🏗️ The Dynamic Builder</div>
+  <p class="section-time">⏱️ Estimated Time: 20 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Dynamic Builder: Assembly Without Waste</h2>
+      <p>
+        Remember the <strong>Glass Mold</strong> from Section 4.1? Strings are immutable—every concatenation shatters the old mold and casts a new one. In loops, this creates mountains of garbage. <code>StringBuilder</code> is your <strong>Dynamic Builder</strong>—a mutable container that grows on demand without discarding previous work.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-2/builder.png" alt="Dynamic builder metaphor" style="max-width: 180px;" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 The Problem: String Concatenation in Loops
+
+Before we learn the solution, let's understand the problem:
+
+<div class="problem-visualization">
+  <h3>❌ String Concatenation: O(n²) Memory Disaster</h3>
+  <div class="iteration-flow">
+    <div class="iteration">
+      <span class="iter-num">i=1</span>
+      <code>result = "" + "1"</code>
+      <span class="new-string">"1"</span>
+      <span class="garbage">💀</span>
+    </div>
+    <div class="iteration">
+      <span class="iter-num">i=2</span>
+      <code>result = "1" + "2"</code>
+      <span class="new-string">"12"</span>
+      <span class="garbage">💀💀</span>
+    </div>
+    <div class="iteration">
+      <span class="iter-num">i=3</span>
+      <code>result = "12" + "3"</code>
+      <span class="new-string">"123"</span>
+      <span class="garbage">💀💀💀</span>
+    </div>
+    <div class="iteration">
+      <span class="iter-num">i=1000</span>
+      <code>result = "..." + "1000"</code>
+      <span class="new-string">"1...1000"</span>
+      <span class="garbage">💀×999</span>
+    </div>
+  </div>
+  <p class="problem-note">Each iteration copies ALL previous characters into a new string. 1,000 iterations = ~500,000 character copies!</p>
+</div>
+
+---
+
+## ✅ The Solution: StringBuilder
+
+`StringBuilder` is a **mutable** character buffer. Instead of creating new strings, it expands an internal array. When done, call `.ToString()` to get the final string.
+
+### ❌ String (Immutable)
+
+```csharp
+string result = "";
+for (int i = 0; i < 1000; i++)
+{
+    result += i + " ";  // 💀 NEW STRING EACH TIME!
+}
+```
+Creates 1,000 intermediate strings 😱
+
+### ✅ StringBuilder (Mutable)
+
+```csharp
+StringBuilder sb = new StringBuilder();
+for (int i = 0; i < 1000; i++)
+{
+    sb.Append(i).Append(" ");  // Same buffer!
+}
+string result = sb.ToString();
+```
+Creates 1 final string ✨
+
+---
+
+## 🔧 StringBuilder Basics
+
+<div class="important-note">
+  <h4>📦 Required Namespace</h4>
+  <code>using System.Text;</code>
+  <p>StringBuilder lives in the System.Text namespace. Add this at the top of your file!</p>
+</div>
+
+<TryItNowRunner 
+  starterId="week-04-stringbuilder-basics" 
+  height={420}
+  code={`using System;
+using System.Text;  // Required for StringBuilder!
+
+class Program
+{
+    static void Main()
+    {
+        // Create a StringBuilder
+        StringBuilder sb = new StringBuilder();
+        
+        // Append text (no new strings created!)
+        sb.Append("Hello");
+        sb.Append(", ");
+        sb.Append("World!");
+        
+        // Convert to string when done
+        string result = sb.ToString();
+        Console.WriteLine(result);
+        
+        // You can chain Append calls
+        StringBuilder report = new StringBuilder();
+        report.Append("=== Report ===")
+              .AppendLine()               // Adds newline
+              .Append("Status: ")
+              .AppendLine("Online")
+              .Append("Users: ")
+              .Append(42);
+        
+        Console.WriteLine();
+        Console.WriteLine(report.ToString());
+    }
+}`}
+  instructions="Notice: StringBuilder uses Append() instead of +. You can chain multiple Append calls. Call ToString() at the end!" 
+/>
+
+---
+
+## 📊 StringBuilder Methods
+
+<div class="methods-grid">
+  <div class="method-card">
+    <h4>📝 Append()</h4>
+    <p>Add text to the end</p>
+    <code>sb.Append("text")</code>
+  </div>
+  <div class="method-card">
+    <h4>↩️ AppendLine()</h4>
+    <p>Add text + newline</p>
+    <code>sb.AppendLine("text")</code>
+  </div>
+  <div class="method-card">
+    <h4>📍 Insert()</h4>
+    <p>Insert at position</p>
+    <code>sb.Insert(0, "start")</code>
+  </div>
+  <div class="method-card">
+    <h4>🔄 Replace()</h4>
+    <p>Replace text in place</p>
+    <code>sb.Replace("old", "new")</code>
+  </div>
+  <div class="method-card">
+    <h4>❌ Remove()</h4>
+    <p>Delete characters</p>
+    <code>sb.Remove(0, 5)</code>
+  </div>
+  <div class="method-card">
+    <h4>🧹 Clear()</h4>
+    <p>Empty the buffer</p>
+    <code>sb.Clear()</code>
+  </div>
+</div>
+
+<TryItNowRunner 
+  starterId="week-04-stringbuilder-methods" 
+  height={440}
+  code={`using System;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        StringBuilder sb = new StringBuilder("Hello World");
+        Console.WriteLine($"Original: {sb}");
+        
+        // Replace in place (no new string!)
+        sb.Replace("World", "C#");
+        Console.WriteLine($"After Replace: {sb}");
+        
+        // Insert at position
+        sb.Insert(0, ">>> ");
+        Console.WriteLine($"After Insert: {sb}");
+        
+        // Append more
+        sb.Append(" <<<");
+        Console.WriteLine($"After Append: {sb}");
+        
+        // Remove characters (start index, length)
+        sb.Remove(0, 4);  // Remove ">>> "
+        Console.WriteLine($"After Remove: {sb}");
+        
+        // Check length and capacity
+        Console.WriteLine($"\\nLength: {sb.Length}");
+        Console.WriteLine($"Capacity: {sb.Capacity}");
+        
+        // Clear resets to empty
+        sb.Clear();
+        Console.WriteLine($"After Clear: \\"{sb}\\"");
+        Console.WriteLine($"Length after Clear: {sb.Length}");
+    }
+}`}
+  instructions="StringBuilder's methods modify the SAME buffer. No garbage created!" 
+/>
+
+---
+
+## 🏎️ Performance Demonstration
+
+Let's prove that StringBuilder is faster for building large strings:
+
+<TryItNowRunner 
+  starterId="week-04-performance-demo" 
+  height={460}
+  code={`using System;
+using System.Text;
+using System.Diagnostics;
+
+class Program
+{
+    static void Main()
+    {
+        const int iterations = 10000;
+        
+        // Method 1: String concatenation (SLOW!)
+        Stopwatch sw1 = Stopwatch.StartNew();
+        string result1 = "";
+        for (int i = 0; i < iterations; i++)
+        {
+            result1 += "x";
+        }
+        sw1.Stop();
+        
+        // Method 2: StringBuilder (FAST!)
+        Stopwatch sw2 = Stopwatch.StartNew();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < iterations; i++)
+        {
+            sb.Append("x");
+        }
+        string result2 = sb.ToString();
+        sw2.Stop();
+        
+        Console.WriteLine($"Building a {iterations:N0}-character string:\\n");
+        Console.WriteLine($"String concatenation: {sw1.ElapsedMilliseconds} ms");
+        Console.WriteLine($"StringBuilder:        {sw2.ElapsedMilliseconds} ms");
+        
+        double speedup = (double)sw1.ElapsedMilliseconds / Math.Max(sw2.ElapsedMilliseconds, 1);
+        Console.WriteLine($"\\nStringBuilder is ~{speedup:F0}x faster!");
+        
+        Console.WriteLine($"\\nBoth produce same result: {result1.Length == result2.Length}");
+    }
+}`}
+  instructions="Watch the dramatic performance difference! StringBuilder is orders of magnitude faster for large string building." 
+/>
+
+---
+
+## 🎯 When to Use StringBuilder
+
+<DeepDiveTabs
+  title="StringBuilder Decision Guide"
+  tabs={[
+    {
+      id: "use",
+      label: "✅ Use StringBuilder",
+      content: `
+        <h3>When StringBuilder Shines</h3>
+        <ul>
+          <li><strong>Loops:</strong> Building strings inside for/while loops</li>
+          <li><strong>Large text:</strong> Assembling reports, logs, HTML</li>
+          <li><strong>Many concatenations:</strong> 4+ string additions in sequence</li>
+          <li><strong>Unknown size:</strong> When final length isn't predictable</li>
+          <li><strong>Frequent modifications:</strong> Building, then editing content</li>
+        </ul>
+        <pre><code>// Perfect for StringBuilder
+StringBuilder log = new StringBuilder();
+foreach (var entry in entries)
+{
+    log.AppendLine(entry.ToString());
+}</code></pre>
+      `
+    },
+    {
+      id: "avoid",
+      label: "❌ Don't Bother",
+      content: `
+        <h3>When String is Fine</h3>
+        <ul>
+          <li><strong>Simple concatenation:</strong> Joining 2-3 strings once</li>
+          <li><strong>Interpolation:</strong> $"Hello, {name}!" is optimized</li>
+          <li><strong>Outside loops:</strong> One-time string building</li>
+          <li><strong>Readability:</strong> When clarity beats micro-optimization</li>
+        </ul>
+        <pre><code>// String is perfectly fine here
+string message = $"Welcome, {name}!";
+string full = firstName + " " + lastName;</code></pre>
+        <p><em>Don't over-engineer simple cases!</em></p>
+      `
+    },
+    {
+      id: "rule",
+      label: "📏 Rule of Thumb",
+      content: `
+        <h3>The Loop Rule</h3>
+        <blockquote>
+          "If you're building a string <strong>inside a loop</strong>, use StringBuilder."
+        </blockquote>
+        <h4>Quick Decision Tree:</h4>
+        <ol>
+          <li>Is this inside a loop? → <strong>StringBuilder</strong></li>
+          <li>Am I concatenating 4+ times? → <strong>Consider StringBuilder</strong></li>
+          <li>Just 1-3 simple concatenations? → <strong>String is fine</strong></li>
+        </ol>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 📊 Real-World Example: Building a Report
+
+<TryItNowRunner 
+  starterId="week-04-report-builder" 
+  height={520}
+  code={`using System;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        // Simulated data
+        string[] names = { "Alice", "Bob", "Charlie", "Diana" };
+        int[] scores = { 95, 87, 92, 78 };
+        
+        // Build a formatted report with StringBuilder
+        StringBuilder report = new StringBuilder();
+        
+        // Header
+        report.AppendLine("╔════════════════════════════════╗");
+        report.AppendLine("║     STUDENT GRADE REPORT       ║");
+        report.AppendLine("╠════════════════════════════════╣");
+        
+        // Column headers
+        report.AppendLine($"║ {"Name",-12} {"Score",6} {"Grade",6}  ║");
+        report.AppendLine("╠════════════════════════════════╣");
+        
+        // Data rows
+        int total = 0;
+        for (int i = 0; i < names.Length; i++)
+        {
+            string grade = scores[i] >= 90 ? "A" : 
+                          scores[i] >= 80 ? "B" : 
+                          scores[i] >= 70 ? "C" : "F";
+            
+            report.AppendLine($"║ {names[i],-12} {scores[i],6} {grade,6}  ║");
+            total += scores[i];
+        }
+        
+        // Footer
+        report.AppendLine("╠════════════════════════════════╣");
+        double avg = (double)total / names.Length;
+        report.AppendLine($"║ {"Average:",-12} {avg,6:F1}        ║");
+        report.AppendLine("╚════════════════════════════════╝");
+        
+        // Output the final report
+        Console.WriteLine(report.ToString());
+    }
+}`}
+  instructions="This report is built efficiently in one buffer. Imagine doing this with string concatenation—it would create dozens of intermediate strings!" 
+/>
+
+---
+
+## ✅ Knowledge Check
+
+<Checkpoint
+  checkpointId="week-04-4-4-checkpoint"
+  title="🔍 Section 4.4 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Why is StringBuilder faster than string concatenation in loops?",
+      options: ["StringBuilder uses a different programming language", "StringBuilder modifies a mutable buffer instead of creating new strings", "StringBuilder compresses the text", "StringBuilder runs on a separate CPU core"],
+      correctAnswer: "StringBuilder modifies a mutable buffer instead of creating new strings",
+      explanation: "StringBuilder maintains a mutable internal character buffer. When you Append(), it adds to the existing buffer. String concatenation creates a brand new immutable string every time."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What method converts a StringBuilder to a regular string?",
+      options: ["Convert()", "GetString()", "ToString()", "Build()"],
+      correctAnswer: "ToString()",
+      explanation: "Call sb.ToString() to convert the StringBuilder contents to an immutable string. Do this when you are done building and need to use the final result."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What namespace is StringBuilder in?",
+      options: ["System", "System.Text", "System.String", "System.IO"],
+      correctAnswer: "System.Text",
+      explanation: "StringBuilder is in the System.Text namespace. Add 'using System.Text;' at the top of your file to use it without the full namespace prefix."
+    },
+    {
+      id: "cp4",
+      type: "multiple-choice",
+      question: "When should you NOT bother with StringBuilder?",
+      options: ["When building strings inside a loop", "When concatenating 2-3 strings outside a loop", "When building large reports", "When performance is critical"],
+      correctAnswer: "When concatenating 2-3 strings outside a loop",
+      explanation: "For simple one-time concatenations like joining first name and last name, regular strings are perfectly fine. StringBuilder overhead is not worth it for 2-3 simple joins outside of loops."
+    }
+  ]}
+/>
+
+---
+
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>🏗️ Key Takeaways: StringBuilder</h3>
+  <ul>
+    <li><strong>Problem:</strong> String concatenation in loops creates O(n²) garbage</li>
+    <li><strong>Solution:</strong> StringBuilder maintains a mutable buffer</li>
+    <li><strong>Namespace:</strong> System.Text</li>
+    <li><strong>Key Methods:</strong> Append(), AppendLine(), Insert(), Replace(), Remove(), Clear()</li>
+    <li><strong>Finish with:</strong> .ToString() to get the final string</li>
+    <li><strong>Rule:</strong> Use StringBuilder when building strings in loops</li>
+  </ul>
+</div>
+
+**Standard Pattern:**
+
+```csharp
+StringBuilder sb = new StringBuilder();
+foreach (var item in items)
+{
+    sb.AppendLine(item.ToString());
+}
+string result = sb.ToString();
+```
+
+<div class="week-complete">
+  <h3>🎉 Week 04 Lessons Complete!</h3>
+  <p>You've mastered Strings & Text Processing. Now apply your skills in Lab 04!</p>
+  <a href="/week-04/lab/" class="lab-button">
+    Start Lab 04: Text Sanitizer →
+  </a>
+</div>
+
+<style>{`
+  .section-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #f59e0b;
+  }
+  
+  .section-badge {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fbbf24;
+  }
+  
+  .section-time {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+  
+  .concept-header {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+  }
+  
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .header-text {
+    flex: 1;
+  }
+  
+  .header-text h2 {
+    color: #fde68a;
+    margin-bottom: 1rem;
+  }
+  
+  .header-text p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+  
+  .problem-visualization {
+    background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 2px solid #f87171;
+  }
+  
+  .problem-visualization h3 {
+    color: #fecaca;
+    margin-bottom: 1rem;
+  }
+  
+  .iteration-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .iteration {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .iter-num {
+    background: #dc2626;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+  
+  .iteration code {
+    color: #fcd34d;
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  .new-string {
+    color: #34d399;
+    font-family: monospace;
+  }
+  
+  .garbage {
+    opacity: 0.7;
+  }
+  
+  .problem-note {
+    color: #fecaca;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .solution-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .approach {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .approach.bad {
+    background: linear-gradient(135deg, #7f1d1d 0%, #450a0a 100%);
+    border: 2px solid #f87171;
+  }
+  
+  .approach.good {
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    border: 2px solid #34d399;
+  }
+  
+  .approach h4 {
+    margin-bottom: 1rem;
+  }
+  
+  .approach.bad h4 { color: #fca5a5; }
+  .approach.good h4 { color: #6ee7b7; }
+  
+  .approach p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+  
+  .important-note {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border: 2px solid #3b82f6;
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .important-note h4 {
+    color: #93c5fd;
+    margin-bottom: 0.5rem;
+  }
+  
+  .important-note code {
+    display: block;
+    background: #0f172a;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: #fcd34d;
+    margin: 0.5rem 0;
+  }
+  
+  .important-note p {
+    color: #94a3b8;
+    margin: 0;
+  }
+  
+  .methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .method-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #475569;
+    padding: 1.25rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  
+  .method-card:hover {
+    transform: translateY(-4px);
+    border-color: #f59e0b;
+  }
+  
+  .method-card h4 {
+    color: #fbbf24;
+    margin-bottom: 0.5rem;
+  }
+  
+  .method-card p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .method-card code {
+    color: #fcd34d;
+    font-size: 0.8rem;
+  }
+  
+  .summary-box {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    border: 2px solid #f59e0b;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .summary-box h3 {
+    color: #fde68a;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-box li {
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pattern-highlight {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+  
+  .pattern-highlight h4 {
+    color: #fcd34d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .week-complete {
+    background: linear-gradient(135deg, #1e3a5f 0%, #312e81 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    margin-top: 3rem;
+    border: 2px solid #6366f1;
+  }
+  
+  .week-complete h3 {
+    color: #a5b4fc;
+    margin-bottom: 0.5rem;
+  }
+  
+  .week-complete p {
+    color: #c7d2fe;
+    margin-bottom: 1.5rem;
+  }
+  
+  .lab-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .lab-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  }
+`}</style>

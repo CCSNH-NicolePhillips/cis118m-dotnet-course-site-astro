@@ -1,0 +1,672 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 4.2 • Formatting & Escape Sequences"
+description: "Master string interpolation and escape sequences for professional text output"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 4.2: Formatting & Escape Sequences
+
+<div class="section-header">
+  <div class="section-badge">💉 The Injection Pipeline</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Injection Pipeline: Beaming Data Into Text</h2>
+      <p>
+        String formatting is like an <strong>injection system</strong>—you create a template with <strong>placeholders</strong>, then beam variable values directly into those slots. The <code>$</code> operator activates this pipeline, turning static text into a dynamic data display.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-2/injection.png" alt="Injection pipeline metaphor" style="max-width: 180px;" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: String Interpolation & Escapes
+
+<div class="video-section">
+  <p class="video-intro">This briefing covers the $ interpolation operator, escape sequences like \n and \t, and how to format professional console output.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/lidS7Ye5QAI" 
+      title="C# Escape Sequences & String Formatting"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 💉 String Interpolation: The `$` Operator
+
+**String Interpolation** is the modern, readable way to inject variables into strings. Prefix your string with `$` and wrap variables in `{curly braces}`.
+
+<div class="syntax-card">
+  <h3>📐 Syntax Pattern</h3>
+  <pre><code>$"Static text {'{'}variable{'}'} more text {'{'}anotherVariable{'}'}"</code></pre>
+</div>
+
+### Before & After: Old Way vs. Modern Way
+
+<DeepDiveTabs
+  title="String Building Approaches"
+  tabs={[
+    {
+      id: "concatenation",
+      label: "❌ Old: Concatenation",
+      content: `
+        <h3>String Concatenation (Tedious)</h3>
+        <pre><code>string name = "Alice";
+int age = 25;
+
+// Messy, error-prone, hard to read
+string message = "Name: " + name + ", Age: " + age + " years old";</code></pre>
+        <p><strong>Problems:</strong></p>
+        <ul>
+          <li>Hard to visualize the final output</li>
+          <li>Easy to forget spaces between parts</li>
+          <li>Creates multiple intermediate strings (memory waste)</li>
+        </ul>
+      `
+    },
+    {
+      id: "interpolation",
+      label: "✅ Modern: Interpolation",
+      content: `
+        <h3>String Interpolation (Clean)</h3>
+        <pre><code>string name = "Alice";
+int age = 25;
+
+// Clear, readable, what-you-see-is-what-you-get
+string message = $"Name: {name}, Age: {age} years old";</code></pre>
+        <p><strong>Benefits:</strong></p>
+        <ul>
+          <li>Reads like the final output</li>
+          <li>Variables highlighted by braces</li>
+          <li>Compiler optimizes to a single string</li>
+        </ul>
+      `
+    },
+    {
+      id: "format",
+      label: "📜 Legacy: String.Format",
+      content: `
+        <h3>String.Format (Legacy Code)</h3>
+        <pre><code>string name = "Alice";
+int age = 25;
+
+// Numbered placeholders
+string message = String.Format("Name: {0}, Age: {1} years old", name, age);</code></pre>
+        <p><strong>When You'll See This:</strong></p>
+        <ul>
+          <li>Older C# codebases (pre-C# 6)</li>
+          <li>When format strings come from external sources</li>
+          <li>Localization systems</li>
+        </ul>
+        <p>Interpolation is preferred for new code.</p>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🎯 Try It: Interpolation Basics
+
+<TryItNowRunner 
+  starterId="week-04-interpolation-basics" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string product = "Keyboard";
+        double price = 49.99;
+        int quantity = 3;
+        
+        // Interpolation: inject variables with braces
+        Console.WriteLine($"Product: ${"{"+"product"+"}"}");
+        Console.WriteLine($"Price: $${"{"+"price"+"}"}");
+        Console.WriteLine($"Quantity: ${"{"+"quantity"+"}"}");
+        
+        // You can even do math inside the braces!
+        Console.WriteLine($"Total: $${"{"+"price * quantity"+"}"}");
+    }
+}`}
+  instructions="Run this code. Notice how braces get replaced with the actual value. Try adding another variable!" 
+/>
+
+---
+
+## 🔢 Format Specifiers: Controlling Output
+
+Inside the braces, you can add **format specifiers** to control how values are displayed:
+
+### Common Format Specifiers
+
+| Specifier | Meaning | Example Input | Output |
+|-----------|---------|---------------|--------|
+| `:C` | Currency | `price` = 49.99 | $49.99 |
+| `:N2` | Number with 2 decimals | `value` = 1234.5678 | 1,234.57 |
+| `:P` | Percentage | `rate` = 0.85 | 85.00% |
+| `:D4` | Padded digits | `id` = 42 | 0042 |
+| `,10` | Right-align (10 chars) | `name` = "Alice" | "     Alice" |
+| `,-10` | Left-align (10 chars) | `name` = "Alice" | "Alice     " |
+
+<TryItNowRunner 
+  starterId="week-04-format-specifiers" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        double price = 49.99;
+        double rate = 0.0825; // 8.25% tax
+        int orderId = 42;
+        
+        Console.WriteLine("=== Format Specifiers Demo ===\\n");
+        
+        // Currency formatting
+        Console.WriteLine($"Price: ${"{"+"price:C"+"}"}");
+        
+        // Percentage
+        Console.WriteLine($"Tax Rate: ${"{"+"rate:P"+"}"}");
+        
+        // Padded order ID
+        Console.WriteLine($"Order ID: ${"{"+"orderId:D6"+"}"}");
+        
+        // Number with commas
+        double bigNumber = 1234567.891;
+        Console.WriteLine($"Big Number: ${"{"+"bigNumber:N2"+"}"}");
+        
+        // Alignment for tables
+        Console.WriteLine("\\nItem            Price");
+        Console.WriteLine("Keyboard        $49.99");
+        Console.WriteLine("Mouse           $29.99");
+    }
+}`}
+  instructions="Experiment with format specifiers. Try changing :C to :N2, or adjust the alignment numbers." 
+/>
+
+---
+
+## 🚨 Escape Sequences: Special Characters
+
+What if you need to include special characters like quotes, newlines, or tabs? You can't just type them directly—you need **escape sequences**.
+
+<div class="concept-highlight escape-concept">
+  <h3>🎯 The Escape Character: Backslash (\)</h3>
+  <p>The backslash tells C#: "The next character is special, not literal."</p>
+</div>
+
+### Common Escape Sequences
+
+<div class="escape-grid">
+  <div class="escape-card">
+    <div class="escape-code">\n</div>
+    <div class="escape-name">Newline</div>
+    <div class="escape-desc">Moves to next line</div>
+  </div>
+  <div class="escape-card">
+    <div class="escape-code">\t</div>
+    <div class="escape-name">Tab</div>
+    <div class="escape-desc">Horizontal tab space</div>
+  </div>
+  <div class="escape-card">
+    <div class="escape-code">\\</div>
+    <div class="escape-name">Backslash</div>
+    <div class="escape-desc">Literal \ character</div>
+  </div>
+  <div class="escape-card">
+    <div class="escape-code">\"</div>
+    <div class="escape-name">Quote</div>
+    <div class="escape-desc">Literal " inside string</div>
+  </div>
+  <div class="escape-card">
+    <div class="escape-code">\'</div>
+    <div class="escape-name">Single Quote</div>
+    <div class="escape-desc">Literal ' in char</div>
+  </div>
+  <div class="escape-card">
+    <div class="escape-code">\r</div>
+    <div class="escape-name">Carriage Return</div>
+    <div class="escape-desc">Return to line start</div>
+  </div>
+</div>
+
+---
+
+## 🎯 Try It: Escape Sequences
+
+<TryItNowRunner 
+  starterId="week-04-escape-sequences" 
+  height={400}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // \\n = newline
+        Console.WriteLine("Line 1\\nLine 2\\nLine 3");
+        
+        // \\t = tab (great for alignment)
+        Console.WriteLine("\\nName\\tAge\\tCity");
+        Console.WriteLine("Alice\\t25\\tBoston");
+        Console.WriteLine("Bob\\t30\\tSeattle");
+        
+        // \\\\ = literal backslash (for file paths)
+        Console.WriteLine("\\nFile path: C:\\\\Users\\\\Documents\\\\file.txt");
+        
+        // \\" = quote inside a string
+        Console.WriteLine("\\nShe said, \\"Hello, World!\\"");
+        
+        // Combining with interpolation
+        string name = "Engineer";
+        Console.WriteLine($"\\n\\tWelcome, {name}!\\n\\tSystem ready.");
+    }
+}`}
+  instructions="Run this to see how escape sequences control output formatting. Try adding your own newlines and tabs!" 
+/>
+
+---
+
+## 📝 Verbatim Strings: The `@` Prefix
+
+Tired of escaping every backslash? Use **verbatim strings** with the `@` prefix—backslashes are treated literally:
+
+<DeepDiveTabs
+  title="Regular vs. Verbatim Strings"
+  tabs={[
+    {
+      id: "regular",
+      label: "Regular String",
+      content: `
+        <h3>Regular String (Escape Required)</h3>
+        <pre><code>// Must escape every backslash
+string path = "C:\\\\Users\\\\Documents\\\\file.txt";
+string multiline = "Line 1\\nLine 2\\nLine 3";</code></pre>
+        <p>Backslash is an escape character, so you need \\\\ for a literal \\.</p>
+      `
+    },
+    {
+      id: "verbatim",
+      label: "@ Verbatim String",
+      content: `
+        <h3>Verbatim String (Literal Backslash)</h3>
+        <pre><code>// @ makes backslash literal
+string path = @"C:\\Users\\Documents\\file.txt";
+
+// Also allows real multi-line strings!
+string multiline = @"Line 1
+Line 2
+Line 3";</code></pre>
+        <p>Perfect for file paths and multi-line text!</p>
+      `
+    },
+    {
+      id: "combined",
+      label: "$@ Combined",
+      content: `
+        <h3>Combining Interpolation + Verbatim</h3>
+        <pre><code>string user = "Alice";
+
+// $@ enables both features!
+string message = $@"Welcome, {user}!
+Your files are at: C:\\Users\\{user}\\Documents";</code></pre>
+        <p><strong>Order matters:</strong> Use <code>$@</code> (not @$) for interpolated verbatim strings.</p>
+      `
+    }
+  ]}
+/>
+
+<TryItNowRunner 
+  starterId="week-04-verbatim-strings" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Verbatim string for file path
+        string path = @"C:\\Users\\Student\\Documents\\project.cs";
+        Console.WriteLine($"File: {path}");
+        
+        // Multi-line verbatim string
+        string ascii = @"
+   /\\_/\\  
+  ( o.o ) 
+   > ^ <
+  /|   |\\
+ (_|   |_)";
+        
+        Console.WriteLine(ascii);
+        
+        // Combined $@ for interpolated multi-line
+        string user = "Engineer";
+        string report = $@"
+=============================
+  System Report for {user}
+=============================
+  Status: ONLINE
+  Time: {DateTime.Now}
+=============================";
+        
+        Console.WriteLine(report);
+    }
+}`}
+  instructions="Verbatim strings make file paths and ASCII art much easier! Try modifying the cat or adding your own ASCII design." 
+/>
+
+---
+
+## ✅ Knowledge Check
+
+<Checkpoint
+  checkpointId="week-04-4-2-checkpoint"
+  title="🔍 Section 4.2 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What does the $ prefix do in C#?",
+      options: ["Makes the string immutable", "Enables string interpolation with variable placeholders", "Converts the string to currency format", "Makes backslashes literal"],
+      correctAnswer: "Enables string interpolation with variable placeholders",
+      explanation: "The $ prefix enables string interpolation, allowing you to embed variables directly in strings using curly braces syntax."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Which escape sequence creates a newline?",
+      options: ["Backslash-t", "Backslash-n", "Backslash-r", "Double backslash"],
+      correctAnswer: "Backslash-n",
+      explanation: "Backslash-n is the newline escape sequence. It moves the cursor to the beginning of the next line."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "What is the benefit of using a verbatim string (@ prefix)?",
+      options: ["It makes the string run faster", "Backslashes are treated literally (no escaping needed)", "It enables string interpolation", "It makes the string immutable"],
+      correctAnswer: "Backslashes are treated literally (no escaping needed)",
+      explanation: "The @ prefix creates a verbatim string where backslashes are literal characters. This is perfect for file paths."
+    },
+    {
+      id: "cp4",
+      type: "multiple-choice",
+      question: "How do you include a literal double-quote inside a regular string?",
+      options: ["Use single quotes instead", "Use the backslash escape sequence", "Use the verbatim prefix", "You cannot include quotes in strings"],
+      correctAnswer: "Use the backslash escape sequence",
+      explanation: "To include a literal double-quote inside a string, escape it with a backslash before the quote character."
+    }
+  ]}
+/>
+
+---
+
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>💉 Key Takeaways: Formatting & Escapes</h3>
+  <ul>
+    <li><strong>String Interpolation ($):</strong> Inject variables with curly brace syntax</li>
+    <li><strong>Format Specifiers:</strong> Control display with :C, :N2, :P, etc.</li>
+    <li><strong>Escape Sequences:</strong> \n (newline), \t (tab), \\ (backslash)</li>
+    <li><strong>Verbatim Strings (@):</strong> Literal backslashes, multi-line support</li>
+    <li><strong>Combined ($@):</strong> Both interpolation AND verbatim in one string</li>
+  </ul>
+</div>
+
+<div class="next-section">
+  <a href="/week-04/4-3-manipulation/">
+    Next: Section 4.3 — Search & Parse (String Methods) →
+  </a>
+</div>
+
+<style>{`
+  .section-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #06b6d4;
+  }
+  
+  .section-badge {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #22d3ee;
+  }
+  
+  .section-time {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+  
+  .concept-header {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+  }
+  
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .header-text {
+    flex: 1;
+  }
+  
+  .header-text h2 {
+    color: #a5f3fc;
+    margin-bottom: 1rem;
+  }
+  
+  .header-text p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+  
+  .syntax-card {
+    background: #0f172a;
+    border: 2px solid #06b6d4;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+  }
+  
+  .syntax-card h3 {
+    color: #22d3ee;
+    margin-bottom: 1rem;
+  }
+  
+  .syntax-card pre {
+    margin: 0;
+  }
+  
+  .syntax-card code {
+    color: #fcd34d;
+    font-size: 1.1rem;
+  }
+  
+  .format-table {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  
+  .format-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .format-table th {
+    background: #0f172a;
+    color: #22d3ee;
+    padding: 1rem;
+    text-align: left;
+  }
+  
+  .format-table td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #334155;
+    color: #e2e8f0;
+  }
+  
+  .format-table code {
+    background: #0f172a;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: #fcd34d;
+  }
+  
+  .escape-concept {
+    background: linear-gradient(135deg, #7c2d12 0%, #9a3412 100%);
+    border-left-color: #f97316;
+  }
+  
+  .escape-concept h3 {
+    color: #fed7aa;
+  }
+  
+  .escape-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .escape-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #475569;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  
+  .escape-card:hover {
+    transform: translateY(-4px);
+    border-color: #06b6d4;
+  }
+  
+  .escape-code {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.75rem;
+    color: #fcd34d;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .escape-name {
+    color: #22d3ee;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+  
+  .escape-desc {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+  
+  .video-section {
+    margin: 2rem 0;
+  }
+  
+  .video-intro {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+  
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #000;
+  }
+  
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .concept-highlight {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border-left: 4px solid #3b82f6;
+  }
+  
+  .concept-highlight h3 {
+    color: #93c5fd;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-box {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border: 2px solid #06b6d4;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .summary-box h3 {
+    color: #a5f3fc;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-box li {
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .next-section {
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  .next-section a {
+    display: inline-block;
+    background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .next-section a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.4);
+  }
+`}</style>

@@ -1,0 +1,540 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 04 • Text Sanitizer"
+description: "Parse CSV data and format it into a professional report"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
+
+# Lab 04: The Text Sanitizer
+
+<DueDateBanner week={4} type="Lab" />
+
+**Time: 60 minutes**  
+**Points: 100**
+
+## 🎯 Mission Objective
+
+You've intercepted a **raw CSV data stream** from a legacy system. Your mission: parse this comma-separated data using `Split()` and transform it into a clean, formatted report using string interpolation.
+
+This lab tests your mastery of:
+- **Split()** to break strings into arrays
+- **String Interpolation** for formatted output
+- **Escape Sequences** for alignment
+- **Trim()** and **Replace()** for data cleaning
+
+---
+
+## 📡 The Data Stream
+
+You will parse employee records in this CSV format:
+
+```
+ID,Name,Department,Salary
+E001,Alice Johnson,Engineering,85000
+E002,Bob Smith,Marketing,72000
+E003,Charlie Brown,Engineering,91000
+E004,Diana Ross,Sales,68000
+```
+
+<div class="data-note">
+  <h4>📋 CSV Structure</h4>
+  <ul>
+    <li><strong>Line 1:</strong> Header row (column names)</li>
+    <li><strong>Lines 2+:</strong> Data rows (actual records)</li>
+    <li><strong>Delimiter:</strong> Comma (<code>,</code>)</li>
+  </ul>
+</div>
+
+---
+
+## 📤 Required Output
+
+Your sanitized report must look like this:
+
+```
+╔══════════════════════════════════════════════╗
+║         EMPLOYEE DIRECTORY REPORT            ║
+╠══════════════════════════════════════════════╣
+║ ID      Name                 Dept        Pay ║
+╠══════════════════════════════════════════════╣
+║ E001    Alice Johnson        Engineering $85,000 ║
+║ E002    Bob Smith            Marketing   $72,000 ║
+║ E003    Charlie Brown        Engineering $91,000 ║
+║ E004    Diana Ross           Sales       $68,000 ║
+╠══════════════════════════════════════════════╣
+║ TOTAL EMPLOYEES: 4                           ║
+║ TOTAL PAYROLL:   $316,000                    ║
+╚══════════════════════════════════════════════╝
+```
+
+---
+
+## 📋 Requirements Checklist
+
+<div class="requirements-grid">
+  <div class="requirement">
+    <input type="checkbox" id="req1" />
+    <label for="req1">Use <code>Split('\n')</code> to separate rows</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req2" />
+    <label for="req2">Use <code>Split(',')</code> to separate columns</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req3" />
+    <label for="req3">Skip the header row (index 0) when processing data</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req4" />
+    <label for="req4">Use string interpolation with alignment (<code>{'{'}value,-15{'}'}</code>)</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req5" />
+    <label for="req5">Format salary with currency (<code>:C0</code> or <code>:N0</code>)</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req6" />
+    <label for="req6">Calculate and display total employee count</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req7" />
+    <label for="req7">Calculate and display total payroll sum</label>
+  </div>
+  <div class="requirement">
+    <input type="checkbox" id="req8" />
+    <label for="req8">Include box-drawing characters for professional look</label>
+  </div>
+</div>
+
+---
+
+## 🧩 Parsing Strategy
+
+Here's the algorithm you'll implement:
+
+<div class="algorithm-steps">
+  <div class="step">
+    <span class="step-num">1</span>
+    <div class="step-content">
+      <h4>Split into Rows</h4>
+      <code>string[] rows = csvData.Split('\n');</code>
+      <p>Creates an array where each element is one line</p>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-num">2</span>
+    <div class="step-content">
+      <h4>Loop Through Data Rows</h4>
+      <code>for (int i = 1; i &lt; rows.Length; i++)</code>
+      <p>Start at index 1 to skip the header</p>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-num">3</span>
+    <div class="step-content">
+      <h4>Split Each Row into Columns</h4>
+      <code>string[] cols = rows[i].Split(',');</code>
+      <p>cols[0]=ID, cols[1]=Name, cols[2]=Dept, cols[3]=Salary</p>
+    </div>
+  </div>
+  <div class="step">
+    <span class="step-num">4</span>
+    <div class="step-content">
+      <h4>Parse and Format</h4>
+      <code>int salary = int.Parse(cols[3]);</code>
+      <p>Convert salary string to integer for math and formatting</p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🏗️ Starter Code
+
+<TryItNowRunner 
+  starterId="week-04-lab" 
+  height={700}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // The raw CSV data stream
+        string csvData = @"ID,Name,Department,Salary
+E001,Alice Johnson,Engineering,85000
+E002,Bob Smith,Marketing,72000
+E003,Charlie Brown,Engineering,91000
+E004,Diana Ross,Sales,68000";
+
+        // TODO: Step 1 - Split into rows
+        // string[] rows = ...
+        
+        // TODO: Step 2 - Print header box
+        Console.WriteLine("╔══════════════════════════════════════════════╗");
+        Console.WriteLine("║         EMPLOYEE DIRECTORY REPORT            ║");
+        Console.WriteLine("╠══════════════════════════════════════════════╣");
+        // Print column headers with alignment
+        
+        // TODO: Step 3 - Initialize counters
+        int totalEmployees = 0;
+        int totalPayroll = 0;
+        
+        // TODO: Step 4 - Loop through data rows (skip header at index 0)
+        // for (int i = 1; i < rows.Length; i++)
+        // {
+        //     Split each row by comma
+        //     Extract: id, name, department, salary
+        //     Parse salary to int
+        //     Print formatted row
+        //     Update counters
+        // }
+        
+        // TODO: Step 5 - Print footer with totals
+        
+        Console.WriteLine("╚══════════════════════════════════════════════╝");
+    }
+}`}
+  instructions="Complete the TODOs to parse the CSV and build the formatted report. Use Split(), interpolation, and alignment specifiers." 
+/>
+
+---
+
+## 💡 Hints
+
+<div class="hints-section">
+  <details>
+    <summary>🔍 Hint 1: Splitting Rows</summary>
+    <pre><code>string[] rows = csvData.Split('\n');
+// rows[0] = "ID,Name,Department,Salary"  (header)
+// rows[1] = "E001,Alice Johnson,Engineering,85000"
+// etc.</code></pre>
+  </details>
+  
+  <details>
+    <summary>🔍 Hint 2: Alignment in Interpolation</summary>
+    <pre><code>// Left-align in 20 characters: {'{'}value,-20{'}'}
+// Right-align in 10 characters: {'{'}value,10{'}'}
+Console.WriteLine($"║ {'{'}id,-7{'}'} {'{'}name,-20{'}'} {'{'}dept,-12{'}'} {'{'}salary,7:C0{'}'} ║");</code></pre>
+  </details>
+  
+  <details>
+    <summary>🔍 Hint 3: Parsing Salary</summary>
+    <pre><code>string[] cols = rows[i].Split(',');
+int salary = int.Parse(cols[3]);  // Convert string to int
+totalPayroll += salary;</code></pre>
+  </details>
+  
+  <details>
+    <summary>🔍 Hint 4: Number Formatting</summary>
+    <pre><code>// :C0 = Currency with 0 decimals: $85,000
+// :N0 = Number with commas: 85,000
+Console.WriteLine($"{'{'}salary:C0{'}'}");  // Outputs: $85,000</code></pre>
+  </details>
+</div>
+
+---
+
+## ✅ Solution Walkthrough
+
+Once you've attempted the lab, expand this section to see the complete solution:
+
+<details>
+  <summary>📖 View Complete Solution</summary>
+  
+<TryItNowRunner 
+  starterId="week-04-lab-solution" 
+  height={750}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // The raw CSV data stream
+        string csvData = @"ID,Name,Department,Salary
+E001,Alice Johnson,Engineering,85000
+E002,Bob Smith,Marketing,72000
+E003,Charlie Brown,Engineering,91000
+E004,Diana Ross,Sales,68000";
+
+        // Step 1: Split into rows
+        string[] rows = csvData.Split('\\n');
+        
+        // Step 2: Print header box
+        Console.WriteLine("╔══════════════════════════════════════════════╗");
+        Console.WriteLine("║         EMPLOYEE DIRECTORY REPORT            ║");
+        Console.WriteLine("╠══════════════════════════════════════════════╣");
+        Console.WriteLine($"║ {"ID",-7} {"Name",-20} {"Dept",-12} {"Pay",7} ║");
+        Console.WriteLine("╠══════════════════════════════════════════════╣");
+        
+        // Step 3: Initialize counters
+        int totalEmployees = 0;
+        int totalPayroll = 0;
+        
+        // Step 4: Loop through data rows (skip header)
+        for (int i = 1; i < rows.Length; i++)
+        {
+            // Split each row by comma
+            string[] cols = rows[i].Split(',');
+            
+            // Extract values
+            string id = cols[0];
+            string name = cols[1];
+            string dept = cols[2];
+            int salary = int.Parse(cols[3]);
+            
+            // Print formatted row
+            Console.WriteLine($"║ {id,-7} {name,-20} {dept,-12} {salary,7:C0} ║");
+            
+            // Update counters
+            totalEmployees++;
+            totalPayroll += salary;
+        }
+        
+        // Step 5: Print footer with totals
+        Console.WriteLine("╠══════════════════════════════════════════════╣");
+        Console.WriteLine($"║ TOTAL EMPLOYEES: {totalEmployees,-28} ║");
+        Console.WriteLine($"║ TOTAL PAYROLL:   {totalPayroll:C0,-28} ║");
+        Console.WriteLine("╚══════════════════════════════════════════════╝");
+    }
+}`}
+  instructions="This is the complete solution. Study how Split(), interpolation, and formatting work together!" 
+/>
+
+</details>
+
+---
+
+## 🚀 Challenge Extensions (Optional)
+
+Want extra practice? Try these enhancements:
+
+<div class="challenge-grid">
+  <div class="challenge-card">
+    <h4>🎯 Challenge 1: Filter by Department</h4>
+    <p>Only show employees from "Engineering"</p>
+    <code>if (dept == "Engineering") ...</code>
+  </div>
+  <div class="challenge-card">
+    <h4>📊 Challenge 2: Calculate Average</h4>
+    <p>Display average salary in the footer</p>
+    <code>double avg = totalPayroll / totalEmployees;</code>
+  </div>
+  <div class="challenge-card">
+    <h4>🔍 Challenge 3: Find Highest Paid</h4>
+    <p>Track and display the highest earner</p>
+    <code>if (salary > maxSalary) ...</code>
+  </div>
+</div>
+
+---
+
+## 📤 Submit Your Lab
+
+When your program produces the correct formatted output:
+
+<div class="submit-section">
+  <p>Copy your completed code and submit it using the Lab Submission form below.</p>
+  
+  <a href="/editor/?week=04&starter=week-04-lab" class="editor-link" target="_blank">
+    Open in Full Editor ↗
+  </a>
+</div>
+
+<style>{`
+  .data-note {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    border: 2px solid #3b82f6;
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+  }
+  
+  .data-note h4 {
+    color: #93c5fd;
+    margin-bottom: 0.75rem;
+  }
+  
+  .data-note ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  
+  .data-note li {
+    color: #e2e8f0;
+    margin-bottom: 0.25rem;
+  }
+  
+  .requirements-grid {
+    display: grid;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #1e293b;
+    border-radius: 8px;
+    border-left: 3px solid #475569;
+  }
+  
+  .requirement:has(input:checked) {
+    border-left-color: #10b981;
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, #1e293b 50%);
+  }
+  
+  .requirement input {
+    width: 18px;
+    height: 18px;
+    accent-color: #10b981;
+  }
+  
+  .requirement label {
+    color: #e2e8f0;
+    cursor: pointer;
+  }
+  
+  .algorithm-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .step {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 8px;
+    border-left: 3px solid #8b5cf6;
+  }
+  
+  .step-num {
+    width: 32px;
+    height: 32px;
+    background: #8b5cf6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .step-content h4 {
+    color: #c4b5fd;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .step-content code {
+    display: block;
+    background: #0f172a;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    color: #fcd34d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .step-content p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  .hints-section {
+    margin: 1.5rem 0;
+  }
+  
+  .hints-section details {
+    background: #1e293b;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #475569;
+  }
+  
+  .hints-section summary {
+    padding: 1rem;
+    cursor: pointer;
+    color: #93c5fd;
+    font-weight: 500;
+  }
+  
+  .hints-section summary:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+  
+  .hints-section pre {
+    margin: 0;
+    padding: 1rem;
+    background: #0f172a;
+    border-radius: 0 0 8px 8px;
+  }
+  
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .challenge-card {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    border: 2px solid #6366f1;
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+  
+  .challenge-card h4 {
+    color: #a5b4fc;
+    margin-bottom: 0.5rem;
+  }
+  
+  .challenge-card p {
+    color: #c7d2fe;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .challenge-card code {
+    color: #fcd34d;
+    font-size: 0.85rem;
+  }
+  
+  .submit-section {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 2px solid #10b981;
+  }
+  
+  .submit-section p {
+    color: #d1fae5;
+    margin-bottom: 1rem;
+  }
+  
+  .editor-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s;
+  }
+  
+  .editor-link:hover {
+    transform: translateY(-2px);
+  }
+`}</style>

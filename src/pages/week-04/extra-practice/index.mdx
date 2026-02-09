@@ -1,0 +1,319 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 04 • Extra Practice"
+description: "Additional exercises for mastering strings and text processing"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Week 04 Extra Practice: Text Processing
+
+Pick **2-3** exercises to reinforce your string manipulation skills. These are optional but highly recommended!
+
+---
+
+## 🔬 Drill 1: Email Parser
+
+Extract the username and domain from an email address using `IndexOf()` and `Substring()`.
+
+<TryItNowRunner 
+  starterId="week-04-drill-email" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string email = "student@university.edu";
+        
+        // TODO: Find the @ symbol position
+        // int atIndex = ...
+        
+        // TODO: Extract the username (before @)
+        // string username = ...
+        
+        // TODO: Extract the domain (after @)
+        // string domain = ...
+        
+        Console.WriteLine($"Email: {email}");
+        // Console.WriteLine($"Username: {username}");
+        // Console.WriteLine($"Domain: {domain}");
+    }
+}`}
+  instructions="Use IndexOf('@') to find the position, then Substring() to extract each part." 
+/>
+
+<details>
+  <summary>💡 Solution</summary>
+
+```csharp
+int atIndex = email.IndexOf('@');
+string username = email.Substring(0, atIndex);
+string domain = email.Substring(atIndex + 1);
+```
+
+</details>
+
+---
+
+## 🔬 Drill 2: Word Counter
+
+Count the number of words in a sentence using `Split()`.
+
+<TryItNowRunner 
+  starterId="week-04-drill-words" 
+  height={300}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string sentence = "The quick brown fox jumps over the lazy dog";
+        
+        // TODO: Split by space to get words array
+        // string[] words = ...
+        
+        // TODO: Count the words
+        // int count = ...
+        
+        Console.WriteLine($"Sentence: {sentence}");
+        // Console.WriteLine($"Word count: {count}");
+    }
+}`}
+  instructions="Split the string by space, then check the array's Length property." 
+/>
+
+---
+
+## 🔬 Drill 3: Phone Formatter
+
+Take a 10-digit phone number and format it as (XXX) XXX-XXXX using `Substring()` and interpolation.
+
+<TryItNowRunner 
+  starterId="week-04-drill-phone" 
+  height={320}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string digits = "5551234567";
+        
+        // TODO: Extract area code (first 3 digits)
+        // string areaCode = digits.Substring(?, ?);
+        
+        // TODO: Extract exchange (next 3 digits)
+        // string exchange = digits.Substring(?, ?);
+        
+        // TODO: Extract subscriber (last 4 digits)
+        // string subscriber = digits.Substring(?);
+        
+        // TODO: Format as (XXX) XXX-XXXX
+        // Console.WriteLine($"({areaCode}) {exchange}-{subscriber}");
+        
+        Console.WriteLine($"Raw: {digits}");
+    }
+}`}
+  instructions="Use Substring(start, length) to extract each part, then interpolation to format." 
+/>
+
+---
+
+## 🔬 Drill 4: Data Cleaner
+
+Clean messy user input: trim whitespace, remove extra spaces, and normalize case.
+
+<TryItNowRunner 
+  starterId="week-04-drill-clean" 
+  height={340}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string messy = "   jOHN    DOE   ";
+        
+        // TODO: Step 1 - Trim leading/trailing whitespace
+        // string step1 = messy.Trim();
+        
+        // TODO: Step 2 - Convert to lowercase
+        // string step2 = step1.ToLower();
+        
+        // TODO: Step 3 - Replace multiple spaces with single space
+        // (Hint: use a while loop or Replace)
+        
+        Console.WriteLine($"Original: \\"{messy}\\"");
+        // Console.WriteLine($"Cleaned:  \\"{cleaned}\\"");
+        // Expected: "john doe"
+    }
+}`}
+  instructions="Chain Trim(), ToLower(), and Replace() to clean the input." 
+/>
+
+---
+
+## 🔬 Drill 5: StringBuilder Report
+
+Build a multiplication table using StringBuilder (much more efficient than string concatenation!).
+
+<TryItNowRunner 
+  starterId="week-04-drill-stringbuilder" 
+  height={400}
+  code={`using System;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        StringBuilder table = new StringBuilder();
+        
+        // TODO: Add header
+        table.AppendLine("=== Multiplication Table (1-5) ===");
+        table.AppendLine();
+        
+        // TODO: Build the table with nested loops
+        // for (int i = 1; i <= 5; i++)
+        // {
+        //     for (int j = 1; j <= 5; j++)
+        //     {
+        //         table.Append($"{i * j,4}");  // Right-align in 4 chars
+        //     }
+        //     table.AppendLine();
+        // }
+        
+        Console.WriteLine(table.ToString());
+    }
+}`}
+  instructions="Use nested loops with Append() and AppendLine(). The ,4 alignment makes columns line up." 
+/>
+
+---
+
+## 🏆 Challenge: CSV to JSON Converter
+
+Convert a simple CSV row to JSON format (advanced!):
+
+<TryItNowRunner 
+  starterId="week-04-challenge-json" 
+  height={420}
+  code={`using System;
+using System.Text;
+
+class Program
+{
+    static void Main()
+    {
+        string csvHeader = "name,age,city";
+        string csvData = "Alice,28,Boston";
+        
+        // TODO: Split headers and data
+        string[] headers = csvHeader.Split(',');
+        string[] values = csvData.Split(',');
+        
+        // TODO: Build JSON using StringBuilder
+        StringBuilder json = new StringBuilder();
+        json.AppendLine("{");
+        
+        for (int i = 0; i < headers.Length; i++)
+        {
+            // Format: "key": "value"
+            // Don't forget quotes around strings!
+            // Add comma after each line except the last
+        }
+        
+        json.AppendLine("}");
+        
+        Console.WriteLine("CSV Row:");
+        Console.WriteLine(csvData);
+        Console.WriteLine("\\nJSON:");
+        Console.WriteLine(json.ToString());
+        
+        // Expected output:
+        // {
+        //   "name": "Alice",
+        //   "age": "28",
+        //   "city": "Boston"
+        // }
+    }
+}`}
+  instructions="This is tricky! You need to handle the comma logic (no comma on last item) and proper JSON formatting." 
+/>
+
+---
+
+## 📚 Practice Tips
+
+<div class="tips-grid">
+  <div class="tip">
+    <h4>🔗 Chain Methods</h4>
+    <p>String methods can be chained: <code>text.Trim().ToLower().Replace(" ", "_")</code></p>
+  </div>
+  <div class="tip">
+    <h4>🔍 Use IndexOf First</h4>
+    <p>Before using Substring, always find the position with IndexOf</p>
+  </div>
+  <div class="tip">
+    <h4>💥 Split is Powerful</h4>
+    <p>Split can take multiple delimiters: <code>Split(new char[] {',', ';'})</code></p>
+  </div>
+  <div class="tip">
+    <h4>🏗️ StringBuilder in Loops</h4>
+    <p>Always use StringBuilder when building strings inside loops</p>
+  </div>
+</div>
+
+<style>{`
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .tip {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #475569;
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+  
+  .tip h4 {
+    color: #93c5fd;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .tip p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  .tip code {
+    color: #fcd34d;
+    font-size: 0.8rem;
+  }
+  
+  details {
+    background: #1e293b;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border: 1px solid #475569;
+  }
+  
+  details summary {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    color: #93c5fd;
+  }
+  
+  details pre {
+    margin: 0;
+    padding: 1rem;
+    background: #0f172a;
+  }
+`}</style>

@@ -62,10 +62,12 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '04', title: 'Week 04: Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-04/' },
-      { title: '4.1 Decision Structures (if/else)', href: '/week-04/lesson-1/' },
-      { title: '4.2 Validation Patterns', href: '/week-04/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-04/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-04/homework/' },
+      { title: '4.1 The Immutability Rule', href: '/week-04/4-1-immutability/' },
+      { title: '4.2 Formatting & Escapes', href: '/week-04/4-2-formatting/' },
+      { title: '4.3 Search & Parse', href: '/week-04/4-3-manipulation/' },
+      { title: '4.4 StringBuilder', href: '/week-04/4-4-stringbuilder/' },
+      { title: 'Lab: Text Sanitizer (Graded)', href: '/week-04/lab/' },
+      { title: 'String Reflection (Graded)', href: '/week-04/homework/' },
       { title: 'Extra Practice', href: '/week-04/extra-practice/' }
     ] },
   { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [

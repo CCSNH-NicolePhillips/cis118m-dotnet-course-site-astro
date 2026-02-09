@@ -1,0 +1,162 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 04 • String Reflection"
+description: "Demonstrate your understanding of string immutability and efficient text processing"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 04: String Reflection (GRADED)
+
+<DueDateBanner week={4} type="Homework" />
+
+## 📝 Homework 04: The Immutability Patch
+
+Now that you understand how strings work in memory, it's time to demonstrate your knowledge of why immutability matters and when to use StringBuilder.
+
+---
+
+## 🧠 The Critical Questions
+
+Answer BOTH questions in **3-5 sentences each**:
+
+### Question 1: The Memory Problem
+
+A junior developer writes this code to build a report with 1,000 lines:
+
+```csharp
+string report = "";
+for (int i = 0; i < 1000; i++)
+{
+    report += $"Line {i}: Data processing complete\n";
+}
+```
+
+**Explain:**
+1. Why is this code inefficient from a memory perspective?
+2. How many string objects are created during the loop?
+3. What happens to the old strings after each iteration?
+
+### Question 2: The Solution
+
+**Explain:**
+1. How would you rewrite the above code using StringBuilder?
+2. Why is StringBuilder more efficient for this use case?
+3. When should you use regular string concatenation vs. StringBuilder?
+
+---
+
+## 📋 Grading Criteria
+
+<div class="grading-rubric">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Correctly explains string immutability and memory allocation</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Accurately describes the number of objects created</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Demonstrates understanding of garbage collection</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Provides correct StringBuilder solution</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Explains when to use each approach</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## ✍️ Submit Your Response
+
+<EngineeringLogEditor 
+  client:load
+  week={4}
+  assignmentType="homework"
+  minWords={100}
+  placeholder="Enter your reflection response here. Address both questions thoroughly, demonstrating your understanding of string immutability, memory allocation, and when to use StringBuilder."
+/>
+
+---
+
+## 💡 Helpful References
+
+<div class="reference-links">
+  <a href="/week-04/4-1-immutability/">Section 4.1: The Immutability Rule</a>
+  <a href="/week-04/4-4-stringbuilder/">Section 4.4: StringBuilder</a>
+</div>
+
+<style>{`
+  .grading-rubric {
+    margin: 1.5rem 0;
+  }
+  
+  .grading-rubric table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .grading-rubric th {
+    background: #0f172a;
+    color: #93c5fd;
+    padding: 1rem;
+    text-align: left;
+  }
+  
+  .grading-rubric td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #334155;
+    color: #e2e8f0;
+  }
+  
+  .grading-rubric tr:last-child td {
+    background: #1e3a5f;
+    font-weight: bold;
+  }
+  
+  .reference-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .reference-links a {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #475569;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    color: #93c5fd;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  
+  .reference-links a:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+  }
+`}</style>

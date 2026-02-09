@@ -1,0 +1,839 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 4.3 • Search & Parse"
+description: "Dissecting data streams with IndexOf, Substring, Replace, and Split"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 4.3: Search & Parse
+
+<div class="section-header">
+  <div class="section-badge">🔪 The Digital Scalpel</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Digital Scalpel: Dissecting Data Streams</h2>
+      <p>
+        Raw data rarely arrives in a usable format. Like a surgeon with precision instruments, you need tools to <strong>locate</strong>, <strong>extract</strong>, <strong>replace</strong>, and <strong>split</strong> text data. These string methods are your <strong>digital scalpels</strong>—surgical tools for parsing data streams.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-2/scalpel.png" alt="Digital scalpel dissecting data" style="max-width: 180px;" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: String Manipulation Methods
+
+<div class="video-section">
+  <p class="video-intro">This briefing covers the essential string manipulation methods: finding text with IndexOf, extracting with Substring, replacing content, and splitting strings into arrays.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/ioi__WRETk4" 
+      title="C# String Methods - IndexOf, Substring, Replace, Split"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🗺️ The String Methods Toolkit
+
+<div class="toolkit-grid">
+  <div class="tool-card tool-find">
+    <div class="tool-icon">🔍</div>
+    <h4>IndexOf()</h4>
+    <p>Locate text position</p>
+  </div>
+  <div class="tool-card tool-extract">
+    <div class="tool-icon">✂️</div>
+    <h4>Substring()</h4>
+    <p>Extract a portion</p>
+  </div>
+  <div class="tool-card tool-replace">
+    <div class="tool-icon">🔄</div>
+    <h4>Replace()</h4>
+    <p>Swap content</p>
+  </div>
+  <div class="tool-card tool-split">
+    <div class="tool-icon">💥</div>
+    <h4>Split()</h4>
+    <p>Break into array</p>
+  </div>
+  <div class="tool-card tool-contains">
+    <div class="tool-icon">❓</div>
+    <h4>Contains()</h4>
+    <p>Check existence</p>
+  </div>
+  <div class="tool-card tool-trim">
+    <div class="tool-icon">🧹</div>
+    <h4>Trim()</h4>
+    <p>Remove whitespace</p>
+  </div>
+</div>
+
+---
+
+## 🔍 IndexOf(): Finding the Position
+
+`IndexOf()` returns the **zero-based position** where a substring first appears. If not found, it returns **-1**.
+
+<div class="index-diagram">
+  <div class="index-string">
+    <span class="char" data-index="0">H</span>
+    <span class="char" data-index="1">e</span>
+    <span class="char" data-index="2">l</span>
+    <span class="char" data-index="3">l</span>
+    <span class="char" data-index="4">o</span>
+    <span class="char" data-index="5">,</span>
+    <span class="char" data-index="6"> </span>
+    <span class="char highlight" data-index="7">W</span>
+    <span class="char highlight" data-index="8">o</span>
+    <span class="char highlight" data-index="9">r</span>
+    <span class="char highlight" data-index="10">l</span>
+    <span class="char highlight" data-index="11">d</span>
+    <span class="char" data-index="12">!</span>
+  </div>
+  <div class="index-numbers">
+    <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+  </div>
+  <div class="index-result">
+    <code>"Hello, World!".IndexOf("World")</code> → <span class="result">7</span>
+  </div>
+</div>
+
+<TryItNowRunner 
+  starterId="week-04-indexof" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string data = "Error: File not found at C:\\\\logs\\\\app.log";
+        
+        // Find position of specific text
+        int errorPos = data.IndexOf("Error");
+        int filePos = data.IndexOf("File");
+        int notFoundPos = data.IndexOf("Success"); // Won't find it!
+        
+        Console.WriteLine($"Original: {data}");
+        Console.WriteLine($"\\n'Error' found at index: {errorPos}");
+        Console.WriteLine($"'File' found at index: {filePos}");
+        Console.WriteLine($"'Success' found at index: {notFoundPos}");
+        
+        // Using IndexOf to check if something exists
+        if (data.IndexOf("Error") != -1)
+        {
+            Console.WriteLine("\\n⚠️ This is an error message!");
+        }
+    }
+}`}
+  instructions="Run this to see how IndexOf returns positions. Notice that 'Success' returns -1 because it doesn't exist in the string." 
+/>
+
+---
+
+## ✂️ Substring(): Extracting Portions
+
+`Substring()` cuts out a portion of the string. It has two forms:
+- `Substring(startIndex)` — from position to end
+- `Substring(startIndex, length)` — extract specific length
+
+<DeepDiveTabs
+  title="Substring Methods"
+  tabs={[
+    {
+      id: "toend",
+      label: "📍 To End",
+      content: `
+        <h3>Substring(startIndex)</h3>
+        <p>Extract from a position to the end of the string:</p>
+        <pre><code>string text = "Hello, World!";
+string world = text.Substring(7);
+// Result: "World!"</code></pre>
+        <p><strong>Starts at index 7</strong>, takes everything to the end.</p>
+      `
+    },
+    {
+      id: "length",
+      label: "📏 With Length",
+      content: `
+        <h3>Substring(startIndex, length)</h3>
+        <p>Extract a specific number of characters:</p>
+        <pre><code>string text = "Hello, World!";
+string hello = text.Substring(0, 5);
+// Result: "Hello"</code></pre>
+        <p><strong>Start at 0</strong>, take <strong>5 characters</strong>.</p>
+      `
+    },
+    {
+      id: "combined",
+      label: "🔗 Combined with IndexOf",
+      content: `
+        <h3>Dynamic Extraction</h3>
+        <p>Use IndexOf to find the position, then Substring to extract:</p>
+        <pre><code>string email = "user@company.com";
+int atPos = email.IndexOf("@");
+string domain = email.Substring(atPos + 1);
+// Result: "company.com"</code></pre>
+        <p>This pattern is incredibly common for parsing!</p>
+      `
+    }
+  ]}
+/>
+
+<TryItNowRunner 
+  starterId="week-04-substring" 
+  height={420}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string logEntry = "[2026-02-08 14:30:15] ERROR: Database connection failed";
+        
+        Console.WriteLine($"Full log: {logEntry}");
+        Console.WriteLine();
+        
+        // Extract the timestamp (positions 1-19)
+        string timestamp = logEntry.Substring(1, 19);
+        Console.WriteLine($"Timestamp: {timestamp}");
+        
+        // Extract the log level using IndexOf
+        int bracketEnd = logEntry.IndexOf("]");
+        int colonPos = logEntry.IndexOf(":", bracketEnd);
+        string level = logEntry.Substring(bracketEnd + 2, colonPos - bracketEnd - 2);
+        Console.WriteLine($"Level: {level}");
+        
+        // Extract the message (everything after the colon)
+        string message = logEntry.Substring(colonPos + 2);
+        Console.WriteLine($"Message: {message}");
+        
+        // Parse an email
+        string email = "engineer@techcorp.io";
+        int atIndex = email.IndexOf("@");
+        string username = email.Substring(0, atIndex);
+        string domain = email.Substring(atIndex + 1);
+        Console.WriteLine($"\\nEmail: {email}");
+        Console.WriteLine($"Username: {username}");
+        Console.WriteLine($"Domain: {domain}");
+    }
+}`}
+  instructions="Study how IndexOf and Substring work together to parse structured data. Try parsing different parts of the log entry!" 
+/>
+
+---
+
+## 🔄 Replace(): Swapping Content
+
+`Replace()` finds all occurrences of a substring and swaps them with a new value. Remember: it returns a **NEW string** (immutability!).
+
+<TryItNowRunner 
+  starterId="week-04-replace" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string template = "Hello, {NAME}! Welcome to {COMPANY}.";
+        
+        // Replace placeholders with actual values
+        string personalized = template
+            .Replace("{NAME}", "Sarah")
+            .Replace("{COMPANY}", "TechCorp");
+        
+        Console.WriteLine($"Template: {template}");
+        Console.WriteLine($"Result:   {personalized}");
+        
+        // Sanitize user input
+        string userInput = "   Hello   World   ";
+        string cleaned = userInput
+            .Replace("   ", " ")  // Multiple spaces to single
+            .Trim();               // Remove leading/trailing
+        
+        Console.WriteLine($"\\nRaw input:   \\"{userInput}\\"");
+        Console.WriteLine($"Cleaned:     \\"{cleaned}\\"");
+        
+        // Replace characters
+        string phone = "(555) 123-4567";
+        string digitsOnly = phone
+            .Replace("(", "")
+            .Replace(")", "")
+            .Replace(" ", "")
+            .Replace("-", "");
+        
+        Console.WriteLine($"\\nPhone: {phone}");
+        Console.WriteLine($"Digits: {digitsOnly}");
+    }
+}`}
+  instructions="Replace is powerful for templates and data cleaning. Try chaining multiple Replace calls together!" 
+/>
+
+---
+
+## 💥 Split(): Breaking Into Arrays
+
+`Split()` is your most powerful parsing tool—it breaks a string into an **array of substrings** based on a delimiter.
+
+<div class="split-diagram">
+  <div class="split-before">
+    <code>"apple,banana,cherry"</code>
+  </div>
+  <div class="split-arrow">
+    <span>.Split(',')</span>
+    <span class="arrow">↓</span>
+  </div>
+  <div class="split-after">
+    <div class="array-box">
+      <div class="array-item"><span class="index">[0]</span> "apple"</div>
+      <div class="array-item"><span class="index">[1]</span> "banana"</div>
+      <div class="array-item"><span class="index">[2]</span> "cherry"</div>
+    </div>
+  </div>
+</div>
+
+<TryItNowRunner 
+  starterId="week-04-split-basic" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Split by comma
+        string fruits = "apple,banana,cherry,date";
+        string[] fruitArray = fruits.Split(',');
+        
+        Console.WriteLine("=== Fruits ===");
+        for (int i = 0; i < fruitArray.Length; i++)
+        {
+            Console.WriteLine($"[{i}] {fruitArray[i]}");
+        }
+        
+        // Split by multiple delimiters
+        string data = "red;green|blue,yellow";
+        string[] colors = data.Split(new char[] { ';', '|', ',' });
+        
+        Console.WriteLine("\\n=== Colors ===");
+        foreach (string color in colors)
+        {
+            Console.WriteLine($"- {color}");
+        }
+        
+        // Split a sentence into words
+        string sentence = "The quick brown fox jumps";
+        string[] words = sentence.Split(' ');
+        
+        Console.WriteLine($"\\nWord count: {words.Length}");
+    }
+}`}
+  instructions="Split turns a single string into an array you can loop through. This is essential for CSV parsing!" 
+/>
+
+---
+
+## 📊 Real-World Example: Parsing CSV Data
+
+CSV (Comma-Separated Values) is everywhere—exports from Excel, database dumps, API responses. Let's parse it:
+
+<TryItNowRunner 
+  starterId="week-04-csv-parsing" 
+  height={500}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Simulated CSV data (like from a file)
+        string csvData = @"Name,Age,City
+Alice,28,Boston
+Bob,35,Seattle
+Charlie,22,Austin
+Diana,31,Denver";
+        
+        Console.WriteLine("=== RAW CSV DATA ===");
+        Console.WriteLine(csvData);
+        Console.WriteLine();
+        
+        // Split into rows
+        string[] rows = csvData.Split('\\n');
+        
+        // First row is the header
+        string[] headers = rows[0].Split(',');
+        
+        Console.WriteLine("=== PARSED DATA ===");
+        Console.WriteLine($"{"Name",-12} {"Age",5} {"City",-10}");
+        Console.WriteLine(new string('-', 30));
+        
+        // Process data rows (skip header at index 0)
+        for (int i = 1; i < rows.Length; i++)
+        {
+            string[] columns = rows[i].Split(',');
+            
+            string name = columns[0];
+            string age = columns[1];
+            string city = columns[2];
+            
+            Console.WriteLine($"{name,-12} {age,5} {city,-10}");
+        }
+        
+        Console.WriteLine("\\n=== SUMMARY ===");
+        Console.WriteLine($"Total records: {rows.Length - 1}");
+    }
+}`}
+  instructions="This is exactly how you'll parse CSV data in Lab 04! Notice the pattern: Split rows first, then Split each row into columns." 
+/>
+
+---
+
+## 🧹 Helper Methods: Contains, Trim, ToUpper/ToLower
+
+<div class="helper-methods">
+  <div class="helper-card">
+    <h4>❓ Contains()</h4>
+    <p>Returns <code>true</code> if substring exists</p>
+    <pre><code>"Hello World".Contains("World") // true</code></pre>
+  </div>
+  <div class="helper-card">
+    <h4>🧹 Trim()</h4>
+    <p>Removes leading/trailing whitespace</p>
+    <pre><code>"  Hello  ".Trim() // "Hello"</code></pre>
+  </div>
+  <div class="helper-card">
+    <h4>⬆️ ToUpper()</h4>
+    <p>Converts to UPPERCASE</p>
+    <pre><code>"Hello".ToUpper() // "HELLO"</code></pre>
+  </div>
+  <div class="helper-card">
+    <h4>⬇️ ToLower()</h4>
+    <p>Converts to lowercase</p>
+    <pre><code>"Hello".ToLower() // "hello"</code></pre>
+  </div>
+</div>
+
+<TryItNowRunner 
+  starterId="week-04-helper-methods" 
+  height={360}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string input = "   Hello, WORLD!   ";
+        
+        Console.WriteLine($"Original:  \\"{input}\\"");
+        Console.WriteLine($"Trimmed:   \\"{input.Trim()}\\"");
+        Console.WriteLine($"Upper:     \\"{input.Trim().ToUpper()}\\"");
+        Console.WriteLine($"Lower:     \\"{input.Trim().ToLower()}\\"");
+        
+        // Case-insensitive search
+        string search = "world";
+        bool found = input.ToLower().Contains(search.ToLower());
+        Console.WriteLine($"\\nContains '{search}' (case-insensitive): {found}");
+        
+        // Chaining methods
+        string messy = "   USER@EMAIL.COM   ";
+        string clean = messy.Trim().ToLower();
+        Console.WriteLine($"\\nCleaned email: {clean}");
+    }
+}`}
+  instructions="Helper methods make data cleaning easy. Notice how you can chain them together!" 
+/>
+
+---
+
+## ✅ Knowledge Check
+
+<Checkpoint
+  checkpointId="week-04-4-3-checkpoint"
+  title="🔍 Section 4.3 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What does IndexOf() return if the substring is NOT found?",
+      options: ["0", "null", "-1", "An exception is thrown"],
+      correctAnswer: "-1",
+      explanation: "IndexOf() returns -1 when the substring does not exist. This is a common pattern: check if the result != -1 to know if something was found."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What is the result of calling Substring(7, 5) on the string Hello World?",
+      options: ["World", "World!", ", Wor", "Hello"],
+      correctAnswer: "World",
+      explanation: "Substring(7, 5) starts at index 7 (the W) and takes 5 characters: W-o-r-l-d, which gives you World without the exclamation mark."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "After using Split with comma delimiter on 'a,b,c' what is the resulting array Length?",
+      options: ["1", "2", "3", "5"],
+      correctAnswer: "3",
+      explanation: "Split breaks the string at each comma, creating an array with 3 elements: a, b, and c. The commas themselves are not included in the result."
+    },
+    {
+      id: "cp4",
+      type: "multiple-choice",
+      question: "Why should you use ToLower() when searching for text?",
+      options: ["It makes the search faster", "It enables case-insensitive matching", "It is required by the Contains method", "It prevents exceptions"],
+      correctAnswer: "It enables case-insensitive matching",
+      explanation: "Converting both the source and search term to lowercase enables case-insensitive matching."
+    }
+  ]}
+/>
+
+---
+
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>🔪 Key Takeaways: Search & Parse</h3>
+  <ul>
+    <li><strong>IndexOf():</strong> Find position of substring (returns -1 if not found)</li>
+    <li><strong>Substring():</strong> Extract portion by position and optional length</li>
+    <li><strong>Replace():</strong> Swap all occurrences with new text</li>
+    <li><strong>Split():</strong> Break string into array by delimiter (essential for CSV!)</li>
+    <li><strong>Contains():</strong> Quick existence check (returns bool)</li>
+    <li><strong>Trim():</strong> Clean whitespace from edges</li>
+    <li><strong>ToUpper()/ToLower():</strong> Case conversion for comparison</li>
+  </ul>
+  
+  <div class="pattern-highlight">
+    <h4>🔗 Common Pattern: IndexOf + Substring</h4>
+    <pre><code>int pos = text.IndexOf("@");
+string domain = text.Substring(pos + 1);</code></pre>
+  </div>
+</div>
+
+<div class="next-section">
+  <a href="/week-04/4-4-stringbuilder/">
+    Next: Section 4.4 — StringBuilder (Efficiency) →
+  </a>
+</div>
+
+<style>{`
+  .section-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #10b981;
+  }
+  
+  .section-badge {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #34d399;
+  }
+  
+  .section-time {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+  
+  .concept-header {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    margin: 2rem 0;
+  }
+  
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+  
+  .header-text {
+    flex: 1;
+  }
+  
+  .header-text h2 {
+    color: #6ee7b7;
+    margin-bottom: 1rem;
+  }
+  
+  .header-text p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+  
+  .toolkit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .tool-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  
+  .tool-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .tool-find { background: linear-gradient(135deg, #1e3a5f, #1e293b); border: 2px solid #3b82f6; }
+  .tool-extract { background: linear-gradient(135deg, #4c1d95, #5b21b6); border: 2px solid #8b5cf6; }
+  .tool-replace { background: linear-gradient(135deg, #7c2d12, #9a3412); border: 2px solid #f97316; }
+  .tool-split { background: linear-gradient(135deg, #064e3b, #065f46); border: 2px solid #10b981; }
+  .tool-contains { background: linear-gradient(135deg, #164e63, #0e7490); border: 2px solid #06b6d4; }
+  .tool-trim { background: linear-gradient(135deg, #581c87, #7e22ce); border: 2px solid #a855f7; }
+  
+  .tool-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .tool-card h4 {
+    color: white;
+    margin-bottom: 0.25rem;
+  }
+  
+  .tool-card p {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  
+  .index-diagram {
+    background: #0f172a;
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  
+  .index-string {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .char {
+    width: 28px;
+    height: 36px;
+    background: #1e293b;
+    border: 1px solid #475569;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+  }
+  
+  .char.highlight {
+    background: #10b981;
+    border-color: #34d399;
+    color: white;
+  }
+  
+  .index-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-family: monospace;
+  }
+  
+  .index-numbers span {
+    width: 28px;
+    text-align: center;
+  }
+  
+  .index-result {
+    margin-top: 1.5rem;
+    color: #94a3b8;
+  }
+  
+  .index-result .result {
+    color: #10b981;
+    font-weight: bold;
+    font-size: 1.25rem;
+  }
+  
+  .split-diagram {
+    background: #0f172a;
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  
+  .split-before code {
+    font-size: 1.25rem;
+    color: #fcd34d;
+  }
+  
+  .split-arrow {
+    margin: 1rem 0;
+    color: #10b981;
+    font-weight: bold;
+  }
+  
+  .split-arrow .arrow {
+    display: block;
+    font-size: 1.5rem;
+  }
+  
+  .array-box {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #1e293b;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid #10b981;
+  }
+  
+  .array-item {
+    text-align: left;
+    font-family: monospace;
+    color: #e2e8f0;
+  }
+  
+  .array-item .index {
+    color: #10b981;
+    margin-right: 0.5rem;
+  }
+  
+  .helper-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  
+  .helper-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #475569;
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+  
+  .helper-card h4 {
+    color: #34d399;
+    margin-bottom: 0.5rem;
+  }
+  
+  .helper-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .helper-card pre {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  
+  .helper-card code {
+    color: #fcd34d;
+  }
+  
+  .video-section {
+    margin: 2rem 0;
+  }
+  
+  .video-intro {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+  
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #000;
+  }
+  
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .summary-box {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    border: 2px solid #10b981;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+  
+  .summary-box h3 {
+    color: #6ee7b7;
+    margin-bottom: 1rem;
+  }
+  
+  .summary-box li {
+    color: #e2e8f0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .pattern-highlight {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+  
+  .pattern-highlight h4 {
+    color: #fcd34d;
+    margin-bottom: 0.5rem;
+  }
+  
+  .next-section {
+    text-align: center;
+    margin-top: 3rem;
+  }
+  
+  .next-section a {
+    display: inline-block;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .next-section a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  }
+`}</style>

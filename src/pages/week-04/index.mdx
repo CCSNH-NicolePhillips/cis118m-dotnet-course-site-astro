@@ -11,18 +11,60 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
 <DueDateBanner week={4} type="Lab" showLatePolicy={false} />
 
 <div class="mission-brief">
-  <h2>📡 Transmission Incoming</h2>
+  <h2>📡 System Data Streams</h2>
   <p>
-    If variables are the fuel, <strong>strings</strong> are the communication lines. As a Senior Architect, you must understand that strings in C# are <em>immutable</em>—they cannot be changed once they are born in memory. Every "modification" creates an entirely new object.
+    If variables are the fuel, <strong>strings</strong> are the communication lines. As a Senior Architect, you must understand that strings in C# are <em>immutable</em>—once cast in memory, they cannot be reshaped. Every "modification" shatters the old mold and forges an entirely new object.
   </p>
   <p>
-    This week, we master the logic of text manipulation and the tools required to build professional-grade output. You'll learn to parse, format, and sanitize text data like a systems engineer.
+    This week, we master the architecture of text processing and the surgical tools required to parse, format, and sanitize data streams like a systems engineer.
   </p>
 </div>
 
 ---
 
-## 📋 Week Overview
+## 🗺️ Week 04 Learning Path
+
+<div class="section-cards">
+  <a href="/week-04/4-1-immutability/" class="section-card immutability">
+    <div class="card-icon">🔮</div>
+    <div class="card-content">
+      <h3>4.1 The Immutability Rule</h3>
+      <p class="metaphor">The Glass Mold</p>
+      <p>Heap allocation, memory references, why strings create new objects</p>
+    </div>
+  </a>
+  
+  <a href="/week-04/4-2-formatting/" class="section-card formatting">
+    <div class="card-icon">💉</div>
+    <div class="card-content">
+      <h3>4.2 Formatting & Escapes</h3>
+      <p class="metaphor">The Injection Pipeline</p>
+      <p>String interpolation ($), escape sequences (\n, \t, \\)</p>
+    </div>
+  </a>
+  
+  <a href="/week-04/4-3-manipulation/" class="section-card manipulation">
+    <div class="card-icon">🔪</div>
+    <div class="card-content">
+      <h3>4.3 Search & Parse</h3>
+      <p class="metaphor">The Digital Scalpel</p>
+      <p>IndexOf(), Substring(), Replace(), Split()</p>
+    </div>
+  </a>
+  
+  <a href="/week-04/4-4-stringbuilder/" class="section-card builder">
+    <div class="card-icon">🏗️</div>
+    <div class="card-content">
+      <h3>4.4 StringBuilder</h3>
+      <p class="metaphor">The Dynamic Builder</p>
+      <p>Efficient text assembly without memory pressure</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
 
 <div class="styled-table-container">
   <table>
@@ -30,29 +72,46 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
       <tr>
         <th>Section</th>
         <th>Topic</th>
-        <th>Focus</th>
+        <th>Key Metaphor</th>
+        <th>Time</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><strong>4.1</strong></td>
         <td><a href="/week-04/4-1-immutability/">The Immutability Rule</a></td>
-        <td>Why strings create new objects on every "change"</td>
+        <td>🔮 The Glass Mold</td>
+        <td>25 min</td>
       </tr>
       <tr>
         <td><strong>4.2</strong></td>
-        <td><a href="/week-04/4-2-interpolation/">Interpolation & Escape</a></td>
-        <td>Using $ and escape sequences for formatted output</td>
+        <td><a href="/week-04/4-2-formatting/">Formatting & Escapes</a></td>
+        <td>💉 The Injection Pipeline</td>
+        <td>25 min</td>
       </tr>
       <tr>
         <td><strong>4.3</strong></td>
-        <td><a href="/week-04/4-3-string-methods/">Search & Parse Methods</a></td>
-        <td>IndexOf, Substring, Split, and Trim</td>
+        <td><a href="/week-04/4-3-manipulation/">Search & Parse</a></td>
+        <td>🔪 The Digital Scalpel</td>
+        <td>30 min</td>
       </tr>
       <tr>
         <td><strong>4.4</strong></td>
-        <td><a href="/week-04/4-4-stringbuilder/">Performance: StringBuilder</a></td>
-        <td>Mutable text for high-volume operations</td>
+        <td><a href="/week-04/4-4-stringbuilder/">StringBuilder</a></td>
+        <td>🏗️ The Dynamic Builder</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-04/lab/">Text Sanitizer</a></td>
+        <td>CSV Parsing + Report</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-04/homework/">String Reflection</a></td>
+        <td>Written Analysis</td>
+        <td>20 min</td>
       </tr>
     </tbody>
   </table>
@@ -144,11 +203,11 @@ Console.WriteLine($"Your rate: {rate:C}");  // → "Your rate: $125.50"
       <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
     </tr>
     <tr>
-      <td style="padding: 8px 0;"><strong>📝 Homework 04:</strong> String Operations Practice</td>
+      <td style="padding: 8px 0;"><strong>📝 Homework 04:</strong> String Reflection</td>
       <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
     </tr>
     <tr>
-      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 04:</strong> Interpolation & Escape Syntax</td>
+      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 04:</strong> Strings & Text Processing</td>
       <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
     </tr>
     <tr>
@@ -189,6 +248,93 @@ string result = sb.ToString();
 
 <div style="text-align: center; margin-top: 40px;">
   <a href="/week-04/4-1-immutability/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
-    INITIALIZE SECTION 4.1 →
+    BEGIN SECTION 4.1 →
   </a>
 </div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  
+  .section-card.immutability {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    border-color: #8b5cf6;
+  }
+  
+  .section-card.formatting {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border-color: #06b6d4;
+  }
+  
+  .section-card.manipulation {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    border-color: #10b981;
+  }
+  
+  .section-card.builder {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    border-color: #f59e0b;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .card-content h3 {
+    color: white;
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .card-content .metaphor {
+    color: #fcd34d;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .card-content p:last-child {
+    color: #d1d5db;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .mission-brief {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid #3b82f6;
+    margin: 2rem 0;
+  }
+  
+  .mission-brief h2 {
+    color: #93c5fd;
+    margin-top: 0;
+  }
+  
+  .mission-brief p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+`}</style>
