@@ -134,7 +134,7 @@ class Program
 }
 `,
         "week-04-lab": `// Name: Your Name Here
-// Assignment: Lab 4 - Text Sanitizer
+// Assignment: Lab 4 - Employee Report
 
 using System;
 
@@ -148,29 +148,18 @@ E002,Bob Smith,Marketing,72000
 E003,Charlie Brown,Engineering,91000
 E004,Diana Ross,Sales,68000";
 
-        // TODO: Split csvData into rows using Split('\\n')
-        string[] rows = csvData.Split('\\n');
+        // TODO: Parse the CSV data and display a formatted employee report
+        // Hints:
+        // - Use Split() to break the data into rows, then columns
+        // - Skip the header row
+        // - Convert salary from string to int
+        // - Track totals as you loop
         
-        // Print header
         Console.WriteLine("=== EMPLOYEE REPORT ===");
         
-        // Initialize counters
-        int totalEmployees = 0;
-        int totalPayroll = 0;
+        // Your code here...
         
-        // TODO: Loop through rows (start at i=1 to skip header)
-        // For each row:
-        //   - Split by comma to get columns: string[] cols = rows[i].Split(',');
-        //   - Extract: string id = cols[0]; string name = cols[1]; etc.
-        //   - Parse salary: int salary = int.Parse(cols[3]);
-        //   - Print: Console.WriteLine($"{id} - {name} ({dept}) - $" + salary.ToString("N0"));
-        //   - Update counters
-        
-        
-        // Print footer with totals
         Console.WriteLine("=======================");
-        Console.WriteLine("Total Employees: " + totalEmployees);
-        Console.WriteLine("Total Payroll: $" + totalPayroll.ToString("N0"));
     }
 }
 `,
