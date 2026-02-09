@@ -263,6 +263,79 @@ export const lessonContexts = {
       Clarity and terminology (10pts): Clear writing, uses terms like "floating-point", "decimal", "rounding"
     `,
     requiredKeywords: ["decimal", "double"]
+  },
+
+  // ===== WEEK 04 =====
+  "week-04-lab": {
+    title: "Week 4: Lab - Text Sanitizer",
+    type: "lab",
+    week: "04",
+    taughtConcepts: `
+      - Split('\\n') breaks a string into an array by newlines
+      - Split(',') breaks a string into an array by commas
+      - Array indexing: rows[0] is the first element, rows[1] is the second
+      - Skip header row by starting loop at i=1 instead of i=0
+      - String interpolation: $"text {variable}" embeds values in strings
+      - int.Parse() converts a string to an integer
+      - Format specifier :N0 adds thousand separators (85000 → 85,000)
+    `,
+    assignmentPrompt: `
+      Parse a CSV data string and display it as a formatted employee report:
+      1. Split the CSV into rows using Split('\\n')
+      2. Loop through rows starting at index 1 (skip the header)
+      3. Split each row by comma to get columns (ID, Name, Department, Salary)
+      4. Display each employee in format: ID - Name (Department) - $Salary
+      5. Calculate and display total employees and total payroll
+      
+      Required output format:
+      === EMPLOYEE REPORT ===
+      E001 - Alice Johnson (Engineering) - $85,000
+      ...
+      =======================
+      Total Employees: 4
+      Total Payroll: $316,000
+    `,
+    rubric: `
+      Splits CSV into rows correctly (20pts): Uses Split('\\n') to break into lines
+      Splits rows into columns (20pts): Uses Split(',') to extract fields from each row
+      Skips header row (10pts): Loop starts at i=1, not i=0
+      Uses string interpolation (20pts): Uses $"..." syntax to format output
+      Calculates totals correctly (20pts): Counts employees and sums salaries
+      Code compiles and runs (10pts): No syntax errors, produces expected output
+    `,
+    requiredKeywords: ["Split", "for", "Console.WriteLine"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-04-homework": {
+    title: "Week 4: String Immutability Reflection",
+    type: "homework",
+    week: "04",
+    taughtConcepts: `
+      - Strings are IMMUTABLE in C# - once created, they cannot be changed
+      - Every string operation (concatenation, ToUpper, Replace) creates a NEW string object
+      - The old string becomes garbage waiting for collection
+      - In a loop: string += "text" creates a new string EVERY iteration
+      - 1000 loop iterations = 1000 garbage string objects
+      - StringBuilder is MUTABLE - it modifies a buffer in place without creating garbage
+      - Use StringBuilder for: loops, building large strings, many concatenations
+      - Use regular strings for: simple cases, 2-3 concatenations, readability
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, explain String Behavior in C#:
+      1. What does it mean that strings are immutable in C#?
+      2. What happens in memory when you concatenate strings inside a loop?
+      3. When should you use StringBuilder instead of regular string concatenation?
+      
+      Tip: Think about the "Glass Mold" metaphor from Section 4.1.
+    `,
+    rubric: `
+      Immutability explanation (35pts): Explains that strings cannot be changed after creation - operations create new strings
+      Loop memory problem (35pts): Explains that concatenation in loops creates many garbage objects (one per iteration)
+      StringBuilder use case (20pts): Explains StringBuilder for loops/many concatenations, regular for simple cases
+      Clarity and terminology (10pts): Clear writing, uses terms like "immutable", "StringBuilder", "new string"
+    `,
+    requiredKeywords: ["immutable", "StringBuilder"]
   }
 };
 
@@ -290,6 +363,13 @@ export const TUTOR_CONTEXTS = {
   'week-03-3-4': "Week 3 Section 3.4: Immutability. const creates compile-time constants that NEVER change (like PI). readonly is for runtime constants set in constructors. const = carved in stone forever, readonly = set once at startup.",
   'week-03-lab': "Week 3 Lab: Data Manifest. Students build a System Profile with 5 variables: appVersion (double), userCount (int), isSystemActive (bool), serverCost (decimal with 'm' suffix!), systemName (string). CRITICAL: serverCost MUST be decimal because it's money!",
   'week-03-homework': "Week 3 Homework: Type Safety Reflection. Students explain WHY double is dangerous for money (the 0.1+0.2 problem), give an example of a financial error, and explain how decimal solves it. Written reflection about type safety.",
+  'week-04': "Week 4: Strings & Text Processing. Students are learning about string immutability (strings cannot be changed after creation), string interpolation ($\"Hello {name}\"), escape sequences (\\n, \\t), string methods (ToUpper, ToLower, Trim, Contains, IndexOf, Substring, Split, Replace), and StringBuilder for efficient string building in loops.",
+  'week-04-4-1': "Week 4 Section 4.1: String Immutability. Strings are immutable - once created, they cannot be changed. The 'Glass Mold' metaphor: you can't reshape glass, only shatter it and cast a new one. Every string operation creates a NEW string object.",
+  'week-04-4-2': "Week 4 Section 4.2: String Interpolation. Using $\"text {variable}\" syntax to embed variables in strings. Format specifiers like :C for currency, :N2 for decimals, :P for percentages.",
+  'week-04-4-3': "Week 4 Section 4.3: String Methods. ToUpper(), ToLower(), Trim(), Contains(), IndexOf(), Substring(), Split(), Replace(). Remember: these methods return NEW strings, they don't modify the original!",
+  'week-04-4-4': "Week 4 Section 4.4: StringBuilder. For building strings in loops, use StringBuilder to avoid creating garbage. Methods: Append(), AppendLine(), Insert(), ToString(). Import with 'using System.Text;'",
+  'week-04-lab': "Week 4 Lab: Text Sanitizer. Students parse CSV data using Split('\\n') and Split(','), loop through rows (starting at i=1 to skip header), extract fields, and display formatted output with string interpolation.",
+  'week-04-homework': "Week 4 Homework: String Reflection. Students explain what string immutability means, what happens when you concatenate in a loop (creates garbage), and when to use StringBuilder. Written reflection, no code.",
 };
 
 export function getTutorContext(pageId) {
