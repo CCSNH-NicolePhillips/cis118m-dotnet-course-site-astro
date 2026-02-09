@@ -67,8 +67,8 @@ export const WEEKS: WeekConfig[] = [
       { title: '4.3 Search & Parse', href: '/week-04/4-3-manipulation/' },
       { title: '4.4 StringBuilder', href: '/week-04/4-4-stringbuilder/' },
       { title: 'Lab: Text Sanitizer (Graded)', href: '/week-04/lab/' },
-      { title: 'String Reflection (Graded)', href: '/week-04/homework/' },
-      { title: 'Extra Practice', href: '/week-04/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-04/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-04/weekly-assessment/' }
     ] },
   { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-05/' },

@@ -1,0 +1,225 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 04 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 04 Technical Assessment
+
+<DueDateBanner week={4} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-04-quiz"
+  title="Week 04: Strings & Text Processing (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does 'string immutability' mean in C#?",
+      options: [
+        "Strings can only contain ASCII characters",
+        "Strings must be declared as const",
+        "Strings cannot be changed after creation",
+        "Strings cannot be passed to methods"
+      ],
+      correctAnswer: "Strings cannot be changed after creation",
+      explanation: "Immutability means once a string object is created in memory, it cannot be modified. Any operation that appears to change a string actually creates a new string object."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the $ prefix enable in C#?",
+      options: [
+        "String interpolation with {variable} placeholders",
+        "Currency formatting",
+        "Regular expression matching",
+        "Case-insensitive comparison"
+      ],
+      correctAnswer: "String interpolation with {variable} placeholders",
+      explanation: "The $ prefix enables string interpolation, allowing you to embed variables directly in strings using {curlyBraces} syntax."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What escape sequence creates a newline?",
+      options: [
+        "\\t",
+        "\\r",
+        "\\\\",
+        "\\n"
+      ],
+      correctAnswer: "\\n",
+      explanation: "The \\n escape sequence creates a newline (line break). \\t is tab, \\r is carriage return, and \\\\ is a literal backslash."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What does IndexOf() return if the substring is NOT found?",
+      options: [
+        "0",
+        "-1",
+        "null",
+        "An exception is thrown"
+      ],
+      correctAnswer: "-1",
+      explanation: "IndexOf() returns -1 when the substring does not exist in the string. This is a common pattern: check if result != -1 to know if something was found."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "What is the result of \"Hello, World\".Substring(7, 5)?",
+      options: [
+        "World",
+        "Hello",
+        ", Wor",
+        "orld"
+      ],
+      correctAnswer: "World",
+      explanation: "Substring(7, 5) starts at index 7 (the 'W') and takes 5 characters: W-o-r-l-d."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What does Split(',') do to the string \"a,b,c\"?",
+      options: [
+        "Returns \"abc\"",
+        "Throws an exception",
+        "Returns an array with 5 elements including the commas",
+        "Returns an array with 3 elements: [\"a\", \"b\", \"c\"]"
+      ],
+      correctAnswer: "Returns an array with 3 elements: [\"a\", \"b\", \"c\"]",
+      explanation: "Split breaks the string at each delimiter (comma), creating an array. The delimiters themselves are not included in the results."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "Why is StringBuilder faster than += in a loop?",
+      options: [
+        "StringBuilder runs on multiple CPU cores",
+        "StringBuilder compresses the text",
+        "StringBuilder modifies a mutable buffer instead of creating new strings",
+        "StringBuilder uses less memory"
+      ],
+      correctAnswer: "StringBuilder modifies a mutable buffer instead of creating new strings",
+      explanation: "StringBuilder maintains a mutable internal buffer. When you Append(), it adds to the existing buffer without creating new string objects, avoiding O(n²) memory churn."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What namespace contains StringBuilder?",
+      options: [
+        "System.Collections",
+        "System.Text",
+        "System",
+        "System.String"
+      ],
+      correctAnswer: "System.Text",
+      explanation: "StringBuilder is in the System.Text namespace. You need 'using System.Text;' at the top of your file to use it without the full namespace prefix."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "What does the @ prefix do in front of a string?",
+      options: [
+        "Enables string interpolation",
+        "Converts the string to uppercase",
+        "Makes the string case-insensitive",
+        "Makes backslashes literal (verbatim string)"
+      ],
+      correctAnswer: "Makes backslashes literal (verbatim string)",
+      explanation: "The @ prefix creates a verbatim string where backslashes are treated as literal characters. This is perfect for file paths like @\"C:\\Users\\file.txt\"."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "When should you use StringBuilder instead of string concatenation?",
+      options: [
+        "Only for strings longer than 100 characters",
+        "Always, for every string operation",
+        "When building strings inside a loop",
+        "Never, string concatenation is always better"
+      ],
+      correctAnswer: "When building strings inside a loop",
+      explanation: "Use StringBuilder when building strings in loops. For simple one-time concatenations like firstName + lastName, regular strings are fine. The overhead of StringBuilder isn't worth it for 2-3 simple joins."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 04 Complete!</strong></p>
+  <p>You've mastered strings and text processing. Next week: User Input!</p>
+  <a href="/week-05/" class="vscode-button">Preview Week 05 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #818cf8;
+  }
+
+  .mission-brief ul {
+    margin-bottom: 0;
+  }
+
+  .mission-brief li {
+    margin: 8px 0;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .vscode-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba899 100%);
+    color: #0d1117;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .vscode-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(78, 201, 176, 0.3);
+  }
+`}</style>
