@@ -60,19 +60,111 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection (Graded)', href: '/week-03/homework/' },
       { title: 'Weekly Assessment (Graded)', href: '/week-03/weekly-assessment/' }
     ] },
-  { slug: '04', title: 'Week 04: Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00', pages: [] },
-  { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [] },
-  { slug: '06', title: 'Week 06: Decision Structures (if/else)', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00', pages: [] },
-  { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00', pages: [] },
-  { slug: '08', title: 'Week 08: While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-15T23:59:59-04:00', pages: [] }, // DST starts Mar 8
+  { slug: '04', title: 'Week 04: Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-04/' },
+      { title: '4.1 Decision Structures (if/else)', href: '/week-04/lesson-1/' },
+      { title: '4.2 Validation Patterns', href: '/week-04/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-04/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-04/homework/' },
+      { title: 'Extra Practice', href: '/week-04/extra-practice/' }
+    ] },
+  { slug: '05', title: 'Week 05: User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-05/' },
+      { title: '5.1 Lesson 1', href: '/week-05/lesson-1/' },
+      { title: '5.2 Lesson 2', href: '/week-05/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-05/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-05/homework/' },
+      { title: 'Extra Practice', href: '/week-05/extra-practice/' }
+    ] },
+  { slug: '06', title: 'Week 06: Decision Structures (if/else)', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-06/' },
+      { title: '6.1 Lesson 1', href: '/week-06/lesson-1/' },
+      { title: '6.2 Lesson 2', href: '/week-06/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-06/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-06/homework/' },
+      { title: 'Extra Practice', href: '/week-06/extra-practice/' }
+    ] },
+  { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00', pages: [
+      { title: '00. Week Overview', href: '/week-07/' },
+      { title: '7.1 Lesson 1', href: '/week-07/lesson-1/' },
+      { title: '7.2 Lesson 2', href: '/week-07/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-07/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-07/homework/' },
+      { title: 'Extra Practice', href: '/week-07/extra-practice/' }
+    ] },
+  { slug: '08', title: 'Week 08: While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-15T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-08/' },
+      { title: '8.1 Lesson 1', href: '/week-08/lesson-1/' },
+      { title: '8.2 Lesson 2', href: '/week-08/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-08/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-08/homework/' },
+      { title: 'Extra Practice', href: '/week-08/extra-practice/' }
+    ] }, // DST starts Mar 8
   // SPRING BREAK: March 16-22, 2026 (No classes)
-  { slug: '09', title: 'Week 09: For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00', pages: [] },
-  { slug: '10', title: 'Week 10: Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00', pages: [] },
-  { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [] },
-  { slug: '12', title: 'Week 12: Array Architectures', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [] },
-  { slug: '13', title: 'Week 13: Lists & Collections', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00', pages: [] },
-  { slug: '14', title: 'Week 14: Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [] },
-  { slug: '15', title: 'Week 15: Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [] },
+  { slug: '09', title: 'Week 09: For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-09/' },
+      { title: '9.1 Lesson 1', href: '/week-09/lesson-1/' },
+      { title: '9.2 Lesson 2', href: '/week-09/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-09/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-09/homework/' },
+      { title: 'Extra Practice', href: '/week-09/extra-practice/' }
+    ] },
+  { slug: '10', title: 'Week 10: Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-10/' },
+      { title: '10.1 Lesson 1', href: '/week-10/lesson-1/' },
+      { title: '10.2 Lesson 2', href: '/week-10/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-10/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-10/homework/' },
+      { title: 'Extra Practice', href: '/week-10/extra-practice/' }
+    ] },
+  { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-11/' },
+      { title: '11.1 Lesson 1', href: '/week-11/lesson-1/' },
+      { title: '11.2 Lesson 2', href: '/week-11/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-11/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-11/homework/' },
+      { title: 'Extra Practice', href: '/week-11/extra-practice/' }
+    ] },
+  { slug: '12', title: 'Week 12: Array Architectures', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-12/' },
+      { title: '12.1 Lesson 1', href: '/week-12/lesson-1/' },
+      { title: '12.2 Lesson 2', href: '/week-12/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-12/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-12/homework/' },
+      { title: 'Extra Practice', href: '/week-12/extra-practice/' }
+    ] },
+  { slug: '13', title: 'Week 13: Lists & Collections', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-13/' },
+      { title: '13.1 Lesson 1', href: '/week-13/lesson-1/' },
+      { title: '13.2 Lesson 2', href: '/week-13/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-13/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' },
+      { title: 'Extra Practice', href: '/week-13/extra-practice/' }
+    ] },
+  { slug: '14', title: 'Week 14: Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-14/' },
+      { title: '14.1 Lesson 1', href: '/week-14/lesson-1/' },
+      { title: '14.2 Lesson 2', href: '/week-14/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-14/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-14/homework/' },
+      { title: 'Extra Practice', href: '/week-14/extra-practice/' }
+    ] },
+  { slug: '15', title: 'Week 15: Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-15/' },
+      { title: '15.1 Lesson 1', href: '/week-15/lesson-1/' },
+      { title: '15.2 Lesson 2', href: '/week-15/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-15/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-15/homework/' },
+      { title: 'Extra Practice', href: '/week-15/extra-practice/' }
+    ] },
+  { slug: '16', title: 'Week 16: Review & Reflection', unlockDate: '2026-05-11T00:00:00-04:00', dueDate: '2026-05-17T23:59:59-04:00', pages: [
+      { title: '00. Week Overview', href: '/week-16/' },
+      { title: '16.1 Lesson 1', href: '/week-16/lesson-1/' },
+      { title: '16.2 Lesson 2', href: '/week-16/lesson-2/' },
+      { title: 'Lab (Graded)', href: '/week-16/lab/' },
+      { title: 'Technical Reflection (Graded)', href: '/week-16/homework/' },
+      { title: 'Extra Practice', href: '/week-16/extra-practice/' }
+    ] },
 ];
 
 // Helper to get week by slug (e.g., '01', '02')
