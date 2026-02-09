@@ -113,11 +113,12 @@ Return JSON:
         // Calculate late penalty if applicable
         // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
         const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
-        const penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt));
+        const penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt), email);
         lateInfo = { 
           daysLate: penaltyInfo.daysLate, 
           penaltyPercent: penaltyInfo.penaltyPercent, 
-          isLate: penaltyInfo.daysLate > 0 
+          isLate: penaltyInfo.daysLate > 0,
+          hasExtension: penaltyInfo.hasExtension 
         };
         
         // Apply late penalty to the grade

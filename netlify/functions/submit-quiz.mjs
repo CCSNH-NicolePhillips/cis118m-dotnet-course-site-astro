@@ -38,7 +38,7 @@ export async function handler(event, context) {
     
     // Check if quiz is past due date (quizzes cannot be submitted late)
     const dueDate = getDueDateForPageId(pageId);
-    if (dueDate && isPastDue(pageId)) {
+    if (dueDate && isPastDue(pageId, new Date(), email)) {
       // Check if instructor has unlocked this quiz for this student
       const unlockKey = `quiz:unlock:${sub}:${pageId}`;
       const isUnlocked = await redis.get(unlockKey);

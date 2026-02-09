@@ -111,7 +111,7 @@ Return JSON:
     let penaltyInfo = { daysLate: 0, penaltyPercent: 0, finalScore: aiGrade };
     
     if (aiGrade !== null) {
-      penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt));
+      penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt), email);
       
       if (penaltyInfo.daysLate > 0) {
         finalGrade = penaltyInfo.finalScore;

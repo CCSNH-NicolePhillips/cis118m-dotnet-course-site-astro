@@ -6,6 +6,66 @@
  */
 
 /**
+ * Student Extensions - Per-student grace periods for late joiners
+ * 
+ * Format: { [auth0_sub_or_email]: { graceDate: 'ISO date', reason: 'string' } }
+ * 
+ * When a student has an extension, submissions before their graceDate
+ * are treated as on-time, regardless of the original due date.
+ * 
+ * To add a student: Add their Auth0 sub (auth0|xxxx) or email here.
+ * The graceDate should be when their catch-up period ends.
+ */
+const STUDENT_EXTENSIONS = {
+  // John Mohn - joined class on Feb 9, 2026 (Week 4 start)
+  // Giving him until Feb 22 (end of Week 5) to catch up on Weeks 1-3
+  'jmohn391@students.snhu.edu': {
+    graceDate: '2026-02-22T23:59:59-05:00',
+    maxWeek: 3,  // Only applies to weeks 1-3, Week 4+ uses normal due dates
+    reason: 'Late enrollment - joined Feb 9, 2026'
+  },
+};
+
+/**
+ * Check if a student has an extension for a given assignment
+ * @param {string} userId - Auth0 sub or email
+ * @param {string} pageId - Assignment ID (e.g., "week-01-lab")
+ * @returns {{ hasExtension: boolean, graceDate: Date|null, reason: string|null }}
+ */
+export function getStudentExtension(userId, pageId) {
+  if (!userId) return { hasExtension: false, graceDate: null, reason: null };
+  
+  // Check by direct match (sub or email)
+  let extension = STUDENT_EXTENSIONS[userId];
+  
+  // Also check by email if userId looks like an Auth0 sub
+  if (!extension && userId.startsWith('auth0|')) {
+    // Try to find by partial email match in keys
+    for (const [key, ext] of Object.entries(STUDENT_EXTENSIONS)) {
+      if (key.includes('@')) {
+        extension = ext;
+        break;
+      }
+    }
+  }
+  
+  if (!extension) return { hasExtension: false, graceDate: null, reason: null };
+  
+  // Check if extension applies to this week
+  const weekNum = getWeekFromPageId(pageId);
+  if (weekNum && extension.maxWeek && weekNum > extension.maxWeek) {
+    // This week is beyond the extension period
+    return { hasExtension: false, graceDate: null, reason: null };
+  }
+  
+  return {
+    hasExtension: true,
+    graceDate: new Date(extension.graceDate),
+    reason: extension.reason
+  };
+}
+
+/**
  * Week due dates configuration
  * Matches src/config/site.ts WEEKS array
  */
@@ -62,9 +122,19 @@ export function getDueDateForPageId(pageId) {
  * Check if a submission is past the due date
  * @param {string} pageId - e.g., "week-01-quiz"
  * @param {Date} [submissionTime] - Time of submission (defaults to now)
- * @returns {boolean} - True if past due
+ * @param {string} [userId] - User ID to check for extensions
+ * @returns {boolean} - True if past due (unless student has valid extension)
  */
-export function isPastDue(pageId, submissionTime = new Date()) {
+export function isPastDue(pageId, submissionTime = new Date(), userId = null) {
+  // Check for student extension first
+  if (userId) {
+    const extension = getStudentExtension(userId, pageId);
+    if (extension.hasExtension && submissionTime <= extension.graceDate) {
+      // Student has valid extension - treat as not past due
+      return false;
+    }
+  }
+  
   const dueDate = getDueDateForPageId(pageId);
   if (!dueDate) return false; // If no due date configured, allow submission
   return submissionTime > dueDate;
@@ -74,9 +144,19 @@ export function isPastDue(pageId, submissionTime = new Date()) {
  * Calculate how many days late a submission is
  * @param {string} pageId - e.g., "week-01-lab"
  * @param {Date} [submissionTime] - Time of submission (defaults to now)
- * @returns {number} - Number of days late (0 if not late)
+ * @param {string} [userId] - User ID to check for extensions
+ * @returns {number} - Number of days late (0 if not late or has valid extension)
  */
-export function getDaysLate(pageId, submissionTime = new Date()) {
+export function getDaysLate(pageId, submissionTime = new Date(), userId = null) {
+  // Check for student extension first
+  if (userId) {
+    const extension = getStudentExtension(userId, pageId);
+    if (extension.hasExtension && submissionTime <= extension.graceDate) {
+      // Student has valid extension - treat as on-time
+      return 0;
+    }
+  }
+  
   const dueDate = getDueDateForPageId(pageId);
   if (!dueDate) return 0;
   
@@ -133,16 +213,20 @@ export function calculateLatePenalty(originalScore, daysLate) {
  * @param {string} pageId - e.g., "week-01-lab"
  * @param {number} originalScore - Score before penalty
  * @param {Date} [submissionTime] - Time of submission
- * @returns {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean, dueDate: Date|null }}
+ * @param {string} [userId] - User ID to check for extensions
+ * @returns {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean, dueDate: Date|null, hasExtension: boolean }}
  */
-export function getLatePenaltyInfo(pageId, originalScore, submissionTime = new Date()) {
-  const daysLate = getDaysLate(pageId, submissionTime);
+export function getLatePenaltyInfo(pageId, originalScore, submissionTime = new Date(), userId = null) {
+  const extension = userId ? getStudentExtension(userId, pageId) : { hasExtension: false };
+  const daysLate = getDaysLate(pageId, submissionTime, userId);
   const penalty = calculateLatePenalty(originalScore, daysLate);
   const dueDate = getDueDateForPageId(pageId);
   
   return {
     ...penalty,
-    dueDate
+    dueDate,
+    hasExtension: extension.hasExtension,
+    extensionReason: extension.reason
   };
 }
 
