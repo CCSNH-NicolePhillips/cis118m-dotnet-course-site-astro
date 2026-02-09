@@ -287,4 +287,32 @@ When your program runs correctly and displays the formatted profile:
   details[open] summary {
     margin-bottom: 12px;
   }
+  
+  /* Light mode overrides */
+  body[data-theme="light"] details {
+    background: rgba(37, 99, 235, 0.08) !important;
+    border-color: rgba(37, 99, 235, 0.2) !important;
+  }
+  
+  body[data-theme="light"] details summary {
+    color: #2563eb !important;
+  }
+  
+  body[data-theme="light"] .styled-table-container table {
+    background: #f8fafc !important;
+  }
+  
+  body[data-theme="light"] .styled-table-container th {
+    background: #e2e8f0 !important;
+    color: #1e293b !important;
+  }
+  
+  body[data-theme="light"] .styled-table-container td {
+    color: #334155 !important;
+    border-color: #e2e8f0 !important;
+  }
+  
+  body[data-theme="light"] .next-section p {
+    color: #1e293b !important;
+  }
 `}</style>

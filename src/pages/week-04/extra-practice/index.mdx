@@ -316,4 +316,35 @@ class Program
     padding: 1rem;
     background: #0f172a;
   }
+  
+  /* Light mode overrides */
+  body[data-theme="light"] .tip {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%) !important;
+    border-color: #cbd5e1 !important;
+  }
+  
+  body[data-theme="light"] .tip h4 {
+    color: #2563eb !important;
+  }
+  
+  body[data-theme="light"] .tip p {
+    color: #334155 !important;
+  }
+  
+  body[data-theme="light"] .tip code {
+    color: #d97706 !important;
+  }
+  
+  body[data-theme="light"] details {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  
+  body[data-theme="light"] details summary {
+    color: #2563eb !important;
+  }
+  
+  body[data-theme="light"] details pre {
+    background: #f1f5f9 !important;
+  }
 `}</style>

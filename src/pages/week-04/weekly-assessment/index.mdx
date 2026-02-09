@@ -222,4 +222,26 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(78, 201, 176, 0.3);
   }
+  
+  /* Light mode overrides */
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: #6366f1 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief h2 {
+    color: #4f46e5 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief li {
+    color: #334155 !important;
+  }
+  
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important;
+  }
+  
+  body[data-theme="light"] .next-section p {
+    color: #1e293b !important;
+  }
 `}</style>
