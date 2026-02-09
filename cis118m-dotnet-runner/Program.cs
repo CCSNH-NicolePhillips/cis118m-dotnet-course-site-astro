@@ -234,6 +234,8 @@ internal static class CheckRunner
             "week-01-lesson-1" => Week01Lesson1Checks(programCs),
             "week-01-lab-1" => Week01Lab1Checks(programCs),
             "week-02-lab" => Week02LabChecks(programCs),
+            "week-03-lab" => Week03LabChecks(programCs),
+            "week-04-lab" => Week04LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -245,6 +247,8 @@ internal static class CheckRunner
             "week-01-lesson-1" => Week01Lesson1Hint(checks),
             "week-01-lab-1" => Week01Lab1Hint(checks),
             "week-02-lab" => Week02LabHint(checks),
+            "week-03-lab" => Week03LabHint(checks),
+            "week-04-lab" => Week04LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -484,6 +488,198 @@ internal static class CheckRunner
             "HasReturn0" => "At the end of Main, add: return 0;",
             "HasFiveWriteLines" => "Add more Console.WriteLine statements - create a formatted report with header, content, and footer.",
             "HasRealContent" => "Replace the TODO comments and placeholders with your actual report content.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ===== WEEK 03 LAB CHECKS =====
+    // Lab 3: Data Manifest - System Profile with 5 variables
+    private static List<CheckResult> Week03LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Add a header comment with your name (e.g., // Name: Jane Doe)"));
+
+        // Check 2: Has double variable (appVersion)
+        var hasDouble = Regex.IsMatch(programCs, @"\bdouble\s+\w+\s*=");
+        checks.Add(new CheckResult(
+            Name: "HasDoubleVariable",
+            Passed: hasDouble,
+            Message: hasDouble
+                ? "Found double variable (appVersion)."
+                : "Declare a double variable for appVersion (e.g., double appVersion = 1.2;)"));
+
+        // Check 3: Has int variable (userCount)
+        var hasInt = Regex.IsMatch(programCs, @"\bint\s+\w+\s*=");
+        checks.Add(new CheckResult(
+            Name: "HasIntVariable",
+            Passed: hasInt,
+            Message: hasInt
+                ? "Found int variable (userCount)."
+                : "Declare an int variable for userCount (e.g., int userCount = 1500;)"));
+
+        // Check 4: Has bool variable (isSystemActive)
+        var hasBool = Regex.IsMatch(programCs, @"\bbool\s+\w+\s*=");
+        checks.Add(new CheckResult(
+            Name: "HasBoolVariable",
+            Passed: hasBool,
+            Message: hasBool
+                ? "Found bool variable (isSystemActive)."
+                : "Declare a bool variable for isSystemActive (e.g., bool isSystemActive = true;)"));
+
+        // Check 5: Has decimal variable with 'm' suffix (serverCost)
+        var hasDecimal = Regex.IsMatch(programCs, @"\bdecimal\s+\w+\s*=");
+        var hasDecimalSuffix = Regex.IsMatch(programCs, @"\d+(\.\d+)?[mM]");
+        checks.Add(new CheckResult(
+            Name: "HasDecimalVariable",
+            Passed: hasDecimal && hasDecimalSuffix,
+            Message: hasDecimal && hasDecimalSuffix
+                ? "Found decimal variable with 'm' suffix (serverCost)."
+                : "Declare a decimal variable for serverCost with 'm' suffix (e.g., decimal serverCost = 45.99m;)"));
+
+        // Check 6: Has string variable (systemName)
+        var hasString = Regex.IsMatch(programCs, @"\bstring\s+\w+\s*=\s*""");
+        checks.Add(new CheckResult(
+            Name: "HasStringVariable",
+            Passed: hasString,
+            Message: hasString
+                ? "Found string variable (systemName)."
+                : "Declare a string variable for systemName (e.g., string systemName = \"Apollo\";)"));
+
+        // Check 7: Has at least 5 Console.WriteLine statements
+        var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
+        var hasFiveWriteLines = writeLineCount >= 5;
+        checks.Add(new CheckResult(
+            Name: "HasFiveWriteLines",
+            Passed: hasFiveWriteLines,
+            Message: hasFiveWriteLines
+                ? $"Found {writeLineCount} Console.WriteLine statements."
+                : $"Print all 5 variables using Console.WriteLine. Found {writeLineCount}."));
+
+        return checks;
+    }
+
+    private static string Week03LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Add '// Name: Your Name' at the very top of your file.",
+            "HasDoubleVariable" => "Add: double appVersion = 1.2;",
+            "HasIntVariable" => "Add: int userCount = 1500;",
+            "HasBoolVariable" => "Add: bool isSystemActive = true;",
+            "HasDecimalVariable" => "Add: decimal serverCost = 45.99m; (the 'm' suffix is required for decimal!)",
+            "HasStringVariable" => "Add: string systemName = \"Apollo\";",
+            "HasFiveWriteLines" => "Print each variable with Console.WriteLine(). You need 5 output statements.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ===== WEEK 04 LAB CHECKS =====
+    // Lab 4: Text Sanitizer - Parse CSV data
+    private static List<CheckResult> Week04LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Add a header comment with your name (e.g., // Name: Jane Doe)"));
+
+        // Check 2: Uses Split to parse rows
+        var hasSplitNewline = Regex.IsMatch(programCs, @"\.Split\s*\(\s*['""]?\\n['""]?\s*\)") || 
+                              Regex.IsMatch(programCs, @"\.Split\s*\(\s*'\\n'\s*\)") ||
+                              programCs.Contains(".Split('\\n')") ||
+                              programCs.Contains(".Split(\"\\n\")");
+        checks.Add(new CheckResult(
+            Name: "HasSplitNewline",
+            Passed: hasSplitNewline,
+            Message: hasSplitNewline
+                ? "Found Split('\\n') to parse rows."
+                : "Use .Split('\\n') to split the CSV data into rows."));
+
+        // Check 3: Uses Split to parse columns
+        var hasSplitComma = Regex.IsMatch(programCs, @"\.Split\s*\(\s*['""],['""]\s*\)") ||
+                            programCs.Contains(".Split(',')");
+        checks.Add(new CheckResult(
+            Name: "HasSplitComma",
+            Passed: hasSplitComma,
+            Message: hasSplitComma
+                ? "Found Split(',') to parse columns."
+                : "Use .Split(',') to split each row into columns."));
+
+        // Check 4: Has a for or foreach loop
+        var hasLoop = Regex.IsMatch(programCs, @"\bfor\s*\(") || Regex.IsMatch(programCs, @"\bforeach\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasLoop",
+            Passed: hasLoop,
+            Message: hasLoop
+                ? "Found loop to iterate through rows."
+                : "Use a for or foreach loop to process each employee row."));
+
+        // Check 5: Parses salary with int.Parse
+        var hasIntParse = programCs.Contains("int.Parse") || programCs.Contains("Int32.Parse");
+        checks.Add(new CheckResult(
+            Name: "HasIntParse",
+            Passed: hasIntParse,
+            Message: hasIntParse
+                ? "Found int.Parse to convert salary."
+                : "Use int.Parse() to convert the salary string to an integer."));
+
+        // Check 6: Has running totals (totalEmployees, totalPayroll)
+        var hasTotalEmployees = Regex.IsMatch(programCs, @"totalEmployees\s*[\+\=]|totalEmployees\s*\+\+");
+        var hasTotalPayroll = Regex.IsMatch(programCs, @"totalPayroll\s*[\+\=]");
+        checks.Add(new CheckResult(
+            Name: "HasTotals",
+            Passed: hasTotalEmployees && hasTotalPayroll,
+            Message: hasTotalEmployees && hasTotalPayroll
+                ? "Found running totals for employees and payroll."
+                : "Update totalEmployees and totalPayroll inside the loop."));
+
+        // Check 7: Has at least 4 Console.WriteLine (header, employees, footer totals)
+        var writeLineCount = Regex.Matches(programCs, @"Console\.WriteLine").Count;
+        var hasEnoughOutput = writeLineCount >= 4;
+        checks.Add(new CheckResult(
+            Name: "HasEnoughOutput",
+            Passed: hasEnoughOutput,
+            Message: hasEnoughOutput
+                ? $"Found {writeLineCount} Console.WriteLine statements."
+                : $"Need more output - print each employee and the totals. Found {writeLineCount}."));
+
+        return checks;
+    }
+
+    private static string Week04LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Add '// Name: Your Name' at the very top of your file.",
+            "HasSplitNewline" => "Split the CSV into rows: string[] rows = csvData.Split('\\n');",
+            "HasSplitComma" => "Split each row into columns: string[] cols = rows[i].Split(',');",
+            "HasLoop" => "Loop through rows: for (int i = 1; i < rows.Length; i++) { ... }",
+            "HasIntParse" => "Convert salary to int: int salary = int.Parse(cols[3]);",
+            "HasTotals" => "Inside the loop, add: totalEmployees++; totalPayroll += salary;",
+            "HasEnoughOutput" => "Print each employee row and the final totals.",
             _ => "Keep working on your solution!"
         };
     }
