@@ -12,6 +12,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       <button id="download-btn" class="button editor-btn" type="button">⬇ Download</button>
       <button id="run-btn" class="button editor-btn primary" type="button" title="Ctrl/Cmd+Enter">▶ Run</button>
       <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">✓ Run Checks</button>
+      <button id="popout-btn" class="button editor-btn" type="button" title="Open in new window">⤢ Pop Out</button>
       <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
     </div>
   </div>
@@ -507,6 +508,17 @@ class Program
           link.click();
           URL.revokeObjectURL(url);
           setStatus("Downloaded");
+        });
+
+        // Pop-out button - open editor in new window
+        const popoutBtn = document.getElementById("popout-btn");
+        popoutBtn.addEventListener("click", () => {
+          // Save current code first
+          saveToCloud(editorInstance.getValue());
+          // Open the standalone editor in a new window
+          const editorUrl = `/editor?starter=${encodeURIComponent(starterId)}`;
+          window.open(editorUrl, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
+          setStatus("Opened in new window");
         });
 
         runBtn.addEventListener("click", () => {
