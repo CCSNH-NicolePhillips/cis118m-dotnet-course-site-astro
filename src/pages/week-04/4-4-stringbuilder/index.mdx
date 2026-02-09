@@ -413,7 +413,7 @@ class Program
       id: "cp2",
       type: "multiple-choice",
       question: "What method converts a StringBuilder to a regular string?",
-      options: ["Convert()", "GetString()", "ToString()", "Build()"],
+      options: ["ToString()", "Convert()", "GetString()", "Build()"],
       correctAnswer: "ToString()",
       explanation: "Call sb.ToString() to convert the StringBuilder contents to an immutable string. Do this when you are done building and need to use the final result."
     },
@@ -429,7 +429,7 @@ class Program
       id: "cp4",
       type: "multiple-choice",
       question: "When should you NOT bother with StringBuilder?",
-      options: ["When building strings inside a loop", "When concatenating 2-3 strings outside a loop", "When building large reports", "When performance is critical"],
+      options: ["When building strings inside a loop", "When building large reports", "When concatenating 2-3 strings outside a loop", "When performance is critical"],
       correctAnswer: "When concatenating 2-3 strings outside a loop",
       explanation: "For simple one-time concatenations like joining first name and last name, regular strings are perfectly fine. StringBuilder overhead is not worth it for 2-3 simple joins outside of loops."
     }

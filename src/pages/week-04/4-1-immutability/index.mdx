@@ -316,7 +316,7 @@ class Program
       id: "cp1",
       type: "multiple-choice",
       question: "What happens when you assign a new value to a string variable?",
-      options: ["The original string is modified in place", "A new string is created and the variable points to it", "The code throws an exception because strings are immutable", "Both strings share the same memory location"],
+      options: ["The original string is modified in place", "The code throws an exception because strings are immutable", "A new string is created and the variable points to it", "Both strings share the same memory location"],
       correctAnswer: "A new string is created and the variable points to it",
       explanation: "Strings are immutable! When you concatenate or modify a string, a NEW string is created in a different memory location. The variable is updated to point to this new string."
     },
@@ -324,7 +324,7 @@ class Program
       id: "cp2",
       type: "multiple-choice",
       question: "Why are strings stored on the Heap instead of the Stack?",
-      options: ["The Stack is only for numbers", "Strings can be very large and need managed memory with garbage collection", "The Heap is faster than the Stack", "Microsoft made an arbitrary design decision"],
+      options: ["The Stack is only for numbers", "The Heap is faster than the Stack", "Microsoft made an arbitrary design decision", "Strings can be very large and need managed memory with garbage collection"],
       correctAnswer: "Strings can be very large and need managed memory with garbage collection",
       explanation: "Strings are reference types that can vary greatly in size. The Heap provides managed memory where the Garbage Collector can clean up abandoned strings."
     },
@@ -332,7 +332,7 @@ class Program
       id: "cp3",
       type: "multiple-choice",
       question: "Building a string with += in a loop that runs 1,000 times is inefficient because:",
-      options: ["The += operator is slower than the + operator", "Each iteration creates a new string and copies all previous content", "Loops are always slow in C#", "The string becomes too long for memory"],
+      options: ["Loops are always slow in C#", "The += operator is slower than the + operator", "The string becomes too long for memory", "Each iteration creates a new string and copies all previous content"],
       correctAnswer: "Each iteration creates a new string and copies all previous content",
       explanation: "Each += creates a brand new string containing all the accumulated content. This O(n squared) behavior creates massive memory churn and CPU waste."
     }

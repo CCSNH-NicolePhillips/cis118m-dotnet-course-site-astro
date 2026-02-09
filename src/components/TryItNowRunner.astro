@@ -20,7 +20,7 @@ const {
 const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height}>
   {instructions && (
     <div class="instructions">
       <span class="icon">▶️</span>
@@ -41,6 +41,10 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       <button class="btn btn-reset" id="lab-reset-button" data-action="reset">
         <span class="icon">↺</span>
         Reset
+      </button>
+      <button class="btn btn-expand" data-action="expand" title="Expand editor">
+        <span class="icon">⤢</span>
+        Expand
       </button>
       {showFullEditorLink && (
         <a href={`/editor/?week=01&starter=${starterId}`} class="link-full-editor" target="_blank">
@@ -77,8 +81,10 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     if (!container) return;
     
     const editorDiv = container.querySelector(`#editor-${runnerId}`);
+    const editorWrapper = container.querySelector('.editor-wrapper');
     const runBtn = container.querySelector('[data-action="run"]');
     const resetBtn = container.querySelector('[data-action="reset"]');
+    const expandBtn = container.querySelector('[data-action="expand"]');
     const outputContainer = container.querySelector('.output-container');
     const outputHeader = container.querySelector('[data-action="toggle-output"]');
     const statusSpan = container.querySelector('.status');
@@ -89,6 +95,8 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     
     let editor = null;
     const originalCode = code;
+    const defaultHeight = parseInt(container.dataset.defaultHeight) || 200;
+    let isExpanded = false;
     
     // Wait for Monaco to load
     const waitForMonaco = async () => {
@@ -686,6 +694,24 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     runBtn.addEventListener('click', runCode);
     resetBtn.addEventListener('click', resetCode);
     
+    // Expand/collapse editor
+    expandBtn.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        editorWrapper.style.height = '500px';
+        expandBtn.innerHTML = '<span class="icon">⤡</span> Collapse';
+        expandBtn.title = 'Collapse editor';
+      } else {
+        editorWrapper.style.height = `${defaultHeight}px`;
+        expandBtn.innerHTML = '<span class="icon">⤢</span> Expand';
+        expandBtn.title = 'Expand editor';
+      }
+      // Tell Monaco to resize
+      if (editor) {
+        editor.layout();
+      }
+    });
+    
     // Keyboard shortcut: Ctrl+Enter to run
     if (editor) {
       editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
@@ -771,6 +797,20 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
   
   .btn-reset:hover:not(:disabled) {
     background: var(--navitem-hover);
+  }
+  
+  .btn-expand {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .btn-expand:hover:not(:disabled) {
+    background: var(--navitem-hover);
+  }
+  
+  .editor-wrapper {
+    transition: height 0.2s ease-out;
   }
   
   .link-full-editor {
