@@ -19,13 +19,12 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
   <div class="stdin-section" id="stdin-section">
     <div class="stdin-header" id="stdin-header">
-      <span class="stdin-label">📥 Program Input</span>
-      <span id="stdin-toggle" class="stdin-toggle">▸</span>
-      <span class="stdin-hint">(for Console.ReadLine)</span>
+      <span class="stdin-label">📥 Program Input (for Console.ReadLine)</span>
+      <span id="stdin-toggle" class="stdin-toggle">▾</span>
     </div>
-    <div class="stdin-content collapsed" id="stdin-content">
-      <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Enter input values here, one per line. These will be passed to Console.ReadLine() calls."></textarea>
-      <div class="stdin-example">Example: If your program asks for name, hours, and rate - enter each on a new line</div>
+    <div class="stdin-content" id="stdin-content">
+      <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Type your input here, one value per line.&#10;Example:&#10;Kitchen Remodel&#10;40.5&#10;125.50"></textarea>
+      <div class="stdin-example">⚠️ Each Console.ReadLine() reads ONE line. Enter values in order, one per line!</div>
     </div>
   </div>
 
@@ -1072,38 +1071,34 @@ class Program
 
     /* Stdin Input Section */
     .stdin-section {
-      background: var(--panel, #1e293b);
-      border-bottom: 1px solid var(--border, #444);
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+      margin: 8px;
     }
     
     .stdin-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 12px;
+      padding: 8px 12px;
       cursor: pointer;
       user-select: none;
     }
     
     .stdin-header:hover {
-      background: var(--panel2, #334155);
+      background: rgba(59, 130, 246, 0.2);
     }
     
-    .stdin-title {
+    .stdin-label {
       font-weight: 700;
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 13px;
+      color: #60a5fa;
     }
     
     .stdin-toggle {
-      font-size: 10px;
-      transition: transform 0.2s;
-    }
-    
-    .stdin-toggle.collapsed {
-      transform: rotate(-90deg);
+      font-size: 12px;
+      color: #60a5fa;
     }
     
     .stdin-hint {
@@ -1122,31 +1117,34 @@ class Program
     
     .stdin-input {
       width: 100%;
-      min-height: 60px;
-      max-height: 100px;
-      background: var(--panel2, #0f172a);
-      border: 1px solid var(--border, #444);
+      min-height: 70px;
+      max-height: 120px;
+      background: #0f172a;
+      border: 2px solid #3b82f6;
       border-radius: 4px;
-      color: var(--text, #f1f5f9);
+      color: #f1f5f9;
       font-family: 'Fira Code', 'Consolas', monospace;
-      font-size: 12px;
-      padding: 8px;
+      font-size: 13px;
+      padding: 10px;
       resize: vertical;
     }
     
     .stdin-input::placeholder {
-      color: var(--muted, #64748b);
+      color: #64748b;
+      white-space: pre-line;
     }
     
     .stdin-input:focus {
       outline: none;
       border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
     }
     
     .stdin-example {
-      font-size: 11px;
-      color: var(--muted, #94a3b8);
-      margin-top: 4px;
+      font-size: 12px;
+      color: #fbbf24;
+      margin-top: 6px;
+      font-weight: 500;
     }
 
     #editor {
