@@ -17,6 +17,18 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
   </div>
 
+  <div class="stdin-section" id="stdin-section">
+    <div class="stdin-header" id="stdin-header">
+      <span class="stdin-label">📥 Program Input</span>
+      <span id="stdin-toggle" class="stdin-toggle">▸</span>
+      <span class="stdin-hint">(for Console.ReadLine)</span>
+    </div>
+    <div class="stdin-content collapsed" id="stdin-content">
+      <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Enter input values here, one per line. These will be passed to Console.ReadLine() calls."></textarea>
+      <div class="stdin-example">Example: If your program asks for name, hours, and rate - enter each on a new line</div>
+    </div>
+  </div>
+
   <div id="editor" aria-label="Monaco editor" style="border:1px solid var(--border); border-radius:8px; overflow:hidden;"></div>
 
   <div class="output-drawer" id="output-drawer">
@@ -603,14 +615,27 @@ class Program
           setStatus("Opened in new window");
         });
 
+        // Stdin input handling
+        const stdinInput = document.getElementById("stdin-input");
+        const stdinHeader = document.getElementById("stdin-header");
+        const stdinContent = document.getElementById("stdin-content");
+        const stdinToggle = document.getElementById("stdin-toggle");
+        
+        stdinHeader.addEventListener("click", () => {
+          stdinContent.classList.toggle("collapsed");
+          stdinToggle.textContent = stdinContent.classList.contains("collapsed") ? "▸" : "▾";
+        });
+
+        const getStdin = () => stdinInput?.value || "";
+
         runBtn.addEventListener("click", () => {
           if (!editorInstance) return;
-          runnerRequest("/api/run", buildPayload(editorInstance.getValue(), ""), "run");
+          runnerRequest("/api/run", buildPayload(editorInstance.getValue(), getStdin()), "run");
         });
 
         checkBtn.addEventListener("click", () => {
           if (!editorInstance) return;
-          runnerRequest("/api/check", buildPayload(editorInstance.getValue(), ""), "check");
+          runnerRequest("/api/check", buildPayload(editorInstance.getValue(), getStdin()), "check");
         });
 
         // Keyboard shortcuts
@@ -666,6 +691,85 @@ class Program
     
     .editor-btn.primary:hover {
       background: #16a34a;
+    }
+
+    /* Stdin Input Section */
+    .stdin-section {
+      background: var(--panel, #1e293b);
+      border-bottom: 1px solid var(--border, #444);
+    }
+    
+    .stdin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .stdin-header:hover {
+      background: var(--panel2, #334155);
+    }
+    
+    .stdin-title {
+      font-weight: 700;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .stdin-toggle {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+    
+    .stdin-toggle.collapsed {
+      transform: rotate(-90deg);
+    }
+    
+    .stdin-hint {
+      font-size: 11px;
+      color: var(--muted, #94a3b8);
+    }
+    
+    .stdin-content {
+      padding: 8px 12px;
+      display: block;
+    }
+    
+    .stdin-content.collapsed {
+      display: none;
+    }
+    
+    .stdin-input {
+      width: 100%;
+      min-height: 60px;
+      max-height: 100px;
+      background: var(--panel2, #0f172a);
+      border: 1px solid var(--border, #444);
+      border-radius: 4px;
+      color: var(--text, #f1f5f9);
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      padding: 8px;
+      resize: vertical;
+    }
+    
+    .stdin-input::placeholder {
+      color: var(--muted, #64748b);
+    }
+    
+    .stdin-input:focus {
+      outline: none;
+      border-color: #22c55e;
+    }
+    
+    .stdin-example {
+      font-size: 11px;
+      color: var(--muted, #94a3b8);
+      margin-top: 4px;
     }
 
     #editor {
