@@ -77,7 +77,199 @@ public class Program
             return await HandleCheck(req);
         });
 
+        // WebSocket endpoint for interactive terminal
+        app.UseWebSockets();
+        app.Map("/ws/run", async (HttpContext context) =>
+        {
+            if (!context.WebSockets.IsWebSocketRequest)
+            {
+                context.Response.StatusCode = 400;
+                return;
+            }
+
+            // Check runner key from query string for WebSocket
+            var runnerKey = app.Configuration["RUNNER_KEY"];
+            if (!string.IsNullOrEmpty(runnerKey))
+            {
+                var providedKey = context.Request.Query["key"].FirstOrDefault();
+                if (providedKey != runnerKey)
+                {
+                    context.Response.StatusCode = 401;
+                    return;
+                }
+            }
+
+            using var ws = await context.WebSockets.AcceptWebSocketAsync();
+            await HandleInteractiveSession(ws);
+        });
+
         await app.RunAsync();
+    }
+
+    private static async Task HandleInteractiveSession(System.Net.WebSockets.WebSocket ws)
+    {
+        var buffer = new byte[4096];
+        string? code = null;
+        string? starterId = null;
+        Process? proc = null;
+        string? jobRoot = null;
+
+        try
+        {
+            // First message should be JSON with code
+            var result = await ws.ReceiveAsync(buffer, CancellationToken.None);
+            if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Text)
+            {
+                var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                var initMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInitMessage>(json);
+                code = initMsg?.Code;
+                starterId = initMsg?.StarterId ?? "interactive";
+            }
+
+            if (string.IsNullOrEmpty(code))
+            {
+                await SendWsMessage(ws, new { type = "error", message = "No code provided" });
+                return;
+            }
+
+            // Set up project
+            var jobId = $"job-{Guid.NewGuid():N}";
+            jobRoot = Path.Combine(Path.GetTempPath(), jobId);
+            Directory.CreateDirectory(jobRoot);
+
+            var projectFile = Path.Combine(jobRoot, "App.csproj");
+            var programFile = Path.Combine(jobRoot, "Program.cs");
+            await File.WriteAllTextAsync(projectFile, RunnerUtilities.CsprojText);
+            await File.WriteAllTextAsync(programFile, code);
+
+            // Compile
+            await SendWsMessage(ws, new { type = "status", message = "Compiling..." });
+            var compile = await RunnerUtilities.RunProcess("dotnet", "build -c Release", jobRoot, TimeSpan.FromSeconds(30));
+            
+            if (compile.ExitCode != 0 || compile.TimedOut)
+            {
+                var diagnostics = RunnerUtilities.ParseDiagnostics(compile.Stdout + "\n" + compile.Stderr);
+                await SendWsMessage(ws, new { type = "compile_error", diagnostics, stderr = compile.Stderr });
+                return;
+            }
+
+            await SendWsMessage(ws, new { type = "status", message = "Running..." });
+            await SendWsMessage(ws, new { type = "started" });
+
+            // Start process with interactive I/O
+            var psi = new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = "run -c Release --no-build",
+                WorkingDirectory = jobRoot,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+
+            proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
+            var exitTcs = new TaskCompletionSource<int>();
+
+            proc.OutputDataReceived += async (_, e) =>
+            {
+                if (e.Data != null)
+                {
+                    try { await SendWsMessage(ws, new { type = "stdout", data = e.Data + "\n" }); } catch { }
+                }
+            };
+
+            proc.ErrorDataReceived += async (_, e) =>
+            {
+                if (e.Data != null)
+                {
+                    try { await SendWsMessage(ws, new { type = "stderr", data = e.Data + "\n" }); } catch { }
+                }
+            };
+
+            proc.Exited += (_, _) => exitTcs.TrySetResult(proc.ExitCode);
+
+            proc.Start();
+            proc.BeginOutputReadLine();
+            proc.BeginErrorReadLine();
+
+            // Handle incoming WebSocket messages (stdin from user)
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30s max runtime
+            var receiveTask = Task.Run(async () =>
+            {
+                var inputBuffer = new byte[1024];
+                while (!cts.Token.IsCancellationRequested && ws.State == System.Net.WebSockets.WebSocketState.Open)
+                {
+                    try
+                    {
+                        var receiveResult = await ws.ReceiveAsync(inputBuffer, cts.Token);
+                        if (receiveResult.MessageType == System.Net.WebSockets.WebSocketMessageType.Close)
+                            break;
+
+                        if (receiveResult.MessageType == System.Net.WebSockets.WebSocketMessageType.Text)
+                        {
+                            var inputJson = Encoding.UTF8.GetString(inputBuffer, 0, receiveResult.Count);
+                            var inputMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInputMessage>(inputJson);
+                            if (inputMsg?.Type == "stdin" && inputMsg.Data != null && !proc.HasExited)
+                            {
+                                await proc.StandardInput.WriteAsync(inputMsg.Data);
+                                await proc.StandardInput.FlushAsync();
+                                // Echo the input back so terminal shows it
+                                await SendWsMessage(ws, new { type = "stdin_echo", data = inputMsg.Data });
+                            }
+                        }
+                    }
+                    catch (OperationCanceledException) { break; }
+                    catch { break; }
+                }
+            });
+
+            // Wait for process to exit or timeout
+            var completed = await Task.WhenAny(exitTcs.Task, Task.Delay(TimeSpan.FromSeconds(30)));
+            
+            if (completed != exitTcs.Task)
+            {
+                try { proc.Kill(entireProcessTree: true); } catch { }
+                await SendWsMessage(ws, new { type = "timeout", message = "Program timed out (30s limit)" });
+            }
+            else
+            {
+                await SendWsMessage(ws, new { type = "exited", exitCode = proc.ExitCode });
+            }
+
+            cts.Cancel();
+        }
+        catch (Exception ex)
+        {
+            try { await SendWsMessage(ws, new { type = "error", message = ex.Message }); } catch { }
+        }
+        finally
+        {
+            if (proc != null && !proc.HasExited)
+            {
+                try { proc.Kill(entireProcessTree: true); } catch { }
+            }
+            proc?.Dispose();
+
+            // Cleanup job folder
+            if (jobRoot != null)
+            {
+                try { Directory.Delete(jobRoot, true); } catch { }
+            }
+
+            if (ws.State == System.Net.WebSockets.WebSocketState.Open)
+            {
+                try { await ws.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "Done", CancellationToken.None); } catch { }
+            }
+        }
+    }
+
+    private static async Task SendWsMessage(System.Net.WebSockets.WebSocket ws, object message)
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(message);
+        var bytes = Encoding.UTF8.GetBytes(json);
+        await ws.SendAsync(bytes, System.Net.WebSockets.WebSocketMessageType.Text, true, CancellationToken.None);
     }
 
     private static async Task<IResult> HandleRequest(RunnerRequest req, bool runAfterCompile)
@@ -783,3 +975,7 @@ internal record RunnerResponse(bool Ok, bool CompileOk, bool RunOk, bool Compile
 internal record CheckResponse(bool Ok, bool CompileOk, List<CheckResult> Checks, string Hint, string Stdout, string Stderr, List<Diagnostic> Diagnostics);
 internal record CheckResult(string Name, bool Passed, string Message);
 internal record ProcessResult(int ExitCode, string Stdout, string Stderr, bool TimedOut);
+
+// WebSocket message types
+internal record InteractiveInitMessage(string? Code, string? StarterId);
+internal record InteractiveInputMessage(string? Type, string? Data);
