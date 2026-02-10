@@ -344,6 +344,51 @@ export const lessonContexts = {
       Clarity and terminology (10pts): Clear writing, uses terms like "immutable", "StringBuilder", "new string"
     `,
     requiredKeywords: ["immutable", "StringBuilder"]
+  },
+
+  // ===== WEEK 05 =====
+  "week-05-boss-fight": {
+    title: "Week 5: Boss Fight - Project Budget Estimator",
+    type: "lab",
+    week: "05",
+    taughtConcepts: `
+      - Console.ReadLine() captures user input as a string
+      - Console.ReadLine() is a BLOCKING call - program halts until Enter is pressed
+      - Console.Write() vs Console.WriteLine() - Write keeps cursor on same line for prompts
+      - int.Parse() converts string to integer
+      - double.Parse() converts string to double (for measurements)
+      - decimal.Parse() converts string to decimal (REQUIRED for financial data!)
+      - String interpolation $"text {variable}" for formatted output
+      - Currency formatting with {value:C}
+    `,
+    assignmentPrompt: `
+      Build an interactive Project Budget Estimator that:
+      1. Prompts for and captures project name (string)
+      2. Prompts for and parses estimated hours (double)
+      3. Prompts for and parses architect hourly rate (decimal - it's money!)
+      4. Calculates total budget (hours * rate)
+      5. Displays: "Project [Name] requires $[Total] in funding."
+      
+      Required output format:
+      === PROJECT BUDGET ESTIMATOR ===
+      Enter project name: [user input]
+      Enter estimated hours: [user input]
+      Enter architect hourly rate: [user input]
+      
+      === BUDGET REPORT ===
+      Project [Name] requires $[Total] in funding.
+      ================================
+    `,
+    rubric: `
+      Uses Console.ReadLine() for all inputs (25pts): All three inputs captured with ReadLine
+      Uses decimal.Parse() for hourly rate (25pts): Financial data uses decimal, not double
+      Uses string interpolation (20pts): Output uses $"..." syntax
+      Correct calculation (15pts): Total correctly calculates hours * rate
+      Code compiles and runs (10pts): No syntax errors
+      Header comment with name (5pts): Has name comment at top
+    `,
+    requiredKeywords: ["Console.ReadLine", "decimal.Parse", "$"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
@@ -378,6 +423,11 @@ export const TUTOR_CONTEXTS = {
   'week-04-4-4': "Week 4 Section 4.4: StringBuilder. For building strings in loops, use StringBuilder to avoid creating garbage. Methods: Append(), AppendLine(), Insert(), ToString(). Import with 'using System.Text;'",
   'week-04-lab': "Week 4 Lab: Text Sanitizer. Students clean messy user input using string methods: Trim() to remove whitespace, ToUpper() for state code, Replace() to clean phone number, Substring() to extract area code, Length for bio character count, and string interpolation for output. NO LOOPS - they haven't learned those yet.",
   'week-04-homework': "Week 4 Homework: String Reflection. Students explain what string immutability means, what happens when you concatenate in a loop (creates garbage), and when to use StringBuilder. Written reflection, no code.",
+  'week-05': "Week 5: User Input & Type Parsing. Students are learning to capture user input with Console.ReadLine() (a blocking call) and parse text to numeric types using int.Parse(), double.Parse(), and decimal.Parse(). Key concept: decimal is REQUIRED for financial data. This week culminates in the Phase I Boss Fight.",
+  'week-05-5-1-readline': "Week 5 Section 5.1: The Intake Valve. Focus: Console.ReadLine() as a blocking call. Console.Write() for prompts (no newline). Guide students on handling null/empty inputs with basic string checks like string.IsNullOrEmpty().",
+  'week-05-5-2-type-parsing': "Week 5 Section 5.2: The Data Refiner. Focus: Why 'int x = Console.ReadLine()' fails (type mismatch). Using int.Parse(), double.Parse(), decimal.Parse(). CRITICAL: decimal.Parse() is required for money!",
+  'week-05-5-3-boss-fight': "Week 5 Section 5.3: Boss Fight - Project Budget Estimator. Combine all Phase I skills: Console.ReadLine() for input, decimal.Parse() for money, string interpolation for output. Must prompt for project name, hours, rate, then calculate and display total.",
+  'week-05-boss-fight': "Week 5 Boss Fight: Project Budget Estimator. Students must use Console.ReadLine() for all inputs, decimal.Parse() for hourly rate (it's money!), calculate hours * rate, and display with string interpolation and currency formatting. Success unlocks Week 6.",
 };
 
 export function getTutorContext(pageId) {

@@ -1,0 +1,431 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 05 • User Input & Type Parsing"
+description: "Capturing user data and converting text to numeric types"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 05: User Input & Type Parsing
+
+<DueDateBanner week={5} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>🚰 The Intake System</h2>
+  <p>
+    Until now, your programs have been <strong>one-way broadcasts</strong>—outputting data but never listening. This week, you open the <strong>intake valve</strong>: learning to capture user input with <code>Console.ReadLine()</code> and refine raw text into usable numeric types with the <code>Parse</code> family of methods.
+  </p>
+  <p>
+    This week culminates in the <strong>Phase I Boss Fight</strong>—an interactive Project Budget Estimator that combines everything you've learned in the Foundations phase.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 05 Learning Path
+
+<div class="section-cards">
+  <a href="/week-05/5-1-readline/" class="section-card readline">
+    <div class="card-icon">🚰</div>
+    <div class="card-content">
+      <h3>5.1 The Intake Valve</h3>
+      <p class="metaphor">Console.ReadLine()</p>
+      <p>Blocking calls, input buffers, capturing user data as strings</p>
+    </div>
+  </a>
+  
+  <a href="/week-05/5-2-type-parsing/" class="section-card parsing">
+    <div class="card-icon">⚗️</div>
+    <div class="card-content">
+      <h3>5.2 The Data Refiner</h3>
+      <p class="metaphor">Type Parsing</p>
+      <p>int.Parse(), double.Parse(), decimal.Parse() for financial data</p>
+    </div>
+  </a>
+  
+  <a href="/week-05/5-3-boss-fight/" class="section-card bossfight">
+    <div class="card-icon">⚔️</div>
+    <div class="card-content">
+      <h3>5.3 The Boss Fight</h3>
+      <p class="metaphor">Interactive App</p>
+      <p>Build a Project Budget Estimator combining all Phase I skills</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Metaphor</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>5.1</strong></td>
+        <td><a href="/week-05/5-1-readline/">The Intake Valve</a></td>
+        <td>🚰 Data Ingress</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>5.2</strong></td>
+        <td><a href="/week-05/5-2-type-parsing/">The Data Refiner</a></td>
+        <td>⚗️ Data Alchemy</td>
+        <td>30 min</td>
+      </tr>
+      <tr class="highlight-row">
+        <td><strong>5.3</strong></td>
+        <td><a href="/week-05/5-3-boss-fight/">Boss Fight</a></td>
+        <td>⚔️ Phase I Final</td>
+        <td>45 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🎓 Learning Objectives
+
+By the end of this week, you will be able to:
+
+1. **Explain** why `Console.ReadLine()` is a blocking call that halts execution
+2. **Capture** user input and store it in string variables
+3. **Parse** text input into numeric types using `int.Parse()`, `double.Parse()`, `decimal.Parse()`
+4. **Justify** why `decimal` is mandatory for financial calculations
+5. **Build** an interactive console application that combines input, parsing, and output
+
+---
+
+## 🏆 Phase I Completion
+
+<div class="phase-completion">
+  <div class="phase-icon">🏆</div>
+  <div class="phase-content">
+    <h3>Phase I: Foundations Complete!</h3>
+    <p>
+      Week 05 marks the end of <strong>Phase I: Foundations</strong>. You've learned:
+    </p>
+    <ul>
+      <li>✅ <strong>Week 1:</strong> The .NET Engine and Console Output</li>
+      <li>✅ <strong>Week 2:</strong> Program Structure (Namespaces, Classes, Main)</li>
+      <li>✅ <strong>Week 3:</strong> Variables & Data Types</li>
+      <li>✅ <strong>Week 4:</strong> Strings & Text Processing</li>
+      <li>✅ <strong>Week 5:</strong> User Input & Type Parsing</li>
+    </ul>
+    <p>
+      The Boss Fight combines all these skills into one interactive application. Success unlocks <strong>Phase II: Logic & Control</strong>!
+    </p>
+  </div>
+</div>
+
+---
+
+## 📚 This Week's Content
+
+<div class="week-nav-cards">
+  <a href="/week-05/5-1-readline/" class="nav-card">
+    <span class="nav-card-number">5.1</span>
+    <span class="nav-card-title">The Intake Valve</span>
+    <span class="nav-card-desc">Console.ReadLine() and blocking calls</span>
+  </a>
+  
+  <a href="/week-05/5-2-type-parsing/" class="nav-card">
+    <span class="nav-card-number">5.2</span>
+    <span class="nav-card-title">The Data Refiner</span>
+    <span class="nav-card-desc">Parsing strings to numeric types</span>
+  </a>
+  
+  <a href="/week-05/5-3-boss-fight/" class="nav-card boss">
+    <span class="nav-card-number">⚔️</span>
+    <span class="nav-card-title">Boss Fight</span>
+    <span class="nav-card-desc">Project Budget Estimator</span>
+  </a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 24px 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .section-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(78, 201, 176, 0.5);
+    box-shadow: 0 8px 24px rgba(78, 201, 176, 0.15);
+  }
+
+  .section-card.bossfight {
+    background: linear-gradient(135deg, rgba(233, 69, 96, 0.1) 0%, rgba(183, 28, 28, 0.1) 100%);
+    border-color: rgba(233, 69, 96, 0.3);
+  }
+
+  .section-card.bossfight:hover {
+    border-color: rgba(233, 69, 96, 0.6);
+    box-shadow: 0 8px 24px rgba(233, 69, 96, 0.2);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px 0;
+    color: #fff;
+  }
+
+  .card-content .metaphor {
+    color: #4ec9b0;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0 0 8px 0;
+  }
+
+  .section-card.bossfight .metaphor {
+    color: #e94560;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+
+  .styled-table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .styled-table-container th {
+    background: rgba(78, 201, 176, 0.2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .styled-table-container td {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .styled-table-container .highlight-row {
+    background: rgba(233, 69, 96, 0.1);
+  }
+
+  .phase-completion {
+    display: flex;
+    gap: 24px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+    align-items: flex-start;
+  }
+
+  .phase-icon {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .phase-content h3 {
+    margin: 0 0 12px 0;
+    color: #ffd700;
+  }
+
+  .phase-content ul {
+    margin: 12px 0;
+    padding-left: 20px;
+  }
+
+  .phase-content li {
+    margin: 8px 0;
+  }
+
+  .week-nav-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .nav-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background: rgba(78, 201, 176, 0.08);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .nav-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .nav-card.boss {
+    background: linear-gradient(135deg, rgba(233, 69, 96, 0.1) 0%, rgba(183, 28, 28, 0.1) 100%);
+    border-color: rgba(233, 69, 96, 0.3);
+  }
+
+  .nav-card-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ec9b0;
+    margin-bottom: 8px;
+  }
+
+  .nav-card.boss .nav-card-number {
+    color: #e94560;
+  }
+
+  .nav-card-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .nav-card-desc {
+    color: #888;
+    font-size: 0.9rem;
+  }
+
+  /* Light mode overrides */
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .mission-brief h2 {
+    color: #2563eb !important;
+  }
+
+  body[data-theme="light"] .section-card {
+    background: rgba(37, 99, 235, 0.05) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .section-card:hover {
+    border-color: rgba(37, 99, 235, 0.3) !important;
+  }
+
+  body[data-theme="light"] .section-card.bossfight {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(185, 28, 28, 0.08) 100%) !important;
+    border-color: rgba(220, 38, 38, 0.2) !important;
+  }
+
+  body[data-theme="light"] .card-content h3 {
+    color: #1e293b !important;
+  }
+
+  body[data-theme="light"] .card-content .metaphor {
+    color: #2563eb !important;
+  }
+
+  body[data-theme="light"] .section-card.bossfight .metaphor {
+    color: #dc2626 !important;
+  }
+
+  body[data-theme="light"] .card-content p:last-child {
+    color: #64748b !important;
+  }
+
+  body[data-theme="light"] .styled-table-container table {
+    background: #f8fafc !important;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    background: #e2e8f0 !important;
+    color: #1e293b !important;
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #334155 !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .styled-table-container .highlight-row {
+    background: rgba(220, 38, 38, 0.06) !important;
+  }
+
+  body[data-theme="light"] .phase-completion {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%) !important;
+    border-color: rgba(234, 179, 8, 0.4) !important;
+  }
+
+  body[data-theme="light"] .phase-content h3 {
+    color: #a16207 !important;
+  }
+
+  body[data-theme="light"] .nav-card {
+    background: rgba(37, 99, 235, 0.06) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .nav-card.boss {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(185, 28, 28, 0.08) 100%) !important;
+    border-color: rgba(220, 38, 38, 0.2) !important;
+  }
+
+  body[data-theme="light"] .nav-card-number {
+    color: #2563eb !important;
+  }
+
+  body[data-theme="light"] .nav-card.boss .nav-card-number {
+    color: #dc2626 !important;
+  }
+
+  body[data-theme="light"] .nav-card-title {
+    color: #1e293b !important;
+  }
+
+  body[data-theme="light"] .nav-card-desc {
+    color: #64748b !important;
+  }
+`}</style>

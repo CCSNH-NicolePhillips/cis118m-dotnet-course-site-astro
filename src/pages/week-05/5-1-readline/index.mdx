@@ -1,0 +1,569 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 5.1 • The Intake Valve (Console.ReadLine)"
+description: "Understanding how programs receive user input and why ReadLine is a blocking call"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 5.1: The Intake Valve
+
+<div class="section-header">
+  <div class="section-badge">🚰 Data Ingress</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Console.ReadLine: The Intake Valve</h2>
+      <p>
+        So far, your programs have been <strong>one-way broadcasts</strong>—they output data but never listen. <code>Console.ReadLine()</code> is the <strong>intake valve</strong> that opens a channel from the outside world into your program. But here's the critical detail: it's a <strong>blocking call</strong>. The entire program halts, waiting for the user to commit their input by pressing Enter.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-5/intake-valve.png" alt="Intake valve metaphor for Console.ReadLine" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: Reading User Input
+
+<div class="video-section">
+  <p class="video-intro">This briefing explains how Console.ReadLine() pauses execution, captures user input into a buffer, and returns it as a string when the user presses Enter.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/sB3GuY3KT0I" 
+      title="C# Console.ReadLine Explained"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 What is a Blocking Call?
+
+A **blocking call** is an instruction that **halts the CPU thread** until some external event occurs. When you call `Console.ReadLine()`, the program stops executing and waits—potentially forever—until the user types something and presses **Enter**.
+
+<div class="concept-highlight blocking-metaphor">
+  <h3>🚦 The Traffic Light Metaphor</h3>
+  <div class="metaphor-grid">
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🟢</div>
+      <div class="metaphor-text">
+        <strong>Before ReadLine</strong>
+        <p>Code executes normally, instructions flow freely.</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🔴</div>
+      <div class="metaphor-text">
+        <strong>At ReadLine</strong>
+        <p>Traffic STOPS. The thread is blocked, waiting for the user.</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🟢</div>
+      <div class="metaphor-text">
+        <strong>After Enter</strong>
+        <p>The light turns green—input captured, execution resumes.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🏛️ Architect's Note
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>⚠️ Production Warning</h4>
+    <p>
+      In production systems, we <strong>never</strong> use <code>.Parse()</code> without a <code>try-catch</code> block (which we will learn in Phase III). For now, assume the user is a trusted engineer who enters valid data. In the real world, users will type "banana" when you ask for a number—and your program will crash.
+    </p>
+  </div>
+</div>
+
+---
+
+## 📊 The Input Buffer
+
+When the user types, characters go into an **input buffer**. Nothing happens until they press **Enter**:
+
+<div class="memory-diagram">
+  <div class="memory-section buffer">
+    <h4>📥 Input Buffer (Building...)</h4>
+    <div class="memory-block">
+      User types: <code>A</code> <code>l</code> <code>i</code> <code>c</code> <code>e</code>
+    </div>
+    <p class="memory-note">Characters accumulate as the user types</p>
+  </div>
+  <div class="memory-arrow">→ Enter ↵</div>
+  <div class="memory-section heap">
+    <h4>📤 String Created</h4>
+    <div class="memory-block heap-block">
+      <code>"Alice"</code> → returned to your program
+    </div>
+    <p class="memory-note">Buffer contents become a string</p>
+  </div>
+</div>
+
+---
+
+## 💻 Basic ReadLine Syntax
+
+<TryItNowRunner 
+  starterId="week-05-readline-basic" 
+  height={350}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // The program BLOCKS here until you type and press Enter
+        Console.Write("Enter your name: ");  // No newline - cursor stays on same line
+        string name = Console.ReadLine();    // BLOCKING CALL - waits for input
+        
+        // Code resumes ONLY after user presses Enter
+        Console.WriteLine($"Hello, {name}!");
+    }
+}`}
+  instructions="Click Run, then type your name and press Enter. Notice how nothing happens until you press Enter—that's the blocking behavior." 
+/>
+
+<DeepDiveTabs
+  title="Understanding ReadLine"
+  tabs={[
+    {
+      id: "write-vs-writeline",
+      label: "Write vs WriteLine",
+      content: `
+        <h3>Console.Write() vs Console.WriteLine()</h3>
+        <p>When prompting for input, use <code>Console.Write()</code> (no newline) so the cursor stays on the same line as your prompt:</p>
+        <pre><code>Console.Write("Enter name: ");   // Cursor: "Enter name: |"
+Console.WriteLine("Enter name:"); // Cursor moves to next line</code></pre>
+        <p><strong>Professional practice:</strong> Use Write() for prompts so the user types on the same line.</p>
+      `
+    },
+    {
+      id: "null-string",
+      label: "The Nullable String",
+      content: `
+        <h3>ReadLine Returns string?</h3>
+        <p>Technically, <code>Console.ReadLine()</code> can return <code>null</code> if input is redirected. In modern C#, the return type is <code>string?</code> (nullable string):</p>
+        <pre><code>string? input = Console.ReadLine();
+
+// Safest practice:
+string name = Console.ReadLine() ?? "";  // Default to empty if null</code></pre>
+        <p>For this course, we'll use <code>string</code> since we're always getting keyboard input.</p>
+      `
+    },
+    {
+      id: "blocking-detail",
+      label: "Why Blocking Matters",
+      content: `
+        <h3>Thread Suspension</h3>
+        <p>When <code>ReadLine()</code> executes:</p>
+        <ul>
+          <li>The calling thread is <strong>suspended</strong></li>
+          <li>CPU cycles are released (not spinning in a loop)</li>
+          <li>The OS handles the keyboard buffer</li>
+          <li>When Enter is pressed, the thread wakes up</li>
+        </ul>
+        <p><strong>In async programming (future courses),</strong> blocking is often avoided. For console apps, it's expected and appropriate.</p>
+      `
+    }
+  ]}
+/>
+
+---
+
+## 🔌 System Telemetry
+
+<div class="telemetry-note">
+  <div class="telemetry-icon">📡</div>
+  <div class="telemetry-content">
+    <h4>System Telemetry Notice</h4>
+    <p>
+      Your progress on this lab is being transmitted to the <strong>Instructor Dashboard</strong>. Ensure your variable names follow <strong>PascalCase</strong> for classes and <strong>camelCase</strong> for local variables.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🎯 Interactive Lab: Access Control System
+
+Your mission: Create an access control system that prompts for a username and displays a personalized "Access Granted" message using **string interpolation** from Week 04.
+
+### Requirements
+1. Use `Console.Write()` for the prompt (not WriteLine)
+2. Capture the username with `Console.ReadLine()`
+3. Display "Access Granted" with the username using `$"...{variable}..."`
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-05-access-control" 
+    style="width: 100%; height: 500px; border: none;"
+    title="Access Control Lab"
+  ></iframe>
+</div>
+
+---
+
+## 🤖 Need Help?
+
+<div class="tutor-prompt">
+  <div class="tutor-icon">💬</div>
+  <div class="tutor-content">
+    <h4>AI Tutor Available</h4>
+    <p>
+      Click the <strong>AI Tutor</strong> button in the bottom-right corner if you need guidance on how to handle null or empty inputs using basic string checks. The tutor can help you understand why checking for empty strings is important before using the data.
+    </p>
+  </div>
+</div>
+
+---
+
+## 📝 Key Takeaways
+
+<div class="takeaways-grid">
+  <div class="takeaway-card">
+    <div class="takeaway-icon">🚰</div>
+    <h4>ReadLine is the Intake Valve</h4>
+    <p>It opens a channel from user to program, returning a string.</p>
+  </div>
+  <div class="takeaway-card">
+    <div class="takeaway-icon">⏸️</div>
+    <h4>It's a Blocking Call</h4>
+    <p>The CPU thread halts completely until Enter is pressed.</p>
+  </div>
+  <div class="takeaway-card">
+    <div class="takeaway-icon">📝</div>
+    <h4>Always Returns Text</h4>
+    <p>Even numbers come in as strings—you'll learn parsing next!</p>
+  </div>
+</div>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Section 5.2: The Data Refiner (Type Parsing)</strong></p>
+  <p>Numbers arrive as text. Learn to convert them into usable numeric types.</p>
+  <a href="/week-05/5-2-type-parsing/" class="vscode-button">Continue to Type Parsing →</a>
+</div>
+
+<style>{`
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, #4ec9b0 0%, #6b9fff 100%);
+    color: #1e1e1e;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .section-time {
+    color: #888;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .concept-header {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .header-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .header-image img {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid rgba(78, 201, 176, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .header-content {
+      grid-template-columns: 1fr;
+    }
+    .header-image {
+      order: -1;
+    }
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .architect-content h4 {
+    margin: 0 0 8px 0;
+    color: #ffc107;
+  }
+
+  .telemetry-note {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(0, 188, 212, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%);
+    border: 2px solid rgba(0, 188, 212, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .telemetry-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .telemetry-content h4 {
+    margin: 0 0 8px 0;
+    color: #00bcd4;
+  }
+
+  .tutor-prompt {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(103, 58, 183, 0.1) 100%);
+    border: 2px solid rgba(156, 39, 176, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .tutor-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .tutor-content h4 {
+    margin: 0 0 8px 0;
+    color: #9c27b0;
+  }
+
+  .concept-highlight {
+    background: rgba(78, 201, 176, 0.08);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .metaphor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .metaphor-item {
+    text-align: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+  }
+
+  .metaphor-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  .memory-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .memory-section {
+    padding: 16px;
+    border-radius: 8px;
+    min-width: 200px;
+  }
+
+  .memory-section.buffer {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+  }
+
+  .memory-section.heap {
+    background: rgba(78, 201, 176, 0.1);
+    border: 2px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .memory-arrow {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4ec9b0;
+  }
+
+  .takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .takeaway-card {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .takeaway-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 1px solid rgba(78, 201, 176, 0.3);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Light mode overrides */
+  body[data-theme="light"] .section-header {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+    border-color: rgba(37, 99, 235, 0.2) !important;
+  }
+
+  body[data-theme="light"] .section-badge {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    color: white !important;
+  }
+
+  body[data-theme="light"] .concept-header {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .concept-highlight {
+    background: rgba(37, 99, 235, 0.06) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .metaphor-item {
+    background: rgba(37, 99, 235, 0.08) !important;
+  }
+
+  body[data-theme="light"] .memory-diagram {
+    background: rgba(37, 99, 235, 0.05) !important;
+  }
+
+  body[data-theme="light"] .takeaway-card {
+    background: rgba(37, 99, 235, 0.06) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+    border-color: #2563eb !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
+  }
+
+  body[data-theme="light"] .architect-note {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+  }
+
+  body[data-theme="light"] .architect-content h4 {
+    color: #b45309 !important;
+  }
+
+  body[data-theme="light"] .telemetry-note {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%) !important;
+    border-color: rgba(6, 182, 212, 0.3) !important;
+  }
+
+  body[data-theme="light"] .telemetry-content h4 {
+    color: #0891b2 !important;
+  }
+
+  body[data-theme="light"] .tutor-prompt {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: rgba(168, 85, 247, 0.3) !important;
+  }
+
+  body[data-theme="light"] .tutor-content h4 {
+    color: #7c3aed !important;
+  }
+`}</style>

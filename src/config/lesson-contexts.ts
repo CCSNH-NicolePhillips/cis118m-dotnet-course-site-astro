@@ -157,11 +157,13 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-04-weekly-assessment': "Week 4 Weekly Assessment: Quiz covering string immutability, interpolation, escape sequences, string methods, and StringBuilder.",
   
   // Week 5
-  'week-05': "Topic: Conditional Logic. Focus: Making decisions in code.",
-  'week-05-lesson-1': "Topic: Conditional Logic. Focus: if statements as decision points in code.",
-  'week-05-lesson-2': "Topic: Comparison Operators. Focus: ==, !=, <, >, <=, >= for making comparisons.",
-  'week-05-lab': "Topic: Decision Trees. Mission: Programs that make choices based on conditions.",
-  'week-05-homework': "Topic: Reflection. Focus: Understanding boolean logic and branching.",
+  'week-05': "Week 5: User Input & Type Parsing. Students are learning to capture user input with Console.ReadLine() (a blocking call) and parse text to numeric types using int.Parse(), double.Parse(), and decimal.Parse(). Key concept: decimal is REQUIRED for financial data due to floating-point precision issues. This week culminates in the Phase I Boss Fight.",
+  'week-05-5-1-readline': "Week 5 Section 5.1: The Intake Valve. Focus: Console.ReadLine() as a blocking call that halts the CPU thread until Enter is pressed. Console.Write() for prompts (no newline). Understanding input buffers. Guide students on how to handle null or empty inputs using basic string checks.",
+  'week-05-5-2-type-parsing': "Week 5 Section 5.2: The Data Refiner. Focus: Why int x = Console.ReadLine() fails (type mismatch). Using int.Parse(), double.Parse(), decimal.Parse(). CRITICAL: decimal.Parse() is required for financial data - remember the 0.1+0.2 problem from Week 3.",
+  'week-05-5-3-boss-fight': "Week 5 Section 5.3: Boss Fight - Project Budget Estimator. Students build an interactive console app that: prompts for project name (string), estimated hours (double), hourly rate (decimal). Calculates total and displays with string interpolation. This is the Phase I final challenge combining all foundational skills.",
+  'week-05-access-control': "Week 5 Access Control Lab: Students create a simple access control system using Console.Write() for prompts, Console.ReadLine() for input, and string interpolation ($\"...\") for output. Guide them on proper prompt formatting (Write vs WriteLine).",
+  'week-05-doubler': "Week 5 Doubler Lab: Students read a number as string, parse to int using int.Parse(), multiply by 2, and display. Focus on the parsing step - why you can't directly assign Console.ReadLine() to an int.",
+  'week-05-boss-fight': "Week 5 Boss Fight: Project Budget Estimator. Students must use Console.ReadLine() for all inputs, decimal.Parse() for hourly rate (money!), proper calculation, and string interpolation with currency formatting. Successful completion unlocks Week 6.",
   
   // Week 6
   'week-06': "Topic: Advanced Branching. Focus: Multiple paths and complex decisions.",

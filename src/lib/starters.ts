@@ -91,6 +91,29 @@ else
     Console.WriteLine("Please enter a whole number between 0 and 100.");
 }
 `,
+  "05": `// Week 5: User Input & Type Parsing
+// Practice capturing input and converting to numeric types
+using System;
+
+// Capturing string input
+Console.Write("Enter your name: ");
+string name = Console.ReadLine();
+
+// Parsing to numeric types
+Console.Write("Enter your age: ");
+string ageText = Console.ReadLine();
+int age = int.Parse(ageText);
+
+// Using decimal for money
+Console.Write("Enter hourly rate: ");
+string rateText = Console.ReadLine();
+decimal rate = decimal.Parse(rateText);
+
+// Display with interpolation
+Console.WriteLine($"\\nHello, {name}!");
+Console.WriteLine($"In 10 years you'll be {age + 10}");
+Console.WriteLine($"Your rate: {rate:C}");
+`,
 };
 
 // Multi-file starters for weeks introducing classes

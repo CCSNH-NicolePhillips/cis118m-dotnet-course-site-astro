@@ -1,0 +1,704 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 5.3 • The Boss Fight"
+description: "Build an Interactive Project Budget Estimator"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# ⚔️ BOSS FIGHT: Project Budget Estimator
+
+<DueDateBanner week={5} type="Lab" />
+
+<div class="boss-header">
+  <div class="boss-banner">
+    <div class="boss-icon">⚔️</div>
+    <div class="boss-title">
+      <h2>BOSS FIGHT: INITIALIZE</h2>
+      <p class="boss-subtitle">Phase I Final Challenge</p>
+    </div>
+    <div class="boss-status">
+      <span class="status-indicator">🔴 LIVE</span>
+    </div>
+  </div>
+</div>
+
+<div class="mission-brief">
+  <div class="brief-header">
+    <div class="brief-icon">📋</div>
+    <h3>Mission Briefing</h3>
+  </div>
+  <div class="brief-content">
+    <p>
+      Architect, you've completed Phase I training. Your skills have been tested individually—now it's time to <strong>integrate everything</strong> into a single, working application. The client needs a <strong>Project Budget Estimator</strong> that calculates funding requirements based on user input.
+    </p>
+    <p>
+      This is not a drill. Your code will be analyzed, validated, and graded by the Senior Engineering team.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🎯 Mission Requirements
+
+Build an interactive console application that:
+
+<div class="requirements-grid">
+  <div class="requirement-card">
+    <div class="req-number">1</div>
+    <div class="req-content">
+      <h4>Project Name</h4>
+      <p>Prompt for and capture a <code>string</code> project name</p>
+    </div>
+  </div>
+  <div class="requirement-card">
+    <div class="req-number">2</div>
+    <div class="req-content">
+      <h4>Estimated Hours</h4>
+      <p>Prompt for and parse a <code>double</code> for estimated hours</p>
+    </div>
+  </div>
+  <div class="requirement-card">
+    <div class="req-number">3</div>
+    <div class="req-content">
+      <h4>Hourly Rate</h4>
+      <p>Prompt for and parse a <code>decimal</code> for architect hourly rate (💰 MONEY!)</p>
+    </div>
+  </div>
+  <div class="requirement-card highlight">
+    <div class="req-number">4</div>
+    <div class="req-content">
+      <h4>Budget Calculation</h4>
+      <p>Calculate total and display: <code>Project [Name] requires $[Total] in funding.</code></p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 📤 Required Output Format
+
+Your program output should follow this exact format:
+
+```
+=== PROJECT BUDGET ESTIMATOR ===
+Enter project name: Website Redesign
+Enter estimated hours: 120.5
+Enter architect hourly rate: 85.00
+
+=== BUDGET REPORT ===
+Project Website Redesign requires $10,242.50 in funding.
+================================
+```
+
+> **Note:** The dollar amount should be formatted as currency using `$"{total:C}"` or similar formatting.
+
+---
+
+## 🏛️ Architect's Note
+
+<div class="architect-note">
+  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-content">
+    <h4>⚠️ Production Warning</h4>
+    <p>
+      In production systems, we <strong>never</strong> use <code>.Parse()</code> without a <code>try-catch</code> block (which we will learn in Phase III). For now, assume the user is a trusted engineer who enters valid data.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🔌 System Telemetry
+
+<div class="telemetry-note">
+  <div class="telemetry-icon">📡</div>
+  <div class="telemetry-content">
+    <h4>System Telemetry Notice</h4>
+    <p>
+      Your progress on this Boss Fight is being transmitted to the <strong>Instructor Dashboard</strong>. Successful completion will increment your participation count and unlock Week 6. Ensure your variable names follow <strong>PascalCase</strong> for classes and <strong>camelCase</strong> for local variables.
+    </p>
+  </div>
+</div>
+
+---
+
+## 🏗️ Code Editor
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-05-boss-fight" 
+    style="width: 100%; height: 650px; border: none;"
+    title="Boss Fight Code Editor"
+  ></iframe>
+</div>
+
+---
+
+## ✅ Validation Checklist
+
+The automated grader will verify:
+
+<div class="validation-checklist">
+  <div class="check-item">
+    <input type="checkbox" id="check1" disabled />
+    <label for="check1">Uses <code>Console.ReadLine()</code> to capture user input</label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="check2" disabled />
+    <label for="check2">Uses <code>decimal.Parse()</code> for the hourly rate (financial data)</label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="check3" disabled />
+    <label for="check3">Uses string interpolation with <code>$</code> symbol for output</label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="check4" disabled />
+    <label for="check4">Correctly calculates total budget (hours × rate)</label>
+  </div>
+  <div class="check-item">
+    <input type="checkbox" id="check5" disabled />
+    <label for="check5">Code compiles and runs without errors</label>
+  </div>
+</div>
+
+---
+
+## 💡 Hints
+
+<details>
+<summary>Hint 1: Getting the project name</summary>
+
+```csharp
+Console.Write("Enter project name: ");
+string projectName = Console.ReadLine();
+```
+
+</details>
+
+<details>
+<summary>Hint 2: Parsing hours (double)</summary>
+
+```csharp
+Console.Write("Enter estimated hours: ");
+string hoursText = Console.ReadLine();
+double hours = double.Parse(hoursText);
+```
+
+</details>
+
+<details>
+<summary>Hint 3: Parsing hourly rate (decimal for money!)</summary>
+
+```csharp
+Console.Write("Enter architect hourly rate: ");
+string rateText = Console.ReadLine();
+decimal hourlyRate = decimal.Parse(rateText);
+```
+
+Remember: Financial calculations MUST use decimal!
+</details>
+
+<details>
+<summary>Hint 4: Calculating and displaying total</summary>
+
+```csharp
+// Cast hours to decimal for accurate calculation
+decimal total = (decimal)hours * hourlyRate;
+
+// Display with currency formatting
+Console.WriteLine($"Project {projectName} requires {total:C} in funding.");
+```
+
+</details>
+
+---
+
+## 📝 Submission
+
+When your program runs correctly and displays the budget report:
+
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+    transition: all 0.3s ease;
+  ">
+    ⚔️ Submit Boss Fight
+  </button>
+  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+## ✅ Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Uses <code>Console.ReadLine()</code> for all three inputs</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Uses <code>decimal.Parse()</code> for hourly rate (financial data)</td>
+        <td>25</td>
+      </tr>
+      <tr>
+        <td>Uses string interpolation (<code>$"..."</code>) for output</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Correctly calculates total (hours × rate)</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Code compiles and runs without errors</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Header comment with name</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="completion-banner">
+  <div class="completion-icon">🏆</div>
+  <div class="completion-content">
+    <h3>Phase I Complete!</h3>
+    <p>
+      Upon successful submission, you will have completed <strong>Phase I: Foundations</strong> of the .NET Mastery Quest. Week 6 will unlock, introducing <strong>Decision Structures (if/else)</strong>—where your programs learn to make choices!
+    </p>
+  </div>
+</div>
+
+<style>{`
+  .boss-header {
+    margin: -24px -24px 24px -24px;
+    padding: 0;
+  }
+
+  .boss-banner {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border: 2px solid #e94560;
+    border-radius: 12px;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boss-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(233, 69, 96, 0.1), transparent);
+    animation: scan 3s linear infinite;
+  }
+
+  @keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .boss-icon {
+    font-size: 3rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .boss-title {
+    flex: 1;
+  }
+
+  .boss-title h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #e94560;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+  }
+
+  .boss-subtitle {
+    margin: 4px 0 0 0;
+    color: #aaa;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .status-indicator {
+    background: rgba(233, 69, 96, 0.2);
+    color: #e94560;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    animation: blink 2s ease-in-out infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .brief-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .brief-icon {
+    font-size: 1.5rem;
+  }
+
+  .brief-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+  }
+
+  .requirements-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 768px) {
+    .requirements-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .requirement-card {
+    display: flex;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(78, 201, 176, 0.2);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .requirement-card.highlight {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.3);
+  }
+
+  .req-number {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #4ec9b0 0%, #6b9fff 100%);
+    color: #1e1e1e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .req-content h4 {
+    margin: 0 0 4px 0;
+    color: #fff;
+  }
+
+  .req-content p {
+    margin: 0;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+
+  .architect-note {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .architect-avatar {
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+
+  .architect-content h4 {
+    margin: 0 0 8px 0;
+    color: #ffc107;
+  }
+
+  .telemetry-note {
+    display: flex;
+    gap: 16px;
+    background: linear-gradient(135deg, rgba(0, 188, 212, 0.1) 0%, rgba(33, 150, 243, 0.1) 100%);
+    border: 2px solid rgba(0, 188, 212, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .telemetry-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .telemetry-content h4 {
+    margin: 0 0 8px 0;
+    color: #00bcd4;
+  }
+
+  .validation-checklist {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .check-item:last-child {
+    border-bottom: none;
+  }
+
+  .check-item input {
+    width: 20px;
+    height: 20px;
+    accent-color: #4ec9b0;
+  }
+
+  .styled-table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .styled-table-container th {
+    background: rgba(78, 201, 176, 0.2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  .styled-table-container td {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .completion-banner {
+    display: flex;
+    gap: 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+    align-items: center;
+  }
+
+  .completion-icon {
+    font-size: 3rem;
+  }
+
+  .completion-content h3 {
+    margin: 0 0 8px 0;
+    color: #ffd700;
+  }
+
+  details {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 8px 0;
+  }
+  
+  details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #4ec9b0;
+  }
+  
+  details[open] summary {
+    margin-bottom: 12px;
+  }
+
+  /* Light mode overrides */
+  body[data-theme="light"] .boss-banner {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%) !important;
+    border-color: #dc2626 !important;
+  }
+
+  body[data-theme="light"] .boss-title h2 {
+    color: #dc2626 !important;
+    text-shadow: none !important;
+  }
+
+  body[data-theme="light"] .boss-subtitle {
+    color: #64748b !important;
+  }
+
+  body[data-theme="light"] .status-indicator {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: #dc2626 !important;
+  }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .brief-header h3 {
+    color: #2563eb !important;
+  }
+
+  body[data-theme="light"] .requirement-card {
+    background: rgba(37, 99, 235, 0.05) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
+  }
+
+  body[data-theme="light"] .requirement-card.highlight {
+    background: rgba(34, 197, 94, 0.08) !important;
+    border-color: rgba(34, 197, 94, 0.2) !important;
+  }
+
+  body[data-theme="light"] .req-number {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
+    color: white !important;
+  }
+
+  body[data-theme="light"] .req-content h4 {
+    color: #1e293b !important;
+  }
+
+  body[data-theme="light"] .req-content p {
+    color: #64748b !important;
+  }
+
+  body[data-theme="light"] .architect-note {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+  }
+
+  body[data-theme="light"] .architect-content h4 {
+    color: #b45309 !important;
+  }
+
+  body[data-theme="light"] .telemetry-note {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(14, 165, 233, 0.08) 100%) !important;
+    border-color: rgba(6, 182, 212, 0.3) !important;
+  }
+
+  body[data-theme="light"] .telemetry-content h4 {
+    color: #0891b2 !important;
+  }
+
+  body[data-theme="light"] .validation-checklist {
+    background: rgba(37, 99, 235, 0.05) !important;
+  }
+
+  body[data-theme="light"] .check-item {
+    border-color: rgba(37, 99, 235, 0.1) !important;
+  }
+
+  body[data-theme="light"] .styled-table-container table {
+    background: #f8fafc !important;
+  }
+
+  body[data-theme="light"] .styled-table-container th {
+    background: #e2e8f0 !important;
+    color: #1e293b !important;
+  }
+
+  body[data-theme="light"] .styled-table-container td {
+    color: #334155 !important;
+    border-color: #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .completion-banner {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.1) 0%, rgba(234, 179, 8, 0.1) 100%) !important;
+    border-color: rgba(234, 179, 8, 0.4) !important;
+  }
+
+  body[data-theme="light"] .completion-content h3 {
+    color: #a16207 !important;
+  }
+
+  body[data-theme="light"] details {
+    background: rgba(37, 99, 235, 0.08) !important;
+    border-color: rgba(37, 99, 235, 0.2) !important;
+  }
+
+  body[data-theme="light"] details summary {
+    color: #2563eb !important;
+  }
+`}</style>

@@ -168,6 +168,88 @@ class Program
     }
 }
 `,
+        "week-05-access-control": `// Name: Your Name Here
+// Assignment: Section 5.1 - Access Control System
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // TODO: Create an Access Control System
+        // 1. Use Console.Write() to prompt for a username (no newline)
+        // 2. Use Console.ReadLine() to capture the username
+        // 3. Display "Access Granted" with the username using string interpolation
+        
+        Console.WriteLine("=== ACCESS CONTROL SYSTEM ===");
+        
+        // Your code here:
+        
+        
+    }
+}
+`,
+        "week-05-doubler": `// Name: Your Name Here
+// Assignment: Section 5.2 - The Doubler
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // TODO: Create a program that doubles a number
+        // 1. Use Console.Write() to prompt for a number
+        // 2. Use Console.ReadLine() to capture the input
+        // 3. Use int.Parse() to convert the string to an integer
+        // 4. Multiply by 2 and display the result
+        
+        Console.WriteLine("=== THE DOUBLER ===");
+        
+        // Your code here:
+        
+        
+    }
+}
+`,
+        "week-05-boss-fight": `// Name: Your Name Here
+// Assignment: Boss Fight - Project Budget Estimator
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== PROJECT BUDGET ESTIMATOR ===");
+        
+        // TODO: Step 1 - Get project name (string)
+        // Use Console.Write() for prompt, Console.ReadLine() for input
+        
+        
+        // TODO: Step 2 - Get estimated hours (double)
+        // Use Console.Write(), Console.ReadLine(), and double.Parse()
+        
+        
+        // TODO: Step 3 - Get architect hourly rate (decimal - it's money!)
+        // Use Console.Write(), Console.ReadLine(), and decimal.Parse()
+        
+        
+        // TODO: Step 4 - Calculate total budget
+        // total = hours * rate (cast hours to decimal for accuracy)
+        
+        
+        // TODO: Step 5 - Display the budget report
+        Console.WriteLine();
+        Console.WriteLine("=== BUDGET REPORT ===");
+        // Use string interpolation: $"Project {name} requires {total:C} in funding."
+        
+        Console.WriteLine("================================");
+    }
+}
+`,
+
       };
 
       const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
