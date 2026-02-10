@@ -27,12 +27,17 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
   </div>
 
-  <div class="stdin-wrap">
+  <div class="stdin-wrap" id="stdin-section" style="border: 2px solid #3b82f6; border-radius: 8px; padding: 8px; margin-bottom: 8px; background: rgba(59, 130, 246, 0.1);">
     <div class="stdin-header" id="stdin-header">
-      <label for="stdin-input" class="input-label">Program Input (optional) <span id="stdin-toggle">▸</span></label>
+      <label for="stdin-input" class="input-label" style="font-weight: bold; color: #3b82f6;">
+        ⌨️ Program Input (for Console.ReadLine) <span id="stdin-toggle">▾</span>
+      </label>
     </div>
-    <div class="stdin-content" id="stdin-content">
-      <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Values passed to your program's stdin"></textarea>
+    <div class="stdin-content" id="stdin-content" style="display: block;">
+      <p style="font-size: 0.85em; margin: 4px 0 8px 0; color: var(--muted);">
+        Enter each input value on a separate line. These will be read by Console.ReadLine() in order.
+      </p>
+      <textarea id="stdin-input" class="stdin-input" rows="4" placeholder="Example for Boss Fight:&#10;Dragon Slayer&#10;100&#10;75.50"></textarea>
     </div>
   </div>
 
@@ -70,7 +75,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
   </div>
 
-  <script src="/monaco/vs/loader.js" type="text/javascript"></script>
+  <!-- Monaco loader is in CourseLayout.astro - don't load again -->
   <script define:vars={{ runnerUrl }}>
     // Inline runner client utilities
     const resolveRunnerUrl = (publicUrl, origin) => {
@@ -290,11 +295,13 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       
       outputDrawerHeader.addEventListener("click", toggleDrawer);
       
-      // Stdin input collapse
+      // Stdin input collapse - expanded by default for interactive programs
       const stdinHeader = document.getElementById("stdin-header");
       const stdinContent = document.getElementById("stdin-content");
       const stdinToggle = document.getElementById("stdin-toggle");
-      let stdinExpanded = false;
+      let stdinExpanded = true; // Default expanded so students see it
+      stdinContent.style.display = "block";
+      stdinToggle.textContent = "▾";
       
       const toggleStdin = () => {
         stdinExpanded = !stdinExpanded;
