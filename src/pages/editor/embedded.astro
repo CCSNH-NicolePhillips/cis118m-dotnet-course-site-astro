@@ -2,6 +2,7 @@
 import EmbeddedEditorLayout from "../../layouts/EmbeddedEditorLayout.astro";
 
 const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
+const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 ---
 
 <EmbeddedEditorLayout title="Embedded Editor">
@@ -57,9 +58,10 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
   </div>
 
-  <script define:vars={{ runnerUrl }}>
+  <script define:vars={{ runnerUrl, runnerWsUrl }}>
     (() => {
       const envRunnerUrl = runnerUrl;
+      const envRunnerWsUrl = runnerWsUrl;
       const qs = new URLSearchParams(window.location.search);
       const starterId = qs.get("starter") || "week-01-lab-1";
       const storageKey = `cis118m:${starterId}:Program.cs`;
@@ -1059,9 +1061,26 @@ class Program
           setStatus("Opened in new window");
         });
 
-        // Stdin input handling - hide since we now have interactive terminal
+        // Stdin input handling - show if WebSocket not configured (fallback mode)
         const stdinSection = document.getElementById("stdin-section");
-        if (stdinSection) stdinSection.style.display = 'none';
+        const stdinInput = document.getElementById("stdin-input");
+        const stdinHeader = document.getElementById("stdin-header");
+        const stdinContent = document.getElementById("stdin-content");
+        const stdinToggle = document.getElementById("stdin-toggle");
+        
+        if (envRunnerWsUrl) {
+          // WebSocket available - hide stdin section
+          if (stdinSection) stdinSection.style.display = 'none';
+        } else {
+          // Fallback mode - show stdin section
+          if (stdinSection) stdinSection.style.display = 'block';
+          if (stdinHeader) {
+            stdinHeader.addEventListener("click", () => {
+              stdinContent.classList.toggle("collapsed");
+              stdinToggle.textContent = stdinContent.classList.contains("collapsed") ? "▸" : "▾";
+            });
+          }
+        }
 
         // Interactive run via WebSocket
         const runInteractive = () => {
@@ -1088,10 +1107,18 @@ class Program
           outputStatus.textContent = "Connecting...";
           writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
 
-          // Build WebSocket URL
-          const wsProtocol = runnerBase.startsWith('https') ? 'wss' : 'ws';
-          const wsHost = runnerBase.replace(/^https?:\/\//, '');
-          const wsUrl = `${wsProtocol}://${wsHost}/ws/run`;
+          // Build WebSocket URL - needs direct runner URL (can't go through Netlify proxy)
+          if (!envRunnerWsUrl) {
+            writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
+            writeToTerminal('\x1b[33mFalling back to batch mode...\x1b[0m\r\n');
+            // Fall back to HTTP mode
+            const stdinInput = document.getElementById("stdin-input");
+            const stdin = stdinInput?.value || "";
+            runnerRequest("/api/run", buildPayload(editorInstance.getValue(), stdin), "run");
+            return;
+          }
+          
+          const wsUrl = envRunnerWsUrl + '/ws/run';
           
           try {
             currentWs = new WebSocket(wsUrl);

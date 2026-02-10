@@ -87,4 +87,4 @@
 # - RUNNER_URL: https://cis118m-dotnet-course-site-astro.onrender.com
 # - RUNNER_KEY: A secret key that the runner will validate
 # - Do NOT set PUBLIC_RUNNER_URL (leave empty)
-
+# - PUBLIC_RUNNER_WS_URL: wss://cis118m-dotnet-course-site-astro.onrender.com (for interactive terminal)
