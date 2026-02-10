@@ -39,7 +39,11 @@ export default async function handler(request, context) {
     // If user has a displayName or studentName, they've completed onboarding
     const isOnboardingComplete = onboardingComplete === 'true' || !!effectiveDisplayName;
 
-    console.log('[get-user-profile] userId:', userId, 'displayName:', effectiveDisplayName, 'onboardingComplete:', isOnboardingComplete);
+    // Track last login time for analytics
+    const loginTime = new Date().toISOString();
+    await redis.set(`cis118m:lastLogin:${userId}`, loginTime);
+    
+    console.log('[get-user-profile] userId:', userId, 'displayName:', effectiveDisplayName, 'onboardingComplete:', isOnboardingComplete, 'lastLogin:', loginTime);
 
     return new Response(
       JSON.stringify({ 

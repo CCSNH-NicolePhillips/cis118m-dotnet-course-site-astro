@@ -78,6 +78,9 @@ export default async function handler(request, context) {
         const studentName = await redis.get(`cis118m:studentName:${sub}`);
         const name = displayName || studentName;
         
+        // Get last login time
+        const lastLogin = await redis.get(`cis118m:lastLogin:${sub}`);
+        
         // Get quiz progress from user:progress:{sub} hash (attempts, bestScore, etc)
         const quizProgress = await redis.hgetall(`user:progress:${sub}`) || {};
         
@@ -171,6 +174,7 @@ export default async function handler(request, context) {
           email: email || "Unknown",
           progress: mergedProgress,
           lastActive,
+          lastLogin: lastLogin || null,
         });
       } catch (err) {
         console.error(`[instructor-progress] Error fetching data for ${sub}:`, err);

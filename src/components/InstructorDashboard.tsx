@@ -49,6 +49,23 @@ const isWeekStarted = (weekNum: number): boolean => {
   return new Date() >= new Date(weekConfig.unlockDate);
 };
 
+// Format last login time in a friendly way
+const formatLastLogin = (isoString: string): string => {
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  if (diffMins < 5) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return date.toLocaleDateString();
+};
+
 // Color scheme for each assignment type
 const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: string }> = {
   participation: { text: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)', border: '#fbbf24' },  // Yellow/Gold
@@ -123,6 +140,7 @@ interface Student {
   email: string;
   name?: string;
   progress: StudentProgress;
+  lastLogin?: string;
   parsedProgress?: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string } };
 }
 
@@ -327,6 +345,7 @@ const InstructorDashboard: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<'all' | AssignmentType>('all');
   const [showTotals, setShowTotals] = useState(true);
   const [hideTestStudents, setHideTestStudents] = useState(true); // Default to hiding test students
+  const [studentFilter, setStudentFilter] = useState<string>(''); // Filter by student name/email
   
   // Modal state
   const [modalData, setModalData] = useState<SubmissionModalData | null>(null);
@@ -357,11 +376,26 @@ const InstructorDashboard: React.FC = () => {
     return Array.from(weeks).sort((a, b) => a - b);
   }, [filteredAssignments]);
 
-  // Filter students based on test student toggle
+  // Filter students based on test student toggle and student search
   const displayedStudents = useMemo(() => {
-    if (!hideTestStudents) return students;
-    return students.filter(s => !isTestStudent(s.email));
-  }, [students, hideTestStudents]);
+    let filtered = students;
+    
+    // Filter out test students if toggle is on
+    if (hideTestStudents) {
+      filtered = filtered.filter(s => !isTestStudent(s.email));
+    }
+    
+    // Filter by student name/email search
+    if (studentFilter.trim()) {
+      const search = studentFilter.toLowerCase().trim();
+      filtered = filtered.filter(s => 
+        (s.name?.toLowerCase().includes(search)) ||
+        (s.email?.toLowerCase().includes(search))
+      );
+    }
+    
+    return filtered;
+  }, [students, hideTestStudents, studentFilter]);
 
   // Count how many test students are hidden
   const hiddenTestCount = useMemo(() => {
@@ -1027,6 +1061,41 @@ const InstructorDashboard: React.FC = () => {
           />
           Hide Test Students {hiddenTestCount > 0 && `(${hiddenTestCount} hidden)`}
         </label>
+        
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ddd' }}>
+          <span>🔍</span>
+          <input
+            type="text"
+            placeholder="Filter by student..."
+            value={studentFilter}
+            onChange={(e) => setStudentFilter(e.target.value)}
+            style={{
+              padding: '6px 10px',
+              borderRadius: '4px',
+              border: '1px solid #444',
+              background: '#1e293b',
+              color: '#f1f5f9',
+              width: '180px',
+              fontSize: '14px'
+            }}
+          />
+          {studentFilter && (
+            <button
+              onClick={() => setStudentFilter('')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#888',
+                cursor: 'pointer',
+                fontSize: '16px',
+                padding: '2px 6px'
+              }}
+              title="Clear filter"
+            >
+              ✕
+            </button>
+          )}
+        </label>
       </div>
 
       {/* Gradebook Table */}
@@ -1103,6 +1172,16 @@ const InstructorDashboard: React.FC = () => {
                       <div style={{ fontSize: '0.75rem', color: student.email ? '#666' : '#f0ad4e' }}>
                         {student.email || `ID: ${student.sub?.slice(-8) || 'No email on file'}`}
                       </div>
+                      {student.lastLogin && (
+                        <div style={{ fontSize: '0.7rem', color: '#4ade80', marginTop: '2px' }} title={`Last login: ${new Date(student.lastLogin).toLocaleString()}`}>
+                          🟢 {formatLastLogin(student.lastLogin)}
+                        </div>
+                      )}
+                      {!student.lastLogin && (
+                        <div style={{ fontSize: '0.7rem', color: '#f59e0b', marginTop: '2px' }}>
+                          ⚠️ Never logged in
+                        </div>
+                      )}
                     </td>
                     
                     {/* Assignment Scores with type-based colors */}
