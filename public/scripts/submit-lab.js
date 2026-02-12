@@ -64,23 +64,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Get starterId from URL - dynamically extracts week number
+  // Get starterId from URL or iframe - dynamically extracts the starter
   const getStarterId = () => {
     const path = window.location.pathname;
+    
+    // Check for boss-fight pattern first
+    const bossFightMatch = path.match(/\/week-(\d+)\/.*boss-fight/);
+    if (bossFightMatch) {
+      const weekNum = bossFightMatch[1];
+      return `week-${weekNum}-boss-fight`;
+    }
+    
     // Match patterns like /week-01/lab, /week-02/lab, /week-15/lab, etc.
-    const match = path.match(/\/week-(\d+)\/lab/);
-    if (match) {
-      const weekNum = match[1]; // e.g., "01", "02", "03", "15"
+    const labMatch = path.match(/\/week-(\d+)\/lab/);
+    if (labMatch) {
+      const weekNum = labMatch[1]; // e.g., "01", "02", "03", "15"
       // Week 1 uses different ID format for backwards compatibility
       if (weekNum === '01') {
         return 'week-01-lab-1';
       }
       return `week-${weekNum}-lab`;
     }
+    
+    // Try to get starterId from embedded iframe's src
+    const iframe = document.querySelector('iframe[src*="embedded"]');
+    if (iframe) {
+      const iframeSrc = iframe.getAttribute('src');
+      const starterMatch = iframeSrc?.match(/starter=([^&]+)/);
+      if (starterMatch) {
+        return starterMatch[1];
+      }
+    }
+    
     return 'week-01-lab-1'; // default fallback
   };
 
   const starterId = getStarterId();
+  console.log('[Submit] Using starterId:', starterId);
   
   // Get week number from starterId
   const getWeekNumber = (id) => {
