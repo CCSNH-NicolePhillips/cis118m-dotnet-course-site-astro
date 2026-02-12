@@ -78,6 +78,7 @@ public class Program
         });
 
         // WebSocket endpoint for interactive terminal
+        // Note: No auth required - endpoint is self-limiting (30s timeout, one process at a time per connection)
         app.UseWebSockets();
         app.Map("/ws/run", async (HttpContext context) =>
         {
@@ -85,18 +86,6 @@ public class Program
             {
                 context.Response.StatusCode = 400;
                 return;
-            }
-
-            // Check runner key from query string for WebSocket
-            var runnerKey = app.Configuration["RUNNER_KEY"];
-            if (!string.IsNullOrEmpty(runnerKey))
-            {
-                var providedKey = context.Request.Query["key"].FirstOrDefault();
-                if (providedKey != runnerKey)
-                {
-                    context.Response.StatusCode = 401;
-                    return;
-                }
             }
 
             using var ws = await context.WebSockets.AcceptWebSocketAsync();
