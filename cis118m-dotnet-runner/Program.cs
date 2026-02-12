@@ -110,7 +110,8 @@ public class Program
             if (result.MessageType == System.Net.WebSockets.WebSocketMessageType.Text)
             {
                 var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                var initMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInitMessage>(json);
+                var jsonOptions = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var initMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInitMessage>(json, jsonOptions);
                 code = initMsg?.Code;
                 starterId = initMsg?.StarterId ?? "interactive";
             }
@@ -199,7 +200,8 @@ public class Program
                         if (receiveResult.MessageType == System.Net.WebSockets.WebSocketMessageType.Text)
                         {
                             var inputJson = Encoding.UTF8.GetString(inputBuffer, 0, receiveResult.Count);
-                            var inputMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInputMessage>(inputJson);
+                            var inputOptions = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                            var inputMsg = System.Text.Json.JsonSerializer.Deserialize<InteractiveInputMessage>(inputJson, inputOptions);
                             if (inputMsg?.Type == "stdin" && inputMsg.Data != null && !proc.HasExited)
                             {
                                 await proc.StandardInput.WriteAsync(inputMsg.Data);
