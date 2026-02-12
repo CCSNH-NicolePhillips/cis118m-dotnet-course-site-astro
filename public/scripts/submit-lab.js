@@ -144,6 +144,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("No previous submission found:", err);
   }
   
+  // Helper to get code from embedded iframe via postMessage
+  const getCodeFromIframe = (starterId) => {
+    return new Promise((resolve) => {
+      const iframe = document.querySelector('iframe[src*="embedded"]');
+      if (!iframe || !iframe.contentWindow) {
+        resolve(null);
+        return;
+      }
+      
+      const timeout = setTimeout(() => {
+        window.removeEventListener('message', handler);
+        resolve(null);
+      }, 2000);
+      
+      const handler = (event) => {
+        if (event.data?.type === 'codeResponse' && event.data?.starterId === starterId) {
+          clearTimeout(timeout);
+          window.removeEventListener('message', handler);
+          resolve(event.data.code);
+        }
+      };
+      
+      window.addEventListener('message', handler);
+      iframe.contentWindow.postMessage({ type: 'getCode', starterId }, '*');
+    });
+  };
+  
   submitBtn.addEventListener("click", async () => {
     submitBtn.disabled = true;
     submitBtn.textContent = "Submitting & Grading...";
@@ -163,30 +190,45 @@ document.addEventListener("DOMContentLoaded", async () => {
         const editor = window.monacoEditorInstances[starterId];
         if (editor) {
           code = editor.getValue();
+          console.log('[Submit] Got code from monacoEditorInstances');
         }
+      }
+      
+      // Try to get from embedded iframe via postMessage
+      if (!code) {
+        console.log('[Submit] Trying to get code from iframe...');
+        code = await getCodeFromIframe(starterId);
+        if (code) console.log('[Submit] Got code from iframe');
       }
       
       // If no embedded editor, fetch the code from cloud storage
       if (!code) {
+        console.log('[Submit] Trying to fetch code from cloud...');
         const codeResponse = await fetch(`/.netlify/functions/code-get?starterId=${encodeURIComponent(starterId)}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
+        console.log('[Submit] Cloud response status:', codeResponse.status);
         if (codeResponse.ok) {
           const codeData = await codeResponse.json();
           code = codeData.code;
+          console.log('[Submit] Got code from cloud:', code ? 'yes' : 'no');
         }
       }
       
       // If no cloud code, try to get from local storage
       if (!code) {
+        console.log('[Submit] Trying localStorage...');
         const storageKey = `cis118m:${starterId}:Program.cs`;
         code = localStorage.getItem(storageKey);
+        console.log('[Submit] Got code from localStorage:', code ? 'yes' : 'no');
       }
       
       if (!code) {
         throw new Error("No code found. Please open the editor and write your program first.");
       }
+      
+      console.log('[Submit] Submitting code, length:', code.length);
       
       // Submit to API with auth
       const response = await fetch("/.netlify/functions/submit-lab", {

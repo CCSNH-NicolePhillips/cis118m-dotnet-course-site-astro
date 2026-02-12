@@ -663,6 +663,14 @@ class Program
         window.monacoEditorInstances = window.monacoEditorInstances || {};
         window.monacoEditorInstances[starterId] = editorInstance;
 
+        // Listen for parent page requests (for submit button)
+        window.addEventListener('message', (event) => {
+          if (event.data?.type === 'getCode' && event.data?.starterId === starterId) {
+            const code = editorInstance ? editorInstance.getValue() : null;
+            event.source?.postMessage({ type: 'codeResponse', starterId, code }, event.origin);
+          }
+        });
+
         // ===== C# INTELLISENSE =====
         if (!window.__csharpCompletionRegistered) {
           window.__csharpCompletionRegistered = true;
