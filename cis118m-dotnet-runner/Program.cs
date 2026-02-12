@@ -161,31 +161,51 @@ public class Program
 
             proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
             var exitTcs = new TaskCompletionSource<int>();
-
-            proc.OutputDataReceived += async (_, e) =>
-            {
-                if (e.Data != null)
-                {
-                    try { await SendWsMessage(ws, new { type = "stdout", data = e.Data + "\n" }); } catch { }
-                }
-            };
-
-            proc.ErrorDataReceived += async (_, e) =>
-            {
-                if (e.Data != null)
-                {
-                    try { await SendWsMessage(ws, new { type = "stderr", data = e.Data + "\n" }); } catch { }
-                }
-            };
-
             proc.Exited += (_, _) => exitTcs.TrySetResult(proc.ExitCode);
 
             proc.Start();
-            proc.BeginOutputReadLine();
-            proc.BeginErrorReadLine();
+
+            // Use character-by-character reading so Console.Write() without newline shows immediately
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            
+            // Read stdout character by character
+            var stdoutTask = Task.Run(async () =>
+            {
+                var buffer = new char[256];
+                try
+                {
+                    while (!cts.Token.IsCancellationRequested && !proc.HasExited)
+                    {
+                        var count = await proc.StandardOutput.ReadAsync(buffer, 0, buffer.Length);
+                        if (count == 0) break;
+                        var text = new string(buffer, 0, count);
+                        // Convert \n to \r\n for terminal
+                        text = text.Replace("\r\n", "\n").Replace("\n", "\r\n");
+                        try { await SendWsMessage(ws, new { type = "stdout", data = text }); } catch { }
+                    }
+                }
+                catch { }
+            });
+
+            // Read stderr character by character
+            var stderrTask = Task.Run(async () =>
+            {
+                var buffer = new char[256];
+                try
+                {
+                    while (!cts.Token.IsCancellationRequested && !proc.HasExited)
+                    {
+                        var count = await proc.StandardError.ReadAsync(buffer, 0, buffer.Length);
+                        if (count == 0) break;
+                        var text = new string(buffer, 0, count);
+                        text = text.Replace("\r\n", "\n").Replace("\n", "\r\n");
+                        try { await SendWsMessage(ws, new { type = "stderr", data = text }); } catch { }
+                    }
+                }
+                catch { }
+            });
 
             // Handle incoming WebSocket messages (stdin from user)
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30s max runtime
             var receiveTask = Task.Run(async () =>
             {
                 var inputBuffer = new byte[1024];
@@ -206,8 +226,6 @@ public class Program
                             {
                                 await proc.StandardInput.WriteAsync(inputMsg.Data);
                                 await proc.StandardInput.FlushAsync();
-                                // Echo the input back so terminal shows it
-                                await SendWsMessage(ws, new { type = "stdin_echo", data = inputMsg.Data });
                             }
                         }
                     }
@@ -226,6 +244,8 @@ public class Program
             }
             else
             {
+                // Give output tasks a moment to flush
+                await Task.Delay(100);
                 await SendWsMessage(ws, new { type = "exited", exitCode = proc.ExitCode });
             }
 

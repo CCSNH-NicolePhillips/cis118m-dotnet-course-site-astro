@@ -321,11 +321,30 @@ class Program
         term.open(terminalContainer);
         fitAddon.fit();
 
+        // Track current input line for editing
+        let inputBuffer = '';
+
         // Handle user input
         term.onData((data) => {
           if (currentWs && currentWs.readyState === WebSocket.OPEN) {
-            // Send input to server
-            currentWs.send(JSON.stringify({ type: 'stdin', data: data }));
+            // Handle special keys
+            if (data === '\r') {
+              // Enter key - send buffered input + newline
+              term.write('\r\n');
+              currentWs.send(JSON.stringify({ type: 'stdin', data: inputBuffer + '\n' }));
+              inputBuffer = '';
+            } else if (data === '\x7f' || data === '\b') {
+              // Backspace
+              if (inputBuffer.length > 0) {
+                inputBuffer = inputBuffer.slice(0, -1);
+                term.write('\b \b'); // Move back, clear char, move back
+              }
+            } else if (data >= ' ' || data === '\t') {
+              // Regular printable character
+              inputBuffer += data;
+              term.write(data);
+            }
+            // Ignore other control characters
           }
         });
 
