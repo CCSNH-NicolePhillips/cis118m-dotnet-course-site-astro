@@ -127,6 +127,8 @@ When the user types, characters go into an **input buffer**. Nothing happens unt
 <TryItNowRunner 
   starterId="week-05-readline-basic" 
   height={350}
+  enableStdin={true}
+  stdinPlaceholder="Type your name here (e.g., Alice)"
   code={`using System;
 
 class Program
@@ -141,7 +143,7 @@ class Program
         Console.WriteLine($"Hello, {name}!");
     }
 }`}
-  instructions="Click Run, then type your name and press Enter. Notice how nothing happens until you press Enter—that's the blocking behavior." 
+  instructions="Enter your name in the input box below, then click Run. Each line you enter is read by one Console.ReadLine() call." 
 />
 
 <DeepDiveTabs

@@ -72,8 +72,8 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '05', title: 'Week 05: User Input & Type Parsing', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-05/' },
-      { title: '5.1 The Intake Valve (Console.ReadLine)', href: '/week-05/5-1-readline/' },
-      { title: '5.2 The Data Refiner (Type Parsing)', href: '/week-05/5-2-type-parsing/' },
+      { title: '5.1 The Intake Valve', href: '/week-05/5-1-readline/' },
+      { title: '5.2 The Data Refiner', href: '/week-05/5-2-type-parsing/' },
       { title: '5.3 Boss Fight (Graded)', href: '/week-05/5-3-boss-fight/', isGatekeeper: true }
     ] },
   { slug: '06', title: 'Week 06: Decision Structures (if/else)', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00', pages: [

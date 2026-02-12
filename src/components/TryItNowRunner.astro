@@ -6,6 +6,8 @@ interface Props {
   instructions?: string;
   showFullEditorLink?: boolean;
   validationRegex?: string;
+  enableStdin?: boolean;
+  stdinPlaceholder?: string;
 }
 
 const { 
@@ -14,17 +16,27 @@ const {
   height = 200,
   instructions,
   showFullEditorLink = false,
-  validationRegex
+  validationRegex,
+  enableStdin = false,
+  stdinPlaceholder = "Enter input values, one per line"
 } = Astro.props;
 
 const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin}>
   {instructions && (
     <div class="instructions">
       <span class="icon">▶️</span>
       <span>{instructions}</span>
+    </div>
+  )}
+  
+  {enableStdin && (
+    <div class="stdin-section">
+      <label class="stdin-label">📥 Program Input (for Console.ReadLine)</label>
+      <textarea class="stdin-input" rows="2" placeholder={stdinPlaceholder}></textarea>
+      <div class="stdin-hint">Each line = one Console.ReadLine() call</div>
     </div>
   )}
   
@@ -518,8 +530,13 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     async function runCode() {
       const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
       
+      // Get stdin input if enabled
+      const stdinInput = container.querySelector('.stdin-input');
+      const stdin = stdinInput ? stdinInput.value : '';
+      
       console.log(`[TryItNowRunner ${runnerId}] Running code for starterId: ${starterId}`);
       console.log(`[TryItNowRunner ${runnerId}] Code preview:`, currentCode.substring(0, 100));
+      console.log(`[TryItNowRunner ${runnerId}] Stdin:`, stdin ? `${stdin.length} chars` : 'none');
       console.log(`[TryItNowRunner ${runnerId}] Output elements:`, { 
         consoleOutput: consoleOutput?.tagName,
         errorOutput: errorOutput?.tagName,
@@ -542,6 +559,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
           body: JSON.stringify({
             code: currentCode,
             starterId: starterId,
+            stdin: stdin,
           }),
         });
         
@@ -764,6 +782,43 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
   
   .instructions .icon {
     font-size: 16px;
+  }
+  
+  .stdin-section {
+    padding: 10px 12px;
+    background: rgba(59, 130, 246, 0.1);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  
+  .stdin-label {
+    display: block;
+    font-weight: 600;
+    color: #3b82f6;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .stdin-input {
+    width: 100%;
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    resize: vertical;
+  }
+  
+  .stdin-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  
+  .stdin-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
   }
   
   .editor-container {
