@@ -148,18 +148,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   const getCodeFromIframe = (starterId) => {
     return new Promise((resolve) => {
       const iframe = document.querySelector('iframe[src*="embedded"]');
+      console.log('[Submit] Looking for iframe:', iframe ? 'found' : 'not found');
       if (!iframe || !iframe.contentWindow) {
+        console.log('[Submit] No iframe or contentWindow');
         resolve(null);
         return;
       }
       
       const timeout = setTimeout(() => {
+        console.log('[Submit] iframe timeout - no response after 2s');
         window.removeEventListener('message', handler);
         resolve(null);
       }, 2000);
       
       const handler = (event) => {
+        console.log('[Submit] Received message:', event.data);
         if (event.data?.type === 'codeResponse' && event.data?.starterId === starterId) {
+          console.log('[Submit] Got code response from iframe');
           clearTimeout(timeout);
           window.removeEventListener('message', handler);
           resolve(event.data.code);
@@ -167,6 +172,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
       
       window.addEventListener('message', handler);
+      console.log('[Submit] Sending getCode to iframe for starterId:', starterId);
       iframe.contentWindow.postMessage({ type: 'getCode', starterId }, '*');
     });
   };

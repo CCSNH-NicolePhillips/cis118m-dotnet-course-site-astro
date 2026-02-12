@@ -665,9 +665,14 @@ class Program
 
         // Listen for parent page requests (for submit button)
         window.addEventListener('message', (event) => {
+          console.log('[Embedded] Received message:', event.data);
           if (event.data?.type === 'getCode' && event.data?.starterId === starterId) {
             const code = editorInstance ? editorInstance.getValue() : null;
-            event.source?.postMessage({ type: 'codeResponse', starterId, code }, event.origin);
+            console.log('[Embedded] Sending code response, length:', code?.length);
+            // Use '*' for same-origin iframe communication
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'codeResponse', starterId, code }, '*');
+            }
           }
         });
 
