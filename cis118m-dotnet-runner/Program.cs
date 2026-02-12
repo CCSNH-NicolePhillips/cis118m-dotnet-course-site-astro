@@ -158,6 +158,11 @@ public class Program
                 UseShellExecute = false,
                 CreateNoWindow = true,
             };
+            
+            // Set US culture so currency formatting shows $ instead of ¤
+            psi.Environment["DOTNET_SYSTEM_GLOBALIZATION_INVARIANT"] = "false";
+            psi.Environment["LC_ALL"] = "en_US.UTF-8";
+            psi.Environment["LANG"] = "en_US.UTF-8";
 
             proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
             var exitTcs = new TaskCompletionSource<int>();
@@ -938,6 +943,11 @@ internal static class RunnerUtilities
             UseShellExecute = false,
             CreateNoWindow = true,
         };
+        
+        // Set US culture so currency formatting shows $ instead of ¤
+        psi.Environment["DOTNET_SYSTEM_GLOBALIZATION_INVARIANT"] = "false";
+        psi.Environment["LC_ALL"] = "en_US.UTF-8";
+        psi.Environment["LANG"] = "en_US.UTF-8";
 
         using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
         var stdout = new StringBuilder();
