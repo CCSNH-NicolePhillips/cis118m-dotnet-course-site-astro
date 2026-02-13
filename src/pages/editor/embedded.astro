@@ -539,7 +539,7 @@ class Program
         const stderr = result?.stderr || "";
         const diagnostics = result?.diagnostics || [];
 
-        stdoutBlock.textContent = stdout.trim() ? stdout : "(no stdout)";
+        // Note: stdoutBlock removed - using terminal for output
         stderrBlock.textContent = stderr.trim() ? stderr : "(no stderr)";
         applyMarkers(diagnostics);
         
@@ -566,8 +566,8 @@ class Program
           return;
         }
 
-        // Switch to console tab to show run output
-        document.querySelector('[data-tab="console"]').click();
+        // Switch to terminal tab to show run output
+        document.querySelector('[data-tab="terminal"]').click();
         outputStatus.textContent = runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run failed";
         setStatus(runOk ? "Run succeeded" : runTimedOut ? "Timed out" : "Run completed");
       };
@@ -575,7 +575,13 @@ class Program
       const runnerRequest = async (path, payload, kind) => {
         setBusy(true, kind === "check" ? "Running checks..." : "Running...");
         openDrawer();
-        stdoutBlock.textContent = "(running...)";
+        
+        // For checks, show status in terminal
+        if (kind === "check") {
+          initTerminal();
+          clearTerminal();
+          writeToTerminal('\x1b[36m⏳ Running checks...\x1b[0m\r\n');
+        }
         
         try {
           const res = await fetch(makeUrl(path), {
