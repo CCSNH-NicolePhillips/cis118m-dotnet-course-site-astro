@@ -4,6 +4,7 @@ import CourseLayout from "../../layouts/CourseLayout.astro";
 const title = "Browser Code Editor";
 const description = "Practice C# in the browser with Monaco, autosave, reset, download, compile, and run.";
 const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
+const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 ---
 
 <CourseLayout title={title} description={description}>
@@ -27,20 +28,6 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
   </div>
 
-  <div class="stdin-wrap" id="stdin-section" style="border: 2px solid #3b82f6; border-radius: 8px; padding: 8px; margin-bottom: 8px; background: rgba(59, 130, 246, 0.1);">
-    <div class="stdin-header" id="stdin-header">
-      <label for="stdin-input" class="input-label" style="font-weight: bold; color: #3b82f6;">
-        ⌨️ Program Input (for Console.ReadLine) <span id="stdin-toggle">▾</span>
-      </label>
-    </div>
-    <div class="stdin-content" id="stdin-content" style="display: block;">
-      <p style="font-size: 0.85em; margin: 4px 0 8px 0; color: var(--muted);">
-        Enter each input value on a separate line. These will be read by Console.ReadLine() in order.
-      </p>
-      <textarea id="stdin-input" class="stdin-input" rows="4" placeholder="Example for Boss Fight:&#10;Dragon Slayer&#10;100&#10;75.50"></textarea>
-    </div>
-  </div>
-
   <div id="editor" aria-label="Monaco editor" style="height:70vh; border:1px solid var(--border); border-radius:14px; overflow:hidden;"></div>
 
   <div class="output-drawer" id="output-drawer">
@@ -50,14 +37,14 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     </div>
     <div class="output-drawer-content" id="output-drawer-content">
       <div class="output-tabs">
-        <button class="output-tab active" data-tab="console">Console</button>
+        <button class="output-tab active" data-tab="terminal">Terminal</button>
         <button class="output-tab" data-tab="errors">Errors</button>
         <button class="output-tab" data-tab="diagnostics">Diagnostics</button>
         <button class="output-tab" data-tab="checks">Checks</button>
       </div>
       <div class="output-tab-content">
-        <div class="tab-pane active" id="tab-console">
-          <pre id="stdout" class="output-pre">(no output yet)</pre>
+        <div class="tab-pane active" id="tab-terminal">
+          <div id="terminal-container"></div>
         </div>
         <div class="tab-pane" id="tab-errors">
           <pre id="stderr" class="output-pre">(no errors yet)</pre>
@@ -76,7 +63,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
   </div>
 
   <!-- Monaco loader is in CourseLayout.astro - don't load again -->
-  <script define:vars={{ runnerUrl }}>
+  <script define:vars={{ runnerUrl, runnerWsUrl }}>
     // Inline runner client utilities
     const resolveRunnerUrl = (publicUrl, origin) => {
       const trimmed = (publicUrl ?? "").trim();
@@ -175,6 +162,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
 
     (() => {
       const envRunnerUrl = runnerUrl;
+      const envRunnerWsUrl = runnerWsUrl;
       const qs = new URLSearchParams(window.location.search);
       let week = (qs.get("week") || "").padStart(2, "0");
       const starterId = qs.get("starter") || (week ? `week-${week}-lesson-1` : "week-01-lesson-1");
@@ -213,9 +201,8 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       if (!checkBtn) {
         console.error('[Editor] check-btn element not found');
       }
-      const stdinInput = document.getElementById("stdin-input");
+      const terminalContainer = document.getElementById("terminal-container");
       const editorHost = document.getElementById("editor");
-      const stdoutBlock = document.getElementById("stdout");
       const stderrBlock = document.getElementById("stderr");
       const diagnosticsList = document.getElementById("diagnostics-list");
       const diagnosticsEmpty = document.getElementById("diagnostics-empty");
@@ -291,25 +278,88 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       
       const openDrawer = () => {
         if (!drawerExpanded) toggleDrawer();
+        fitAddon?.fit();
       };
       
       outputDrawerHeader.addEventListener("click", toggleDrawer);
       
-      // Stdin input collapse - expanded by default for interactive programs
-      const stdinHeader = document.getElementById("stdin-header");
-      const stdinContent = document.getElementById("stdin-content");
-      const stdinToggle = document.getElementById("stdin-toggle");
-      let stdinExpanded = true; // Default expanded so students see it
-      stdinContent.style.display = "block";
-      stdinToggle.textContent = "▾";
-      
-      const toggleStdin = () => {
-        stdinExpanded = !stdinExpanded;
-        stdinContent.style.display = stdinExpanded ? "block" : "none";
-        stdinToggle.textContent = stdinExpanded ? "▾" : "▸";
+      // Initialize xterm.js terminal
+      let term = null;
+      let fitAddon = null;
+      let currentWs = null;
+      let inputBuffer = '';
+
+      const initTerminal = () => {
+        if (term) return;
+        term = new Terminal({
+          cursorBlink: true,
+          fontSize: 13,
+          fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
+          theme: {
+            background: '#0f172a',
+            foreground: '#e2e8f0',
+            cursor: '#22c55e',
+            cursorAccent: '#0f172a',
+            selection: 'rgba(34, 197, 94, 0.3)',
+            black: '#1e293b',
+            red: '#ef4444',
+            green: '#22c55e',
+            yellow: '#eab308',
+            blue: '#3b82f6',
+            magenta: '#a855f7',
+            cyan: '#06b6d4',
+            white: '#f1f5f9',
+          },
+          rows: 12,
+        });
+        fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(terminalContainer);
+        fitAddon.fit();
+
+        // Handle user input
+        term.onData((data) => {
+          if (currentWs && currentWs.readyState === WebSocket.OPEN) {
+            if (data === '\r') {
+              // Enter key - send buffered input + newline
+              term.write('\r\n');
+              currentWs.send(JSON.stringify({ type: 'stdin', data: inputBuffer + '\n' }));
+              inputBuffer = '';
+            } else if (data === '\x7f' || data === '\b') {
+              // Backspace
+              if (inputBuffer.length > 0) {
+                inputBuffer = inputBuffer.slice(0, -1);
+                term.write('\b \b');
+              }
+            } else if (data >= ' ' || data === '\t') {
+              // Regular printable character
+              inputBuffer += data;
+              term.write(data);
+            }
+          }
+        });
+
+        // Resize on window resize
+        window.addEventListener('resize', () => fitAddon?.fit());
       };
-      
-      stdinHeader.addEventListener("click", toggleStdin);
+
+      const clearTerminal = () => {
+        if (term) {
+          term.clear();
+          term.reset();
+        }
+        inputBuffer = '';
+      };
+
+      const writeToTerminal = (text, color = null) => {
+        if (!term) initTerminal();
+        if (color) {
+          const colors = { green: '\x1b[32m', red: '\x1b[31m', yellow: '\x1b[33m', cyan: '\x1b[36m', reset: '\x1b[0m' };
+          term.write(colors[color] + text + colors.reset);
+        } else {
+          term.write(text);
+        }
+      };
       
       // Tab switching
       document.querySelectorAll(".output-tab").forEach(tab => {
@@ -319,6 +369,7 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
           tab.classList.add("active");
           document.getElementById(`tab-${target}`).classList.add("active");
+          if (target === 'terminal') fitAddon?.fit();
         });
       });
 
@@ -797,11 +848,152 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
             runnerRequest("/api/compile", payload, "compile");
           });
 
-          runBtn.addEventListener("click", () => {
+          // Interactive run via WebSocket
+          const runInteractive = () => {
             if (!editorInstance) return;
-            const payload = buildRunnerPayload(starterId, editorInstance.getValue(), stdinInput.value || "");
-            runnerRequest("/api/run", payload, "run");
-          });
+            
+            // Close any existing connection
+            if (currentWs) {
+              currentWs.close();
+              currentWs = null;
+            }
+
+            initTerminal();
+            clearTerminal();
+            openDrawer();
+            
+            // Switch to terminal tab
+            document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
+            document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+            document.querySelector('[data-tab="terminal"]').classList.add("active");
+            document.getElementById("tab-terminal").classList.add("active");
+            fitAddon?.fit();
+
+            setBusy(true, "Connecting...");
+            outputStatus.textContent = "Connecting...";
+            writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
+
+            // Build WebSocket URL
+            if (!envRunnerWsUrl) {
+              writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
+              writeToTerminal('\x1b[33mFalling back to batch mode...\x1b[0m\r\n');
+              // Fall back to HTTP mode
+              runnerRequest("/api/run", buildRunnerPayload(starterId, editorInstance.getValue(), ""), "run");
+              return;
+            }
+            
+            const wsUrl = envRunnerWsUrl + '/ws/run';
+            
+            try {
+              currentWs = new WebSocket(wsUrl);
+            } catch (err) {
+              writeToTerminal('\x1b[31m❌ Failed to connect: ' + err.message + '\x1b[0m\r\n');
+              setBusy(false);
+              outputStatus.textContent = "Connection failed";
+              return;
+            }
+
+            currentWs.onopen = () => {
+              writeToTerminal('\x1b[32m✓ Connected\x1b[0m\r\n');
+              currentWs.send(JSON.stringify({
+                code: editorInstance.getValue(),
+                starterId: starterId
+              }));
+            };
+
+            currentWs.onmessage = (event) => {
+              try {
+                const msg = JSON.parse(event.data);
+                
+                switch (msg.type) {
+                  case 'status':
+                    outputStatus.textContent = msg.message;
+                    writeToTerminal('\x1b[36m' + msg.message + '\x1b[0m\r\n');
+                    break;
+                    
+                  case 'started':
+                    outputStatus.textContent = "Running (type input below)";
+                    writeToTerminal('\x1b[32m─── Program Started ───\x1b[0m\r\n');
+                    writeToTerminal('\x1b[90m(Type your input and press Enter)\x1b[0m\r\n\r\n');
+                    setStatus("Running");
+                    setBusy(false);
+                    term.focus();
+                    break;
+                    
+                  case 'stdout':
+                    term.write(msg.data.replace(/\n/g, '\r\n'));
+                    break;
+                    
+                  case 'stderr':
+                    term.write('\x1b[31m' + msg.data.replace(/\n/g, '\r\n') + '\x1b[0m');
+                    stderrBlock.textContent = (stderrBlock.textContent === '(no errors yet)' ? '' : stderrBlock.textContent) + msg.data;
+                    break;
+                    
+                  case 'stdin_echo':
+                    // Input is echoed - already displayed by terminal
+                    break;
+                    
+                  case 'compile_error':
+                    writeToTerminal('\r\n\x1b[31m❌ Compilation Failed\x1b[0m\r\n');
+                    if (msg.diagnostics) {
+                      msg.diagnostics.forEach(d => {
+                        writeToTerminal(`\x1b[31m  Line ${d.Line}: ${d.Message}\x1b[0m\r\n`);
+                      });
+                    }
+                    if (msg.stderr) {
+                      stderrBlock.textContent = msg.stderr;
+                    }
+                    applyMarkers(msg.diagnostics || []);
+                    outputStatus.textContent = "Compile error";
+                    setStatus("Compile error");
+                    setBusy(false);
+                    break;
+                    
+                  case 'exited':
+                    writeToTerminal('\r\n\x1b[32m─── Program Exited (code: ' + msg.exitCode + ') ───\x1b[0m\r\n');
+                    outputStatus.textContent = msg.exitCode === 0 ? "Completed" : `Exited (${msg.exitCode})`;
+                    setStatus("Ready");
+                    setBusy(false);
+                    break;
+                    
+                  case 'timeout':
+                    writeToTerminal('\r\n\x1b[31m⏱️ ' + msg.message + '\x1b[0m\r\n');
+                    outputStatus.textContent = "Timed out";
+                    setStatus("Ready");
+                    setBusy(false);
+                    break;
+                    
+                  case 'error':
+                    writeToTerminal('\r\n\x1b[31m❌ Error: ' + msg.message + '\x1b[0m\r\n');
+                    outputStatus.textContent = "Error";
+                    setStatus("Ready");
+                    setBusy(false);
+                    break;
+                }
+              } catch (err) {
+                console.error('WS message parse error:', err);
+              }
+            };
+
+            currentWs.onerror = (err) => {
+              writeToTerminal('\x1b[31m❌ WebSocket error\x1b[0m\r\n');
+              outputStatus.textContent = "Connection error";
+              setStatus("Error");
+              setBusy(false);
+            };
+
+            currentWs.onclose = () => {
+              if (outputStatus.textContent === "Running (type input below)") {
+                writeToTerminal('\r\n\x1b[33m⚠️ Connection closed\x1b[0m\r\n');
+                outputStatus.textContent = "Disconnected";
+              }
+              setStatus("Ready");
+              setBusy(false);
+              currentWs = null;
+            };
+          };
+
+          runBtn.addEventListener("click", runInteractive);
           
           checkBtn.addEventListener("click", () => {
             console.log('[Check] Button clicked');
@@ -829,6 +1021,9 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
           
           // Mark lesson as in-progress when editor loads
           ProgressTracker.markInProgress(starterId);
+          
+          // Initialize terminal
+          initTerminal();
       };
 
       const startWhenReady = () => {
@@ -947,52 +1142,6 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
       font-size: 12px;
       line-height: 1.2;
     }
-
-    .stdin-wrap {
-      margin: 8px 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    
-    .stdin-header {
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-    }
-    
-    .stdin-header:hover .input-label {
-      color: var(--accent);
-    }
-    
-    .stdin-content {
-      display: none;
-    }
-
-    .stdin-input {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--panel2);
-      color: var(--text);
-      padding: 8px 10px;
-      font-family: monospace;
-      resize: vertical;
-    }
-
-    .input-label {
-      font-weight: 600;
-      color: var(--text);
-      font-size: 14px;
-      transition: color 0.2s;
-    }
-    
-    #stdin-toggle {
-      margin-left: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
     
     #editor {
       background: var(--panel);
@@ -1082,6 +1231,22 @@ const runnerUrl = import.meta.env.PUBLIC_RUNNER_URL ?? "";
     
     .tab-pane.active {
       display: block;
+    }
+    
+    /* Terminal container styles */
+    #terminal-container {
+      height: 100%;
+      background: #0f172a;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    #tab-terminal {
+      padding: 8px;
+    }
+    
+    #tab-terminal .xterm {
+      height: 100%;
     }
 
     .output-pre {
