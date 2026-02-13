@@ -8,6 +8,7 @@ interface Props {
   validationRegex?: string;
   enableStdin?: boolean;
   stdinPlaceholder?: string;
+  enableInteractiveTerminal?: boolean;
 }
 
 const { 
@@ -18,13 +19,15 @@ const {
   showFullEditorLink = false,
   validationRegex,
   enableStdin = false,
-  stdinPlaceholder = "Enter input values, one per line"
+  stdinPlaceholder = "Enter input values, one per line",
+  enableInteractiveTerminal = false
 } = Astro.props;
 
 const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
+const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin} data-enable-interactive={enableInteractiveTerminal} data-runner-ws-url={runnerWsUrl}>
   {instructions && (
     <div class="instructions">
       <span class="icon">▶️</span>
@@ -32,7 +35,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     </div>
   )}
   
-  {enableStdin && (
+  {enableStdin && !enableInteractiveTerminal && (
     <div class="stdin-section">
       <label class="stdin-label">📥 Program Input (for Console.ReadLine)</label>
       <textarea class="stdin-input" rows="2" placeholder={stdinPlaceholder}></textarea>
@@ -69,20 +72,28 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
   <div class="output-container" id="lab-output" data-collapsed="true">
     <div class="output-header" data-action="toggle-output">
       <span class="icon">▼</span>
-      <span class="title">Output</span>
+      <span class="title">{enableInteractiveTerminal ? 'Terminal' : 'Output'}</span>
       <span class="status"></span>
     </div>
     <div class="output-content">
-      <div class="output-tabs">
-        <button class="output-tab active" data-tab="console">Console</button>
-        <button class="output-tab" data-tab="errors">Errors</button>
-      </div>
-      <div class="output-panel" data-panel="console">
-        <pre class="output-text"></pre>
-      </div>
-      <div class="output-panel hidden" data-panel="errors">
-        <pre class="error-text"></pre>
-      </div>
+      {enableInteractiveTerminal ? (
+        <div class="terminal-panel">
+          <div class="terminal-container"></div>
+        </div>
+      ) : (
+        <>
+          <div class="output-tabs">
+            <button class="output-tab active" data-tab="console">Console</button>
+            <button class="output-tab" data-tab="errors">Errors</button>
+          </div>
+          <div class="output-panel" data-panel="console">
+            <pre class="output-text"></pre>
+          </div>
+          <div class="output-panel hidden" data-panel="errors">
+            <pre class="error-text"></pre>
+          </div>
+        </>
+      )}
     </div>
   </div>
 </div>
@@ -102,6 +113,15 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
     const statusSpan = container.querySelector('.status');
     const consoleOutput = container.querySelector('[data-panel="console"] .output-text');
     const errorOutput = container.querySelector('[data-panel="errors"] .error-text');
+    const terminalContainer = container.querySelector('.terminal-container');
+    const enableInteractive = container.dataset.enableInteractive === 'true';
+    const runnerWsUrl = container.dataset.runnerWsUrl || '';
+    
+    // Terminal state (for interactive mode)
+    let term = null;
+    let fitAddon = null;
+    let currentWs = null;
+    let inputBuffer = '';
     const outputTabs = container.querySelectorAll('.output-tab');
     const outputPanels = container.querySelectorAll('.output-panel');
     
@@ -148,6 +168,76 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       setTimeout(() => {
         confettiContainer.remove();
       }, 3000);
+    };
+    
+    // ===== Interactive Terminal Functions =====
+    const initTerminal = () => {
+      if (!enableInteractive || !terminalContainer || term) return;
+      
+      term = new Terminal({
+        cursorBlink: true,
+        fontSize: 13,
+        fontFamily: "'Fira Code', 'Consolas', 'Monaco', monospace",
+        theme: {
+          background: '#0f172a',
+          foreground: '#e2e8f0',
+          cursor: '#22c55e',
+          cursorAccent: '#0f172a',
+          selection: 'rgba(34, 197, 94, 0.3)',
+          black: '#1e293b',
+          red: '#ef4444',
+          green: '#22c55e',
+          yellow: '#eab308',
+          blue: '#3b82f6',
+          magenta: '#a855f7',
+          cyan: '#06b6d4',
+          white: '#f1f5f9',
+        },
+        rows: 8,
+      });
+      fitAddon = new FitAddon.FitAddon();
+      term.loadAddon(fitAddon);
+      term.open(terminalContainer);
+      fitAddon.fit();
+
+      // Handle user input
+      term.onData((data) => {
+        if (currentWs && currentWs.readyState === WebSocket.OPEN) {
+          if (data === '\r') {
+            term.write('\r\n');
+            currentWs.send(JSON.stringify({ type: 'stdin', data: inputBuffer + '\n' }));
+            inputBuffer = '';
+          } else if (data === '\x7f' || data === '\b') {
+            if (inputBuffer.length > 0) {
+              inputBuffer = inputBuffer.slice(0, -1);
+              term.write('\b \b');
+            }
+          } else if (data >= ' ' || data === '\t') {
+            inputBuffer += data;
+            term.write(data);
+          }
+        }
+      });
+
+      window.addEventListener('resize', () => fitAddon?.fit());
+    };
+
+    const clearTerminal = () => {
+      if (term) {
+        term.clear();
+        term.reset();
+      }
+      inputBuffer = '';
+    };
+
+    const writeToTerminal = (text, color = null) => {
+      if (!term) return;
+      if (color) {
+        const colors = { green: '\x1b[32m', red: '\x1b[31m', yellow: '\x1b[33m', cyan: '\x1b[36m', reset: '\x1b[0m' };
+        term.write(colors[color] + text + colors.reset);
+      } else {
+        term.write(text);
+      }
     };
     
     // ===== C# IntelliSense Data =====
@@ -694,6 +784,142 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
       }
     }
     
+    // Interactive run via WebSocket
+    async function runCodeInteractive() {
+      const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
+      
+      // Close any existing connection
+      if (currentWs) {
+        currentWs.close();
+        currentWs = null;
+      }
+
+      initTerminal();
+      clearTerminal();
+      toggleOutput(true);
+      
+      if (fitAddon) {
+        setTimeout(() => fitAddon.fit(), 100);
+      }
+
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span class="icon">⏳</span> Running...';
+      statusSpan.textContent = '⏳ Connecting...';
+      writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
+
+      if (!runnerWsUrl) {
+        writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
+        statusSpan.textContent = '✗ Not configured';
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="icon">▶</span> Run';
+        return;
+      }
+      
+      const wsUrl = runnerWsUrl + '/ws/run';
+      
+      try {
+        currentWs = new WebSocket(wsUrl);
+      } catch (err) {
+        writeToTerminal('\x1b[31m❌ Failed to connect: ' + err.message + '\x1b[0m\r\n');
+        statusSpan.textContent = '✗ Connection failed';
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="icon">▶</span> Run';
+        return;
+      }
+
+      currentWs.onopen = () => {
+        writeToTerminal('\x1b[32m✓ Connected\x1b[0m\r\n');
+        currentWs.send(JSON.stringify({
+          code: currentCode,
+          starterId: starterId
+        }));
+      };
+
+      currentWs.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          
+          switch (msg.type) {
+            case 'status':
+              statusSpan.textContent = msg.message;
+              writeToTerminal('\x1b[36m' + msg.message + '\x1b[0m\r\n');
+              break;
+              
+            case 'started':
+              statusSpan.textContent = 'Running...';
+              writeToTerminal('\x1b[32m─── Program Started ───\x1b[0m\r\n');
+              writeToTerminal('\x1b[90m(Type your input and press Enter)\x1b[0m\r\n\r\n');
+              runBtn.disabled = false;
+              runBtn.innerHTML = '<span class="icon">▶</span> Run';
+              term.focus();
+              break;
+              
+            case 'stdout':
+              term.write(msg.data.replace(/\n/g, '\r\n'));
+              break;
+              
+            case 'stderr':
+              term.write('\x1b[31m' + msg.data.replace(/\n/g, '\r\n') + '\x1b[0m');
+              break;
+              
+            case 'compile_error':
+              writeToTerminal('\r\n\x1b[31m❌ Compilation Failed\x1b[0m\r\n');
+              if (msg.diagnostics) {
+                msg.diagnostics.forEach(d => {
+                  writeToTerminal(`\x1b[31m  Line ${d.Line}: ${d.Message}\x1b[0m\r\n`);
+                });
+              }
+              statusSpan.textContent = '✗ Compile error';
+              statusSpan.style.color = '#ef4444';
+              runBtn.disabled = false;
+              runBtn.innerHTML = '<span class="icon">▶</span> Run';
+              break;
+              
+            case 'exited':
+              writeToTerminal('\r\n\x1b[32m─── Program Exited (code: ' + msg.exitCode + ') ───\x1b[0m\r\n');
+              statusSpan.textContent = msg.exitCode === 0 ? '✓ Completed' : `Exited (${msg.exitCode})`;
+              statusSpan.style.color = msg.exitCode === 0 ? '#10b981' : '#ef4444';
+              runBtn.disabled = false;
+              runBtn.innerHTML = '<span class="icon">▶</span> Run';
+              break;
+              
+            case 'timeout':
+              writeToTerminal('\r\n\x1b[31m⏱️ ' + msg.message + '\x1b[0m\r\n');
+              statusSpan.textContent = '⏱️ Timed out';
+              runBtn.disabled = false;
+              runBtn.innerHTML = '<span class="icon">▶</span> Run';
+              break;
+              
+            case 'error':
+              writeToTerminal('\r\n\x1b[31m❌ Error: ' + msg.message + '\x1b[0m\r\n');
+              statusSpan.textContent = '✗ Error';
+              runBtn.disabled = false;
+              runBtn.innerHTML = '<span class="icon">▶</span> Run';
+              break;
+          }
+        } catch (err) {
+          console.error('WS message parse error:', err);
+        }
+      };
+
+      currentWs.onerror = (err) => {
+        writeToTerminal('\x1b[31m❌ WebSocket error\x1b[0m\r\n');
+        statusSpan.textContent = '✗ Connection error';
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="icon">▶</span> Run';
+      };
+
+      currentWs.onclose = () => {
+        if (statusSpan.textContent === 'Running...') {
+          writeToTerminal('\r\n\x1b[33m⚠️ Connection closed\x1b[0m\r\n');
+          statusSpan.textContent = 'Disconnected';
+        }
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<span class="icon">▶</span> Run';
+        currentWs = null;
+      };
+    }
+    
     // Reset code
     function resetCode() {
       if (editor) {
@@ -702,15 +928,26 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
         const textarea = editorDiv.querySelector('textarea');
         if (textarea) textarea.value = originalCode;
       }
-      consoleOutput.textContent = '';
-      errorOutput.textContent = '';
+      if (consoleOutput) consoleOutput.textContent = '';
+      if (errorOutput) errorOutput.textContent = '';
       statusSpan.textContent = '';
       outputContainer.dataset.collapsed = 'true';
       outputHeader.querySelector('.icon').textContent = '▼';
+      
+      // Clear terminal if interactive
+      if (enableInteractive && term) {
+        clearTerminal();
+      }
     }
     
-    runBtn.addEventListener('click', runCode);
+    // Attach run button - use interactive mode if enabled
+    runBtn.addEventListener('click', enableInteractive ? runCodeInteractive : runCode);
     resetBtn.addEventListener('click', resetCode);
+    
+    // Initialize terminal on load if interactive
+    if (enableInteractive) {
+      setTimeout(() => initTerminal(), 100);
+    }
     
     // Expand/collapse editor (modal pop-out)
     const collapseEditor = () => {
@@ -1047,6 +1284,22 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
   
   .output-panel.hidden {
     display: none;
+  }
+  
+  /* Interactive terminal panel */
+  .terminal-panel {
+    padding: 8px;
+    background: #0f172a;
+    min-height: 150px;
+  }
+  
+  .terminal-container {
+    height: 140px;
+    background: #0f172a;
+  }
+  
+  .terminal-container .xterm {
+    height: 100%;
   }
   
   .output-text,
