@@ -133,123 +133,23 @@ const getWeekLockInfo = (weekSlug: string) => {
                   </button>
                   <div class="week-content" id={`week-${w.slug}-content`}>
                     <ul class="week-links">
-                      {w.slug === '01' ? (
-                        <>
-                          <li>
-                            <a href={`/week-${w.slug}/start-here/`} data-page={`/week-${w.slug}/start-here/`}>
-                              <span class="lesson-text">00. Start Here</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-start-here`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/syllabus/`} data-page={`/week-${w.slug}/syllabus/`}>
-                              <span class="lesson-text">01. Course Syllabus & Expectations</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-syllabus`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/required-quiz/`} data-page={`/week-${w.slug}/required-quiz/`}>
-                              <span class="lesson-text">02. Syllabus Assessment (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-required-quiz`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/lesson-1/`} data-page={`/week-${w.slug}/lesson-1/`} data-starter={`week-${w.slug}-lesson-1`}>
-                              <span class="lesson-text">03. Lesson: The Spark</span>
-                              <span class="lesson-status" data-starter={`week-${w.slug}-lesson-1`} data-page-id={`week-${w.slug}-lesson-1`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/lab-01/`} data-page={`/week-${w.slug}/lab-01/`}>
-                              <span class="lesson-text">04. Lab: Console Logic (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-lab-01`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
-                              <span class="lesson-text">05. Technical Reflection (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-homework`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/weekly-assessment/`} data-page={`/week-${w.slug}/weekly-assessment/`}>
-                              <span class="lesson-text">06. Weekly Assessment (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-weekly-assessment`}></span>
-                            </a>
-                          </li>
-                        </>
-                      ) : w.slug === '02' ? (
-                        <>
-                          <li>
-                            <a href={`/week-${w.slug}/`} data-page={`/week-${w.slug}/`}>
-                              <span class="lesson-text">2.0 Week Overview</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-overview`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/2-1-namespaces/`} data-page={`/week-${w.slug}/2-1-namespaces/`}>
-                              <span class="lesson-text">2.1 Namespaces & Classes</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-2-1-namespaces`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/2-2-main-method/`} data-page={`/week-${w.slug}/2-2-main-method/`}>
-                              <span class="lesson-text">2.2 The Main Method</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-2-2-main-method`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/2-3-compilation/`} data-page={`/week-${w.slug}/2-3-compilation/`}>
-                              <span class="lesson-text">2.3 Compilation Pipeline</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-2-3-compilation`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/2-4-style/`} data-page={`/week-${w.slug}/2-4-style/`}>
-                              <span class="lesson-text">2.4 Code Style & Conventions</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-2-4-style`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/lab/`} data-page={`/week-${w.slug}/lab/`}>
-                              <span class="lesson-text">Lab: Build a Program (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-lab`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/homework/`} data-page={`/week-${w.slug}/homework/`}>
-                              <span class="lesson-text">Technical Reflection (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-homework`}></span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href={`/week-${w.slug}/weekly-assessment/`} data-page={`/week-${w.slug}/weekly-assessment/`}>
-                              <span class="lesson-text">Weekly Assessment (Graded)</span>
-                              <span class="lesson-status" data-page-id={`week-${w.slug}-weekly-assessment`}></span>
-                            </a>
-                          </li>
-                        </>
-                      ) : (
-                        <>
-                          {w.pages && w.pages.length > 0 ? (
-                            w.pages.map((page) => {
-                              // Extract page ID from href for status tracking
-                              const pageId = page.href.replace(/^\//, '').replace(/\/$/, '').replace(/\//g, '-');
-                              return (
-                                <li>
-                                  <a href={page.href} data-page={page.href}>
-                                    <span class="lesson-text">{page.title}</span>
-                                    <span class="lesson-status" data-page-id={pageId}></span>
-                                  </a>
-                                </li>
-                              );
-                            })
-                          ) : (
+                      {w.pages && w.pages.length > 0 ? (
+                        w.pages.map((page) => {
+                          // Extract page ID from href for status tracking
+                          const pageId = page.href.replace(/^\//, '').replace(/\/$/, '').replace(/\//g, '-');
+                          return (
                             <li>
-                              <span class="lesson-text" style="opacity: 0.5;">Content coming soon...</span>
+                              <a href={page.href} data-page={page.href}>
+                                <span class="lesson-text">{page.title}</span>
+                                <span class="lesson-status" data-page-id={pageId}></span>
+                              </a>
                             </li>
-                          )}
-                        </>
+                          );
+                        })
+                      ) : (
+                        <li>
+                          <span class="lesson-text" style="opacity: 0.5;">Content coming soon...</span>
+                        </li>
                       )}
                     </ul>
                   </div>
