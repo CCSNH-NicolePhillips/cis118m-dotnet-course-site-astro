@@ -62,6 +62,12 @@ GRADING-SPECIFIC RULES:
    - Grade the CODE and CONTENT, not the person
    - Same submission = same grade regardless of who submitted
    - If requirements are met, give full points
+
+4. COMPILER/RUNTIME CHECK:
+   - If the code compiles and runs without errors, give FULL POINTS for the "Code compiles and runs" category
+   - Do NOT deduct from this category for formatting, output order, or style issues
+   - The ONLY reason to deduct from this category is if the code has actual syntax errors or crashes at runtime
+   - Output formatting differences belong in OTHER rubric categories, NOT the compiler check
 `;
 
 export const AI_TUTOR_RULES = `

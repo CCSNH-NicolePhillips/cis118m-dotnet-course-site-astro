@@ -303,13 +303,13 @@ export const lessonContexts = {
       Profile sanitization complete!
     `,
     rubric: `
-      Uses Trim() correctly (15pts): Removes whitespace from name and city
-      Uses ToUpper() correctly (15pts): Capitalizes state code
-      Uses Replace() correctly (20pts): Removes ( ) and space from phone number
-      Uses Substring() correctly (20pts): Extracts area code (first 3 digits)
-      Uses Length property (10pts): Displays bio character count
+      Uses Trim() correctly (15pts): Removes whitespace from name and city using .Trim()
+      Uses ToUpper() correctly (15pts): Capitalizes state code using .ToUpper()
+      Uses Replace() correctly (20pts): Removes ( ) and space from phone number using .Replace()
+      Uses Substring() correctly (20pts): Extracts area code (first 3 digits) using .Substring()
+      Uses Length property (10pts): Displays bio character count using .Length
       Uses string interpolation (10pts): Uses $"..." syntax for formatted output
-      Code compiles and runs (10pts): No syntax errors, produces expected output
+      Code compiles and runs (10pts): If the code compiles and runs without errors, award full 10 points. Do NOT deduct for output formatting or ordering differences - those belong in other categories.
     `,
     requiredKeywords: ["Trim", "ToUpper", "Replace", "Substring", "Length"],
     gradingTone: "college-freshman-friendly"
