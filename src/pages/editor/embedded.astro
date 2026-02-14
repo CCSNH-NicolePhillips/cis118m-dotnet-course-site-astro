@@ -8,21 +8,21 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 <EmbeddedEditorLayout title="Embedded Editor">
   <div class="editor-bar">
     <div class="editor-actions">
-      <button id="save-btn" class="button editor-btn" type="button">💾 Save</button>
-      <button id="reset-btn" class="button editor-btn" type="button">↺ Reset</button>
-      <button id="download-btn" class="button editor-btn" type="button">⬇ Download</button>
-      <button id="run-btn" class="button editor-btn primary" type="button" title="Ctrl/Cmd+Enter">▶ Run</button>
+      <button id="save-btn" class="button editor-btn" type="button"><span aria-hidden="true">💾</span> Save</button>
+      <button id="reset-btn" class="button editor-btn" type="button"><span aria-hidden="true">↺</span> Reset</button>
+      <button id="download-btn" class="button editor-btn" type="button"><span aria-hidden="true">⬇</span> Download</button>
+      <button id="run-btn" class="button editor-btn primary" type="button" title="Ctrl/Cmd+Enter" aria-label="Run code (Ctrl+Enter)"><span aria-hidden="true">▶</span> Run</button>
       <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">Run Checks</button>
-      <button id="popout-btn" class="button editor-btn" type="button" title="Open in new window">⤢ Pop Out</button>
-      <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
+      <button id="popout-btn" class="button editor-btn" type="button" title="Open in new window"><span aria-hidden="true">⤢</span> Pop Out</button>
+      <span id="status" class="hint" style="margin-left:10px;" aria-live="polite">Loading…</span>
     </div>
   </div>
 
   <div class="stdin-section" id="stdin-section">
-    <div class="stdin-header" id="stdin-header">
-      <span class="stdin-label">📥 Program Input (for Console.ReadLine)</span>
-      <span id="stdin-toggle" class="stdin-toggle">▾</span>
-    </div>
+    <button class="stdin-header" id="stdin-header" type="button" aria-expanded="false">
+      <label class="stdin-label" for="stdin-input"><span aria-hidden="true">📥</span> Program Input (for Console.ReadLine)</label>
+      <span id="stdin-toggle" class="stdin-toggle" aria-hidden="true">▾</span>
+    </button>
     <div class="stdin-content" id="stdin-content">
       <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Type your input here, one value per line.&#10;Example:&#10;Kitchen Remodel&#10;40.5&#10;125.50"></textarea>
       <div class="stdin-example">Note: Each Console.ReadLine() reads ONE line. Enter values in order, one per line!</div>
@@ -32,24 +32,24 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   <div id="editor" aria-label="Monaco editor" style="border:1px solid var(--border); border-radius:8px; overflow:hidden;"></div>
 
   <div class="output-drawer expanded" id="output-drawer">
-    <div class="output-drawer-header" id="output-drawer-header">
-      <span class="output-drawer-title">Terminal <span id="drawer-toggle">▾</span></span>
-      <span id="output-status" class="hint">Waiting to run…</span>
-    </div>
+    <button class="output-drawer-header" id="output-drawer-header" type="button" aria-expanded="true">
+      <span class="output-drawer-title">Terminal <span id="drawer-toggle" aria-hidden="true">▾</span></span>
+      <span id="output-status" class="hint" aria-live="polite">Waiting to run…</span>
+    </button>
     <div class="output-drawer-content" id="output-drawer-content">
-      <div class="output-tabs">
-        <button class="output-tab active" data-tab="terminal">Terminal</button>
-        <button class="output-tab" data-tab="errors">Errors</button>
-        <button class="output-tab" data-tab="checks">Checks</button>
+      <div class="output-tabs" role="tablist">
+        <button class="output-tab active" data-tab="terminal" role="tab" aria-selected="true" aria-controls="tab-terminal" id="tabctl-terminal">Terminal</button>
+        <button class="output-tab" data-tab="errors" role="tab" aria-selected="false" aria-controls="tab-errors" id="tabctl-errors">Errors</button>
+        <button class="output-tab" data-tab="checks" role="tab" aria-selected="false" aria-controls="tab-checks" id="tabctl-checks">Checks</button>
       </div>
       <div class="output-tab-content">
-        <div class="tab-pane active" id="tab-terminal">
+        <div class="tab-pane active" id="tab-terminal" role="tabpanel" aria-labelledby="tabctl-terminal">
           <div id="terminal-container"></div>
         </div>
-        <div class="tab-pane" id="tab-errors">
+        <div class="tab-pane" id="tab-errors" role="tabpanel" aria-labelledby="tabctl-errors" hidden>
           <pre id="stderr" class="output-pre">(no errors yet)</pre>
         </div>
-        <div class="tab-pane" id="tab-checks">
+        <div class="tab-pane" id="tab-checks" role="tabpanel" aria-labelledby="tabctl-checks" hidden>
           <div id="checks-results"></div>
           <div id="checks-hint" class="checks-hint"></div>
           <div id="checks-empty" class="hint">Click "Run Checks" to see guided feedback.</div>
@@ -381,6 +381,7 @@ class Program
         drawerExpanded = !drawerExpanded;
         outputDrawer.classList.toggle("expanded", drawerExpanded);
         drawerToggle.textContent = drawerExpanded ? "▴" : "▾";
+        outputDrawerHeader.setAttribute("aria-expanded", drawerExpanded ? "true" : "false");
         if (drawerExpanded) fitAddon?.fit();
       };
       
@@ -395,10 +396,16 @@ class Program
       document.querySelectorAll(".output-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           const target = tab.dataset.tab;
-          document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
-          document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-          tab.classList.add("active");
-          document.getElementById(`tab-${target}`).classList.add("active");
+          document.querySelectorAll(".output-tab").forEach(t => {
+            const isActive = t === tab;
+            t.classList.toggle("active", isActive);
+            t.setAttribute("aria-selected", isActive ? "true" : "false");
+          });
+          document.querySelectorAll(".tab-pane").forEach(p => {
+            const isActive = p.id === `tab-${target}`;
+            p.classList.toggle("active", isActive);
+            if (isActive) { p.removeAttribute("hidden"); } else { p.setAttribute("hidden", ""); }
+          });
           if (target === 'terminal') fitAddon?.fit();
         });
       });
@@ -1135,10 +1142,16 @@ class Program
           openDrawer();
           
           // Switch to terminal tab
-          document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
-          document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-          document.querySelector('[data-tab="terminal"]').classList.add("active");
-          document.getElementById("tab-terminal").classList.add("active");
+          document.querySelectorAll(".output-tab").forEach(t => {
+            const isTerminal = t.dataset.tab === "terminal";
+            t.classList.toggle("active", isTerminal);
+            t.setAttribute("aria-selected", isTerminal ? "true" : "false");
+          });
+          document.querySelectorAll(".tab-pane").forEach(p => {
+            const isTerminal = p.id === "tab-terminal";
+            p.classList.toggle("active", isTerminal);
+            if (isTerminal) { p.removeAttribute("hidden"); } else { p.setAttribute("hidden", ""); }
+          });
           fitAddon?.fit();
 
           setBusy(true, "Connecting...");
@@ -1349,6 +1362,12 @@ class Program
       padding: 8px 12px;
       cursor: pointer;
       user-select: none;
+      border: none;
+      width: 100%;
+      background: transparent;
+      font: inherit;
+      color: inherit;
+      text-align: left;
     }
     
     .stdin-header:hover {
@@ -1436,7 +1455,12 @@ class Program
       justify-content: space-between;
       padding: 6px 12px;
       cursor: pointer;
+      border: none;
       border-bottom: 1px solid var(--border, #444);
+      width: 100%;
+      background: transparent;
+      font: inherit;
+      color: inherit;
     }
     
     .output-drawer-title {

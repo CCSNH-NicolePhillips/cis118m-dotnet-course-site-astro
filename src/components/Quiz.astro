@@ -34,7 +34,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         <p class="question-text">{q.question}</p>
         
         {q.type === 'multiple-choice' && q.options && (
-          <div class="options">
+          <div class="options" role="radiogroup" aria-label={q.question}>
             {q.options.map((option, optIndex) => (
               <label class="option-label">
                 <input 
@@ -50,7 +50,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         )}
         
         {q.type === 'true-false' && (
-          <div class="options">
+          <div class="options" role="radiogroup" aria-label={q.question}>
             <label class="option-label">
               <input type="radio" name={`q-${q.id}`} value="True" required />
               <span>True</span>
@@ -89,7 +89,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     </div>
   </div>
   
-  <div class="quiz-results" id={`results-${quizId}`} style="display: none;">
+  <div class="quiz-results" id={`results-${quizId}`} style="display: none;" aria-live="polite">
     <div class="results-header">
       <h3>Results</h3>
       <div class="score-display" id={`score-${quizId}`}></div>

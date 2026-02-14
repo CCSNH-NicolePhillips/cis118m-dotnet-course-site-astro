@@ -30,13 +30,14 @@ const { checkId, question, correctAnswer, explanation } = Astro.props;
         class="knowledge-check-answer" 
         placeholder="Type your answer here..."
         rows="3"
+        aria-label="Your answer"
       ></textarea>
       <button type="button" class="knowledge-check-submit vscode-button">
         Check Answer
       </button>
     </div>
     
-    <div class="knowledge-check-feedback" style="display: none;">
+    <div class="knowledge-check-feedback" style="display: none;" aria-live="polite">
       <div class="feedback-correct" style="display: none;">
         <span class="feedback-icon">✅</span>
         <span class="feedback-text">Correct! +1 Participation Point</span>

@@ -78,9 +78,10 @@ const getWeekLockInfo = (weekSlug: string) => {
     </script>
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <div class="container">
       <div class="shell">
-        <aside class="card sidebar" id="sidebar">
+        <aside class="card sidebar" id="sidebar" aria-label="Course navigation">
           <button class="sidebar-collapse-btn" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
             <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -107,7 +108,7 @@ const getWeekLockInfo = (weekSlug: string) => {
 
           <hr />
 
-          <nav>
+          <nav aria-label="Course weeks">
             <div class="hint" style="margin-bottom:8px;">Weeks</div>
             <div class="week-menu">
               {WEEKS.map((w) => {
@@ -280,7 +281,7 @@ const getWeekLockInfo = (weekSlug: string) => {
           <header class="top-header">
             <div class="header-spacer"></div>
             <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" title="Toggle theme" aria-label="Toggle theme">
-              <span id="theme-icon">🌙</span>
+              <span id="theme-icon" aria-hidden="true">🌙</span>
             </button>
             <div class="auth-header">
               <!-- Logged out state -->
@@ -297,15 +298,15 @@ const getWeekLockInfo = (weekSlug: string) => {
                 </svg>
               </button>
               <div data-auth="dropdown-menu" class="dropdown-menu" role="menu" style="display:none;">
-                <a href="/grades/" class="dropdown-item" role="menuitem">📊 My Grades</a>
-                <button type="button" class="dropdown-item" role="menuitem" onclick="window.__onboarding?.openSettings()">⚙️ Settings</button>
+                <a href="/grades/" class="dropdown-item" role="menuitem"><span aria-hidden="true">📊</span> My Grades</a>
+                <button type="button" class="dropdown-item" role="menuitem" onclick="window.__onboarding?.openSettings()"><span aria-hidden="true">⚙️</span> Settings</button>
                 <hr style="margin: 4px 0; border: none; border-top: 1px solid var(--border);" />
                 <button data-auth="logout" type="button" class="dropdown-item" role="menuitem">Sign out</button>
               </div>
             </div>
           </header>
           
-          <main class="card main">
+          <main class="card main" id="main-content">
             <div id="content-loading" style="display:block; text-align:center; padding:60px 20px; color: var(--text-muted);">
               <p>Loading...</p>
             </div>
@@ -411,6 +412,10 @@ const getWeekLockInfo = (weekSlug: string) => {
           sidebar.classList.toggle("collapsed", !isExpanded);
           sidebar.classList.toggle("pinned", isPinned);
           
+          // Update collapse button accessibility
+          collapseBtn.setAttribute("aria-label", isExpanded ? "Collapse sidebar" : "Expand sidebar");
+          collapseBtn.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+          
           // Update pin button appearance
           const pinPath = pinBtn.querySelector('path:first-child');
           if (pinPath) {
@@ -418,6 +423,7 @@ const getWeekLockInfo = (weekSlug: string) => {
           }
           pinBtn.style.opacity = isPinned ? "1" : "0.5";
           pinBtn.style.color = isPinned ? "var(--accent)" : "var(--muted)";
+          pinBtn.setAttribute("aria-label", isPinned ? "Unpin sidebar" : "Pin sidebar");
         };
         
         applySidebarState();

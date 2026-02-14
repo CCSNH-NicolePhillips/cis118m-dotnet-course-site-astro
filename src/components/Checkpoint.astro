@@ -36,7 +36,7 @@ const { checkpointId, title, questions } = Astro.props;
         <p class="question-text">{q.question}</p>
         
         {q.type === 'multiple-choice' && q.options && (
-          <div class="options">
+          <div class="options" role="radiogroup" aria-label={q.question}>
             {q.options.map((option) => (
               <label class="option-label" data-value={option}>
                 <input 
@@ -52,7 +52,7 @@ const { checkpointId, title, questions } = Astro.props;
         )}
         
         {q.type === 'true-false' && (
-          <div class="options">
+          <div class="options" role="radiogroup" aria-label={q.question}>
             <label class="option-label" data-value="True">
               <input type="radio" name={`checkpoint-${q.id}`} value="True" />
               <span>True</span>
@@ -79,7 +79,7 @@ const { checkpointId, title, questions } = Astro.props;
           </div>
         )}
         
-        <div class="explanation" style="display: none;">
+        <div class="explanation" style="display: none;" aria-live="polite">
           {q.explanation && <p>{q.explanation}</p>}
         </div>
       </div>

@@ -3,11 +3,11 @@
 ---
 
 <!-- Welcome Modal (shown on first login) -->
-<div id="welcome-modal" class="onboarding-modal" style="display: none;">
+<div id="welcome-modal" class="onboarding-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="welcome-heading">
   <div class="modal-backdrop"></div>
   <div class="modal-content">
     <div class="modal-header">
-      <h2>👋 Welcome to CIS118M!</h2>
+      <h2 id="welcome-heading"><span aria-hidden="true">👋</span> Welcome to CIS118M!</h2>
       <p class="modal-subtitle">.NET Programming with C#</p>
     </div>
     
@@ -49,12 +49,12 @@
 </div>
 
 <!-- Settings Modal (accessible from dropdown) -->
-<div id="settings-modal" class="onboarding-modal" style="display: none;">
+<div id="settings-modal" class="onboarding-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="settings-heading">
   <div class="modal-backdrop" onclick="window.__onboarding?.closeSettings()"></div>
   <div class="modal-content">
     <div class="modal-header">
-      <h2>⚙️ Settings</h2>
-      <button class="modal-close-btn" onclick="window.__onboarding?.closeSettings()">×</button>
+      <h2 id="settings-heading"><span aria-hidden="true">⚙️</span> Settings</h2>
+      <button class="modal-close-btn" onclick="window.__onboarding?.closeSettings()" aria-label="Close settings">×</button>
     </div>
     
     <div class="modal-body">

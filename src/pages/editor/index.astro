@@ -24,36 +24,36 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       <button id="run-btn" class="button editor-btn" type="button" title="Ctrl/Cmd+Enter">Run</button>
       <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">Run Checks</button>
       <button id="theme-toggle" class="button editor-btn" type="button" title="Toggle Light/Dark">🌙</button>
-      <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
+      <span id="status" class="hint" style="margin-left:10px;" aria-live="polite">Loading…</span>
     </div>
   </div>
 
   <div id="editor" aria-label="Monaco editor" style="height:70vh; border:1px solid var(--border); border-radius:14px; overflow:hidden;"></div>
 
   <div class="output-drawer" id="output-drawer">
-    <div class="output-drawer-header" id="output-drawer-header">
-      <span class="output-drawer-title">Output <span id="drawer-toggle">▾</span></span>
-      <span id="output-status" class="hint">Waiting to compile/run…</span>
-    </div>
+    <button class="output-drawer-header" id="output-drawer-header" type="button" aria-expanded="false">
+      <span class="output-drawer-title">Output <span id="drawer-toggle" aria-hidden="true">▾</span></span>
+      <span id="output-status" class="hint" aria-live="polite">Waiting to compile/run…</span>
+    </button>
     <div class="output-drawer-content" id="output-drawer-content">
-      <div class="output-tabs">
-        <button class="output-tab active" data-tab="terminal">Terminal</button>
-        <button class="output-tab" data-tab="errors">Errors</button>
-        <button class="output-tab" data-tab="diagnostics">Diagnostics</button>
-        <button class="output-tab" data-tab="checks">Checks</button>
+      <div class="output-tabs" role="tablist">
+        <button class="output-tab active" data-tab="terminal" role="tab" aria-selected="true" aria-controls="tab-terminal" id="tabctl-terminal">Terminal</button>
+        <button class="output-tab" data-tab="errors" role="tab" aria-selected="false" aria-controls="tab-errors" id="tabctl-errors">Errors</button>
+        <button class="output-tab" data-tab="diagnostics" role="tab" aria-selected="false" aria-controls="tab-diagnostics" id="tabctl-diagnostics">Diagnostics</button>
+        <button class="output-tab" data-tab="checks" role="tab" aria-selected="false" aria-controls="tab-checks" id="tabctl-checks">Checks</button>
       </div>
       <div class="output-tab-content">
-        <div class="tab-pane active" id="tab-terminal">
+        <div class="tab-pane active" id="tab-terminal" role="tabpanel" aria-labelledby="tabctl-terminal">
           <div id="terminal-container"></div>
         </div>
-        <div class="tab-pane" id="tab-errors">
+        <div class="tab-pane" id="tab-errors" role="tabpanel" aria-labelledby="tabctl-errors" hidden>
           <pre id="stderr" class="output-pre">(no errors yet)</pre>
         </div>
-        <div class="tab-pane" id="tab-diagnostics">
+        <div class="tab-pane" id="tab-diagnostics" role="tabpanel" aria-labelledby="tabctl-diagnostics" hidden>
           <ul id="diagnostics-list" class="diagnostics-list"></ul>
           <div id="diagnostics-empty" class="hint" style="display:none;">No diagnostics.</div>
         </div>
-        <div class="tab-pane" id="tab-checks">
+        <div class="tab-pane" id="tab-checks" role="tabpanel" aria-labelledby="tabctl-checks" hidden>
           <div id="checks-results"></div>
           <div id="checks-hint" class="checks-hint"></div>
           <div id="checks-empty" class="hint" style="display:none;">Click "Run Checks" to see guided feedback.</div>
@@ -274,6 +274,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         drawerExpanded = !drawerExpanded;
         outputDrawer.classList.toggle("expanded", drawerExpanded);
         drawerToggle.textContent = drawerExpanded ? "▴" : "▾";
+        outputDrawerHeader.setAttribute("aria-expanded", drawerExpanded ? "true" : "false");
       };
       
       const openDrawer = () => {
@@ -365,10 +366,16 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       document.querySelectorAll(".output-tab").forEach(tab => {
         tab.addEventListener("click", () => {
           const target = tab.dataset.tab;
-          document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
-          document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-          tab.classList.add("active");
-          document.getElementById(`tab-${target}`).classList.add("active");
+          document.querySelectorAll(".output-tab").forEach(t => {
+            const isActive = t === tab;
+            t.classList.toggle("active", isActive);
+            t.setAttribute("aria-selected", isActive ? "true" : "false");
+          });
+          document.querySelectorAll(".tab-pane").forEach(p => {
+            const isActive = p.id === `tab-${target}`;
+            p.classList.toggle("active", isActive);
+            if (isActive) { p.removeAttribute("hidden"); } else { p.setAttribute("hidden", ""); }
+          });
           if (target === 'terminal') fitAddon?.fit();
         });
       });
@@ -872,10 +879,16 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
             openDrawer();
             
             // Switch to terminal tab
-            document.querySelectorAll(".output-tab").forEach(t => t.classList.remove("active"));
-            document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
-            document.querySelector('[data-tab="terminal"]').classList.add("active");
-            document.getElementById("tab-terminal").classList.add("active");
+            document.querySelectorAll(".output-tab").forEach(t => {
+              const isTerminal = t.dataset.tab === "terminal";
+              t.classList.toggle("active", isTerminal);
+              t.setAttribute("aria-selected", isTerminal ? "true" : "false");
+            });
+            document.querySelectorAll(".tab-pane").forEach(p => {
+              const isTerminal = p.id === "tab-terminal";
+              p.classList.toggle("active", isTerminal);
+              if (isTerminal) { p.removeAttribute("hidden"); } else { p.setAttribute("hidden", ""); }
+            });
             fitAddon?.fit();
 
             setBusy(true, "Connecting...");
@@ -1182,7 +1195,12 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       padding: 6px 16px;
       cursor: pointer;
       user-select: none;
+      border: none;
       border-bottom: 1px solid var(--border);
+      width: 100%;
+      background: transparent;
+      font: inherit;
+      color: inherit;
     }
     
     .output-drawer-title {

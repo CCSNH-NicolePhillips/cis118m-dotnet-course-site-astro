@@ -30,35 +30,35 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 <div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin ? "true" : "false"} data-enable-interactive={enableInteractiveTerminal ? "true" : "false"} data-runner-ws-url={runnerWsUrl}>
   {instructions && (
     <div class="instructions">
-      <span class="icon">▶️</span>
+      <span class="icon" aria-hidden="true">▶️</span>
       <span>{instructions}</span>
     </div>
   )}
   
   {enableStdin && !enableInteractiveTerminal && (
     <div class="stdin-section">
-      <label class="stdin-label">📥 Program Input (for Console.ReadLine)</label>
-      <textarea class="stdin-input" rows="2" placeholder={stdinPlaceholder}></textarea>
+      <label class="stdin-label" for={`stdin-${runnerId}`}><span aria-hidden="true">📥</span> Program Input (for Console.ReadLine)</label>
+      <textarea class="stdin-input" id={`stdin-${runnerId}`} rows="2" placeholder={stdinPlaceholder}></textarea>
       <div class="stdin-hint">Each line = one Console.ReadLine() call</div>
     </div>
   )}
   
   <div class="editor-container">
     <div class="editor-wrapper" style={`height: ${height}px`}>
-      <div id={`editor-${runnerId}`} class="monaco-editor-container"></div>
+      <div id={`editor-${runnerId}`} class="monaco-editor-container" role="application" aria-label="C# code editor"></div>
     </div>
     
     <div class="toolbar" id="lab-toolbar">
       <button class="btn btn-run" id="lab-run-button" data-action="run">
-        <span class="icon">▶</span>
+        <span class="icon" aria-hidden="true">▶</span>
         Run
       </button>
       <button class="btn btn-reset" id="lab-reset-button" data-action="reset">
-        <span class="icon">↺</span>
+        <span class="icon" aria-hidden="true">↺</span>
         Reset
       </button>
       <button class="btn btn-expand" data-action="expand" title="Pop out editor">
-        <span class="icon">⤢</span>
+        <span class="icon" aria-hidden="true">⤢</span>
         Pop Out
       </button>
       {showFullEditorLink && (
@@ -71,11 +71,11 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   </div>
   
   <div class="output-container" id="lab-output" data-collapsed="true">
-    <div class="output-header" data-action="toggle-output">
-      <span class="icon">▼</span>
+    <button class="output-header" data-action="toggle-output" type="button" aria-expanded="false">
+      <span class="icon" aria-hidden="true">▼</span>
       <span class="title">{enableInteractiveTerminal ? 'Terminal' : 'Output'}</span>
-      <span class="status"></span>
-    </div>
+      <span class="status" aria-live="polite"></span>
+    </button>
     <div class="output-content">
       {enableInteractiveTerminal ? (
         <div class="terminal-panel">
@@ -83,15 +83,15 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         </div>
       ) : (
         <>
-          <div class="output-tabs">
-            <button class="output-tab active" data-tab="console">Console</button>
-            <button class="output-tab" data-tab="errors">Errors</button>
+          <div class="output-tabs" role="tablist">
+            <button class="output-tab active" data-tab="console" role="tab" aria-selected="true" aria-controls={`panel-console-${runnerId}`} id={`tab-console-${runnerId}`}>Console</button>
+            <button class="output-tab" data-tab="errors" role="tab" aria-selected="false" aria-controls={`panel-errors-${runnerId}`} id={`tab-errors-${runnerId}`}>Errors</button>
           </div>
-          <div class="output-panel" data-panel="console">
+          <div class="output-panel" data-panel="console" role="tabpanel" id={`panel-console-${runnerId}`} aria-labelledby={`tab-console-${runnerId}`}>
             <pre class="output-text"></pre>
           </div>
-          <div class="output-panel hidden" data-panel="errors">
-            <pre class="error-text"></pre>
+          <div class="output-panel hidden" data-panel="errors" role="tabpanel" id={`panel-errors-${runnerId}`} aria-labelledby={`tab-errors-${runnerId}`} hidden>
+            <pre class="error-text" aria-live="assertive"></pre>
           </div>
         </>
       )}
@@ -593,6 +593,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       if (forceExpand || isCollapsed) {
         outputContainer.dataset.collapsed = 'false';
         outputHeader.querySelector('.icon').textContent = '▲';
+        outputHeader.setAttribute('aria-expanded', 'true');
         // Scroll into view
         setTimeout(() => {
           outputContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -600,6 +601,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       } else {
         outputContainer.dataset.collapsed = 'true';
         outputHeader.querySelector('.icon').textContent = '▼';
+        outputHeader.setAttribute('aria-expanded', 'false');
       }
     }
     
@@ -609,9 +611,15 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     outputTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const targetPanel = tab.dataset.tab;
-        outputTabs.forEach(t => t.classList.toggle('active', t === tab));
+        outputTabs.forEach(t => {
+          const isActive = t === tab;
+          t.classList.toggle('active', isActive);
+          t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        });
         outputPanels.forEach(p => {
-          p.classList.toggle('hidden', p.dataset.panel !== targetPanel);
+          const isActive = p.dataset.panel === targetPanel;
+          p.classList.toggle('hidden', !isActive);
+          if (isActive) { p.removeAttribute('hidden'); } else { p.setAttribute('hidden', ''); }
         });
       });
     });
@@ -1131,6 +1139,11 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     cursor: pointer;
     user-select: none;
     transition: background 0.2s;
+    border: none;
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    text-align: left;
   }
   
   .output-header:hover {

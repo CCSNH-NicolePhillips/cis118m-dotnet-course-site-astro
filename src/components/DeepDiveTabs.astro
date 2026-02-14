@@ -34,6 +34,7 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
         class:list={["tab-btn", { "tab-btn-active": tab.id === defaultTab }]}
         data-tab-id={tab.id}
         type="button"
+        tabindex={tab.id === defaultTab ? "0" : "-1"}
       >
         {tab.label}
       </button>
@@ -83,7 +84,7 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
     <div class="video-container">
       <iframe
         src={videoUrl}
-        frameborder="0"
+        title="Educational video"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen
       ></iframe>
@@ -139,6 +140,7 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
         const isActive = btn.dataset.tabId === targetId;
         btn.setAttribute("aria-selected", isActive ? "true" : "false");
         btn.classList.toggle("tab-btn-active", isActive);
+        btn.setAttribute("tabindex", isActive ? "0" : "-1");
       });
 
       tabPanels.forEach((panel) => {
