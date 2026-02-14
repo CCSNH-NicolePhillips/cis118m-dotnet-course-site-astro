@@ -660,6 +660,11 @@ const InstructorDashboard: React.FC = () => {
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] UPDATE_GRADE:', modalData.student.sub, modalData.assignmentId, score);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -690,6 +695,11 @@ const InstructorDashboard: React.FC = () => {
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] DROP_LOWEST:', modalData.student.sub, modalData.assignmentId);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -720,6 +730,11 @@ const InstructorDashboard: React.FC = () => {
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] DELETE_ATTEMPT:', modalData.student.sub, modalData.assignmentId);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -749,6 +764,11 @@ const InstructorDashboard: React.FC = () => {
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] UNLOCK_QUIZ:', modalData.student.sub, modalData.assignmentId);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -779,6 +799,11 @@ const InstructorDashboard: React.FC = () => {
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] WAIVE_PENALTY:', modalData.student.sub, modalData.assignmentId);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -809,13 +834,18 @@ const InstructorDashboard: React.FC = () => {
     if (scoreStr === null) return;
     const score = parseInt(scoreStr);
     if (isNaN(score) || score < 0 || score > 100) {
-      alert('Invalid score. Must be a number between 0 and 100.');
+      setActionFeedback({ type: 'error', message: 'Invalid score. Must be a number between 0 and 100.' });
       return;
     }
     if (!confirm(`Force set grade to ${score}% for ${modalData.student.name}? This creates a new grade record.`)) return;
     
     try {
       const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
+        return;
+      }
+      console.log('[Override] FORCE_SET_GRADE:', modalData.student.sub, modalData.assignmentId, score);
       const res = await fetch('/.netlify/functions/manual-override', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
