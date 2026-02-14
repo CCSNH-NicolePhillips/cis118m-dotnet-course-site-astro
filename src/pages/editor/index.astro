@@ -607,7 +607,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         if (hint) {
           const hintText = document.createElement("div");
           hintText.className = "hint-text";
-          hintText.innerHTML = `<strong>💡 Next hint:</strong> ${hint}`;
+          hintText.innerHTML = `<strong>Next hint:</strong> ${hint}`;
           checksHint.appendChild(hintText);
         }
         
@@ -871,11 +871,11 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 
             setBusy(true, "Connecting...");
             outputStatus.textContent = "Connecting...";
-            writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
+            writeToTerminal('\x1b[36mConnecting to runner...\x1b[0m\r\n');
 
             // Build WebSocket URL
             if (!envRunnerWsUrl) {
-              writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
+              writeToTerminal('\x1b[31mERROR: Interactive terminal not configured.\x1b[0m\r\n');
               writeToTerminal('\x1b[33mFalling back to batch mode...\x1b[0m\r\n');
               // Fall back to HTTP mode
               runnerRequest("/api/run", buildRunnerPayload(starterId, editorInstance.getValue(), ""), "run");
@@ -887,14 +887,14 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
             try {
               currentWs = new WebSocket(wsUrl);
             } catch (err) {
-              writeToTerminal('\x1b[31m❌ Failed to connect: ' + err.message + '\x1b[0m\r\n');
+              writeToTerminal('\x1b[31mERROR: Failed to connect: ' + err.message + '\x1b[0m\r\n');
               setBusy(false);
               outputStatus.textContent = "Connection failed";
               return;
             }
 
             currentWs.onopen = () => {
-              writeToTerminal('\x1b[32m✓ Connected\x1b[0m\r\n');
+              writeToTerminal('\x1b[32mConnected\x1b[0m\r\n');
               currentWs.send(JSON.stringify({
                 code: editorInstance.getValue(),
                 starterId: starterId
@@ -934,7 +934,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
                     break;
                     
                   case 'compile_error':
-                    writeToTerminal('\r\n\x1b[31m❌ Compilation Failed\x1b[0m\r\n');
+                    writeToTerminal('\r\n\x1b[31mCompilation Failed\x1b[0m\r\n');
                     if (msg.diagnostics) {
                       msg.diagnostics.forEach(d => {
                         writeToTerminal(`\x1b[31m  Line ${d.Line}: ${d.Message}\x1b[0m\r\n`);
@@ -957,14 +957,14 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
                     break;
                     
                   case 'timeout':
-                    writeToTerminal('\r\n\x1b[31m⏱️ ' + msg.message + '\x1b[0m\r\n');
+                    writeToTerminal('\r\n\x1b[31mTIMEOUT: ' + msg.message + '\x1b[0m\r\n');
                     outputStatus.textContent = "Timed out";
                     setStatus("Ready");
                     setBusy(false);
                     break;
                     
                   case 'error':
-                    writeToTerminal('\r\n\x1b[31m❌ Error: ' + msg.message + '\x1b[0m\r\n');
+                    writeToTerminal('\r\n\x1b[31mERROR: ' + msg.message + '\x1b[0m\r\n');
                     outputStatus.textContent = "Error";
                     setStatus("Ready");
                     setBusy(false);
@@ -976,7 +976,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
             };
 
             currentWs.onerror = (err) => {
-              writeToTerminal('\x1b[31m❌ WebSocket error\x1b[0m\r\n');
+              writeToTerminal('\x1b[31mWebSocket error\x1b[0m\r\n');
               outputStatus.textContent = "Connection error";
               setStatus("Error");
               setBusy(false);
@@ -984,7 +984,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 
             currentWs.onclose = () => {
               if (outputStatus.textContent === "Running (type input below)") {
-                writeToTerminal('\r\n\x1b[33m⚠️ Connection closed\x1b[0m\r\n');
+                writeToTerminal('\r\n\x1b[33mConnection closed\x1b[0m\r\n');
                 outputStatus.textContent = "Disconnected";
               }
               setStatus("Ready");

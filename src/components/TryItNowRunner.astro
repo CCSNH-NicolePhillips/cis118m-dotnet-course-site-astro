@@ -634,13 +634,13 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       });
       
       runBtn.disabled = true;
-      runBtn.innerHTML = '<span class="icon">⏳</span> Running...';
-      statusSpan.textContent = '⏳ Running...';
+      runBtn.innerHTML = '<span class="icon">...</span> Running...';
+      if (statusSpan) statusSpan.textContent = 'Running...';
       
       // Expand output and clear
       toggleOutput(true);
-      consoleOutput.textContent = '(running...)';
-      errorOutput.textContent = '';
+      if (consoleOutput) consoleOutput.textContent = '(running...)';
+      if (errorOutput) errorOutput.textContent = '';
       
       try {
         const response = await fetch('/api/compile-and-run', {
@@ -673,7 +673,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
             const regex = new RegExp(regexParts[1], regexParts[2]);
             if (regex.test(result.stdout)) {
               isValidated = true;
-              statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">✅ Requirements Met</span>';
+              if (statusSpan) statusSpan.innerHTML = '<span style="color: #4ec9b0; font-weight: bold;">Requirements Met</span>';
               
               // Trigger celebration animation
               triggerCelebration();
@@ -713,7 +713,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         }
         
         // Display output
-        consoleOutput.textContent = result.stdout || '(no output)';
+        if (consoleOutput) consoleOutput.textContent = result.stdout || '(no output)';
         
         // Display errors
         const hasErrors = result.stderr || (result.diagnostics && result.diagnostics.some(d => d.severity === 'Error'));
@@ -729,17 +729,19 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
               }
             });
           }
-          errorOutput.textContent = errorText;
-          statusSpan.textContent = '⚠️ Completed with errors';
-          statusSpan.style.color = '#ef4444';
+          if (errorOutput) errorOutput.textContent = errorText;
+          if (statusSpan) {
+            statusSpan.textContent = 'Completed with errors';
+            statusSpan.style.color = '#ef4444';
+          }
           
           // Auto-switch to errors tab
           outputTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === 'errors'));
           outputPanels.forEach(p => p.classList.toggle('hidden', p.dataset.panel !== 'errors'));
         } else {
           // Only set generic success if validation hasn't already passed
-          if (!isValidated) {
-            statusSpan.textContent = '✓ Execution Successful';
+          if (!isValidated && statusSpan) {
+            statusSpan.textContent = 'Execution Successful';
             statusSpan.style.color = '#10b981';
           }
           
@@ -775,9 +777,11 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         
       } catch (err) {
         console.error('[TryItNowRunner] Run failed:', err);
-        errorOutput.textContent = `Failed to run code: ${err.message}`;
-        statusSpan.textContent = '✗ Error';
-        statusSpan.style.color = '#ef4444';
+        if (errorOutput) errorOutput.textContent = `Failed to run code: ${err.message}`;
+        if (statusSpan) {
+          statusSpan.textContent = 'Error';
+          statusSpan.style.color = '#ef4444';
+        }
       } finally {
         runBtn.disabled = false;
         runBtn.innerHTML = '<span class="icon">▶</span> Run';
@@ -803,13 +807,13 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       }
 
       runBtn.disabled = true;
-      runBtn.innerHTML = '<span class="icon">⏳</span> Running...';
-      statusSpan.textContent = '⏳ Connecting...';
-      writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
+      runBtn.innerHTML = '<span class="icon">...</span> Running...';
+      if (statusSpan) statusSpan.textContent = 'Connecting...';
+      writeToTerminal('\x1b[36mConnecting to runner...\x1b[0m\r\n');
 
       if (!runnerWsUrl) {
-        writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
-        statusSpan.textContent = '✗ Not configured';
+        writeToTerminal('\x1b[31mERROR: Interactive terminal not configured.\x1b[0m\r\n');
+        if (statusSpan) statusSpan.textContent = 'Not configured';
         runBtn.disabled = false;
         runBtn.innerHTML = '<span class="icon">▶</span> Run';
         return;
@@ -820,15 +824,15 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       try {
         currentWs = new WebSocket(wsUrl);
       } catch (err) {
-        writeToTerminal('\x1b[31m❌ Failed to connect: ' + err.message + '\x1b[0m\r\n');
-        statusSpan.textContent = '✗ Connection failed';
+        writeToTerminal('\x1b[31mERROR: Failed to connect: ' + err.message + '\x1b[0m\r\n');
+        if (statusSpan) statusSpan.textContent = 'Connection failed';
         runBtn.disabled = false;
         runBtn.innerHTML = '<span class="icon">▶</span> Run';
         return;
       }
 
       currentWs.onopen = () => {
-        writeToTerminal('\x1b[32m✓ Connected\x1b[0m\r\n');
+        writeToTerminal('\x1b[32mConnected\x1b[0m\r\n');
         currentWs.send(JSON.stringify({
           code: currentCode,
           starterId: starterId
@@ -841,12 +845,12 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
           
           switch (msg.type) {
             case 'status':
-              statusSpan.textContent = msg.message;
+              if (statusSpan) statusSpan.textContent = msg.message;
               writeToTerminal('\x1b[36m' + msg.message + '\x1b[0m\r\n');
               break;
               
             case 'started':
-              statusSpan.textContent = 'Running...';
+              if (statusSpan) statusSpan.textContent = 'Running...';
               writeToTerminal('\x1b[32m─── Program Started ───\x1b[0m\r\n');
               writeToTerminal('\x1b[90m(Type your input and press Enter)\x1b[0m\r\n\r\n');
               runBtn.disabled = false;
@@ -863,36 +867,40 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
               break;
               
             case 'compile_error':
-              writeToTerminal('\r\n\x1b[31m❌ Compilation Failed\x1b[0m\r\n');
+              writeToTerminal('\r\n\x1b[31mCompilation Failed\x1b[0m\r\n');
               if (msg.diagnostics) {
                 msg.diagnostics.forEach(d => {
                   writeToTerminal(`\x1b[31m  Line ${d.Line}: ${d.Message}\x1b[0m\r\n`);
                 });
               }
-              statusSpan.textContent = '✗ Compile error';
-              statusSpan.style.color = '#ef4444';
+              if (statusSpan) {
+                statusSpan.textContent = 'Compile error';
+                statusSpan.style.color = '#ef4444';
+              }
               runBtn.disabled = false;
               runBtn.innerHTML = '<span class="icon">▶</span> Run';
               break;
               
             case 'exited':
               writeToTerminal('\r\n\x1b[32m─── Program Exited (code: ' + msg.exitCode + ') ───\x1b[0m\r\n');
-              statusSpan.textContent = msg.exitCode === 0 ? '✓ Completed' : `Exited (${msg.exitCode})`;
-              statusSpan.style.color = msg.exitCode === 0 ? '#10b981' : '#ef4444';
+              if (statusSpan) {
+                statusSpan.textContent = msg.exitCode === 0 ? 'Completed' : `Exited (${msg.exitCode})`;
+                statusSpan.style.color = msg.exitCode === 0 ? '#10b981' : '#ef4444';
+              }
               runBtn.disabled = false;
               runBtn.innerHTML = '<span class="icon">▶</span> Run';
               break;
               
             case 'timeout':
-              writeToTerminal('\r\n\x1b[31m⏱️ ' + msg.message + '\x1b[0m\r\n');
-              statusSpan.textContent = '⏱️ Timed out';
+              writeToTerminal('\r\n\x1b[31mTIMEOUT: ' + msg.message + '\x1b[0m\r\n');
+              if (statusSpan) statusSpan.textContent = 'Timed out';
               runBtn.disabled = false;
               runBtn.innerHTML = '<span class="icon">▶</span> Run';
               break;
               
             case 'error':
-              writeToTerminal('\r\n\x1b[31m❌ Error: ' + msg.message + '\x1b[0m\r\n');
-              statusSpan.textContent = '✗ Error';
+              writeToTerminal('\r\n\x1b[31mERROR: ' + msg.message + '\x1b[0m\r\n');
+              if (statusSpan) statusSpan.textContent = 'Error';
               runBtn.disabled = false;
               runBtn.innerHTML = '<span class="icon">▶</span> Run';
               break;
@@ -903,15 +911,15 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       };
 
       currentWs.onerror = (err) => {
-        writeToTerminal('\x1b[31m❌ WebSocket error\x1b[0m\r\n');
-        statusSpan.textContent = '✗ Connection error';
+        writeToTerminal('\x1b[31mWebSocket error\x1b[0m\r\n');
+        statusSpan.textContent = 'Connection error';
         runBtn.disabled = false;
         runBtn.innerHTML = '<span class="icon">▶</span> Run';
       };
 
       currentWs.onclose = () => {
         if (statusSpan.textContent === 'Running...') {
-          writeToTerminal('\r\n\x1b[33m⚠️ Connection closed\x1b[0m\r\n');
+          writeToTerminal('\r\n\x1b[33mConnection closed\x1b[0m\r\n');
           statusSpan.textContent = 'Disconnected';
         }
         runBtn.disabled = false;

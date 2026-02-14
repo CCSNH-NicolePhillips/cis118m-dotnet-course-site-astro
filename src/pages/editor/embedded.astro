@@ -12,7 +12,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       <button id="reset-btn" class="button editor-btn" type="button">↺ Reset</button>
       <button id="download-btn" class="button editor-btn" type="button">⬇ Download</button>
       <button id="run-btn" class="button editor-btn primary" type="button" title="Ctrl/Cmd+Enter">▶ Run</button>
-      <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">✓ Run Checks</button>
+      <button id="check-btn" class="button editor-btn" type="button" title="Run guided checks">Run Checks</button>
       <button id="popout-btn" class="button editor-btn" type="button" title="Open in new window">⤢ Pop Out</button>
       <span id="status" class="hint" style="margin-left:10px;">Loading…</span>
     </div>
@@ -25,7 +25,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     </div>
     <div class="stdin-content" id="stdin-content">
       <textarea id="stdin-input" class="stdin-input" rows="3" placeholder="Type your input here, one value per line.&#10;Example:&#10;Kitchen Remodel&#10;40.5&#10;125.50"></textarea>
-      <div class="stdin-example">⚠️ Each Console.ReadLine() reads ONE line. Enter values in order, one per line!</div>
+      <div class="stdin-example">Note: Each Console.ReadLine() reads ONE line. Enter values in order, one per line!</div>
     </div>
   </div>
 
@@ -519,14 +519,14 @@ class Program
         checks.forEach((check) => {
           const li = document.createElement("li");
           li.className = check.passed ? "check-pass" : "check-fail";
-          li.innerHTML = `<span class="check-icon">${check.passed ? "✓" : "✗"}</span><span>${check.name}: ${check.message}</span>`;
+          li.innerHTML = `<span class="check-icon">${check.passed ? "PASS" : "FAIL"}</span><span>${check.name}: ${check.message}</span>`;
           ul.appendChild(li);
         });
         
         checksResults.appendChild(ul);
         
         if (hint) {
-          checksHint.innerHTML = `<div class="hint-text"><strong>💡 Hint:</strong> ${hint}</div>`;
+          checksHint.innerHTML = `<div class="hint-text"><strong>Hint:</strong> ${hint}</div>`;
         }
         
         if (checks.every(c => c.passed)) {
@@ -580,7 +580,7 @@ class Program
         if (kind === "check") {
           initTerminal();
           clearTerminal();
-          writeToTerminal('\x1b[36m⏳ Running checks...\x1b[0m\r\n');
+          writeToTerminal('\x1b[36mRunning checks...\x1b[0m\r\n');
         }
         
         try {
@@ -1143,11 +1143,11 @@ class Program
 
           setBusy(true, "Connecting...");
           outputStatus.textContent = "Connecting...";
-          writeToTerminal('\x1b[36m⏳ Connecting to runner...\x1b[0m\r\n');
+          writeToTerminal('\x1b[36mConnecting to runner...\x1b[0m\r\n');
 
           // Build WebSocket URL - needs direct runner URL (can't go through Netlify proxy)
           if (!envRunnerWsUrl) {
-            writeToTerminal('\x1b[31m❌ Interactive terminal not configured.\x1b[0m\r\n');
+            writeToTerminal('\x1b[31mERROR: Interactive terminal not configured.\x1b[0m\r\n');
             writeToTerminal('\x1b[33mFalling back to batch mode...\x1b[0m\r\n');
             // Fall back to HTTP mode
             const stdinInput = document.getElementById("stdin-input");
@@ -1161,14 +1161,14 @@ class Program
           try {
             currentWs = new WebSocket(wsUrl);
           } catch (err) {
-            writeToTerminal('\x1b[31m❌ Failed to connect: ' + err.message + '\x1b[0m\r\n');
+            writeToTerminal('\x1b[31mERROR: Failed to connect: ' + err.message + '\x1b[0m\r\n');
             setBusy(false);
             outputStatus.textContent = "Connection failed";
             return;
           }
 
           currentWs.onopen = () => {
-            writeToTerminal('\x1b[32m✓ Connected\x1b[0m\r\n');
+            writeToTerminal('\x1b[32mConnected\x1b[0m\r\n');
             // Send the code
             currentWs.send(JSON.stringify({
               code: editorInstance.getValue(),
@@ -1209,7 +1209,7 @@ class Program
                   break;
                   
                 case 'compile_error':
-                  writeToTerminal('\r\n\x1b[31m❌ Compilation Failed\x1b[0m\r\n');
+                  writeToTerminal('\r\n\x1b[31mCompilation Failed\x1b[0m\r\n');
                   if (msg.diagnostics) {
                     msg.diagnostics.forEach(d => {
                       writeToTerminal(`\x1b[31m  Line ${d.Line}: ${d.Message}\x1b[0m\r\n`);
@@ -1232,14 +1232,14 @@ class Program
                   break;
                   
                 case 'timeout':
-                  writeToTerminal('\r\n\x1b[31m⏱️ ' + msg.message + '\x1b[0m\r\n');
+                  writeToTerminal('\r\n\x1b[31mTIMEOUT: ' + msg.message + '\x1b[0m\r\n');
                   outputStatus.textContent = "Timed out";
                   setStatus("Ready");
                   setBusy(false);
                   break;
                   
                 case 'error':
-                  writeToTerminal('\r\n\x1b[31m❌ Error: ' + msg.message + '\x1b[0m\r\n');
+                  writeToTerminal('\r\n\x1b[31mERROR: ' + msg.message + '\x1b[0m\r\n');
                   outputStatus.textContent = "Error";
                   setStatus("Ready");
                   setBusy(false);
@@ -1251,7 +1251,7 @@ class Program
           };
 
           currentWs.onerror = (err) => {
-            writeToTerminal('\x1b[31m❌ WebSocket error\x1b[0m\r\n');
+            writeToTerminal('\x1b[31mWebSocket error\x1b[0m\r\n');
             outputStatus.textContent = "Connection error";
             setStatus("Error");
             setBusy(false);
@@ -1259,7 +1259,7 @@ class Program
 
           currentWs.onclose = () => {
             if (outputStatus.textContent === "Running (type input below)") {
-              writeToTerminal('\r\n\x1b[33m⚠️ Connection closed\x1b[0m\r\n');
+              writeToTerminal('\r\n\x1b[33mConnection closed\x1b[0m\r\n');
               outputStatus.textContent = "Disconnected";
             }
             setStatus("Ready");
