@@ -57,9 +57,9 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         <span class="icon">↺</span>
         Reset
       </button>
-      <button class="btn btn-expand" data-action="expand" title="Expand editor">
+      <button class="btn btn-expand" data-action="expand" title="Pop out editor">
         <span class="icon">⤢</span>
-        Expand
+        Pop Out
       </button>
       {showFullEditorLink && (
         <a href={`/editor/?starter=${starterId}`} class="link-full-editor" target="_blank" 
@@ -129,7 +129,6 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     let editor = null;
     const originalCode = code;
     const defaultHeight = parseInt(container.dataset.defaultHeight) || 200;
-    let isExpanded = false;
     
     // Wait for Monaco to load
     const waitForMonaco = async () => {
@@ -958,44 +957,10 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       setTimeout(() => initTerminal(), 100);
     }
     
-    // Expand/collapse editor (modal pop-out)
-    const collapseEditor = () => {
-      isExpanded = false;
-      container.classList.remove('expanded-modal');
-      document.body.classList.remove('modal-open');
-      expandBtn.innerHTML = '<span class="icon">⤢</span> Expand';
-      expandBtn.title = 'Expand editor';
-      // Restore original height
-      editorWrapper.style.height = `${defaultHeight}px`;
-      // Tell Monaco to resize after transition
-      setTimeout(() => {
-        if (editor) editor.layout();
-      }, 50);
-    };
-    
+    // Expand editor - open in popup window
     expandBtn.addEventListener('click', () => {
-      isExpanded = !isExpanded;
-      if (isExpanded) {
-        container.classList.add('expanded-modal');
-        document.body.classList.add('modal-open');
-        expandBtn.innerHTML = '<span class="icon">✕</span> Close';
-        expandBtn.title = 'Close expanded editor';
-        // Set expanded height
-        editorWrapper.style.height = 'calc(100vh - 200px)';
-        // Tell Monaco to resize after transition
-        setTimeout(() => {
-          if (editor) editor.layout();
-        }, 50);
-      } else {
-        collapseEditor();
-      }
-    });
-    
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isExpanded) {
-        collapseEditor();
-      }
+      const editorUrl = `/editor/embedded?starter=${starterId}`;
+      window.open(editorUrl, '_blank', 'width=1200,height=800,resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no');
     });
     
     // Keyboard shortcut: Ctrl+Enter to run
@@ -1134,74 +1099,6 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   
   .editor-wrapper {
     transition: height 0.2s ease-out;
-  }
-  
-  /* Modal pop-out styles */
-  .try-it-now-runner.expanded-modal {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    width: auto;
-    height: auto;
-    max-width: none;
-    margin: 0;
-    z-index: 10000;
-    border-radius: 12px;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .try-it-now-runner.expanded-modal .editor-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
-  
-  .try-it-now-runner.expanded-modal .editor-wrapper {
-    flex: 1;
-    height: auto !important;
-    min-height: 0;
-  }
-  
-  .try-it-now-runner.expanded-modal .monaco-editor-container {
-    height: 100% !important;
-  }
-  
-  .try-it-now-runner.expanded-modal .output-container {
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  
-  .try-it-now-runner.expanded-modal .btn-expand {
-    background: #ef4444;
-    color: white;
-    border-color: #ef4444;
-  }
-  
-  .try-it-now-runner.expanded-modal .btn-expand:hover {
-    background: #dc2626;
-    border-color: #dc2626;
-  }
-  
-  /* Backdrop when modal is open */
-  :global(body.modal-open::before) {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-  }
-  
-  :global(body.modal-open) {
-    overflow: hidden;
   }
   
   .link-full-editor {

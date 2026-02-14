@@ -1093,8 +1093,8 @@ class Program
         popoutBtn.addEventListener("click", () => {
           // Save current code first
           saveToCloud(editorInstance.getValue());
-          // Open the standalone editor in a new window
-          const editorUrl = `/editor?starter=${encodeURIComponent(starterId)}`;
+          // Open the embedded editor in a new window (no sidebar/nav)
+          const editorUrl = `/editor/embedded?starter=${encodeURIComponent(starterId)}`;
           window.open(editorUrl, '_blank', 'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no');
           setStatus("Opened in new window");
         });
