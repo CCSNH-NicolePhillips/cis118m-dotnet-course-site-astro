@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getTutorPromptRules } from "./_lib/ai-rules.mjs";
 import { COURSE_CONTENT_SUMMARY } from "./_lib/course-summary.mjs";
+import { verifyAuth0Token } from "./_lib/auth0-verify.mjs";
+import { getRedis } from "./_lib/redis.mjs";
 
 // Course configuration
 const COURSE_INFO = {
@@ -79,6 +81,110 @@ HOW TO GET HELP:
 SPRING BREAK: March 16-22, 2026 (No classes)
 `;
 
+/**
+ * Fetch and format a student's grades from Redis.
+ * Returns a human-readable summary string, or empty string if unavailable.
+ */
+async function fetchStudentGrades(userId) {
+  try {
+    const redis = getRedis();
+    
+    // Fetch from the main progress store (has scores, feedback, attempts, etc.)
+    const progressKey = `user:progress:data:${userId}`;
+    const progressHash = await redis.hgetall(progressKey) || {};
+    
+    if (Object.keys(progressHash).length === 0) {
+      return '';
+    }
+    
+    // Group by assignment ID
+    const assignments = {};
+    for (const [hashKey, value] of Object.entries(progressHash)) {
+      const parts = hashKey.split(':');
+      if (parts.length >= 2) {
+        const field = parts.pop();
+        const assignmentId = parts.join(':');
+        if (!assignments[assignmentId]) {
+          assignments[assignmentId] = {};
+        }
+        assignments[assignmentId][field] = value;
+      }
+    }
+    
+    // Also fetch detailed grade records for rubric/feedback
+    const gradesKey = `user:${userId}:grades`;
+    const gradesHash = await redis.hgetall(gradesKey) || {};
+    
+    // Build readable summary
+    const lines = [];
+    
+    // Sort assignments by week number for readability
+    const sortedIds = Object.keys(assignments).sort((a, b) => {
+      const weekA = parseInt(a.match(/week-(\d+)/)?.[1] || '99');
+      const weekB = parseInt(b.match(/week-(\d+)/)?.[1] || '99');
+      return weekA - weekB || a.localeCompare(b);
+    });
+    
+    for (const id of sortedIds) {
+      const a = assignments[id];
+      const score = a.bestScore || a.score;
+      if (score === undefined && !a.status) continue; // skip empty entries
+      
+      // Format assignment name from ID (week-01-lab → Week 01 Lab)
+      const displayName = id
+        .replace(/-/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+      
+      let line = `- ${displayName}: `;
+      if (score !== undefined) {
+        line += `Score: ${score}/100`;
+      }
+      if (a.status) {
+        line += ` (${a.status})`;
+      }
+      if (a.attempts) {
+        line += `, Attempts: ${a.attempts}`;
+      }
+      lines.push(line);
+      
+      // Add feedback from detailed grade record if available
+      if (gradesHash[id]) {
+        try {
+          const record = typeof gradesHash[id] === 'string' 
+            ? JSON.parse(gradesHash[id]) 
+            : gradesHash[id];
+          if (record.feedback) {
+            lines.push(`  Feedback: ${record.feedback}`);
+          }
+          // Include rubric breakdown if available
+          if (record.rubric && typeof record.rubric === 'object') {
+            const rubricItems = Object.entries(record.rubric)
+              .map(([category, details]) => {
+                if (typeof details === 'object' && details.score !== undefined) {
+                  return `${category}: ${details.score}/${details.maxScore || '?'}`;
+                }
+                return `${category}: ${details}`;
+              })
+              .join(', ');
+            if (rubricItems) {
+              lines.push(`  Rubric: ${rubricItems}`);
+            }
+          }
+        } catch (e) {
+          // Skip if can't parse
+        }
+      }
+    }
+    
+    if (lines.length === 0) return '';
+    
+    return lines.join('\n');
+  } catch (err) {
+    console.error('[ai-tutor] Error fetching grades:', err.message || err);
+    return '';
+  }
+}
+
 export async function handler(event, context) {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
@@ -103,6 +209,23 @@ export async function handler(event, context) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: "Message is required" })
     };
+  }
+
+  // Optionally verify auth token and fetch student grades
+  // Auth is NOT required - tutor still works without grades for unauthenticated users
+  let studentGrades = '';
+  try {
+    const authHeader = event.headers?.authorization || event.headers?.Authorization;
+    if (authHeader) {
+      const user = await verifyAuth0Token(authHeader);
+      if (user?.sub) {
+        studentGrades = await fetchStudentGrades(user.sub);
+        console.log('[ai-tutor] Fetched grades for user:', user.sub, 'grades found:', !!studentGrades);
+      }
+    }
+  } catch (authErr) {
+    // Auth failed - continue without grades (non-blocking)
+    console.log('[ai-tutor] Auth/grades skipped:', authErr.message || authErr);
   }
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -177,7 +300,10 @@ ${codeSection}
 ${homeworkSection}
 ${requestedWeekContent}
 ${courseContextSection}
-
+${studentGrades ? `
+STUDENT'S GRADES & PROGRESS:
+${studentGrades}
+` : ''}
 ADDITIONAL GUIDELINES:
 - For SYLLABUS questions (due dates, email, late policy, grading): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" - you ARE the syllabus expert!
 - You have COMPLETE knowledge of ALL course content from Week 1-15. When students ask about ANY week or lesson, use the course knowledge base above to give accurate summaries.
@@ -186,6 +312,9 @@ ADDITIONAL GUIDELINES:
 - If the student has code or homework visible above, you can reference it when they ask for help. You can see what they've written!
 - For homework help: Guide them to improve their answer without giving the answer directly. Ask leading questions or point out what's missing.
 - Keep responses to 2-5 sentences max for quick questions, but you can expand to 5-8 sentences for summary requests.
+- GRADE QUESTIONS: If the student asks about their grades, scores, or why they received a certain grade, use the STUDENT'S GRADES & PROGRESS section above to give specific, accurate answers. Reference the exact score, feedback, and rubric details. Be encouraging and focus on what they can do to improve. If they scored well, congratulate them! If they scored low, identify specific areas from the feedback/rubric where they lost points and suggest concrete steps to improve.
+- If a student asks about grades but no grade data is available, let them know you can only see grades for assignments they've submitted through the course site, and suggest they check with their instructor for any questions about grades not shown.
+- NEVER fabricate or guess grades. Only reference grades that appear in the STUDENT'S GRADES & PROGRESS section above.
 
 Student ${name} asks: "${message}"
 

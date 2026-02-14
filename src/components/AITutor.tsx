@@ -140,9 +140,20 @@ const AITutor: React.FC = () => {
     }
 
     try {
+      // Get auth token so the tutor can fetch student grades securely
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      try {
+        const token = await window.__auth?.getAccessToken?.();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      } catch (authErr) {
+        console.log('[AITutor] Could not get auth token:', authErr);
+      }
+
       const response = await fetch('/.netlify/functions/ai-tutor', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           message: userMessage,
           pageId,
