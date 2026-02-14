@@ -628,7 +628,14 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         const compileTimedOut = Boolean(result?.compileTimedOut ?? result?.CompileTimedOut);
         const runTimedOut = Boolean(result?.runTimedOut ?? result?.RunTimedOut);
 
-        stdoutBlock.textContent = stdout.trim() ? stdout : "(no stdout)";
+        // Write stdout to terminal
+        initTerminal();
+        clearTerminal();
+        if (stdout.trim()) {
+          writeToTerminal(stdout.replace(/\n/g, '\r\n'));
+        } else {
+          writeToTerminal('\x1b[90m(no output)\x1b[0m\r\n');
+        }
         stderrBlock.textContent = stderr.trim() ? stderr : "(no stderr)";
 
         renderDiagnostics(diagnostics);
@@ -706,7 +713,9 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         openDrawer(); // Open drawer immediately to show progress
         
         // Clear previous output
-        stdoutBlock.textContent = '(running...)';
+        initTerminal();
+        clearTerminal();
+        writeToTerminal('\x1b[36m' + statusMsg + '\x1b[0m\r\n');
         stderrBlock.textContent = '';
         diagnosticsList.innerHTML = '';
         diagnosticsEmpty.style.display = 'block';

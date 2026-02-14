@@ -62,8 +62,9 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
         Expand
       </button>
       {showFullEditorLink && (
-        <a href={`/editor/?week=01&starter=${starterId}`} class="link-full-editor" target="_blank">
-          Open in full editor ↗
+        <a href={`/editor/?starter=${starterId}`} class="link-full-editor" target="_blank" 
+          onclick={`window.open(this.href, '_blank', 'width=900,height=700,resizable=yes,scrollbars=yes'); return false;`}>
+          Open in full editor
         </a>
       )}
     </div>
