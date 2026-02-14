@@ -63,6 +63,13 @@ function getExpectedSections(weekSlug) {
   return EXPECTED_SECTIONS[weekSlug] ?? 4;
 }
 
+// Boss fight weeks - Phase capstone projects worth 2x a regular lab
+const BOSS_FIGHT_WEEKS = {
+  '05': { name: 'Boss Fight: Interactive Console App', id: 'week-05-boss-fight' },
+  '09': { name: 'Boss Fight: Logic Engine', id: 'week-09-boss-fight' },
+  '13': { name: 'Boss Fight: Data Collection Manager', id: 'week-13-boss-fight' },
+};
+
 // Generate assignment definitions in EXACT order to match Canvas columns
 // Order: Participation, Lab, Homework, Quiz, [Syllabus Quiz for Week 1]
 function generateAssignments() {
@@ -75,11 +82,21 @@ function generateAssignments() {
   assignments.push({ id: 'week-01-quiz', name: 'Week 1 Quiz', points: 100, week: '01' });
   assignments.push({ id: 'week-01-required-quiz', name: 'Week 1 Syllabus Quiz', points: 100, week: '01' });
   
-  // Weeks 2-14: Participation, Lab, Homework, Quiz
+  // Weeks 2-14: Participation, Lab/BossFight, Homework, Quiz
   for (let w = 2; w <= 14; w++) {
     const slug = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${slug}-participation`, name: `Week ${w} Participation`, points: 100, isParticipation: true, week: slug });
-    assignments.push({ id: `week-${slug}-lab`, name: `Week ${w} Lab`, points: 100, week: slug });
+    
+    // Boss fight weeks get 200 points and use boss fight assignment ID
+    const bossFight = BOSS_FIGHT_WEEKS[slug];
+    if (bossFight) {
+      assignments.push({ id: bossFight.id, name: `Week ${w} ${bossFight.name}`, points: 200, isBossFight: true, week: slug });
+      // Also check for legacy lab ID in case grades were stored under week-XX-lab
+      assignments[assignments.length - 1].legacyId = `week-${slug}-lab`;
+    } else {
+      assignments.push({ id: `week-${slug}-lab`, name: `Week ${w} Lab`, points: 100, week: slug });
+    }
+    
     assignments.push({ id: `week-${slug}-homework`, name: `Week ${w} Homework`, points: 100, week: slug });
     assignments.push({ id: `week-${slug}-quiz`, name: `Week ${w} Quiz`, points: 100, week: slug });
   }
@@ -246,10 +263,31 @@ export default async function handler(request, context) {
             if (progressData[progressKey] !== undefined) {
               score = parseFloat(progressData[progressKey]);
             }
+            
+            // For boss fight weeks, also check legacy lab ID
+            if (score === null && assignment.legacyId) {
+              const legacyKey = `${assignment.legacyId}:score`;
+              if (progressData[legacyKey] !== undefined) {
+                score = parseFloat(progressData[legacyKey]);
+              }
+            }
 
             // Check completions
             if (score === null && completionsList.includes(assignment.id)) {
               const completionData = await redis.get(`completion:${linkedSub}:${assignment.id}`);
+              if (completionData) {
+                try {
+                  const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
+                  if (parsed.score !== undefined) {
+                    score = parseFloat(parsed.score);
+                  }
+                } catch (e) {}
+              }
+            }
+            
+            // Also check completions under legacy ID
+            if (score === null && assignment.legacyId && completionsList.includes(assignment.legacyId)) {
+              const completionData = await redis.get(`completion:${linkedSub}:${assignment.legacyId}`);
               if (completionData) {
                 try {
                   const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
@@ -304,7 +342,10 @@ export default async function handler(request, context) {
     const dataRows = studentRows.map(student => {
       const gradeValues = assignmentsToExport.map(a => {
         const score = student.grades[a.id];
-        return score !== null && score !== undefined ? score : '';
+        if (score === null || score === undefined) return '';
+        // Scale 0-100 internal score to assignment's point value
+        // e.g., score 85 on a 200-point boss fight = 170/200
+        return Math.round(score * a.points / 100);
       });
       
       return [
