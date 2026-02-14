@@ -34,7 +34,7 @@ export const WEEKS: WeekConfig[] = [
       { title: '00. Week Overview', href: '/week-01/start-here/' },
       { title: '1.1 Course Syllabus & Expectations', href: '/week-01/syllabus/' },
       { title: '1.2 Syllabus Assessment (Graded)', href: '/week-01/required-quiz/', isGatekeeper: true }, // 100% Required
-      { title: '1.3 The Spark', href: '/week-01/lesson-1/' },
+      { title: '1.3 Your First Program', href: '/week-01/lesson-1/' },
       { title: 'Lab: Console Logic (Graded)', href: '/week-01/lab-01/' },
       { title: 'Technical Reflection (Graded)', href: '/week-01/homework/' },
       { title: 'Weekly Assessment (Graded)', href: '/week-01/weekly-assessment/' }
