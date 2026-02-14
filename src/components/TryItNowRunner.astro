@@ -27,7 +27,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin} data-enable-interactive={enableInteractiveTerminal} data-runner-ws-url={runnerWsUrl}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin ? "true" : "false"} data-enable-interactive={enableInteractiveTerminal ? "true" : "false"} data-runner-ws-url={runnerWsUrl}>
   {instructions && (
     <div class="instructions">
       <span class="icon">▶️</span>
