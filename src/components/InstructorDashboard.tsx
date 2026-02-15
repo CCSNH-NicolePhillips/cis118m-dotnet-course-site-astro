@@ -284,15 +284,23 @@ const calculateWeightedTotals = (
       const score = parsed[assignment.id]?.score;
       const hasScore = score !== undefined && score !== null;
       
+      const isBossFight = bossFightWeeks.has(assignment.week) && assignment.type === 'lab';
+      
       if (hasScore) {
         // Assignment was submitted, count actual score
-        if (assignment.type === 'lab') labScores.push(score);
+        if (assignment.type === 'lab') {
+          labScores.push(score);
+          if (isBossFight) labScores.push(score); // Boss fights count 2x
+        }
         else if (assignment.type === 'quiz') quizScores.push(score);
         else if (assignment.type === 'homework') homeworkScores.push(score);
         else if (assignment.type === 'final') finalScores.push(score);
       } else if (weekPastDue && weekStarted) {
         // Week is past due with no submission, count as 0
-        if (assignment.type === 'lab') labScores.push(0);
+        if (assignment.type === 'lab') {
+          labScores.push(0);
+          if (isBossFight) labScores.push(0); // Boss fights count 2x
+        }
         else if (assignment.type === 'quiz') quizScores.push(0);
         else if (assignment.type === 'homework') homeworkScores.push(0);
         else if (assignment.type === 'final') finalScores.push(0);

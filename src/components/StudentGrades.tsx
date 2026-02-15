@@ -277,16 +277,24 @@ const StudentGrades: React.FC = () => {
       } else {
         const score = progress[assignment.id]?.score;
         const hasScore = score !== undefined && score !== null;
+        const isBossFight = BOSS_FIGHT_WEEKS.has(assignment.week) && assignment.type === 'lab';
         
         if (hasScore) {
           // Assignment was submitted, count actual score
-          if (assignment.type === 'lab') labScores.push(score);
+          // Boss fights count double (200pts vs 100pts) in weighted average
+          if (assignment.type === 'lab') {
+            labScores.push(score);
+            if (isBossFight) labScores.push(score); // Push twice for 2x weight
+          }
           else if (assignment.type === 'quiz') quizScores.push(score);
           else if (assignment.type === 'homework') homeworkScores.push(score);
           else if (assignment.type === 'final') finalScores.push(score);
         } else if (weekPastDue && weekStarted) {
           // Week is past due with no submission, count as 0
-          if (assignment.type === 'lab') labScores.push(0);
+          if (assignment.type === 'lab') {
+            labScores.push(0);
+            if (isBossFight) labScores.push(0); // Push twice for 2x weight
+          }
           else if (assignment.type === 'quiz') quizScores.push(0);
           else if (assignment.type === 'homework') homeworkScores.push(0);
           else if (assignment.type === 'final') finalScores.push(0);
@@ -599,7 +607,7 @@ const StudentGrades: React.FC = () => {
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.participation.text, fontSize: '0.8rem' }}>Part</th>
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.quiz.text, fontSize: '0.8rem' }}>Quiz</th>
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.homework.text, fontSize: '0.8rem' }}>HW</th>
-              <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.lab.text, fontSize: '0.8rem' }}>Lab</th>
+              <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.lab.text, fontSize: '0.8rem' }}>Lab/Boss</th>
             </tr>
           </thead>
           <tbody>
@@ -625,7 +633,10 @@ const StudentGrades: React.FC = () => {
               }
               
               const hwScore = progress[`week-${wStr}-homework`]?.score;
-              const labScore = progress[`week-${wStr}-lab`]?.score;
+              const isBossFightWeek = BOSS_FIGHT_WEEKS.has(week);
+              const labScore = isBossFightWeek
+                ? progress[`week-${wStr}-boss-fight`]?.score
+                : progress[`week-${wStr}-lab`]?.score;
               
               // Check if week is past due and started (for showing 0 on unsubmitted)
               const weekPastDue = isWeekPastDue(week);
@@ -711,6 +722,9 @@ const StudentGrades: React.FC = () => {
                     {renderScore(hwScore, TYPE_COLORS.homework.text, 'homework')}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    {isBossFightWeek && (
+                      <span style={{ fontSize: '0.65rem', color: '#f44336', display: 'block', marginBottom: '2px' }}>⚔️ 2x</span>
+                    )}
                     {renderScore(labScore, TYPE_COLORS.lab.text, 'lab')}
                   </td>
                 </tr>
