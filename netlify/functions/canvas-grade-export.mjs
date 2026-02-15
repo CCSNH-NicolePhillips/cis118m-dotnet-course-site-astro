@@ -58,9 +58,10 @@ function isWeekStarted(weekSlug) {
 }
 
 // Expected sections per week for participation
-const EXPECTED_SECTIONS = { '01': 5 }; // Week 1 has 5, others default to 4
+// Weeks 2-4 have 4 content sections, weeks 5+ have 2
+const EXPECTED_SECTIONS = { '01': 5, '02': 4, '03': 4, '04': 4 };
 function getExpectedSections(weekSlug) {
-  return EXPECTED_SECTIONS[weekSlug] ?? 4;
+  return EXPECTED_SECTIONS[weekSlug] ?? 2;
 }
 
 // Boss fight weeks - Phase capstone projects worth 2x a regular lab

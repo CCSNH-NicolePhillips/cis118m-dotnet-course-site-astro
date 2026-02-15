@@ -5,13 +5,16 @@ const TOTAL_WEEKS = 15;
 
 // Expected sections per week for participation scoring
 // Week 1: 5 checkpoints (original behavior - don't change, students already graded)
-// Week 2+: 4 numbered sections (e.g., 2-1, 2-2, 2-3, 2-4)
+// Weeks 2-4: 4 numbered sections (e.g., 2-1, 2-2, 2-3, 2-4)
+// Weeks 5+: 2 numbered sections (e.g., 5-1, 5-2) + boss fight or other graded work
 const EXPECTED_SECTIONS_PER_WEEK: { [week: number]: number } = {
   1: 5,  // Original behavior - DO NOT CHANGE
   2: 4,  // 2-1, 2-2, 2-3, 2-4
-  // Default to 4 for other weeks
+  3: 4,  // 3-1, 3-2, 3-3, 3-4
+  4: 4,  // 4-1, 4-2, 4-3, 4-4
+  // Weeks 5+ have 2 content sections each (default)
 };
-const getExpectedSections = (week: number): number => EXPECTED_SECTIONS_PER_WEEK[week] ?? 4;
+const getExpectedSections = (week: number): number => EXPECTED_SECTIONS_PER_WEEK[week] ?? 2;
 
 // Get due date for a week number (1-indexed)
 const getWeekDueDate = (weekNum: number): Date | null => {

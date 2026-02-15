@@ -41,16 +41,35 @@ const ASSIGNMENTS = {
   'week-02-lab': { name: 'Week 2 Lab', points: 100 },
   'week-02-homework': { name: 'Week 2 Homework', points: 100 },
   'week-02-quiz': { name: 'Week 2 Quiz', points: 100 },
+
+  // Week 3
+  'week-03-participation': { name: 'Week 3 Participation', points: 100, isParticipation: true, week: 'week-03' },
+  'week-03-lab': { name: 'Week 3 Lab', points: 100 },
+  'week-03-homework': { name: 'Week 3 Homework', points: 100 },
+  'week-03-quiz': { name: 'Week 3 Quiz', points: 100 },
+
+  // Week 4
+  'week-04-participation': { name: 'Week 4 Participation', points: 100, isParticipation: true, week: 'week-04' },
+  'week-04-lab': { name: 'Week 4 Lab', points: 100 },
+  'week-04-homework': { name: 'Week 4 Homework', points: 100 },
+  'week-04-quiz': { name: 'Week 4 Quiz', points: 100 },
+
+  // Week 5 (Boss Fight week — no separate lab/homework/quiz)
+  'week-05-participation': { name: 'Week 5 Participation', points: 100, isParticipation: true, week: 'week-05' },
+  'week-05-boss-fight': { name: 'Week 5 Boss Fight', points: 200 },
 };
 
 // Expected sections per week for participation scoring
+// Weeks 2-4 have 4 content sections, weeks 5+ have 2
 const EXPECTED_SECTIONS_PER_WEEK = {
   1: 5,  // Original behavior - DO NOT CHANGE
   2: 4,  // 2-1, 2-2, 2-3, 2-4
-  // Default to 4 for other weeks
+  3: 4,  // 3-1, 3-2, 3-3, 3-4
+  4: 4,  // 4-1, 4-2, 4-3, 4-4
+  // Weeks 5+ have 2 content sections each (default)
 };
 function getExpectedSections(weekNum) {
-  return EXPECTED_SECTIONS_PER_WEEK[weekNum] ?? 4;
+  return EXPECTED_SECTIONS_PER_WEEK[weekNum] ?? 2;
 }
 
 // Count participation for a week
