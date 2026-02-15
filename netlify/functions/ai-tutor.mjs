@@ -113,10 +113,6 @@ async function fetchStudentGrades(userId) {
       }
     }
     
-    // Also fetch detailed grade records for rubric/feedback
-    const gradesKey = `user:${userId}:grades`;
-    const gradesHash = await redis.hgetall(gradesKey) || {};
-    
     // Build readable summary
     const lines = [];
     
@@ -149,32 +145,36 @@ async function fetchStudentGrades(userId) {
       }
       lines.push(line);
       
-      // Add feedback from detailed grade record if available
-      if (gradesHash[id]) {
+      // Add feedback from progress data
+      if (a.feedback) {
+        lines.push(`  Feedback: ${a.feedback}`);
+      }
+      
+      // Include rubric breakdown from progress data
+      if (a.rubric) {
         try {
-          const record = typeof gradesHash[id] === 'string' 
-            ? JSON.parse(gradesHash[id]) 
-            : gradesHash[id];
-          if (record.feedback) {
-            lines.push(`  Feedback: ${record.feedback}`);
-          }
-          // Include rubric breakdown if available
-          if (record.rubric && typeof record.rubric === 'object') {
-            const rubricItems = Object.entries(record.rubric)
+          const rubricObj = typeof a.rubric === 'string' ? JSON.parse(a.rubric) : a.rubric;
+          if (rubricObj && typeof rubricObj === 'object') {
+            const rubricItems = Object.entries(rubricObj)
               .map(([category, details]) => {
-                if (typeof details === 'object' && details.score !== undefined) {
-                  return `${category}: ${details.score}/${details.maxScore || '?'}`;
+                if (typeof details === 'object' && details.points !== undefined) {
+                  return `${category.replace(/-/g, ' ')}: ${details.points}${details.maxPoints ? `/${details.maxPoints}` : ''} - ${details.rationale || ''}`;
                 }
-                return `${category}: ${details}`;
+                return `${category}: ${JSON.stringify(details)}`;
               })
-              .join(', ');
+              .join('; ');
             if (rubricItems) {
               lines.push(`  Rubric: ${rubricItems}`);
             }
           }
         } catch (e) {
-          // Skip if can't parse
+          // Skip if can't parse rubric
         }
+      }
+      
+      // Include detailed report if available
+      if (a.detailedReport) {
+        lines.push(`  Detailed Report: ${a.detailedReport}`);
       }
     }
     

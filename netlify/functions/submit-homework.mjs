@@ -39,6 +39,8 @@ export async function handler(event, context) {
 
     let aiGrade = null;
     let aiFeedback = null;
+    let aiRubric = {};
+    let aiDetailedReport = '';
 
     // Perform AI grading on the reflection if we have it and API key
     if (reflection && process.env.GEMINI_API_KEY) {
@@ -63,19 +65,28 @@ STUDENT REFLECTION:
 ${reflection}
 
 RUBRIC:
-- Understanding (40 pts): Does the student show understanding of source code and the compiler?
-- Terminology (30 pts): Did they use the terms "Source Code" and "Compiler" correctly?
-- Completeness (20 pts): Did they address all 3 questions?
-- Effort (10 pts): Did they put in genuine effort?
+- Source Code definition (35 pts): Student explains that Source Code is the human-readable text they write
+- Compiler role (35 pts): Student explains the Compiler translates Source Code into computer-executable instructions
+- Semicolon = compiler error (20 pts): Student correctly identifies that missing semicolon is caught by the Compiler
+- Clarity and keyword usage (10 pts): Clear writing using both 'Source Code' and 'Compiler' terms
 
 Grade the reflection and provide:
 1. "score": total points (0-100)
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with praise. Frame any suggestions positively.
+3. "rubric": object with each rubric category, points awarded out of max, and brief rationale
+4. "detailedReport": 3-5 sentence instructor-facing summary explaining what the student understood, what they missed, and improvement areas
 
 Return JSON:
 {
   "score": number,
-  "feedback": "warm, encouraging 2-3 sentence feedback"
+  "feedback": "warm, encouraging 2-3 sentence feedback",
+  "rubric": {
+    "source-code-definition": {"points": number, "maxPoints": 35, "rationale": "why"},
+    "compiler-role": {"points": number, "maxPoints": 35, "rationale": "why"},
+    "semicolon-error": {"points": number, "maxPoints": 20, "rationale": "why"},
+    "clarity": {"points": number, "maxPoints": 10, "rationale": "why"}
+  },
+  "detailedReport": "instructor-facing analysis"
 }`;
 
         const result = await model.generateContent(prompt);
@@ -89,6 +100,8 @@ Return JSON:
         
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
+        aiRubric = gradeData.rubric || {};
+        aiDetailedReport = gradeData.detailedReport || '';
 
       } catch (gradeError) {
         console.error('[submit-homework] AI grading failed:', gradeError.message);
@@ -132,6 +145,8 @@ Return JSON:
         [`${assignmentId}:status`]: 'completed',
         [`${assignmentId}:feedback`]: aiFeedback || '',
         [`${assignmentId}:savedCode`]: reflection || code || '',
+        [`${assignmentId}:rubric`]: JSON.stringify(aiRubric),
+        [`${assignmentId}:detailedReport`]: aiDetailedReport,
         [`${assignmentId}:gradedAt`]: new Date().toISOString()
       });
       

@@ -53,7 +53,7 @@ export async function handler(event, context) {
           model: "gemini-2.0-flash",
           generationConfig: {
             responseMimeType: "application/json",
-            maxOutputTokens: 500,
+            maxOutputTokens: 800,
           }
         });
 
@@ -74,7 +74,8 @@ ${code}
 Grade the code and provide:
 1. "score": total points (0-100)
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with genuine praise for what they did well. If there are issues, frame them as "Next time you might try..." or "One small thing to polish..." Never say "wrong" or "incorrect" - use "almost there" or "close!"
-3. "rubric": object with each rubric category, points awarded, and brief rationale
+3. "rubric": object with each rubric category from the RUBRIC section above, points awarded out of max, and brief rationale explaining WHY
+4. "detailedReport": 3-5 sentence instructor-facing summary explaining the overall grade, what the student did well, what they missed, and specific improvement areas
 
 IMPORTANT TONE GUIDELINES:
 - These are college freshmen, many writing their first program ever
@@ -83,17 +84,17 @@ IMPORTANT TONE GUIDELINES:
 - Frame suggestions as opportunities, not failures
 - Use encouraging phrases like "Great start!", "Nice work on...", "You're on the right track!"
 
+IMPORTANT: Use the EXACT rubric categories from the RUBRIC section above. Each rubric entry must include "points", "maxPoints", and "rationale".
+
 Return JSON:
 {
   "score": number,
   "feedback": "warm, encouraging 2-3 sentence feedback for student",
   "rubric": {
-    "correctness": {"points": 0-40, "rationale": "why"},
-    "requirements": {"points": 0-30, "rationale": "why"},
-    "header": {"points": 0-10, "rationale": "why"},
-    "quality": {"points": 0-10, "rationale": "why"},
-    "submission": {"points": 10, "rationale": "submitted on time"}
-  }
+    "category-name": {"points": number, "maxPoints": number, "rationale": "specific reason"},
+    ...
+  },
+  "detailedReport": "3-5 sentence instructor-facing analysis of the submission"
 }`;
 
         const result = await model.generateContent(prompt);
@@ -157,6 +158,7 @@ Return JSON:
           [`${assignmentId}:feedback`]: aiFeedback || '',
           [`${assignmentId}:savedCode`]: code,
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
+          [`${assignmentId}:detailedReport`]: gradeData.detailedReport || '',
           [`${assignmentId}:gradedAt`]: new Date().toISOString()
         });
         

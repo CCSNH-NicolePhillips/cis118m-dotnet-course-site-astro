@@ -146,6 +146,7 @@ interface StudentProgress {
 
 interface RubricCategory {
   points: number;
+  maxPoints?: number;
   rationale: string;
 }
 
@@ -417,7 +418,7 @@ const InstructorDashboard: React.FC = () => {
   }, [students]);
 
   const parseProgressData = (progress: StudentProgress) => {
-    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; gradedAt?: string } } = {};
+    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; status?: string; feedback?: string; savedCode?: string; rubric?: object; detailedReport?: string; gradedAt?: string } } = {};
     
     for (const [key, value] of Object.entries(progress || {})) {
       const parts = key.split(':');
@@ -435,6 +436,7 @@ const InstructorDashboard: React.FC = () => {
         else if (field === 'status') parsed[pageId].status = String(value);
         else if (field === 'feedback') parsed[pageId].feedback = String(value);
         else if (field === 'savedCode') parsed[pageId].savedCode = String(value);
+        else if (field === 'detailedReport') parsed[pageId].detailedReport = String(value);
         else if (field === 'gradedAt') parsed[pageId].gradedAt = String(value);
         else if (field === 'rubric') {
           try {
@@ -1501,9 +1503,9 @@ const InstructorDashboard: React.FC = () => {
 
               {/* AI Grading Rubric */}
               {modalData.student.parsedProgress?.[modalData.assignmentId]?.rubric && (
-                <details style={{ marginBottom: '20px' }}>
+                <details open style={{ marginBottom: '20px' }}>
                   <summary style={{ cursor: 'pointer', color: '#a78bfa', fontWeight: 'bold', padding: '10px 0' }}>
-                    AI Grading Rubric (Detailed)
+                    📊 AI Grading Rubric (Detailed)
                   </summary>
                   <div style={{
                     background: '#0d0d0d',
@@ -1520,20 +1522,25 @@ const InstructorDashboard: React.FC = () => {
                         borderBottom: '1px solid #333'
                       }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ color: '#4ec9b0', fontWeight: 'bold', textTransform: 'capitalize' }}>{category}</div>
+                          <div style={{ color: '#4ec9b0', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                            {category.replace(/-/g, ' ')}
+                          </div>
                           <div style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>
                             {typeof data?.rationale === 'string' ? data.rationale : (data?.rationale ? JSON.stringify(data.rationale) : 'N/A')}
                           </div>
                         </div>
                         <div style={{
-                          background: (data?.points || 0) >= (category === 'correctness' ? 30 : category === 'requirements' ? 20 : 7) ? '#4ec9b0' : '#ce9178',
+                          background: data?.maxPoints
+                            ? (data.points / data.maxPoints >= 0.7 ? '#4ec9b0' : data.points / data.maxPoints >= 0.4 ? '#ce9178' : '#f44336')
+                            : ((data?.points || 0) >= 7 ? '#4ec9b0' : '#ce9178'),
                           color: '#000',
                           padding: '4px 12px',
                           borderRadius: '4px',
                           fontWeight: 'bold',
-                          marginLeft: '15px'
+                          marginLeft: '15px',
+                          whiteSpace: 'nowrap'
                         }}>
-                          {data?.points || 0} pts
+                          {data?.points || 0}{data?.maxPoints ? `/${data.maxPoints}` : ' pts'}
                         </div>
                       </div>
                     ))}
@@ -1543,6 +1550,26 @@ const InstructorDashboard: React.FC = () => {
                       Graded: {new Date(modalData.student.parsedProgress[modalData.assignmentId].gradedAt!).toLocaleString()}
                     </div>
                   )}
+                </details>
+              )}
+
+              {/* AI Detailed Report (Instructor-facing analysis) */}
+              {modalData.student.parsedProgress?.[modalData.assignmentId]?.detailedReport && (
+                <details open style={{ marginBottom: '20px' }}>
+                  <summary style={{ cursor: 'pointer', color: '#60a5fa', fontWeight: 'bold', padding: '10px 0' }}>
+                    📝 AI Grading Report (Instructor Analysis)
+                  </summary>
+                  <div style={{
+                    background: '#0d0d0d',
+                    padding: '15px',
+                    borderRadius: '8px',
+                    marginTop: '10px',
+                    color: '#ccc',
+                    lineHeight: '1.6',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {modalData.student.parsedProgress[modalData.assignmentId].detailedReport}
+                  </div>
                 </details>
               )}
 

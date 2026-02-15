@@ -40,7 +40,7 @@ export async function handler(event, context) {
     model: "gemini-2.0-flash",
     generationConfig: {
       responseMimeType: "application/json",
-      maxOutputTokens: 250,
+      maxOutputTokens: 800,
     }
   });
 
@@ -61,18 +61,20 @@ ${effectiveContext.requiredKeywords?.length ? `\nREQUIRED KEYWORDS (check if pre
 Grade the response and provide:
 1. "score": total points (0-100)
 2. "feedback": ONE sentence of praise + ONE short tip (shown to student)
-3. "rubric": object with each rubric category, points awarded, and brief rationale (for instructor records only)
+3. "rubric": object with each rubric category from above, points awarded out of max, and brief rationale explaining WHY those points were given or deducted
+4. "detailedReport": a 3-5 sentence instructor-facing summary explaining the overall grade, what the student did well, what they missed, and specific improvement areas
+
+IMPORTANT: Use the EXACT rubric categories from the RUBRIC section above (not generic ones). Each rubric entry must include "points", "maxPoints", and "rationale".
 
 Return JSON:
 {
   "score": number,
   "feedback": "friendly 2-sentence feedback for student",
   "rubric": {
-    "clr": {"points": 0-40, "rationale": "why"},
-    "csharp": {"points": 0-30, "rationale": "why"},
-    "semicolon": {"points": 0-20, "rationale": "why"},
-    "clarity": {"points": 0-10, "rationale": "why"}
-  }
+    "category-name": {"points": number, "maxPoints": number, "rationale": "specific reason for this score"},
+    ...
+  },
+  "detailedReport": "3-5 sentence instructor-facing analysis of the submission"
 }
 `;
 
@@ -158,6 +160,7 @@ Return JSON:
         score: data.score,
         feedback: data.feedback,
         rubric: data.rubric,
+        detailedReport: data.detailedReport,
       };
       
       // Store under instructor-accessible key (backup/audit trail)
@@ -179,6 +182,8 @@ Return JSON:
         [`${assignmentId}:status`]: data.score >= 70 ? 'completed' : 'attempted',
         [`${assignmentId}:feedback`]: data.feedback || '',
         [`${assignmentId}:savedCode`]: content,
+        [`${assignmentId}:rubric`]: JSON.stringify(data.rubric || {}),
+        [`${assignmentId}:detailedReport`]: data.detailedReport || '',
         [`${assignmentId}:submittedAt`]: timestamp,
         [`${assignmentId}:attempts`]: currentAttempts + 1,
       });
