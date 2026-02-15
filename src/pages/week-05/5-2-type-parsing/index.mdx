@@ -272,7 +272,69 @@ decimal total = price * 1.08m;  // 8% tax</code></pre>
 
 ---
 
-## 🔌 System Telemetry
+## � The Crash: When Raw Data Strikes
+
+{/* ── Senior Architect Alert: The Crash ── */}
+<div class="senior-architect-layout crash-layout">
+  <div class="architect-hero">
+    <img src="/media/week%205/5.2/systemAlert.png" alt="System Alert — FormatException crash from unparseable input" />
+    <p class="hero-caption">Fig 5.2b: System Alert — Unvalidated Input Triggers Fatal FormatException</p>
+  </div>
+
+  <h2 class="architect-heading">The Danger of Raw Data</h2>
+
+  <p>
+    What happens when a user types <code>"banana"</code> instead of a number? The system <strong>crashes</strong>. No warning. No recovery. Your application terminates immediately with a <code>FormatException</code>.
+  </p>
+
+  <div class="crash-demo">
+    <div class="crash-terminal">
+      <div class="terminal-bar">
+        <span class="terminal-dot red" aria-hidden="true"></span>
+        <span class="terminal-dot yellow" aria-hidden="true"></span>
+        <span class="terminal-dot green" aria-hidden="true"></span>
+        <span class="terminal-title">Runtime Exception</span>
+      </div>
+      <pre class="terminal-output"><code>Enter your age: banana
+
+Unhandled exception.
+System.FormatException: The input string 'banana' was not in a correct format.
+   at System.Number.ThrowFormatException[TChar](ReadOnlySpan`1 value)
+   at System.Int32.Parse(String s)
+   at Program.Main() in Program.cs:line 4
+
+Process terminated. Exit code: 1.</code></pre>
+    </div>
+  </div>
+
+  <div class="crash-rules">
+    <div class="crash-rule">
+      <div class="crash-rule-icon" aria-hidden="true">🔴</div>
+      <div>
+        <h4>The Rule</h4>
+        <p><code>.Parse()</code> assumes valid input. If the string cannot be converted, the runtime throws a <strong>FormatException</strong> and your program dies.</p>
+      </div>
+    </div>
+    <div class="crash-rule">
+      <div class="crash-rule-icon" aria-hidden="true">🟡</div>
+      <div>
+        <h4>For Now</h4>
+        <p>We trust user input in this phase. In <strong>Phase III</strong>, you'll learn <code>try-catch</code> and <code>TryParse()</code> to handle bad data gracefully.</p>
+      </div>
+    </div>
+    <div class="crash-rule">
+      <div class="crash-rule-icon" aria-hidden="true">🟢</div>
+      <div>
+        <h4>The Takeaway</h4>
+        <p>Every <code>.Parse()</code> call is a <strong>trust contract</strong> — you're trusting the user gave you valid data. In production, that trust must be verified.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## �🔌 System Telemetry
 
 <div class="telemetry-note">
   <div class="telemetry-icon" aria-hidden="true">📡</div>
@@ -820,5 +882,139 @@ Your mission: Create a program that reads a number from the user and multiplies 
 
   body[data-theme="light"] .tutor-content h4 {
     color: #7c3aed !important;
+  }
+
+  /* ── The Crash Section ── */
+  .crash-layout {
+    border-color: #ef4444 !important;
+  }
+
+  .crash-demo {
+    margin: 25px 0;
+  }
+
+  .crash-terminal {
+    background: #0d1117;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #30363d;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+
+  .terminal-bar {
+    background: #161b22;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #30363d;
+  }
+
+  .terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .terminal-dot.red { background: #ff5f57; }
+  .terminal-dot.yellow { background: #febc2e; }
+  .terminal-dot.green { background: #28c840; }
+
+  .terminal-title {
+    margin-left: 8px;
+    color: #8b949e;
+    font-size: 0.85rem;
+    font-family: monospace;
+  }
+
+  .terminal-output {
+    padding: 16px 20px;
+    margin: 0;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #f85149;
+    overflow-x: auto;
+  }
+
+  .terminal-output code {
+    color: inherit;
+    background: none;
+    padding: 0;
+  }
+
+  .crash-rules {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 25px;
+  }
+
+  .crash-rule {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #e2e8f0;
+  }
+
+  .crash-rule:nth-child(1) { border-left-color: #ef4444; }
+  .crash-rule:nth-child(2) { border-left-color: #eab308; }
+  .crash-rule:nth-child(3) { border-left-color: #22c55e; }
+
+  .crash-rule-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .crash-rule h4 {
+    margin: 0 0 4px 0;
+    color: #1e293b;
+    font-size: 0.95rem;
+  }
+
+  .crash-rule p {
+    margin: 0;
+    color: #475569;
+    font-size: 0.9rem;
+  }
+
+  /* ── Dark mode: Crash Section ── */
+  body:not([data-theme="light"]) .crash-layout {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+  }
+
+  body:not([data-theme="light"]) .crash-rule {
+    background: rgba(0, 0, 0, 0.3);
+    border-left-color: rgba(255, 255, 255, 0.1);
+  }
+
+  body:not([data-theme="light"]) .crash-rule:nth-child(1) { border-left-color: #ef4444; }
+  body:not([data-theme="light"]) .crash-rule:nth-child(2) { border-left-color: #eab308; }
+  body:not([data-theme="light"]) .crash-rule:nth-child(3) { border-left-color: #22c55e; }
+
+  body:not([data-theme="light"]) .crash-rule h4 {
+    color: #e2e8f0;
+  }
+
+  body:not([data-theme="light"]) .crash-rule p {
+    color: #94a3b8;
+  }
+
+  body[data-theme="light"] .crash-terminal {
+    border-color: #d1d5db !important;
+  }
+
+  body[data-theme="light"] .terminal-bar {
+    background: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+  }
+
+  body[data-theme="light"] .terminal-title {
+    color: #6b7280 !important;
   }
 `}</style>
