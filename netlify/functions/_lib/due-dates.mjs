@@ -18,10 +18,17 @@
  */
 const STUDENT_EXTENSIONS = {
   // John Mohn - joined class on Feb 9, 2026 (Week 4 start)
-  // Giving him until Feb 22 (end of Week 5) to catch up on Weeks 1-3
+  // Giving him until Feb 22 (end of Week 5) to catch up on Weeks 1-5
+  // Auth0 sub: auth0|6990e5d5adfc6d8bbff66a17
+  'auth0|6990e5d5adfc6d8bbff66a17': {
+    graceDate: '2026-02-22T23:59:59-05:00',
+    maxWeek: 5,  // Waive late penalties for all weeks through Week 5
+    reason: 'Late enrollment - joined Feb 9, 2026'
+  },
+  // Email alias (in case userId comes as email)
   'jmohn391@students.snhu.edu': {
     graceDate: '2026-02-22T23:59:59-05:00',
-    maxWeek: 3,  // Only applies to weeks 1-3, Week 4+ uses normal due dates
+    maxWeek: 5,
     reason: 'Late enrollment - joined Feb 9, 2026'
   },
 };
@@ -36,18 +43,7 @@ export function getStudentExtension(userId, pageId) {
   if (!userId) return { hasExtension: false, graceDate: null, reason: null };
   
   // Check by direct match (sub or email)
-  let extension = STUDENT_EXTENSIONS[userId];
-  
-  // Also check by email if userId looks like an Auth0 sub
-  if (!extension && userId.startsWith('auth0|')) {
-    // Try to find by partial email match in keys
-    for (const [key, ext] of Object.entries(STUDENT_EXTENSIONS)) {
-      if (key.includes('@')) {
-        extension = ext;
-        break;
-      }
-    }
-  }
+  const extension = STUDENT_EXTENSIONS[userId];
   
   if (!extension) return { hasExtension: false, graceDate: null, reason: null };
   
