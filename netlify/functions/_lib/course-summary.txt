@@ -358,7 +358,7 @@ Key Concepts:
 - immutable
 - baked into your program
 
-Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated Time: 20 minutes --- ## 🎬 Technical Briefing: const vs readonly This Senior Architect briefing explains const as a "Universal Law" (compile-time) and compares it to readonly (runtime)—key concepts for writing safe, predictable code in...
+Summary: # Section 3.4: Immutability 🔒 Constants & Readonly ⏱️ Estimated Time: 20 minutes --- ✦ Written in Stone: The 'const' Keyword In C#, a constant is a value that is fixed forever the moment you compile your code. Unlike a regular variable which is a temporary parking spot, a constant is an engraved in...
 
 ### 📚 Overview: Week 03 • Extra Practice
 
