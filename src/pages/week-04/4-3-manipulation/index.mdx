@@ -464,7 +464,30 @@ class Program
 
 ---
 
-## ✅ Knowledge Check
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>🔪 Key Takeaways: Search & Parse</h3>
+  <ul>
+    <li><strong>IndexOf():</strong> Find position of substring (returns -1 if not found)</li>
+    <li><strong>Substring():</strong> Extract portion by position and optional length</li>
+    <li><strong>Replace():</strong> Swap all occurrences with new text</li>
+    <li><strong>Split():</strong> Break string into array by delimiter (essential for CSV!)</li>
+    <li><strong>Contains():</strong> Quick existence check (returns bool)</li>
+    <li><strong>Trim():</strong> Clean whitespace from edges</li>
+    <li><strong>ToUpper()/ToLower():</strong> Case conversion for comparison</li>
+  </ul>
+  
+  <div class="pattern-highlight">
+    <h4>🔗 Common Pattern: IndexOf + Substring</h4>
+    <pre><code>int pos = text.IndexOf("@");
+string domain = text.Substring(pos + 1);</code></pre>
+  </div>
+</div>
+
+---
+
+## 🧠 Knowledge Check
 
 <Checkpoint
   checkpointId="week-04-4-3-checkpoint"
@@ -507,31 +530,9 @@ class Program
 
 ---
 
-## 📋 Section Summary
-
-<div class="summary-box">
-  <h3>🔪 Key Takeaways: Search & Parse</h3>
-  <ul>
-    <li><strong>IndexOf():</strong> Find position of substring (returns -1 if not found)</li>
-    <li><strong>Substring():</strong> Extract portion by position and optional length</li>
-    <li><strong>Replace():</strong> Swap all occurrences with new text</li>
-    <li><strong>Split():</strong> Break string into array by delimiter (essential for CSV!)</li>
-    <li><strong>Contains():</strong> Quick existence check (returns bool)</li>
-    <li><strong>Trim():</strong> Clean whitespace from edges</li>
-    <li><strong>ToUpper()/ToLower():</strong> Case conversion for comparison</li>
-  </ul>
-  
-  <div class="pattern-highlight">
-    <h4>🔗 Common Pattern: IndexOf + Substring</h4>
-    <pre><code>int pos = text.IndexOf("@");
-string domain = text.Substring(pos + 1);</code></pre>
-  </div>
-</div>
-
 <div class="next-section">
-  <a href="/week-04/4-4-stringbuilder/">
-    Next: Section 4.4 — StringBuilder (Efficiency) →
-  </a>
+  <p>Next up: <strong>Section 4.4 — StringBuilder (Efficiency)</strong></p>
+  <a href="/week-04/4-4-stringbuilder/" class="vscode-button">Continue to Section 4.4 →</a>
 </div>
 
 <style>{`

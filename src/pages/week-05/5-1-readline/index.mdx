@@ -272,6 +272,41 @@ Your mission: Create an access control system that prompts for a username and di
 
 ---
 
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-05-5-1-checkpoint"
+  title="🔍 Section 5.1 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What data type does Console.ReadLine() always return?",
+      options: ["int", "object", "string", "It depends on what the user types"],
+      correctAnswer: "string",
+      explanation: "Console.ReadLine() ALWAYS returns a string, no matter what the user types. Even if they type '42', it comes back as the text \"42\", not the number 42."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What does it mean that Console.ReadLine() is a 'blocking call'?",
+      options: ["It blocks other programs from running", "It prevents the user from typing", "The program halts and waits until the user presses Enter", "It blocks network connections"],
+      correctAnswer: "The program halts and waits until the user presses Enter",
+      explanation: "A blocking call suspends the CPU thread at that line. The program does nothing—consuming zero CPU cycles—until the user types something and presses Enter."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "Why should you use Console.Write() instead of Console.WriteLine() when prompting for input?",
+      options: ["Write() is faster than WriteLine()", "Write() keeps the cursor on the same line as the prompt", "WriteLine() causes errors with ReadLine()", "There is no difference between them"],
+      correctAnswer: "Write() keeps the cursor on the same line as the prompt",
+      explanation: "Console.Write() does NOT add a newline, so the user's cursor stays right after the prompt text (e.g., 'Enter name: |'). This is the professional practice for input prompts."
+    }
+  ]}
+/>
+
+---
+
 <div class="next-section">
   <p>Next up: <strong>Section 5.2: The Data Refiner (Type Parsing)</strong></p>
   <p>Numbers arrive as text. Learn to convert them into usable numeric types.</p>

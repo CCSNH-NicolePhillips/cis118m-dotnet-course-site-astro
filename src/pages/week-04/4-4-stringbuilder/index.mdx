@@ -395,7 +395,34 @@ class Program
 
 ---
 
-## ✅ Knowledge Check
+## 📋 Section Summary
+
+<div class="summary-box">
+  <h3>🏗️ Key Takeaways: StringBuilder</h3>
+  <ul>
+    <li><strong>Problem:</strong> String concatenation in loops creates O(n²) garbage</li>
+    <li><strong>Solution:</strong> StringBuilder maintains a mutable buffer</li>
+    <li><strong>Namespace:</strong> System.Text</li>
+    <li><strong>Key Methods:</strong> Append(), AppendLine(), Insert(), Replace(), Remove(), Clear()</li>
+    <li><strong>Finish with:</strong> .ToString() to get the final string</li>
+    <li><strong>Rule:</strong> Use StringBuilder when building strings in loops</li>
+  </ul>
+</div>
+
+**Standard Pattern:**
+
+```csharp
+StringBuilder sb = new StringBuilder();
+foreach (var item in items)
+{
+    sb.AppendLine(item.ToString());
+}
+string result = sb.ToString();
+```
+
+---
+
+## 🧠 Knowledge Check
 
 <Checkpoint
   checkpointId="week-04-4-4-checkpoint"
@@ -437,31 +464,6 @@ class Program
 />
 
 ---
-
-## 📋 Section Summary
-
-<div class="summary-box">
-  <h3>🏗️ Key Takeaways: StringBuilder</h3>
-  <ul>
-    <li><strong>Problem:</strong> String concatenation in loops creates O(n²) garbage</li>
-    <li><strong>Solution:</strong> StringBuilder maintains a mutable buffer</li>
-    <li><strong>Namespace:</strong> System.Text</li>
-    <li><strong>Key Methods:</strong> Append(), AppendLine(), Insert(), Replace(), Remove(), Clear()</li>
-    <li><strong>Finish with:</strong> .ToString() to get the final string</li>
-    <li><strong>Rule:</strong> Use StringBuilder when building strings in loops</li>
-  </ul>
-</div>
-
-**Standard Pattern:**
-
-```csharp
-StringBuilder sb = new StringBuilder();
-foreach (var item in items)
-{
-    sb.AppendLine(item.ToString());
-}
-string result = sb.ToString();
-```
 
 <div class="week-complete">
   <h3>🎉 Week 04 Lessons Complete!</h3>

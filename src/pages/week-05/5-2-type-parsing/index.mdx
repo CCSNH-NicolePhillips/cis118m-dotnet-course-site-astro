@@ -404,6 +404,49 @@ Your mission: Create a program that reads a number from the user and multiplies 
 
 ---
 
+## 🧠 Knowledge Check
+
+<Checkpoint
+  checkpointId="week-05-5-2-checkpoint"
+  title="🔍 Section 5.2 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Why can't you write: int x = Console.ReadLine(); ?",
+      options: ["ReadLine() is not a valid method", "You must use var instead of int", "ReadLine() returns a string, which cannot be implicitly converted to int", "You need to import a special namespace first"],
+      correctAnswer: "ReadLine() returns a string, which cannot be implicitly converted to int",
+      explanation: "C# is strongly typed. ReadLine() returns a string, and you cannot assign a string directly to an int variable. You must explicitly parse it with int.Parse()."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What happens if you call int.Parse() on the text \"banana\"?",
+      options: ["It returns 0", "It returns null", "The program crashes with a FormatException", "It silently ignores the invalid input"],
+      correctAnswer: "The program crashes with a FormatException",
+      explanation: "Parse() throws a FormatException when the string cannot be converted to the target type. The text \"banana\" has no valid integer representation, so the program terminates with a fatal error."
+    },
+    {
+      id: "cp3",
+      type: "multiple-choice",
+      question: "Which Parse method should you use for financial/money data?",
+      options: ["int.Parse()", "double.Parse()", "decimal.Parse()", "float.Parse()"],
+      correctAnswer: "decimal.Parse()",
+      explanation: "Financial data ALWAYS uses decimal.Parse(). The decimal type provides exact precision for currency values, while double and float can introduce tiny rounding errors that are unacceptable for money."
+    },
+    {
+      id: "cp4",
+      type: "multiple-choice",
+      question: "What does int.Parse(\"42\") return?",
+      options: ["The string \"42\"", "The integer 42", "The double 42.0", "An error because 42 is already a number"],
+      correctAnswer: "The integer 42",
+      explanation: "int.Parse(\"42\") converts the string \"42\" into the integer value 42. This is the essential refining step—transforming raw text input into a usable numeric type."
+    }
+  ]}
+/>
+
+---
+
 <div class="next-section">
   <p>Next up: <strong>Section 5.3: The Boss Fight</strong></p>
   <p>Combine everything you've learned to build an interactive Project Budget Estimator!</p>
