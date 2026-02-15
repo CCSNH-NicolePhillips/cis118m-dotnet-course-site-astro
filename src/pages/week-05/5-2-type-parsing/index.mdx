@@ -12,22 +12,56 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 <div class="section-header">
   <div class="section-badge">⚗️ Data Alchemy</div>
-  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+  <p class="section-time" aria-hidden="true">⏱️ Estimated Time: 30 minutes</p>
 </div>
 
 ---
 
-<div class="concept-header">
-  <div class="header-content">
-    <div class="header-text">
-      <h2>✦ From Text Data to Numeric State</h2>
-      <p>
-        <code>Console.ReadLine()</code> always returns a <strong>string</strong>—even if the user types "42". To perform mathematical operations, you must <strong>refine</strong> that raw text into a proper numeric type. This is called <strong>parsing</strong>, and choosing the wrong parser is a critical failure in production systems.
-      </p>
-    </div>
-    <div class="header-image">
-      <img src="/media/week-5/data-refiner.png" alt="Data refiner metaphor for type parsing" />
-    </div>
+{/* ── Senior Architect Hero ── */}
+<div class="senior-architect-layout">
+  <div class="architect-hero">
+    <img src="/media/week%205/5.2/parse.png" alt="The Data Refiner — Refining Raw Strings into Numeric State" />
+    <p class="hero-caption">Fig 5.2: Technical Parsing — Refining Raw Strings into Numeric State</p>
+  </div>
+
+  <h2 class="architect-heading">5.2: The Parsing Bridge</h2>
+
+  <p>
+    Raw text is "dirty" data. To perform math, we must <strong>refine</strong> it using Parsing methods. This is the bridge between human-readable text and machine-calculable values.
+  </p>
+
+  <div class="architect-parse-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Target Type</th>
+          <th>Method</th>
+          <th>Use Case</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Integer</strong></td>
+          <td><code>int.Parse(data)</code></td>
+          <td>Whole numbers (Count, Age)</td>
+        </tr>
+        <tr>
+          <td><strong>Double</strong></td>
+          <td><code>double.Parse(data)</code></td>
+          <td>Scientific precision (Weight, Distance)</td>
+        </tr>
+        <tr class="decimal-highlight">
+          <td><strong>Decimal</strong></td>
+          <td><code>decimal.Parse(data)</code></td>
+          <td>Financial accuracy (Currency)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="architect-warning">
+    <h4>⚠️ System Warning: FormatExceptions</h4>
+    <p>If you try to parse "Hello" into an <code>int</code>, the program will terminate with a fatal error. We call this a 'Crash-on-Input'.</p>
   </div>
 </div>
 
@@ -43,7 +77,7 @@ int x = Console.ReadLine();  // ERROR: Cannot implicitly convert string to int
 ```
 
 <div class="error-box">
-  <div class="error-icon">⚠️</div>
+  <div class="error-icon" aria-hidden="true">⚠️</div>
   <div class="error-content">
     <h4>Compiler Error CS0029</h4>
     <p><code>Cannot implicitly convert type 'string' to 'int'</code></p>
@@ -74,7 +108,7 @@ int x = Console.ReadLine();  // ERROR: Cannot implicitly convert string to int
 ## 🏛️ Architect's Note
 
 <div class="architect-note">
-  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-avatar" aria-hidden="true">👷‍♂️</div>
   <div class="architect-content">
     <h4>⚠️ Production Warning</h4>
     <p>
@@ -129,7 +163,7 @@ The .NET Framework provides parsing methods for each numeric type. Choose based 
 </div>
 
 <div class="critical-callout">
-  <div class="callout-icon">💰</div>
+  <div class="callout-icon" aria-hidden="true">💰</div>
   <div class="callout-content">
     <h4>The Architect's Rule: decimal for Financial Data</h4>
     <p>
@@ -241,7 +275,7 @@ decimal total = price * 1.08m;  // 8% tax</code></pre>
 ## 🔌 System Telemetry
 
 <div class="telemetry-note">
-  <div class="telemetry-icon">📡</div>
+  <div class="telemetry-icon" aria-hidden="true">📡</div>
   <div class="telemetry-content">
     <h4>System Telemetry Notice</h4>
     <p>
@@ -275,7 +309,7 @@ Your mission: Create a program that reads a number from the user and multiplies 
 ## 🤖 Need Help?
 
 <div class="tutor-prompt">
-  <div class="tutor-icon">💬</div>
+  <div class="tutor-icon" aria-hidden="true">💬</div>
   <div class="tutor-content">
     <h4>AI Tutor Available</h4>
     <p>
@@ -290,17 +324,17 @@ Your mission: Create a program that reads a number from the user and multiplies 
 
 <div class="takeaways-grid">
   <div class="takeaway-card">
-    <div class="takeaway-icon">🔤</div>
+    <div class="takeaway-icon" aria-hidden="true">🔤</div>
     <h4>ReadLine Returns String</h4>
     <p>Even "42" is text until you parse it.</p>
   </div>
   <div class="takeaway-card">
-    <div class="takeaway-icon">⚗️</div>
+    <div class="takeaway-icon" aria-hidden="true">⚗️</div>
     <h4>Parse Refines Data</h4>
     <p>int.Parse(), double.Parse(), decimal.Parse() convert text to numbers.</p>
   </div>
   <div class="takeaway-card">
-    <div class="takeaway-icon">💰</div>
+    <div class="takeaway-icon" aria-hidden="true">💰</div>
     <h4>decimal for Money</h4>
     <p>Financial data ALWAYS uses decimal.Parse().</p>
   </div>
@@ -315,6 +349,175 @@ Your mission: Create a program that reads a number from the user and multiplies 
 </div>
 
 <style>{`
+  /* ── Senior Architect Layout ── */
+  .senior-architect-layout {
+    background-color: #ffffff;
+    color: #1e293b;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    max-width: 950px;
+    margin: 2rem auto;
+  }
+
+  .architect-hero {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .architect-hero img {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+
+  .hero-caption {
+    margin-top: 15px;
+    font-style: italic;
+    color: #64748b;
+  }
+
+  .architect-heading {
+    color: #1e3a8a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 10px;
+  }
+
+  /* ── Architect Parse Table ── */
+  .architect-parse-table {
+    margin: 25px 0;
+    overflow-x: auto;
+  }
+
+  .architect-parse-table table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e2e8f0;
+  }
+
+  .architect-parse-table thead tr {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .architect-parse-table th {
+    padding: 12px;
+    text-align: left;
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .architect-parse-table td {
+    padding: 12px;
+    color: #334155;
+  }
+
+  .architect-parse-table tr {
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .architect-parse-table .decimal-highlight {
+    background: rgba(239, 68, 68, 0.05);
+  }
+
+  .architect-parse-table .decimal-highlight td {
+    color: #b91c1c;
+    font-weight: bold;
+  }
+
+  .architect-warning {
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+  }
+
+  .architect-warning h4 {
+    margin: 0;
+    color: #991b1b;
+  }
+
+  .architect-warning p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #334155;
+  }
+
+  @media (max-width: 768px) {
+    .senior-architect-layout {
+      padding: 20px;
+    }
+  }
+
+  /* ── Dark mode overrides for architect layout ── */
+  body:not([data-theme="light"]) .senior-architect-layout {
+    background-color: #1e1e2e;
+    color: #e2e8f0;
+    border-color: rgba(78, 201, 176, 0.3);
+  }
+
+  body:not([data-theme="light"]) .architect-hero {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(78, 201, 176, 0.2);
+  }
+
+  body:not([data-theme="light"]) .hero-caption {
+    color: #94a3b8;
+  }
+
+  body:not([data-theme="light"]) .architect-heading {
+    color: #4ec9b0;
+    border-color: #4ec9b0;
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table thead tr {
+    background-color: rgba(78, 201, 176, 0.15);
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table th {
+    color: #e2e8f0;
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table td {
+    color: #cbd5e1;
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table table {
+    border-color: rgba(78, 201, 176, 0.2);
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table tr {
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table .decimal-highlight {
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  body:not([data-theme="light"]) .architect-parse-table .decimal-highlight td {
+    color: #fca5a5;
+  }
+
+  body:not([data-theme="light"]) .architect-warning {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  body:not([data-theme="light"]) .architect-warning h4 {
+    color: #fca5a5;
+  }
+
+  body:not([data-theme="light"]) .architect-warning p {
+    color: #cbd5e1;
+  }
+
+  /* ── Existing component styles ── */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -339,36 +542,6 @@ Your mission: Create a program that reads a number from the user and multiplies 
     color: #888;
     margin: 0;
     font-size: 0.95rem;
-  }
-
-  .concept-header {
-    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
-    border: 1px solid rgba(78, 201, 176, 0.2);
-    border-radius: 12px;
-    padding: 24px;
-    margin: 24px 0;
-  }
-
-  .header-content {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .header-image img {
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid rgba(78, 201, 176, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    .header-content {
-      grid-template-columns: 1fr;
-    }
-    .header-image {
-      order: -1;
-    }
   }
 
   .error-box {
@@ -572,9 +745,13 @@ Your mission: Create a program that reads a number from the user and multiplies 
     color: white !important;
   }
 
-  body[data-theme="light"] .concept-header {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
-    border-color: rgba(37, 99, 235, 0.15) !important;
+  body[data-theme="light"] .error-box {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.08) 100%) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+  }
+
+  body[data-theme="light"] .error-content h4 {
+    color: #dc2626 !important;
   }
 
   body[data-theme="light"] .styled-table-container table {
@@ -607,15 +784,6 @@ Your mission: Create a program that reads a number from the user and multiplies 
 
   body[data-theme="light"] .next-section p {
     color: #333 !important;
-  }
-
-  body[data-theme="light"] .error-box {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.08) 100%) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
-  }
-
-  body[data-theme="light"] .error-content h4 {
-    color: #dc2626 !important;
   }
 
   body[data-theme="light"] .architect-note {

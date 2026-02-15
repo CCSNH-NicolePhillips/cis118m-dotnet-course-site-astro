@@ -12,21 +12,32 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 <div class="section-header">
   <div class="section-badge">🚰 Data Ingress</div>
-  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+  <p class="section-time" aria-hidden="true">⏱️ Estimated Time: 25 minutes</p>
 </div>
 
 ---
 
-<div class="concept-header">
-  <div class="header-content">
-    <div class="header-text">
-      <h2>✦ Console.ReadLine: The Intake Valve</h2>
-      <p>
-        So far, your programs have been <strong>one-way broadcasts</strong>—they output data but never listen. <code>Console.ReadLine()</code> is the <strong>intake valve</strong> that opens a channel from the outside world into your program. But here's the critical detail: it's a <strong>blocking call</strong>. The entire program halts, waiting for the user to commit their input by pressing Enter.
-      </p>
+{/* ── Senior Architect Hero ── */}
+<div class="senior-architect-layout">
+  <div class="architect-hero">
+    <img src="/media/week%205/5.1/buffer.png" alt="The Intake Valve — Thread Execution Paused Awaiting User Buffer" />
+    <p class="hero-caption">Fig 5.1: Thread Execution Paused — Awaiting User Buffer</p>
+  </div>
+
+  <h2 class="architect-heading">5.1: Capturing the Stream</h2>
+
+  <p>
+    In the .NET ecosystem, <code>Console.ReadLine()</code> is a <strong>Blocking Call</strong>. The CPU thread halts at this line, waiting for the human operator to input data and press <kbd>Enter</kbd>.
+  </p>
+
+  <div class="architect-rule-grid">
+    <div class="architect-rule blue">
+      <strong>Architect's Rule:</strong>
+      <p>No matter what the user types (numbers, symbols, or nothing), the return type is <strong>ALWAYS</strong> a string.</p>
     </div>
-    <div class="header-image">
-      <img src="/media/week-5/intake-valve.png" alt="Intake valve metaphor for Console.ReadLine" />
+    <div class="architect-rule orange">
+      <strong>System State:</strong>
+      <p>The program "sleeps" during this phase, consuming zero CPU cycles while awaiting the interrupt.</p>
     </div>
   </div>
 </div>
@@ -59,21 +70,21 @@ A **blocking call** is an instruction that **halts the CPU thread** until some e
   <h3>🚦 The Traffic Light Metaphor</h3>
   <div class="metaphor-grid">
     <div class="metaphor-item">
-      <div class="metaphor-icon">🟢</div>
+      <div class="metaphor-icon" aria-hidden="true">🟢</div>
       <div class="metaphor-text">
         <strong>Before ReadLine</strong>
         <p>Code executes normally, instructions flow freely.</p>
       </div>
     </div>
     <div class="metaphor-item">
-      <div class="metaphor-icon">🔴</div>
+      <div class="metaphor-icon" aria-hidden="true">🔴</div>
       <div class="metaphor-text">
         <strong>At ReadLine</strong>
         <p>Traffic STOPS. The thread is blocked, waiting for the user.</p>
       </div>
     </div>
     <div class="metaphor-item">
-      <div class="metaphor-icon">🟢</div>
+      <div class="metaphor-icon" aria-hidden="true">🟢</div>
       <div class="metaphor-text">
         <strong>After Enter</strong>
         <p>The light turns green—input captured, execution resumes.</p>
@@ -87,7 +98,7 @@ A **blocking call** is an instruction that **halts the CPU thread** until some e
 ## 🏛️ Architect's Note
 
 <div class="architect-note">
-  <div class="architect-avatar">👷‍♂️</div>
+  <div class="architect-avatar" aria-hidden="true">👷‍♂️</div>
   <div class="architect-content">
     <h4>⚠️ Production Warning</h4>
     <p>
@@ -110,7 +121,7 @@ When the user types, characters go into an **input buffer**. Nothing happens unt
     </div>
     <p class="memory-note">Characters accumulate as the user types</p>
   </div>
-  <div class="memory-arrow">→ Enter ↵</div>
+  <div class="memory-arrow" aria-hidden="true">→ Enter ↵</div>
   <div class="memory-section heap">
     <h4>📤 String Created</h4>
     <div class="memory-block heap-block">
@@ -195,7 +206,7 @@ string name = Console.ReadLine() ?? "";  // Default to empty if null</code></pre
 ## 🔌 System Telemetry
 
 <div class="telemetry-note">
-  <div class="telemetry-icon">📡</div>
+  <div class="telemetry-icon" aria-hidden="true">📡</div>
   <div class="telemetry-content">
     <h4>System Telemetry Notice</h4>
     <p>
@@ -228,7 +239,7 @@ Your mission: Create an access control system that prompts for a username and di
 ## 🤖 Need Help?
 
 <div class="tutor-prompt">
-  <div class="tutor-icon">💬</div>
+  <div class="tutor-icon" aria-hidden="true">💬</div>
   <div class="tutor-content">
     <h4>AI Tutor Available</h4>
     <p>
@@ -243,17 +254,17 @@ Your mission: Create an access control system that prompts for a username and di
 
 <div class="takeaways-grid">
   <div class="takeaway-card">
-    <div class="takeaway-icon">🚰</div>
+    <div class="takeaway-icon" aria-hidden="true">🚰</div>
     <h4>ReadLine is the Intake Valve</h4>
     <p>It opens a channel from user to program, returning a string.</p>
   </div>
   <div class="takeaway-card">
-    <div class="takeaway-icon">⏸️</div>
+    <div class="takeaway-icon" aria-hidden="true">⏸️</div>
     <h4>It's a Blocking Call</h4>
     <p>The CPU thread halts completely until Enter is pressed.</p>
   </div>
   <div class="takeaway-card">
-    <div class="takeaway-icon">📝</div>
+    <div class="takeaway-icon" aria-hidden="true">📝</div>
     <h4>Always Returns Text</h4>
     <p>Even numbers come in as strings—you'll learn parsing next!</p>
   </div>
@@ -268,6 +279,134 @@ Your mission: Create an access control system that prompts for a username and di
 </div>
 
 <style>{`
+  /* ── Senior Architect Layout ── */
+  .senior-architect-layout {
+    background-color: #ffffff;
+    color: #1e293b;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    max-width: 950px;
+    margin: 2rem auto;
+  }
+
+  .architect-hero {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .architect-hero img {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 6px;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+
+  .hero-caption {
+    margin-top: 15px;
+    font-style: italic;
+    color: #64748b;
+  }
+
+  .architect-heading {
+    color: #1e3a8a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 10px;
+  }
+
+  .architect-rule-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 25px 0;
+  }
+
+  .architect-rule {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .architect-rule.blue {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+  }
+
+  .architect-rule.blue strong {
+    color: #1e40af;
+  }
+
+  .architect-rule.orange {
+    background: #fff7ed;
+    border-left: 4px solid #ea580c;
+  }
+
+  .architect-rule.orange strong {
+    color: #9a3412;
+  }
+
+  .architect-rule p {
+    font-size: 14px;
+    margin-top: 5px;
+    color: #334155;
+  }
+
+  @media (max-width: 768px) {
+    .architect-rule-grid {
+      grid-template-columns: 1fr;
+    }
+    .senior-architect-layout {
+      padding: 20px;
+    }
+  }
+
+  /* ── Dark mode overrides for architect layout ── */
+  body:not([data-theme="light"]) .senior-architect-layout {
+    background-color: #1e1e2e;
+    color: #e2e8f0;
+    border-color: rgba(78, 201, 176, 0.3);
+  }
+
+  body:not([data-theme="light"]) .architect-hero {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(78, 201, 176, 0.2);
+  }
+
+  body:not([data-theme="light"]) .hero-caption {
+    color: #94a3b8;
+  }
+
+  body:not([data-theme="light"]) .architect-heading {
+    color: #4ec9b0;
+    border-color: #4ec9b0;
+  }
+
+  body:not([data-theme="light"]) .architect-rule.blue {
+    background: rgba(37, 99, 235, 0.1);
+    border-color: #60a5fa;
+  }
+
+  body:not([data-theme="light"]) .architect-rule.blue strong {
+    color: #93c5fd;
+  }
+
+  body:not([data-theme="light"]) .architect-rule.orange {
+    background: rgba(234, 88, 12, 0.1);
+    border-color: #fb923c;
+  }
+
+  body:not([data-theme="light"]) .architect-rule.orange strong {
+    color: #fdba74;
+  }
+
+  body:not([data-theme="light"]) .architect-rule p {
+    color: #cbd5e1;
+  }
+
+  /* ── Existing component styles ── */
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -292,36 +431,6 @@ Your mission: Create an access control system that prompts for a username and di
     color: #888;
     margin: 0;
     font-size: 0.95rem;
-  }
-
-  .concept-header {
-    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
-    border: 1px solid rgba(78, 201, 176, 0.2);
-    border-radius: 12px;
-    padding: 24px;
-    margin: 24px 0;
-  }
-
-  .header-content {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .header-image img {
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid rgba(78, 201, 176, 0.3);
-  }
-
-  @media (max-width: 768px) {
-    .header-content {
-      grid-template-columns: 1fr;
-    }
-    .header-image {
-      order: -1;
-    }
   }
 
   .architect-note {
@@ -507,11 +616,6 @@ Your mission: Create an access control system that prompts for a username and di
   body[data-theme="light"] .section-badge {
     background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%) !important;
     color: white !important;
-  }
-
-  body[data-theme="light"] .concept-header {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
-    border-color: rgba(37, 99, 235, 0.15) !important;
   }
 
   body[data-theme="light"] .concept-highlight {
