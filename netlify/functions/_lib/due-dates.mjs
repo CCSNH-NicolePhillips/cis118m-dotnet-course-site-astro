@@ -66,14 +66,22 @@ export function getStudentExtension(userId, pageId) {
  * Matches src/config/site.ts WEEKS array
  */
 const WEEK_DUE_DATES = {
-  1: '2026-01-25T23:59:59-05:00',  // Week 1 due Saturday 1/25
-  2: '2026-02-01T23:59:59-05:00',  // Week 2 due Saturday 2/1
-  3: '2026-02-08T23:59:59-05:00',  // Week 3 due Saturday 2/8
-  4: '2026-02-15T23:59:59-05:00',  // Week 4 due Saturday 2/15
-  5: '2026-02-22T23:59:59-05:00',  // Week 5 due Saturday 2/22
-  6: '2026-03-01T23:59:59-05:00',  // Week 6 due Saturday 3/1
-  7: '2026-03-08T23:59:59-05:00',  // Week 7 due Saturday 3/8
-  8: '2026-03-22T23:59:59-05:00',  // Week 8 due Saturday 3/22 (after spring break)
+  1: '2026-01-25T23:59:59-05:00',  // Week 1 due Sunday 1/25
+  2: '2026-02-01T23:59:59-05:00',  // Week 2 due Sunday 2/1
+  3: '2026-02-08T23:59:59-05:00',  // Week 3 due Sunday 2/8
+  4: '2026-02-15T23:59:59-05:00',  // Week 4 due Sunday 2/15
+  5: '2026-02-22T23:59:59-05:00',  // Week 5 due Sunday 2/22
+  6: '2026-03-01T23:59:59-05:00',  // Week 6 due Sunday 3/1
+  7: '2026-03-08T23:59:59-05:00',  // Week 7 due Sunday 3/8
+  8: '2026-03-15T23:59:59-04:00',  // Week 8 due Sunday 3/15 (EDT starts 3/8)
+  // Spring Break: March 16-22
+  9: '2026-03-29T23:59:59-04:00',  // Week 9 due Sunday 3/29
+  10: '2026-04-05T23:59:59-04:00', // Week 10 due Sunday 4/5
+  11: '2026-04-12T23:59:59-04:00', // Week 11 due Sunday 4/12
+  12: '2026-04-19T23:59:59-04:00', // Week 12 due Sunday 4/19
+  13: '2026-04-26T23:59:59-04:00', // Week 13 due Sunday 4/26
+  14: '2026-05-03T23:59:59-04:00', // Week 14 due Sunday 5/3
+  15: '2026-05-10T23:59:59-04:00', // Week 15 due Sunday 5/10
 };
 
 /**
