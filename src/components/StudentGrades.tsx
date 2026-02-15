@@ -76,12 +76,23 @@ ASSIGNMENTS.push({ id: 'week-01-homework', label: 'Homework', week: 1, type: 'ho
 ASSIGNMENTS.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
 
 // Weeks 2-14: Participation, Quiz, Homework, Lab
+// Boss fight weeks (5, 9, 13) replace lab with boss-fight (200pts)
+// Week 5 has no quiz or homework (boss fight only)
+const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // Weeks with boss fight but NO quiz/homework
+const BOSS_FIGHT_WEEKS = new Set([5, 9, 13]); // All boss fight weeks
+
 for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
   ASSIGNMENTS.push({ id: `week-${wStr}-participation`, label: 'Participation', week: w, type: 'participation' });
-  ASSIGNMENTS.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
-  ASSIGNMENTS.push({ id: `week-${wStr}-homework`, label: 'Homework', week: w, type: 'homework' });
-  ASSIGNMENTS.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
+  if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
+    ASSIGNMENTS.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
+    ASSIGNMENTS.push({ id: `week-${wStr}-homework`, label: 'Homework', week: w, type: 'homework' });
+  }
+  if (BOSS_FIGHT_WEEKS.has(w)) {
+    ASSIGNMENTS.push({ id: `week-${wStr}-boss-fight`, label: 'Boss Fight', week: w, type: 'lab' });
+  } else {
+    ASSIGNMENTS.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
+  }
 }
 
 // Week 15: Participation, Quiz, Homework, Lab + Final Project

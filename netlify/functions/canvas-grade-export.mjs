@@ -84,6 +84,9 @@ function generateAssignments() {
   assignments.push({ id: 'week-01-required-quiz', name: 'Week 1 Syllabus Quiz', points: 100, week: '01' });
   
   // Weeks 2-14: Participation, Lab/BossFight, Homework, Quiz
+  // Week 5 is boss-fight-only (no homework or quiz)
+  const BOSS_FIGHT_ONLY_WEEKS = new Set(['05']); // No quiz/homework
+
   for (let w = 2; w <= 14; w++) {
     const slug = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${slug}-participation`, name: `Week ${w} Participation`, points: 100, isParticipation: true, week: slug });
@@ -98,8 +101,11 @@ function generateAssignments() {
       assignments.push({ id: `week-${slug}-lab`, name: `Week ${w} Lab`, points: 100, week: slug });
     }
     
-    assignments.push({ id: `week-${slug}-homework`, name: `Week ${w} Homework`, points: 100, week: slug });
-    assignments.push({ id: `week-${slug}-quiz`, name: `Week ${w} Quiz`, points: 100, week: slug });
+    // Skip homework and quiz for boss-fight-only weeks
+    if (!BOSS_FIGHT_ONLY_WEEKS.has(slug)) {
+      assignments.push({ id: `week-${slug}-homework`, name: `Week ${w} Homework`, points: 100, week: slug });
+      assignments.push({ id: `week-${slug}-quiz`, name: `Week ${w} Quiz`, points: 100, week: slug });
+    }
   }
   
   // Week 15 - includes final at the end

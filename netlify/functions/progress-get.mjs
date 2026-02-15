@@ -140,7 +140,6 @@ export default async function handler(request, context) {
       'week-03-quiz',
       'week-03-weekly-assessment',
       'week-04-quiz',
-      'week-05-quiz',
       'week-06-quiz',
       'week-07-quiz',
       'week-08-quiz'

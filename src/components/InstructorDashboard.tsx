@@ -87,12 +87,23 @@ const generateAssignments = () => {
   assignments.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
   
   // Weeks 2-14 (regular weeks)
+  // Boss fight weeks replace lab with boss-fight (200pts)
+  // Week 5 has no quiz or homework (boss fight only)
+  const bossFightOnlyWeeks = new Set([5]); // No quiz/homework
+  const bossFightWeeks = new Set([5, 9, 13]); // All boss fight weeks
+
   for (let w = 2; w <= 14; w++) {
     const wStr = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${wStr}-participation`, label: 'Part', week: w, type: 'participation' });
-    assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
-    assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
-    assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
+    if (!bossFightOnlyWeeks.has(w)) {
+      assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
+      assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
+    }
+    if (bossFightWeeks.has(w)) {
+      assignments.push({ id: `week-${wStr}-boss-fight`, label: 'Boss Fight', week: w, type: 'lab' });
+    } else {
+      assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
+    }
   }
   
   // Week 15 - Final week with regular assignments plus Final Project

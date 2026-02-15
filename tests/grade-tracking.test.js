@@ -226,12 +226,15 @@ describe('Gradebook Assignment Definitions', () => {
 
   const EXPECTED_REGULAR_WEEK_IDS = (weekNum) => {
     const wStr = weekNum.toString().padStart(2, '0');
-    return [
-      `week-${wStr}-participation`,
-      `week-${wStr}-quiz`,
-      `week-${wStr}-homework`,
-      `week-${wStr}-lab`
-    ];
+    const ids = [`week-${wStr}-participation`];
+    // Boss fight only weeks (like week 5) have no quiz/homework
+    const bossFightOnlyWeeks = new Set([5]);
+    if (!bossFightOnlyWeeks.has(weekNum)) {
+      ids.push(`week-${wStr}-quiz`);
+      ids.push(`week-${wStr}-homework`);
+    }
+    ids.push(`week-${wStr}-lab`);
+    return ids;
   };
 
   it('should have correct Week 1 assignment IDs', () => {
@@ -250,7 +253,9 @@ describe('Gradebook Assignment Definitions', () => {
 
   it('should zero-pad week numbers correctly', () => {
     const week5Ids = EXPECTED_REGULAR_WEEK_IDS(5);
-    expect(week5Ids[1]).toBe('week-05-quiz');
+    // Week 5 is boss-fight-only: participation + lab, no quiz/homework
+    expect(week5Ids[0]).toBe('week-05-participation');
+    expect(week5Ids[1]).toBe('week-05-lab');
     
     const week12Ids = EXPECTED_REGULAR_WEEK_IDS(12);
     expect(week12Ids[1]).toBe('week-12-quiz');
