@@ -11,28 +11,28 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
 
 <DueDateBanner week={5} type="Lab" />
 
-{/* ── Senior Architect Hero ── */}
-<div class="senior-architect-layout">
-  <div class="architect-hero">
-    <img src="/media/week%205/boss%20fight/boss.jpeg" alt="The Blueprint — Boss Fight: Build the Full System" />
-    <p class="hero-caption">Fig 5.3: The Blueprint — Integrating Input, Parsing, and Calculation into a Complete System</p>
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ 5.3: The Blueprint</h2>
+      <p>
+        You've opened the valve. You've refined the data. Now it's time to <strong>build the full system</strong>. This Boss Fight combines <code>Console.ReadLine()</code>, <code>.Parse()</code>, and string interpolation into a working application that a real client could use.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%205/boss%20fight/boss.jpeg" alt="The Blueprint — Boss Fight: Build the Full System" />
+    </div>
   </div>
+</div>
 
-  <h2 class="architect-heading">5.3: The Blueprint</h2>
-
-  <p>
-    You've opened the valve. You've refined the data. Now it's time to <strong>build the full system</strong>. This Boss Fight combines <code>Console.ReadLine()</code>, <code>.Parse()</code>, and string interpolation into a working application that a real client could use.
-  </p>
-
-  <div class="architect-rule-grid">
-    <div class="rule-card">
-      <h4>Architect's Rule</h4>
-      <p>A production application is never just one concept — it's the <strong>integration</strong> of many skills into a unified, working system.</p>
-    </div>
-    <div class="rule-card">
-      <h4>System State</h4>
-      <p><strong>Input → Parse → Calculate → Output.</strong> This is the data pipeline you're building. Every step must succeed or the system fails.</p>
-    </div>
+<div class="architect-rule-grid">
+  <div class="rule-card">
+    <h4>Architect's Rule</h4>
+    <p>A production application is never just one concept — it's the <strong>integration</strong> of many skills into a unified, working system.</p>
+  </div>
+  <div class="rule-card">
+    <h4>System State</h4>
+    <p><strong>Input → Parse → Calculate → Output.</strong> This is the data pipeline you're building. Every step must succeed or the system fails.</p>
   </div>
 </div>
 
@@ -334,45 +334,6 @@ When your program runs correctly and displays the budget report:
 </div>
 
 <style>{`
-  /* ── Senior Architect Layout ── */
-  .senior-architect-layout {
-    background-color: #ffffff;
-    color: #1e293b;
-    padding: 40px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    max-width: 950px;
-    margin: 2rem auto;
-  }
-
-  .architect-hero {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-
-  .architect-hero img {
-    width: 100%;
-    max-width: 700px;
-    border-radius: 6px;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-  }
-
-  .hero-caption {
-    margin-top: 15px;
-    font-style: italic;
-    color: #64748b;
-  }
-
-  .architect-heading {
-    color: #1e3a8a;
-    border-bottom: 2px solid #2563eb;
-    padding-bottom: 10px;
-  }
-
   .architect-rule-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -399,35 +360,12 @@ When your program runs correctly and displays the budget report:
   }
 
   @media (max-width: 768px) {
-    .senior-architect-layout {
-      padding: 20px;
-    }
     .architect-rule-grid {
       grid-template-columns: 1fr;
     }
   }
 
-  /* ── Dark mode: Architect Layout ── */
-  body:not([data-theme="light"]) .senior-architect-layout {
-    background-color: #1e1e2e;
-    color: #e2e8f0;
-    border-color: rgba(78, 201, 176, 0.3);
-  }
-
-  body:not([data-theme="light"]) .architect-hero {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(78, 201, 176, 0.2);
-  }
-
-  body:not([data-theme="light"]) .hero-caption {
-    color: #94a3b8;
-  }
-
-  body:not([data-theme="light"]) .architect-heading {
-    color: #4ec9b0;
-    border-color: #4ec9b0;
-  }
-
+  /* ── Dark mode ── */
   body:not([data-theme="light"]) .rule-card {
     background: rgba(0, 0, 0, 0.2);
     border-color: rgba(78, 201, 176, 0.15);

@@ -911,71 +911,86 @@ code {
   }
 }
 
-/* C# vs .NET Header Section */
-.cs-vs-dotnet-header {
-  background: linear-gradient(135deg, rgba(30, 58, 138, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
-  border-radius: var(--radius);
-  padding: 2rem;
-  margin: 2rem 0;
-  border: 1px solid var(--border);
+/* ── Concept Header — Canonical lesson hero card ── */
+/* Used on ALL section pages for consistent heading style */
+.concept-header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 24px 0;
 }
 
-body[data-theme="dark"] .cs-vs-dotnet-header {
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.7) 100%);
+body:not([data-theme="dark"]) .concept-header {
+  background: linear-gradient(135deg, #e8f4f8 0%, #e0f0f0 100%);
 }
 
-.header-content {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 2rem;
-  align-items: center;
-}
-
-.header-text h2 {
-  margin-top: 0;
-  font-size: 1.75rem;
-  color: var(--text);
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.header-text p {
-  margin-bottom: 0;
-  color: var(--text);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
-
-.header-image {
+.concept-header .header-content {
   display: flex;
-  justify-content: center;
+  gap: 32px;
   align-items: center;
 }
 
-.header-image img {
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.concept-header .header-text {
+  flex: 1;
 }
 
-body[data-theme="dark"] .header-image img {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+.concept-header .header-text h2 {
+  color: #4ec9b0;
+  margin-top: 0;
+  font-size: 1.5rem;
+}
+
+body:not([data-theme="dark"]) .concept-header .header-text h2 {
+  color: #1a6b5a;
+}
+
+.concept-header .header-text p {
+  color: #c0c0c0;
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
+
+body:not([data-theme="dark"]) .concept-header .header-text p {
+  color: #333;
+}
+
+.concept-header .header-image {
+  flex-shrink: 0;
+  width: 280px;
+}
+
+.concept-header .header-image img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  cursor: zoom-in;
+}
+
+body:not([data-theme="dark"]) .concept-header .header-image img {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 @media (max-width: 768px) {
-  .header-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .concept-header .header-content {
+    flex-direction: column;
   }
-  
-  .header-image {
-    order: -1;
-  }
-  
-  .header-image img {
+  .concept-header .header-image {
+    width: 100%;
     max-width: 300px;
   }
+}
+
+/* Legacy alias — Week 1 lesson 1 */
+.cs-vs-dotnet-header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 24px 0;
+}
+
+body:not([data-theme="dark"]) .cs-vs-dotnet-header {
+  background: linear-gradient(135deg, #e8f4f8 0%, #e0f0f0 100%);
 }
 
 /* Diagnostic Panel Card Styles */
@@ -1230,4 +1245,47 @@ body:not([data-theme="dark"]) .next-section p {
 
 body:not([data-theme="dark"]) .next-section p strong {
   color: #0d5c4d;
+}
+
+/* ── Image Lightbox Overlay ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  padding: 24px;
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+}
+
+.lightbox-overlay img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+  transform: scale(0.92);
+  transition: transform 0.25s ease;
+}
+
+.lightbox-overlay.active img {
+  transform: scale(1);
+}
+
+/* Make all content images look clickable */
+#main-content img:not(.no-lightbox):not([src*="icon"]):not([width="1"]) {
+  cursor: zoom-in;
+  transition: filter 0.2s ease;
+}
+
+#main-content img:not(.no-lightbox):not([src*="icon"]):not([width="1"]):hover {
+  filter: brightness(1.05);
 }

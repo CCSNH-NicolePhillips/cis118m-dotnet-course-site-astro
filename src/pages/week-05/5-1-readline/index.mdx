@@ -17,28 +17,28 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
-{/* ── Senior Architect Hero ── */}
-<div class="senior-architect-layout">
-  <div class="architect-hero">
-    <img src="/media/week%205/5.1/buffer.png" alt="The Intake Valve — Thread Execution Paused Awaiting User Buffer" />
-    <p class="hero-caption">Fig 5.1: Thread Execution Paused — Awaiting User Buffer</p>
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ 5.1: Capturing the Stream</h2>
+      <p>
+        In the .NET ecosystem, <code>Console.ReadLine()</code> is a <strong>Blocking Call</strong>. The CPU thread halts at this line, waiting for the human operator to input data and press <kbd>Enter</kbd>.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%205/5.1/buffer.png" alt="The Intake Valve — Thread Execution Paused Awaiting User Buffer" />
+    </div>
   </div>
+</div>
 
-  <h2 class="architect-heading">5.1: Capturing the Stream</h2>
-
-  <p>
-    In the .NET ecosystem, <code>Console.ReadLine()</code> is a <strong>Blocking Call</strong>. The CPU thread halts at this line, waiting for the human operator to input data and press <kbd>Enter</kbd>.
-  </p>
-
-  <div class="architect-rule-grid">
-    <div class="architect-rule blue">
-      <strong>Architect's Rule:</strong>
-      <p>No matter what the user types (numbers, symbols, or nothing), the return type is <strong>ALWAYS</strong> a string.</p>
-    </div>
-    <div class="architect-rule orange">
-      <strong>System State:</strong>
-      <p>The program "sleeps" during this phase, consuming zero CPU cycles while awaiting the interrupt.</p>
-    </div>
+<div class="architect-rule-grid">
+  <div class="architect-rule blue">
+    <strong>Architect's Rule:</strong>
+    <p>No matter what the user types (numbers, symbols, or nothing), the return type is <strong>ALWAYS</strong> a string.</p>
+  </div>
+  <div class="architect-rule orange">
+    <strong>System State:</strong>
+    <p>The program "sleeps" during this phase, consuming zero CPU cycles while awaiting the interrupt.</p>
   </div>
 </div>
 
@@ -279,45 +279,6 @@ Your mission: Create an access control system that prompts for a username and di
 </div>
 
 <style>{`
-  /* ── Senior Architect Layout ── */
-  .senior-architect-layout {
-    background-color: #ffffff;
-    color: #1e293b;
-    padding: 40px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    max-width: 950px;
-    margin: 2rem auto;
-  }
-
-  .architect-hero {
-    background: #f8fafc;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    margin-bottom: 30px;
-    text-align: center;
-  }
-
-  .architect-hero img {
-    width: 100%;
-    max-width: 700px;
-    border-radius: 6px;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-  }
-
-  .hero-caption {
-    margin-top: 15px;
-    font-style: italic;
-    color: #64748b;
-  }
-
-  .architect-heading {
-    color: #1e3a8a;
-    border-bottom: 2px solid #2563eb;
-    padding-bottom: 10px;
-  }
-
   .architect-rule-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -358,32 +319,9 @@ Your mission: Create an access control system that prompts for a username and di
     .architect-rule-grid {
       grid-template-columns: 1fr;
     }
-    .senior-architect-layout {
-      padding: 20px;
-    }
   }
 
-  /* ── Dark mode overrides for architect layout ── */
-  body:not([data-theme="light"]) .senior-architect-layout {
-    background-color: #1e1e2e;
-    color: #e2e8f0;
-    border-color: rgba(78, 201, 176, 0.3);
-  }
-
-  body:not([data-theme="light"]) .architect-hero {
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(78, 201, 176, 0.2);
-  }
-
-  body:not([data-theme="light"]) .hero-caption {
-    color: #94a3b8;
-  }
-
-  body:not([data-theme="light"]) .architect-heading {
-    color: #4ec9b0;
-    border-color: #4ec9b0;
-  }
-
+  /* ── Dark mode overrides ── */
   body:not([data-theme="light"]) .architect-rule.blue {
     background: rgba(37, 99, 235, 0.1);
     border-color: #60a5fa;

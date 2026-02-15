@@ -17,52 +17,52 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 ---
 
-{/* ── Senior Architect Hero ── */}
-<div class="senior-architect-layout">
-  <div class="architect-hero">
-    <img src="/media/week%205/5.2/parse.png" alt="The Data Refiner — Refining Raw Strings into Numeric State" />
-    <p class="hero-caption">Fig 5.2: Technical Parsing — Refining Raw Strings into Numeric State</p>
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ 5.2: The Parsing Bridge</h2>
+      <p>
+        Raw text is "dirty" data. To perform math, we must <strong>refine</strong> it using Parsing methods. This is the bridge between human-readable text and machine-calculable values.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%205/5.2/parse.png" alt="The Data Refiner — Refining Raw Strings into Numeric State" />
+    </div>
   </div>
+</div>
 
-  <h2 class="architect-heading">5.2: The Parsing Bridge</h2>
+<div class="architect-parse-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Target Type</th>
+        <th>Method</th>
+        <th>Use Case</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Integer</strong></td>
+        <td><code>int.Parse(data)</code></td>
+        <td>Whole numbers (Count, Age)</td>
+      </tr>
+      <tr>
+        <td><strong>Double</strong></td>
+        <td><code>double.Parse(data)</code></td>
+        <td>Scientific precision (Weight, Distance)</td>
+      </tr>
+      <tr class="decimal-highlight">
+        <td><strong>Decimal</strong></td>
+        <td><code>decimal.Parse(data)</code></td>
+        <td>Financial accuracy (Currency)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-  <p>
-    Raw text is "dirty" data. To perform math, we must <strong>refine</strong> it using Parsing methods. This is the bridge between human-readable text and machine-calculable values.
-  </p>
-
-  <div class="architect-parse-table">
-    <table>
-      <thead>
-        <tr>
-          <th>Target Type</th>
-          <th>Method</th>
-          <th>Use Case</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Integer</strong></td>
-          <td><code>int.Parse(data)</code></td>
-          <td>Whole numbers (Count, Age)</td>
-        </tr>
-        <tr>
-          <td><strong>Double</strong></td>
-          <td><code>double.Parse(data)</code></td>
-          <td>Scientific precision (Weight, Distance)</td>
-        </tr>
-        <tr class="decimal-highlight">
-          <td><strong>Decimal</strong></td>
-          <td><code>decimal.Parse(data)</code></td>
-          <td>Financial accuracy (Currency)</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="architect-warning">
-    <h4>⚠️ System Warning: FormatExceptions</h4>
-    <p>If you try to parse "Hello" into an <code>int</code>, the program will terminate with a fatal error. We call this a 'Crash-on-Input'.</p>
-  </div>
+<div class="architect-warning">
+  <h4>⚠️ System Warning: FormatExceptions</h4>
+  <p>If you try to parse "Hello" into an <code>int</code>, the program will terminate with a fatal error. We call this a 'Crash-on-Input'.</p>
 </div>
 
 ---

@@ -1192,5 +1192,49 @@ const getWeekLockInfo = (weekSlug: string) => {
     
     <!-- AI Tutor floating chat -->
     <AITutor client:only="react" />
+
+    <!-- Image Lightbox -->
+    <script is:inline>
+      (() => {
+        let overlay = null;
+
+        function openLightbox(src, alt) {
+          if (overlay) return;
+          overlay = document.createElement('div');
+          overlay.className = 'lightbox-overlay';
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = alt || '';
+          overlay.appendChild(img);
+          document.body.appendChild(overlay);
+          requestAnimationFrame(() => overlay.classList.add('active'));
+
+          overlay.addEventListener('click', closeLightbox);
+          document.addEventListener('keydown', onKey);
+        }
+
+        function closeLightbox() {
+          if (!overlay) return;
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            overlay = null;
+          }, 250);
+          document.removeEventListener('keydown', onKey);
+        }
+
+        function onKey(e) {
+          if (e.key === 'Escape') closeLightbox();
+        }
+
+        document.addEventListener('click', (e) => {
+          const img = e.target.closest('#main-content img:not(.no-lightbox):not([src*="icon"]):not([width="1"])');
+          if (img) {
+            e.preventDefault();
+            openLightbox(img.src, img.alt);
+          }
+        });
+      })();
+    </script>
   </body>
 </html>

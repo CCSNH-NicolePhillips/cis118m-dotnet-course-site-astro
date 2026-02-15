@@ -509,11 +509,8 @@ Summary: # Section 4.4: StringBuilder 🏗️ The Dynamic Builder ⏱️ Estimat
 Summary: # Week 04 Extra Practice: Text Processing Pick **2-3** exercises to reinforce your string manipulation skills. These are optional but highly recommended! --- ## 🔬 Drill 1: Email Parser Extract the username and domain from an email address using IndexOf() and Substring(). 💡 Solution --- ## 🔬 Drill...
 
 ### 📝 Homework: Homework 04 • String Reflection
-Key Concepts:
-- 3-5 sentences each
-- Explain:
 
-Summary: # Homework 04: String Reflection (GRADED) ## 📝 Homework 04: The Immutability Patch Now that you understand how strings work in memory, it's time to demonstrate your knowledge of why immutability matters and when to use StringBuilder. --- ## 🧠 The Critical Questions Answer BOTH questions in **3-5 s...
+Summary: # Homework 04: Reflection - (GRADED) ## 📝 Homework 04: The Immutability Patch Now that you understand how strings work in memory, it's time to demonstrate your knowledge of why immutability matters in real-world applications. 🧵 String Immutability Reflection In 3-5 sentences, explain String Behavi...
 
 ### 📚 Overview: Week 04 • Strings & Text Processing
 Key Concepts:
@@ -528,69 +525,79 @@ Summary: # Week 4 Lab: Eligibility Checker ## Overview Use if/else to determine 
 
 ### 🔬 Lab: Lab 04 • Text Sanitizer
 Key Concepts:
-- Time: 60 minutes
+- Time: 45 minutes
 - Points: 100
-- raw CSV data stream
-- Split()
-- String Interpolation
+- messy user input
+- string methods
+- Your job:
 
-Summary: # Lab 04: The Text Sanitizer **Time: 60 minutes** **Points: 100** ## 🎯 Mission Objective You've intercepted a **raw CSV data stream** from a legacy system. Your mission: parse this comma-separated data using Split() and transform it into a clean, formatted report using string interpolation. This la...
+Summary: # Lab 04: The Text Sanitizer **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective You've received **messy user input** that needs to be cleaned up and formatted before it can be stored in the database. Use **string methods** to sanitize the data. --- ## 📋 The Problem A user submitted their ...
+
+### 📋 Quiz: Week 04 • Technical Assessment
+
+Summary: # 🏁 Week 04 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
+
+Quiz Questions (10 questions):
+1. Q: What does 'string immutability' mean in C#?
+   A: Strings cannot be changed after creation
+   Why: Immutability means once a string object is created in memory, it cannot be modified. Any operation that appears to change a string actually creates a new string object.
+2. Q: What does the $ prefix enable in C#?
+   A: String interpolation with {variable} placeholders
+   Why: The $ prefix enables string interpolation, allowing you to embed variables directly in strings using {curlyBraces} syntax.
+3. Q: What escape sequence creates a newline?
+   A: \\n
+   Why: The \\n escape sequence creates a newline (line break). \\t is tab, \\r is carriage return, and \\\\ is a literal backslash.
+4. Q: What does IndexOf() return if the substring is NOT found?
+   A: -1
+   Why: IndexOf() returns -1 when the substring does not exist in the string. This is a common pattern: check if result != -1 to know if something was found.
+5. Q: What is the result of \
+   A: World
+   Why: Substring(7, 5) starts at index 7 (the 'W') and takes 5 characters: W-o-r-l-d.
+6. Q: What does Split(',') do to the string \
+   A: Returns an array with 3 elements: [\
+   Why: Split breaks the string at each delimiter (comma), creating an array. The delimiters themselves are not included in the results.
+7. Q: Why is StringBuilder faster than += in a loop?
+   A: StringBuilder modifies a mutable buffer instead of creating new strings
+   Why: StringBuilder maintains a mutable internal buffer. When you Append(), it adds to the existing buffer without creating new string objects, avoiding O(n²) memory churn.
+8. Q: What namespace contains StringBuilder?
+   A: System.Text
+   Why: StringBuilder is in the System.Text namespace. You need 'using System.Text;' at the top of your file to use it without the full namespace prefix.
+9. Q: What does the @ prefix do in front of a string?
+   A: Makes backslashes literal (verbatim string)
+   Why: The @ prefix creates a verbatim string where backslashes are treated as literal characters. This is perfect for file paths like @\
+10. Q: When should you use StringBuilder instead of string concatenation?
+   A: When building strings inside a loop
+   Why: Use StringBuilder when building strings in loops. For simple one-time concatenations like firstName + lastName, regular strings are fine. The overhead of StringBuilder isn't worth it for 2-3 simple joins.
 
 ---
 
 ## Week 5: User Input
 
-### 📚 Overview: Week 05 • Extra Practice
-
-Summary: # Week 5 Extra Practice: Loop confidence builders Pick **1–2** items (optional). - Make a countdown from 5 to 1, then print “GO!” - Ask the user for a number, then print that many smiley faces (as text like ":)"). - Challenge: Print this pattern using loops: * ** *** **** ***** ## Open in Editor - U...
-
-### 📝 Homework: Week 05 • Week 5 Homework: Pattern Printer
-
-Summary: # Week 5 Homework: Pattern Printer ## Overview Use loops to print a simple pattern (stars, numbers, or a sequence). You choose the pattern—just follow the requirements. ## Requirements checklist (acceptance criteria) - [ ] Uses at least one loop - [ ] Prints at least 5 lines of output - [ ] Output f...
-
-### 📚 Overview: Week 05
+### 📚 Overview: Section 5.1 • The Intake Valve (Console.ReadLine)
 Key Concepts:
-- Focus:
+- blocking call
+- halts the CPU thread
+- input buffer
 
-Summary: # Week 5 **Focus:** Loops: making the computer repeat steps (while + for). ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/...
+Summary: # Section 5.1: The Intake Valve 🚰 Data Ingress ⏱️ Estimated Time: 25 minutes --- ✦ 5.1: Capturing the Stream In the .NET ecosystem, Console.ReadLine() is a Blocking Call . The CPU thread halts at this line, waiting for the human operator to input data and press Enter . Architect's Rule: No matter w...
 
-### 🔬 Lab: Week 05 • Week 5 Lab: Input Retry Loop + Number Game
+### 📚 Overview: Section 5.2 • The Data Refiner (Type Parsing)
 
-Summary: # Week 5 Lab: Input Retry Loop + Number Game ## Overview Build a small program that keeps asking until the user enters a valid number, then plays a simple guessing or counting game. ## Requirements checklist (acceptance criteria) - [ ] Uses a loop (while is recommended) to re-prompt on invalid input...
+Summary: # Section 5.2: The Data Refiner ⚗️ Data Alchemy ⏱️ Estimated Time: 30 minutes --- ✦ 5.2: The Parsing Bridge Raw text is "dirty" data. To perform math, we must refine it using Parsing methods. This is the bridge between human-readable text and machine-calculable values. Target Type Method Use Case In...
 
-### 📖 Lesson: Week 05 • Lesson 1
+### 📚 Overview: Section 5.3 • The Boss Fight
 Key Concepts:
-- Condition
-- Infinite loop
+- Submit Lab
 
-Summary: # Week 5 Lesson 1: While loops (repeat until it’s done) ## Goal - Understand what a loop is (and why we use it) - Write a while loop that stops correctly - Recognize an infinite loop (and fix it) ## What to know - **Loop**: A way to repeat code. - **Condition**: A true/false check that controls the ...
+Summary: # ⚔️ BOSS FIGHT: Project Budget Estimator ✦ 5.3: The Blueprint You've opened the valve. You've refined the data. Now it's time to build the full system . This Boss Fight combines Console.ReadLine() , .Parse() , and string interpolation into a working application that a real client could use. Archite...
 
-Code Example:
-```csharp
-int count = 1;
-while (count <= 5)
-{
-    Console.WriteLine($"Count: {count}");
-    count = count + 1; // IMPORTANT: changes the value so the loop can end
-}
-Console.WriteLine("Done!");
-```
-
-### 📖 Lesson: Week 05 • Lesson 2
+### 📚 Overview: Week 05 • User Input & Type Parsing
 Key Concepts:
-- Counter
-- Iteration
-- 2) When should you prefer a for loop over a while loop?
+- Explain
+- Capture
+- Justify
 
-Summary: # Week 5 Lesson 2: For loops (counting like a pro) ## Goal - Write for loops that count up and down - Use for when you know how many times to repeat - Read a for loop out loud (so it stops being scary) ## What to know - **for**: A loop that usually includes: start, stop condition, and change step. -...
-
-Code Example:
-```csharp
-for (int i = 1; i <= 5; i++)
-{
-    Console.WriteLine($"i is {i}");
-}
-```
+Summary: # Week 05: User Input & Type Parsing 🚰 The Intake System Until now, your programs have been one-way broadcasts —outputting data but never listening. This week, you open the intake valve : learning to capture user input with Console.ReadLine() and refine raw text into usable numeric types with the P...
 
 ---
 
