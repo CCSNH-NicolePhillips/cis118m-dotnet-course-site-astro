@@ -191,56 +191,6 @@ The automated grader will verify:
 
 ---
 
-## 💡 Hints
-
-<details>
-<summary>Hint 1: Getting the project name</summary>
-
-```csharp
-Console.Write("Enter project name: ");
-string projectName = Console.ReadLine();
-```
-
-</details>
-
-<details>
-<summary>Hint 2: Parsing hours (double)</summary>
-
-```csharp
-Console.Write("Enter estimated hours: ");
-string hoursText = Console.ReadLine();
-double hours = double.Parse(hoursText);
-```
-
-</details>
-
-<details>
-<summary>Hint 3: Parsing hourly rate (decimal for money!)</summary>
-
-```csharp
-Console.Write("Enter architect hourly rate: ");
-string rateText = Console.ReadLine();
-decimal hourlyRate = decimal.Parse(rateText);
-```
-
-Remember: Financial calculations MUST use decimal!
-</details>
-
-<details>
-<summary>Hint 4: Calculating and displaying total</summary>
-
-```csharp
-// Cast hours to decimal for accurate calculation
-decimal total = (decimal)hours * hourlyRate;
-
-// Display with currency formatting
-Console.WriteLine($"Project {projectName} requires {total:C} in funding.");
-```
-
-</details>
-
----
-
 ## 📝 Submission
 
 When your program runs correctly and displays the budget report:
@@ -380,7 +330,7 @@ When your program runs correctly and displays the budget report:
   }
 
   .boss-header {
-    margin: -24px -24px 24px -24px;
+    margin: 24px 0;
     padding: 0;
   }
 

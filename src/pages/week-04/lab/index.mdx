@@ -156,53 +156,6 @@ Profile sanitization complete!
 
 ---
 
-## 💡 Hints
-
-<details>
-<summary>Hint 1: Trim removes whitespace</summary>
-
-```csharp
-string messy = "   hello world   ";
-string clean = messy.Trim();  // "hello world"
-```
-
-</details>
-
-<details>
-<summary>Hint 2: Replace can remove characters</summary>
-
-```csharp
-string phone = "(555) 123-4567";
-string clean = phone.Replace("(", "").Replace(")", "").Replace(" ", "");
-// Result: "555-123-4567"
-```
-
-</details>
-
-<details>
-<summary>Hint 3: Substring extracts part of a string</summary>
-
-```csharp
-string phone = "555-123-4567";
-string areaCode = phone.Substring(0, 3);  // "555"
-// Substring(startIndex, length)
-```
-
-</details>
-
-<details>
-<summary>Hint 4: String interpolation</summary>
-
-```csharp
-string name = "John";
-int age = 25;
-Console.WriteLine($"Name: {name}, Age: {age}");
-```
-
-</details>
-
----
-
 ## 📝 Submission
 
 When your program runs correctly and displays the formatted profile:
