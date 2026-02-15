@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const token = await getAccessToken();
     if (token) {
-      const response = await fetch(`/.netlify/functions/get-submission?week=${weekNumber}&type=lab`, {
+      const response = await fetch(`/api/get-submission?week=${weekNumber}&type=lab`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
@@ -230,7 +230,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       // If no embedded editor, fetch the code from cloud storage
       if (!code) {
         console.log('[Submit] Trying to fetch code from cloud...');
-        const codeResponse = await fetch(`/.netlify/functions/code-get?starterId=${encodeURIComponent(starterId)}`, {
+        const codeResponse = await fetch(`/api/code-get?starterId=${encodeURIComponent(starterId)}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -257,7 +257,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log('[Submit] Submitting code, length:', code.length);
       
       // Submit to API with auth
-      const response = await fetch("/.netlify/functions/submit-lab", {
+      const response = await fetch("/api/submit-lab", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

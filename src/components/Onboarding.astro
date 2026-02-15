@@ -460,7 +460,7 @@
       const token = window.__auth?.getAccessToken ? await window.__auth.getAccessToken() : null;
       console.log('[Onboarding] Syncing to server - token available:', !!token, 'name:', name);
       if (token) {
-        const response = await fetch('/.netlify/functions/progress-update', {
+        const response = await fetch('/api/progress-update', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -496,7 +496,7 @@
         return null;
       }
       
-      const res = await fetch('/.netlify/functions/get-user-profile', {
+      const res = await fetch('/api/get-user-profile', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

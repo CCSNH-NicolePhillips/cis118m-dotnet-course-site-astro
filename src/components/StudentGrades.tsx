@@ -218,7 +218,7 @@ const StudentGrades: React.FC = () => {
         return;
       }
       
-      const res = await fetch('/.netlify/functions/progress-get', {
+      const res = await fetch('/api/progress-get', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

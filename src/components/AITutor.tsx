@@ -151,7 +151,7 @@ const AITutor: React.FC = () => {
         console.log('[AITutor] Could not get auth token:', authErr);
       }
 
-      const response = await fetch('/.netlify/functions/ai-tutor', {
+      const response = await fetch('/api/ai-tutor', {
         method: 'POST',
         headers,
         body: JSON.stringify({

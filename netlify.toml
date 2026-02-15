@@ -76,6 +76,55 @@
   status = 200
   force = true
 
+# Route /api/submit-lab to the submit-lab function
+[[redirects]]
+  from = "/api/submit-lab"
+  to = "/.netlify/functions/submit-lab"
+  status = 200
+  force = true
+
+# Route /api/submit-homework to the submit-homework function
+[[redirects]]
+  from = "/api/submit-homework"
+  to = "/.netlify/functions/submit-homework"
+  status = 200
+  force = true
+
+# Route /api/submit-quiz to the submit-quiz function
+[[redirects]]
+  from = "/api/submit-quiz"
+  to = "/.netlify/functions/submit-quiz"
+  status = 200
+  force = true
+
+# Route /api/ai-tutor to the ai-tutor function
+[[redirects]]
+  from = "/api/ai-tutor"
+  to = "/.netlify/functions/ai-tutor"
+  status = 200
+  force = true
+
+# Route /api/ai-grade to the ai-grade function
+[[redirects]]
+  from = "/api/ai-grade"
+  to = "/.netlify/functions/ai-grade"
+  status = 200
+  force = true
+
+# Route /api/get-submission to the get-submission function
+[[redirects]]
+  from = "/api/get-submission"
+  to = "/.netlify/functions/get-submission"
+  status = 200
+  force = true
+
+# Route /api/get-user-profile to the get-user-profile function
+[[redirects]]
+  from = "/api/get-user-profile"
+  to = "/.netlify/functions/get-user-profile"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"

@@ -112,7 +112,7 @@ const { checkpointId, title, questions } = Astro.props;
       // Create unique participation key: combines page path with checkpoint and question
       const pageId = `${checkpointId}:${questionId}`;
       
-      await fetch('/.netlify/functions/progress-update', {
+      await fetch('/api/progress-update', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

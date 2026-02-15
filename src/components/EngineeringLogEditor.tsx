@@ -313,7 +313,7 @@ const EngineeringLogEditor = ({
         };
       }
       
-      const response = await fetch('/.netlify/functions/ai-grade', {
+      const response = await fetch('/api/ai-grade', {
         method: 'POST',
         headers,
         body: JSON.stringify(payload),
@@ -354,7 +354,7 @@ const EngineeringLogEditor = ({
 
       // Save the mission success to the database with savedCode for gradebook
       const didPass = data.score >= PASSING_SCORE;
-      const progressResponse = await fetch('/.netlify/functions/progress-update', {
+      const progressResponse = await fetch('/api/progress-update', {
         method: 'POST',
         headers,
         body: JSON.stringify({ 
