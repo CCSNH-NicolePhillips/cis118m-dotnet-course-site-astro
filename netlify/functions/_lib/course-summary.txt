@@ -342,7 +342,7 @@ Key Concepts:
 - Speed:
 - Use for:
 
-Summary: # Section 3.2: Numeric Precision ✦ Numeric Precision: Picking the Right Container Choosing a numeric type in C# is a trade-off between storage size, range, and accuracy . Not every number is created equal—while an int is perfect for counting apples, using a double for banking could lead to missing p...
+Summary: # Section 3.2: Numeric Precision 🔢 Numeric Types ⏱️ Estimated Time: 25 minutes ✦ Numeric Precision: Picking the Right Container Choosing a numeric type in C# is a trade-off between storage size, range, and accuracy . Not every number is created equal—while an int is perfect for counting apples, usi...
 
 ### 📚 Overview: Section 3.3 • Logic & Text
 Key Concepts:

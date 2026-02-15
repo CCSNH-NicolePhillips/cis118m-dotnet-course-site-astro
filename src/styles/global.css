@@ -1331,3 +1331,42 @@ body:not([data-theme="dark"]) .video-intro {
   height: 100%;
   border: none;
 }
+
+/* ── Section Header — Badge + Estimated Time bar ── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(78, 201, 176, 0.3);
+}
+
+body:not([data-theme="dark"]) .section-header {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+.section-badge {
+  background: linear-gradient(135deg, #4ec9b0 0%, #6b9fff 100%);
+  color: #1e1e1e;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+body:not([data-theme="dark"]) .section-badge {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  color: white;
+}
+
+.section-time {
+  color: #888;
+  margin: 0;
+  font-size: 0.95rem;
+}
