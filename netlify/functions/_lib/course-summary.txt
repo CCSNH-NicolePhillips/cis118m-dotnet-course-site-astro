@@ -75,11 +75,11 @@ Summary: # Lab 1: Welcome Program **Time: 45 minutes** **Points: 100** ## Object
 
 ### 📖 Lesson: Week 01 • Lesson 1
 Key Concepts:
-- Time: 50 minutes
 - console app
 - managed history
+- deployable package
 
-Summary: # Week 1 Lesson 1: .NET vs C# + Console Apps **Time: 50 minutes** ## What You'll Learn - What **.NET** is (the platform) and what **C#** is (the language) - How C# code gets executed - What a **console app** does - Write your first "Hello World" program --- 💠 C# vs. .NET: The Language and the Platf...
+Summary: # Week 1 Lesson 1: .NET vs C# + Console Apps 🖥️ Console Foundations ⏱️ Estimated Time: 50 minutes ## What You'll Learn - What **.NET** is (the platform) and what **C#** is (the language) - How C# code gets executed - What a **console app** does - Write your first "Hello World" program --- 💠 C# vs....
 
 ### 📋 Quiz: Week 01 • Syllabus Assessment
 
