@@ -180,6 +180,76 @@ async function fetchStudentGrades(userId) {
     
     if (lines.length === 0) return '';
     
+    // Calculate cumulative weighted grade
+    const BOSS_FIGHT_WEEKS = new Set([5, 9, 13]);
+    const labScores = [];
+    const quizScores = [];
+    const homeworkScores = [];
+    const participationScores = [];
+    const finalScores = [];
+    
+    for (const id of sortedIds) {
+      const a = assignments[id];
+      const score = parseFloat(a.bestScore || a.score);
+      if (isNaN(score)) continue;
+      
+      if (id.includes('-lab') || id.includes('-boss-fight')) {
+        labScores.push(score);
+        // Boss fights count double
+        const weekMatch = id.match(/week-(\d+)/);
+        if (weekMatch && BOSS_FIGHT_WEEKS.has(parseInt(weekMatch[1])) && id.includes('-boss-fight')) {
+          labScores.push(score);
+        }
+      } else if (id.includes('-quiz')) {
+        quizScores.push(score);
+      } else if (id.includes('-homework')) {
+        homeworkScores.push(score);
+      } else if (id.includes('-participation')) {
+        participationScores.push(score);
+      } else if (id.includes('-final')) {
+        finalScores.push(score);
+      }
+    }
+    
+    const avg = arr => arr.length > 0 ? arr.reduce((s, v) => s + v, 0) / arr.length : null;
+    const labAvg = avg(labScores);
+    const quizAvg = avg(quizScores);
+    const homeworkAvg = avg(homeworkScores);
+    const participationAvg = avg(participationScores);
+    const finalAvg = avg(finalScores);
+    
+    // Weighted cumulative (only count categories with submitted work)
+    let totalWeight = 0;
+    let weightedSum = 0;
+    if (labAvg !== null) { weightedSum += labAvg * 0.40; totalWeight += 0.40; }
+    if (quizAvg !== null) { weightedSum += quizAvg * 0.20; totalWeight += 0.20; }
+    if (homeworkAvg !== null) { weightedSum += homeworkAvg * 0.20; totalWeight += 0.20; }
+    if (participationAvg !== null) { weightedSum += participationAvg * 0.10; totalWeight += 0.10; }
+    if (finalAvg !== null) { weightedSum += finalAvg * 0.10; totalWeight += 0.10; }
+    
+    const cumulativeGrade = totalWeight > 0 ? (weightedSum / totalWeight) : null;
+    
+    // Determine letter grade
+    const letterGrade = (g) => {
+      if (g >= 90) return 'A';
+      if (g >= 80) return 'B';
+      if (g >= 70) return 'C';
+      if (g >= 60) return 'D';
+      return 'F';
+    };
+    
+    lines.push('');
+    lines.push('--- CUMULATIVE GRADE SUMMARY ---');
+    if (labAvg !== null) lines.push(`Lab Average: ${labAvg.toFixed(1)}/100 (weight: 40%)`);
+    if (quizAvg !== null) lines.push(`Quiz Average: ${quizAvg.toFixed(1)}/100 (weight: 20%)`);
+    if (homeworkAvg !== null) lines.push(`Homework Average: ${homeworkAvg.toFixed(1)}/100 (weight: 20%)`);
+    if (participationAvg !== null) lines.push(`Participation Average: ${participationAvg.toFixed(1)}/100 (weight: 10%)`);
+    if (finalAvg !== null) lines.push(`Final Project Average: ${finalAvg.toFixed(1)}/100 (weight: 10%)`);
+    if (cumulativeGrade !== null) {
+      lines.push(`OVERALL CUMULATIVE GRADE: ${cumulativeGrade.toFixed(1)}/100 (${letterGrade(cumulativeGrade)})`);
+      lines.push(`Note: Based on ${Math.round(totalWeight * 100)}% of total course weight (only categories with submissions are counted).`);
+    }
+    
     return lines.join('\n');
   } catch (err) {
     console.error('[ai-tutor] Error fetching grades:', err.message || err);
@@ -314,7 +384,9 @@ ADDITIONAL GUIDELINES:
 - If the student has code or homework visible above, you can reference it when they ask for help. You can see what they've written!
 - For homework help: Guide them to improve their answer without giving the answer directly. Ask leading questions or point out what's missing.
 - Keep responses to 2-5 sentences max for quick questions, but you can expand to 5-8 sentences for summary requests.
-- GRADE QUESTIONS: If the student asks about their grades, scores, or why they received a certain grade, use the STUDENT'S GRADES & PROGRESS section above to give specific, accurate answers. Reference the exact score, feedback, and rubric details. Be encouraging and focus on what they can do to improve. If they scored well, congratulate them! If they scored low, identify specific areas from the feedback/rubric where they lost points and suggest concrete steps to improve.
+- FORMATTING: Always format your responses with proper line breaks and structure. Use **bold** for emphasis, use bullet points (- item) for lists, and separate sections with blank lines. NEVER output a wall of text. Each assignment score should be on its own line. Use markdown formatting.
+- GRADE QUESTIONS: If the student asks about their grades, scores, or overall grade, use the STUDENT'S GRADES & PROGRESS section above. The CUMULATIVE GRADE SUMMARY at the bottom gives their weighted overall course grade — ALWAYS include this when they ask about their grade or how they're doing. Format grades in a clean table-like layout with each assignment on its own line. Show the category averages and overall grade prominently.
+- If they scored well, congratulate them! If they scored low, identify specific areas from the feedback/rubric where they lost points and suggest concrete steps to improve.
 - If a student asks about grades but no grade data is available, let them know you can only see grades for assignments they've submitted through the course site, and suggest they check with their instructor for any questions about grades not shown.
 - NEVER fabricate or guess grades. Only reference grades that appear in the STUDENT'S GRADES & PROGRESS section above.
 

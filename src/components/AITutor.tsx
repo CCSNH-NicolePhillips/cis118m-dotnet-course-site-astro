@@ -1,6 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getTutorContext } from '../config/lesson-contexts';
 
+/** Render a simple subset of Markdown to HTML for chat messages */
+function renderMarkdown(text: string): string {
+  let html = text
+    // Escape HTML
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Code blocks (```...```)
+    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre style="background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:8px;overflow-x:auto;font-size:13px;margin:6px 0"><code>$2</code></pre>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code style="background:rgba(0,0,0,0.3);padding:1px 5px;border-radius:4px;font-size:13px">$1</code>')
+    // Bold
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    // Bullet lists (lines starting with - or *)
+    .replace(/^[\-\*] (.+)$/gm, '<li style="margin-left:16px;list-style:disc">$1</li>')
+    // Newlines to <br> (but not inside <pre>)
+    .replace(/\n/g, '<br/>');
+  // Clean up <br/> right before/after block elements
+  html = html.replace(/<br\/?>\s*<pre/g, '<pre').replace(/<\/pre>\s*<br\/?>/g, '</pre>');
+  html = html.replace(/<br\/?>\s*<li/g, '<li').replace(/<\/li>\s*<br\/?>/g, '</li>');
+  return html;
+}
+
 // Extend Auth0 user type with additional profile fields
 declare global {
   interface Window {
@@ -303,7 +328,7 @@ const AITutor: React.FC = () => {
                     : '0 2px 8px rgba(0, 0, 0, 0.2)',
                 }}
               >
-                {msg.content}
+                <span dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} />
               </div>
             ))}
             
