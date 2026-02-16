@@ -746,24 +746,30 @@ string domain = text.Substring(pos + 1);</code></pre>
   }
   
   .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
     text-align: center;
-    margin-top: 3rem;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
   }
   
   .next-section a {
     display: inline-block;
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 16px;
   }
-  
-  .next-section a:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p {
+    color: #333 !important;
   }
 
   /* ===== LIGHT MODE OVERRIDES ===== */
