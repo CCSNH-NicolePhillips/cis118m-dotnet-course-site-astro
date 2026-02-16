@@ -129,26 +129,7 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
 
 Every `if` statement is a **gate** — it evaluates a condition and opens or closes the path:
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                  DECISION ENGINE                        │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│   Input: score = 85                                     │
-│                                                         │
-│          ┌──────────────┐                               │
-│          │ score >= 90?  │                               │
-│          └──────┬───────┘                               │
-│           NO ↙     ↘ YES                                │
-│          ┌──────────────┐                               │
-│          │ score >= 80?  │     → "Grade: A"             │
-│          └──────┬───────┘                               │
-│           NO ↙     ↘ YES                                │
-│                        → "Grade: B" ✓                   │
-│          → "Grade: C or below"                          │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+<img src="/media/week%206/6.0/decisionEngine.png" alt="Decision Engine diagram showing how if/else if conditions are evaluated top to bottom" style="width: 100%; max-width: 700px; display: block; margin: 24px auto; border-radius: 12px; border: 2px solid rgba(107, 159, 255, 0.3);" />
 
 The computer evaluates each condition **top to bottom** and takes the **first path that evaluates to true**.
 
