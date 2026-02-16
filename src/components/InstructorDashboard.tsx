@@ -876,7 +876,15 @@ const InstructorDashboard: React.FC = () => {
       
       const result = await res.json();
       setActionFeedback({ type: 'success', message: result.message || 'Late penalty waived' });
-      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
+      // Optimistically update modal data
+      const updatedStudent = { ...modalData.student };
+      if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
+      const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
+      pp.penaltyWaived = true;
+      if (pp.originalScore !== undefined) pp.score = pp.originalScore;
+      updatedStudent.parsedProgress[modalData.assignmentId] = pp;
+      setModalData({ ...modalData, student: updatedStudent });
+      loadGradebook();
     } catch (err) {
       setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
     }
@@ -1204,40 +1212,33 @@ const InstructorDashboard: React.FC = () => {
       {/* Schedule Manager Panel */}
       {showScheduleManager && (
         <div style={{
-          marginBottom: '20px',
+          marginBottom: '15px',
           background: '#1a1a2e',
           border: '1px solid #4ec9b0',
-          borderRadius: '8px',
-          overflow: 'hidden'
+          borderRadius: '6px',
+          overflow: 'hidden',
+          maxHeight: '320px',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
-          <div style={{ padding: '15px 20px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 style={{ margin: 0, color: '#4ec9b0' }}>📅 Course Schedule Manager</h3>
-            <span style={{ color: '#888', fontSize: '0.8rem' }}>Click a week to edit unlock/due dates</span>
+          <div style={{ padding: '6px 12px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+            <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }}>📅 Schedule Manager</span>
+            {scheduleMsg && (
+              <span style={{ color: scheduleMsg.type === 'success' ? '#4ec9b0' : '#ce9178', fontSize: '0.75rem' }}>
+                {scheduleMsg.message}
+              </span>
+            )}
           </div>
           
-          {scheduleMsg && (
-            <div style={{
-              margin: '10px 20px 0',
-              padding: '8px 12px',
-              borderRadius: '4px',
-              background: scheduleMsg.type === 'success' ? 'rgba(78, 201, 176, 0.2)' : 'rgba(206, 145, 120, 0.2)',
-              color: scheduleMsg.type === 'success' ? '#4ec9b0' : '#ce9178',
-              border: `1px solid ${scheduleMsg.type === 'success' ? '#4ec9b0' : '#ce9178'}`,
-              fontSize: '0.85rem'
-            }}>
-              {scheduleMsg.message}
-            </div>
-          )}
-          
-          <div style={{ padding: '15px 20px', overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+          <div style={{ overflowY: 'auto', overflowX: 'auto', flex: 1 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
               <thead>
-                <tr>
-                  <th style={{ padding: '8px 12px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333' }}>Week</th>
-                  <th style={{ padding: '8px 12px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333' }}>Unlock Date</th>
-                  <th style={{ padding: '8px 12px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333' }}>Due Date</th>
-                  <th style={{ padding: '8px 12px', textAlign: 'center', color: '#4ec9b0', borderBottom: '1px solid #333' }}>Status</th>
-                  <th style={{ padding: '8px 12px', textAlign: 'center', color: '#4ec9b0', borderBottom: '1px solid #333' }}>Actions</th>
+                <tr style={{ position: 'sticky', top: 0, background: '#1a1a2e', zIndex: 1 }}>
+                  <th style={{ padding: '4px 8px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333', whiteSpace: 'nowrap' }}>Wk</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333', whiteSpace: 'nowrap' }}>Unlock</th>
+                  <th style={{ padding: '4px 8px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333', whiteSpace: 'nowrap' }}>Due</th>
+                  <th style={{ padding: '4px 6px', textAlign: 'center', color: '#4ec9b0', borderBottom: '1px solid #333' }}></th>
+                  <th style={{ padding: '4px 6px', textAlign: 'center', color: '#4ec9b0', borderBottom: '1px solid #333' }}></th>
                 </tr>
               </thead>
               <tbody>
@@ -1254,86 +1255,54 @@ const InstructorDashboard: React.FC = () => {
                   const isActive = isUnlocked && !isPastDue;
                   const isEditing = editingWeek === weekNum;
                   const hasOverride = !!override;
+                  const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+                  const fmtTime = (d: string) => new Date(d).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
                   
                   return (
                     <tr key={weekNum} style={{
                       background: isEditing ? 'rgba(78, 201, 176, 0.1)' : (idx % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent'),
-                      borderBottom: '1px solid #222'
+                      borderBottom: '1px solid #1e1e1e'
                     }}>
-                      <td style={{ padding: '8px 12px', color: '#ddd', whiteSpace: 'nowrap' }}>
-                        <span style={{ fontWeight: 'bold' }}>Week {weekNum}</span>
-                        {hasOverride && <span style={{ color: '#fbbf24', marginLeft: '6px', fontSize: '0.75rem' }} title={`Modified by ${override.updatedBy} on ${override.updatedAt ? new Date(override.updatedAt).toLocaleDateString() : ''}`}>✏️ modified</span>}
+                      <td style={{ padding: '3px 8px', color: '#ddd', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontWeight: 'bold' }}>{weekNum}</span>
+                        {hasOverride && <span style={{ color: '#fbbf24', marginLeft: '3px' }} title={`Modified by ${override.updatedBy}`}>✏️</span>}
                       </td>
-                      <td style={{ padding: '8px 12px' }}>
+                      <td style={{ padding: '3px 8px', whiteSpace: 'nowrap' }}>
                         {isEditing ? (
-                          <input
-                            type="datetime-local"
-                            value={editUnlockDate}
-                            onChange={(e) => setEditUnlockDate(e.target.value)}
-                            style={{
-                              padding: '4px 8px',
-                              background: '#1e1e1e',
-                              border: '1px solid #4ec9b0',
-                              borderRadius: '4px',
-                              color: '#fff',
-                              fontSize: '0.85rem'
-                            }}
-                          />
+                          <input type="datetime-local" value={editUnlockDate} onChange={(e) => setEditUnlockDate(e.target.value)}
+                            style={{ padding: '2px 4px', background: '#1e1e1e', border: '1px solid #4ec9b0', borderRadius: '3px', color: '#fff', fontSize: '0.75rem', width: '165px' }} />
                         ) : (
                           <span style={{ color: isUnlocked ? '#4ec9b0' : '#888' }}>
-                            {new Date(effectiveUnlock).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                            {' '}
-                            <span style={{ color: '#666', fontSize: '0.75rem' }}>
-                              {new Date(effectiveUnlock).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
+                            {fmtDate(effectiveUnlock)} <span style={{ color: '#666' }}>{fmtTime(effectiveUnlock)}</span>
                           </span>
                         )}
                       </td>
-                      <td style={{ padding: '8px 12px' }}>
+                      <td style={{ padding: '3px 8px', whiteSpace: 'nowrap' }}>
                         {isEditing ? (
-                          <input
-                            type="datetime-local"
-                            value={editDueDate}
-                            onChange={(e) => setEditDueDate(e.target.value)}
-                            style={{
-                              padding: '4px 8px',
-                              background: '#1e1e1e',
-                              border: '1px solid #fbbf24',
-                              borderRadius: '4px',
-                              color: '#fff',
-                              fontSize: '0.85rem'
-                            }}
-                          />
+                          <input type="datetime-local" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)}
+                            style={{ padding: '2px 4px', background: '#1e1e1e', border: '1px solid #fbbf24', borderRadius: '3px', color: '#fff', fontSize: '0.75rem', width: '165px' }} />
                         ) : (
                           <span style={{ color: isPastDue ? '#ce9178' : '#ddd' }}>
-                            {effectiveDue ? (
-                              <>
-                                {new Date(effectiveDue).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-                                {' '}
-                                <span style={{ color: '#666', fontSize: '0.75rem' }}>
-                                  {new Date(effectiveDue).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </>
-                            ) : '—'}
+                            {effectiveDue ? <>{fmtDate(effectiveDue)} <span style={{ color: '#666' }}>{fmtTime(effectiveDue)}</span></> : '—'}
                           </span>
                         )}
                       </td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center' }}>
+                      <td style={{ padding: '3px 4px', textAlign: 'center' }}>
                         <span style={{
                           display: 'inline-block',
-                          padding: '2px 8px',
-                          borderRadius: '10px',
-                          fontSize: '0.75rem',
+                          padding: '1px 6px',
+                          borderRadius: '8px',
+                          fontSize: '0.65rem',
                           fontWeight: 'bold',
                           background: isActive ? 'rgba(78, 201, 176, 0.2)' : isPastDue ? 'rgba(206, 145, 120, 0.2)' : 'rgba(136, 136, 136, 0.2)',
                           color: isActive ? '#4ec9b0' : isPastDue ? '#ce9178' : '#888'
                         }}>
-                          {isActive ? 'Active' : isPastDue ? 'Past Due' : 'Locked'}
+                          {isActive ? '●' : isPastDue ? '✗' : '○'}
                         </span>
                       </td>
-                      <td style={{ padding: '8px 12px', textAlign: 'center' }}>
+                      <td style={{ padding: '3px 6px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                         {isEditing ? (
-                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                          <span style={{ display: 'inline-flex', gap: '3px' }}>
                             <button
                               disabled={scheduleSaving}
                               onClick={async () => {
@@ -1341,94 +1310,46 @@ const InstructorDashboard: React.FC = () => {
                                 try {
                                   const token = await getAccessToken();
                                   if (!token) return;
-                                  
                                   const payload: any = { week: weekNum };
                                   if (editUnlockDate) payload.unlockDate = new Date(editUnlockDate).toISOString();
                                   if (editDueDate) payload.dueDate = new Date(editDueDate).toISOString();
-                                  
                                   const res = await fetch('/.netlify/functions/schedule-manager', {
                                     method: 'POST',
                                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                                     body: JSON.stringify(payload)
                                   });
-                                  
                                   if (res.ok) {
                                     const data = await res.json();
-                                    // Reload overrides
-                                    const overridesRes = await fetch('/.netlify/functions/schedule-manager', {
-                                      headers: { 'Authorization': `Bearer ${token}` }
-                                    });
-                                    if (overridesRes.ok) {
-                                      const overridesData = await overridesRes.json();
-                                      setScheduleOverrides(overridesData.overrides || {});
-                                    }
-                                    setScheduleMsg({ type: 'success', message: data.message || `Week ${weekNum} updated` });
+                                    const overridesRes = await fetch('/.netlify/functions/schedule-manager', { headers: { 'Authorization': `Bearer ${token}` } });
+                                    if (overridesRes.ok) { const od = await overridesRes.json(); setScheduleOverrides(od.overrides || {}); }
+                                    setScheduleMsg({ type: 'success', message: `Wk ${weekNum} saved` });
                                     setEditingWeek(null);
                                   } else {
                                     const err = await res.json();
-                                    setScheduleMsg({ type: 'error', message: err.error || 'Update failed' });
+                                    setScheduleMsg({ type: 'error', message: err.error || 'Failed' });
                                   }
                                 } catch (err) {
                                   setScheduleMsg({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
-                                } finally {
-                                  setScheduleSaving(false);
-                                }
+                                } finally { setScheduleSaving(false); }
                               }}
-                              style={{
-                                background: '#4ec9b0',
-                                color: '#000',
-                                border: 'none',
-                                padding: '4px 10px',
-                                borderRadius: '4px',
-                                cursor: scheduleSaving ? 'wait' : 'pointer',
-                                fontWeight: 'bold',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              {scheduleSaving ? '...' : 'Save'}
-                            </button>
-                            <button
-                              onClick={() => { setEditingWeek(null); setScheduleMsg(null); }}
-                              style={{
-                                background: '#444',
-                                color: '#ddd',
-                                border: 'none',
-                                padding: '4px 10px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </div>
+                              style={{ background: '#4ec9b0', color: '#000', border: 'none', padding: '2px 8px', borderRadius: '3px', cursor: scheduleSaving ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: '0.7rem' }}
+                            >{scheduleSaving ? '...' : '✓'}</button>
+                            <button onClick={() => { setEditingWeek(null); setScheduleMsg(null); }}
+                              style={{ background: '#444', color: '#ddd', border: 'none', padding: '2px 8px', borderRadius: '3px', cursor: 'pointer', fontSize: '0.7rem' }}>✗</button>
+                          </span>
                         ) : (
-                          <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
+                          <span style={{ display: 'inline-flex', gap: '3px' }}>
                             <button
                               onClick={() => {
                                 setEditingWeek(weekNum);
-                                // Pre-fill with current effective dates in local datetime format
-                                const unlockDt = new Date(effectiveUnlock);
-                                const dueDt = effectiveDue ? new Date(effectiveDue) : null;
-                                // Format for datetime-local input (YYYY-MM-DDTHH:MM)
                                 const pad = (n: number) => n.toString().padStart(2, '0');
                                 const toLocalInput = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-                                setEditUnlockDate(toLocalInput(unlockDt));
-                                setEditDueDate(dueDt ? toLocalInput(dueDt) : '');
+                                setEditUnlockDate(toLocalInput(new Date(effectiveUnlock)));
+                                setEditDueDate(effectiveDue ? toLocalInput(new Date(effectiveDue)) : '');
                                 setScheduleMsg(null);
                               }}
-                              style={{
-                                background: '#2d2d2d',
-                                color: '#ddd',
-                                border: '1px solid #555',
-                                padding: '4px 10px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontSize: '0.8rem'
-                              }}
-                            >
-                              ✏️ Edit
-                            </button>
+                              style={{ background: 'transparent', color: '#888', border: '1px solid #444', padding: '2px 6px', borderRadius: '3px', cursor: 'pointer', fontSize: '0.7rem' }}
+                            >✏️</button>
                             {hasOverride && (
                               <button
                                 onClick={async () => {
@@ -1442,34 +1363,19 @@ const InstructorDashboard: React.FC = () => {
                                       body: JSON.stringify({ week: weekNum, action: 'RESET_WEEK' })
                                     });
                                     if (res.ok) {
-                                      const overridesRes = await fetch('/.netlify/functions/schedule-manager', {
-                                        headers: { 'Authorization': `Bearer ${token}` }
-                                      });
-                                      if (overridesRes.ok) {
-                                        const overridesData = await overridesRes.json();
-                                        setScheduleOverrides(overridesData.overrides || {});
-                                      }
-                                      setScheduleMsg({ type: 'success', message: `Week ${weekNum} reset to defaults` });
+                                      const overridesRes = await fetch('/.netlify/functions/schedule-manager', { headers: { 'Authorization': `Bearer ${token}` } });
+                                      if (overridesRes.ok) { const od = await overridesRes.json(); setScheduleOverrides(od.overrides || {}); }
+                                      setScheduleMsg({ type: 'success', message: `Wk ${weekNum} reset` });
                                     }
                                   } catch (err) {
                                     setScheduleMsg({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
                                   }
                                 }}
-                                style={{
-                                  background: '#2d2d2d',
-                                  color: '#fbbf24',
-                                  border: '1px solid #fbbf24',
-                                  padding: '4px 10px',
-                                  borderRadius: '4px',
-                                  cursor: 'pointer',
-                                  fontSize: '0.8rem'
-                                }}
-                                title="Reset to hardcoded default dates"
-                              >
-                                ↩ Reset
-                              </button>
+                                style={{ background: 'transparent', color: '#fbbf24', border: '1px solid #fbbf24', padding: '2px 6px', borderRadius: '3px', cursor: 'pointer', fontSize: '0.7rem' }}
+                                title="Reset to defaults"
+                              >↩</button>
                             )}
-                          </div>
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -1477,10 +1383,6 @@ const InstructorDashboard: React.FC = () => {
                 })}
               </tbody>
             </table>
-          </div>
-          <div style={{ padding: '10px 20px', borderTop: '1px solid #333', color: '#666', fontSize: '0.75rem' }}>
-            Note: Schedule overrides are stored in Redis and will be used by the gradebook for past-due calculations. 
-            Content unlock/lock on the site uses the hardcoded dates in the codebase — to change when content is visible, update the code and redeploy.
           </div>
         </div>
       )}
@@ -1837,7 +1739,16 @@ const InstructorDashboard: React.FC = () => {
                             if (res.ok) {
                               const result = await res.json();
                               setActionFeedback({ type: 'success', message: result.message || (isUnlocked ? 'Quiz locked' : 'Quiz unlocked') });
-                              closeModal();
+                              // Optimistically update modal data so toggle flips immediately
+                              const updatedStudent = { ...modalData.student };
+                              if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
+                              const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
+                              pp.quizUnlocked = !isUnlocked;
+                              if (!isUnlocked) {
+                                pp.unlockedAt = new Date().toISOString();
+                              }
+                              updatedStudent.parsedProgress[modalData.assignmentId] = pp;
+                              setModalData({ ...modalData, student: updatedStudent });
                               loadGradebook();
                             }
                           } catch (err) {
@@ -1914,40 +1825,39 @@ const InstructorDashboard: React.FC = () => {
                               const token = await getAccessToken();
                               if (!token) return;
                               
-                              if (!penaltyWaived) {
-                                // Waive the penalty
-                                const res = await fetch('/.netlify/functions/manual-override', {
-                                  method: 'POST',
-                                  headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    userId: modalData.student.sub,
-                                    pageId: modalData.assignmentId,
-                                    action: 'WAIVE_PENALTY',
-                                    reason: 'Instructor toggled late penalty off'
-                                  })
-                                });
-                                if (res.ok) {
-                                  setActionFeedback({ type: 'success', message: 'Late penalty waived — original score restored' });
-                                  closeModal();
-                                  loadGradebook();
+                              const action = penaltyWaived ? 'REAPPLY_PENALTY' : 'WAIVE_PENALTY';
+                              const res = await fetch('/.netlify/functions/manual-override', {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  userId: modalData.student.sub,
+                                  pageId: modalData.assignmentId,
+                                  action,
+                                  reason: penaltyWaived ? 'Instructor toggled late penalty back on' : 'Instructor toggled late penalty off'
+                                })
+                              });
+                              if (res.ok) {
+                                const result = await res.json();
+                                setActionFeedback({ type: 'success', message: result.message || (penaltyWaived ? 'Late penalty re-applied' : 'Late penalty waived — original score restored') });
+                                // Optimistically update modal data so toggle flips immediately
+                                const updatedStudent = { ...modalData.student };
+                                if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
+                                const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
+                                if (penaltyWaived) {
+                                  // Re-applied: recalculate penalized score
+                                  pp.penaltyWaived = false;
+                                  if (pp.originalScore !== undefined && pp.daysLate !== undefined && pp.daysLate > 0) {
+                                    const penalty = Math.min(pp.daysLate * 10, 100);
+                                    pp.score = pp.daysLate > 3 ? 0 : Math.max(0, Math.round(pp.originalScore * (1 - penalty / 100)));
+                                  }
+                                } else {
+                                  // Waived: restore original score
+                                  pp.penaltyWaived = true;
+                                  if (pp.originalScore !== undefined) pp.score = pp.originalScore;
                                 }
-                              } else {
-                                // Re-apply the penalty
-                                const res = await fetch('/.netlify/functions/manual-override', {
-                                  method: 'POST',
-                                  headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({
-                                    userId: modalData.student.sub,
-                                    pageId: modalData.assignmentId,
-                                    action: 'REAPPLY_PENALTY',
-                                    reason: 'Instructor toggled late penalty back on'
-                                  })
-                                });
-                                if (res.ok) {
-                                  setActionFeedback({ type: 'success', message: 'Late penalty re-applied' });
-                                  closeModal();
-                                  loadGradebook();
-                                }
+                                updatedStudent.parsedProgress[modalData.assignmentId] = pp;
+                                setModalData({ ...modalData, student: updatedStudent });
+                                loadGradebook();
                               }
                             } catch (err) {
                               setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
