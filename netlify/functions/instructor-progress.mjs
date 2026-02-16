@@ -72,14 +72,14 @@ export default async function handler(request, context) {
     
     for (const sub of studentSubs) {
       try {
-        const email = await redis.get(`cis118m:studentEmail:${sub}`);
-        // Prefer displayName (user-set) over studentName (from Auth0, usually email)
-        const displayName = await redis.get(`cis118m:displayName:${sub}`);
-        const studentName = await redis.get(`cis118m:studentName:${sub}`);
+        // Batch student metadata lookups into a single mget
+        const [email, displayName, studentName, lastLogin] = await redis.mget(
+          `cis118m:studentEmail:${sub}`,
+          `cis118m:displayName:${sub}`,
+          `cis118m:studentName:${sub}`,
+          `cis118m:lastLogin:${sub}`
+        );
         const name = displayName || studentName;
-        
-        // Get last login time
-        const lastLogin = await redis.get(`cis118m:lastLogin:${sub}`);
         
         // Get quiz progress from user:progress:{sub} hash (attempts, bestScore, etc)
         const quizProgress = await redis.hgetall(`user:progress:${sub}`) || {};
@@ -91,38 +91,44 @@ export default async function handler(request, context) {
         // Get completions list to find all completed items
         const completionsList = await redis.smembers(`completions:${sub}`) || [];
         
-        // Get completion details for each completed item
+        // Batch completion detail lookups with mget
         const completionDetails = {};
-        for (const itemId of completionsList) {
-          const completionData = await redis.get(`completion:${sub}:${itemId}`);
-          if (completionData) {
-            try {
-              const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
-              // Convert completion data to progress format
-              if (parsed.score !== undefined && parsed.score !== null) {
-                completionDetails[`${itemId}:score`] = parsed.score;
+        if (completionsList.length > 0) {
+          const completionKeys = completionsList.map(id => `completion:${sub}:${id}`);
+          const completionResults = await redis.mget(...completionKeys);
+          for (let i = 0; i < completionsList.length; i++) {
+            const completionData = completionResults[i];
+            const itemId = completionsList[i];
+            if (completionData) {
+              try {
+                const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
+                if (parsed.score !== undefined && parsed.score !== null) {
+                  completionDetails[`${itemId}:score`] = parsed.score;
+                }
+                if (parsed.passed !== undefined && parsed.passed !== null) {
+                  completionDetails[`${itemId}:passed`] = parsed.passed ? 1 : 0;
+                }
+                if (parsed.timestamp) {
+                  completionDetails[`${itemId}:timestamp`] = parsed.timestamp;
+                }
+                completionDetails[`${itemId}:status`] = 'completed';
+              } catch (e) {
+                console.error(`[instructor-progress] Failed to parse completion for ${sub}:${itemId}:`, e);
               }
-              if (parsed.passed !== undefined && parsed.passed !== null) {
-                completionDetails[`${itemId}:passed`] = parsed.passed ? 1 : 0;
-              }
-              if (parsed.timestamp) {
-                completionDetails[`${itemId}:timestamp`] = parsed.timestamp;
-              }
-              completionDetails[`${itemId}:status`] = 'completed';
-            } catch (e) {
-              console.error(`[instructor-progress] Failed to parse completion for ${sub}:${itemId}:`, e);
             }
           }
         }
         
-        // Get saved code for each assignment
+        // Get saved code for each assignment (batch with mget)
         const savedCodes = {};
         const codeKeys = await redis.keys(`code:${sub}:*`);
-        for (const codeKey of codeKeys) {
-          const savedCode = await redis.get(codeKey);
-          const assignmentId = codeKey.replace(`code:${sub}:`, '');
-          if (savedCode) {
-            savedCodes[assignmentId] = savedCode;
+        if (codeKeys.length > 0) {
+          const codeResults = await redis.mget(...codeKeys);
+          for (let i = 0; i < codeKeys.length; i++) {
+            const assignmentId = codeKeys[i].replace(`code:${sub}:`, '');
+            if (codeResults[i]) {
+              savedCodes[assignmentId] = codeResults[i];
+            }
           }
         }
         
@@ -165,45 +171,38 @@ export default async function handler(request, context) {
         }
         
         // Check quiz unlock status for all quiz assignments
-        const quizUnlocks = {};
+        // Batch all quiz unlock key lookups with mget for performance
+        const quizUnlockKeys = [];
+        const quizUnlockIds = [];
         for (let w = 1; w <= 16; w++) {
           const wStr = w.toString().padStart(2, '0');
           const quizIds = w === 1 
             ? [`week-${wStr}-quiz`, `week-${wStr}-required-quiz`] 
             : [`week-${wStr}-quiz`];
           for (const qId of quizIds) {
-            const unlockKey = `quiz:unlock:${sub}:${qId}`;
-            const unlockData = await redis.get(unlockKey);
-            if (unlockData) {
-              try {
-                const parsed = typeof unlockData === 'string' ? JSON.parse(unlockData) : unlockData;
-                quizUnlocks[qId] = parsed;
-                mergedProgress[`${qId}:quizUnlocked`] = 'true';
-                mergedProgress[`${qId}:unlockedBy`] = parsed.unlockedBy || '';
-                mergedProgress[`${qId}:unlockedAt`] = parsed.unlockedAt || '';
-              } catch {
-                quizUnlocks[qId] = { unlockedAt: 'unknown' };
-                mergedProgress[`${qId}:quizUnlocked`] = 'true';
-              }
-            }
+            quizUnlockKeys.push(`quiz:unlock:${sub}:${qId}`);
+            quizUnlockIds.push(qId);
           }
-          
-          // Check pre-waive keys for labs and homework
-          const labId = `week-${wStr}-lab`;
-          const hwId = `week-${wStr}-homework`;
-          for (const aId of [labId, hwId]) {
-            const prewaiveKey = `penalty:prewaive:${sub}:${aId}`;
-            const prewaiveData = await redis.get(prewaiveKey);
-            if (prewaiveData) {
-              mergedProgress[`${aId}:penaltyPreWaived`] = 'true';
-              try {
-                const parsed = typeof prewaiveData === 'string' ? JSON.parse(prewaiveData) : prewaiveData;
-                if (parsed.waivedBy) mergedProgress[`${aId}:preWaivedBy`] = parsed.waivedBy;
-                if (parsed.waivedAt) mergedProgress[`${aId}:preWaivedAt`] = parsed.waivedAt;
-              } catch {}
+        }
+        
+        const unlockResults = quizUnlockKeys.length > 0 ? await redis.mget(...quizUnlockKeys) : [];
+        for (let i = 0; i < unlockResults.length; i++) {
+          const unlockData = unlockResults[i];
+          if (unlockData) {
+            const qId = quizUnlockIds[i];
+            try {
+              const parsed = typeof unlockData === 'string' ? JSON.parse(unlockData) : unlockData;
+              mergedProgress[`${qId}:quizUnlocked`] = 'true';
+              mergedProgress[`${qId}:unlockedBy`] = parsed.unlockedBy || '';
+              mergedProgress[`${qId}:unlockedAt`] = parsed.unlockedAt || '';
+            } catch {
+              mergedProgress[`${qId}:quizUnlocked`] = 'true';
             }
           }
         }
+        
+        // Pre-waive data is already in dataProgress hash (penaltyPreWaived, preWaivedBy, preWaivedAt)
+        // No extra Redis calls needed — it's merged via the dataProgress loop above
         
         // Calculate last active from timestamps
         let lastActive = null;
