@@ -275,6 +275,36 @@ export default async function handler(request, context) {
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
       
+    } else if (action === 'LOCK_QUIZ') {
+      // Revoke quiz unlock - re-lock a quiz that was previously unlocked
+      const unlockKey = `quiz:unlock:${userId}:${pageId}`;
+      
+      const existed = await redis.del(unlockKey);
+      
+      // Log for audit
+      const auditEntry = JSON.stringify({
+        action: "LOCK_QUIZ",
+        userId,
+        pageId,
+        reason: reason || "Instructor revoked late access",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[LOCK_QUIZ] ${instructor.email} locked ${pageId} for ${userId} (existed: ${existed})`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'LOCK_QUIZ',
+          message: 'Quiz locked. Student can no longer submit late.'
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
     } else if (action === 'FORCE_SET_GRADE') {
       // Force set a grade from scratch - useful when grade was accidentally deleted
       // This creates all necessary fields for a "submitted" state

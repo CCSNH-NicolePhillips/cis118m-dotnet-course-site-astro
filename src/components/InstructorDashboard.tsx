@@ -1782,33 +1782,93 @@ const InstructorDashboard: React.FC = () => {
                 </div>
               </div>
 
-              {/* Quiz Unlock Status Banner */}
+              {/* Quiz Unlock Toggle */}
               {(() => {
+                if (!modalData.assignmentId?.includes('quiz')) return null;
                 const progress = modalData.student.parsedProgress?.[modalData.assignmentId];
-                if (progress?.quizUnlocked) {
-                  return (
-                    <div style={{
-                      marginBottom: '20px',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      background: 'rgba(78, 201, 176, 0.15)',
-                      border: '1px solid #4ec9b0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px'
-                    }}>
-                      <span style={{ fontSize: '1.3rem' }}>🔓</span>
+                const isUnlocked = progress?.quizUnlocked === true;
+                
+                return (
+                  <div style={{
+                    marginBottom: '20px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    background: '#2d2d2d',
+                    border: '1px solid #444',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '10px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '1.1rem' }}>{isUnlocked ? '🔓' : '🔒'}</span>
                       <div>
-                        <div style={{ color: '#4ec9b0', fontWeight: 'bold' }}>Quiz Unlocked for Late Submission</div>
-                        <div style={{ color: '#888', fontSize: '0.8rem', marginTop: '2px' }}>
-                          {progress.unlockedBy && `By: ${progress.unlockedBy}`}
-                          {progress.unlockedAt && ` • ${new Date(progress.unlockedAt).toLocaleString()}`}
+                        <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.9rem' }}>Late Quiz Access</div>
+                        <div style={{ color: '#888', fontSize: '0.8rem' }}>
+                          {isUnlocked
+                            ? <>Unlocked{progress?.unlockedBy && ` by ${progress.unlockedBy}`}{progress?.unlockedAt && ` • ${new Date(progress.unlockedAt).toLocaleString()}`}</>
+                            : 'Student cannot submit past due date'}
                         </div>
                       </div>
                     </div>
-                  );
-                }
-                return null;
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <span style={{ color: isUnlocked ? '#4ec9b0' : '#888', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        {isUnlocked ? 'Unlocked' : 'Locked'}
+                      </span>
+                      <div 
+                        onClick={async () => {
+                          if (!modalData) return;
+                          try {
+                            const token = await getAccessToken();
+                            if (!token) return;
+                            
+                            const action = isUnlocked ? 'LOCK_QUIZ' : 'UNLOCK_QUIZ';
+                            const res = await fetch('/.netlify/functions/manual-override', {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                userId: modalData.student.sub,
+                                pageId: modalData.assignmentId,
+                                action,
+                                reason: overrideReason || (isUnlocked ? 'Instructor revoked late access' : 'Instructor granted late access')
+                              })
+                            });
+                            if (res.ok) {
+                              const result = await res.json();
+                              setActionFeedback({ type: 'success', message: result.message || (isUnlocked ? 'Quiz locked' : 'Quiz unlocked') });
+                              closeModal();
+                              loadGradebook();
+                            }
+                          } catch (err) {
+                            setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+                          }
+                        }}
+                        style={{
+                          width: '44px',
+                          height: '24px',
+                          borderRadius: '12px',
+                          background: isUnlocked ? '#4ec9b0' : '#555',
+                          position: 'relative',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          background: '#fff',
+                          position: 'absolute',
+                          top: '2px',
+                          left: isUnlocked ? '22px' : '2px',
+                          transition: 'left 0.2s',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                        }} />
+                      </div>
+                    </label>
+                  </div>
+                );
               })()}
 
               {/* Late Penalty Toggle */}
@@ -2305,71 +2365,7 @@ const InstructorDashboard: React.FC = () => {
                     <p style={{ color: '#ddd', marginTop: 0 }}>
                       Late submission options:
                     </p>
-                    {modalData?.assignmentId?.includes('quiz') && (
-                      <>
-                        {modalData.student.parsedProgress?.[modalData.assignmentId]?.quizUnlocked ? (
-                          <>
-                            <div style={{
-                              background: 'rgba(78, 201, 176, 0.15)',
-                              border: '1px solid #4ec9b0',
-                              padding: '10px 15px',
-                              borderRadius: '4px',
-                              marginBottom: '10px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px'
-                            }}>
-                              <span style={{ fontSize: '1.1rem' }}>🔓</span>
-                              <div>
-                                <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }}>Quiz Already Unlocked</span>
-                                <div style={{ color: '#888', fontSize: '0.75rem' }}>
-                                  Student can submit late
-                                </div>
-                              </div>
-                            </div>
-                            <button
-                              onClick={handleUnlockQuiz}
-                              style={{
-                                background: '#2d2d2d',
-                                color: '#4ec9b0',
-                                border: '1px solid #4ec9b0',
-                                padding: '8px 16px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                width: '100%',
-                                marginBottom: '10px',
-                                fontSize: '0.85rem'
-                              }}
-                            >
-                              🔄 Refresh Unlock (extend 30 days)
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={handleUnlockQuiz}
-                              style={{
-                                background: '#4ec9b0',
-                                color: '#000',
-                                border: 'none',
-                                padding: '10px 20px',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                width: '100%',
-                                marginBottom: '10px'
-                              }}
-                            >
-                              🔓 Unlock Quiz
-                            </button>
-                            <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: '15px' }}>
-                              Allow late quiz submission past due date.
-                            </p>
-                          </>
-                        )}
-                      </>
-                    )}
+
                     {(modalData?.assignmentId?.includes('lab') || modalData?.assignmentId?.includes('homework')) && (
                       <>
                         <button
