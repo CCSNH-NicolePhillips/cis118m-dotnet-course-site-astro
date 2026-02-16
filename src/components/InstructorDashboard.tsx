@@ -76,6 +76,9 @@ const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: st
 };
 
 // Assignment definitions for the course - dynamically generate all weeks
+const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // No quiz/homework
+const BOSS_FIGHT_WEEKS = new Set([5, 9, 13]); // All boss fight weeks
+
 const generateAssignments = () => {
   const assignments: { id: string; label: string; week: number; type: AssignmentType }[] = [];
   
@@ -89,17 +92,15 @@ const generateAssignments = () => {
   // Weeks 2-14 (regular weeks)
   // Boss fight weeks replace lab with boss-fight (200pts)
   // Week 5 has no quiz or homework (boss fight only)
-  const bossFightOnlyWeeks = new Set([5]); // No quiz/homework
-  const bossFightWeeks = new Set([5, 9, 13]); // All boss fight weeks
 
   for (let w = 2; w <= 14; w++) {
     const wStr = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${wStr}-participation`, label: 'Part', week: w, type: 'participation' });
-    if (!bossFightOnlyWeeks.has(w)) {
+    if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
       assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
     }
-    if (bossFightWeeks.has(w)) {
+    if (BOSS_FIGHT_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-boss-fight`, label: 'Boss Fight', week: w, type: 'lab' });
     } else {
       assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
@@ -284,7 +285,7 @@ const calculateWeightedTotals = (
       const score = parsed[assignment.id]?.score;
       const hasScore = score !== undefined && score !== null;
       
-      const isBossFight = bossFightWeeks.has(assignment.week) && assignment.type === 'lab';
+      const isBossFight = BOSS_FIGHT_WEEKS.has(assignment.week) && assignment.type === 'lab';
       
       if (hasScore) {
         // Assignment was submitted, count actual score
