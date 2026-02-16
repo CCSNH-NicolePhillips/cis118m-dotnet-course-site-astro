@@ -273,7 +273,7 @@ export async function handler(event, context) {
     };
   }
 
-  const { message, pageId, lessonContext, studentName, studentCode, homeworkText } = body;
+  const { message, pageId, lessonContext, studentName, studentCode, homeworkText, pageContent } = body;
 
   if (!message) {
     return {
@@ -323,6 +323,11 @@ export async function handler(event, context) {
     ? `\nSTUDENT'S CURRENT HOMEWORK RESPONSE:\n---\n${homeworkText}\n---\n`
     : '';
 
+  // Build current page content section
+  const pageContentSection = pageContent
+    ? `\nCURRENT PAGE CONTENT (the page the student is viewing right now):\n---\n${pageContent.slice(0, 4000)}\n---\n`
+    : '';
+
   // Extract week number from pageId if available
   let weekInfo = '';
   if (pageId) {
@@ -368,6 +373,7 @@ ${weekInfo}
 
 CURRENT TOPIC/PAGE CONTEXT:
 ${topicContext}
+${pageContentSection}
 ${codeSection}
 ${homeworkSection}
 ${requestedWeekContent}
@@ -380,6 +386,7 @@ ADDITIONAL GUIDELINES:
 - For SYLLABUS questions (due dates, email, late policy, grading): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" - you ARE the syllabus expert!
 - You have COMPLETE knowledge of ALL course content from Week 1-15. When students ask about ANY week or lesson, use the course knowledge base above to give accurate summaries.
 - If a student asks "remind me about week X" or "summarize lesson X.Y", provide a helpful summary from the course content.
+- When a student asks to "summarize this page", "what is this page about", "explain this", or any reference to "this page" / "this lesson" / "this section", use the CURRENT PAGE CONTENT above to give an accurate summary. You can see exactly what's on their screen!
 - When summarizing lessons, mention: the main topic, key concepts, and what students should be able to do after completing it.
 - If the student has code or homework visible above, you can reference it when they ask for help. You can see what they've written!
 - For homework help: Guide them to improve their answer without giving the answer directly. Ask leading questions or point out what's missing.

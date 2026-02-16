@@ -164,6 +164,33 @@ const AITutor: React.FC = () => {
       console.log('[AITutor] Could not get homework text:', err);
     }
 
+    // Extract current page content from the DOM so the tutor knows what page the student is on
+    let pageContent = '';
+    try {
+      const mainEl = document.getElementById('main-content');
+      if (mainEl) {
+        // Get the page title
+        const titleEl = mainEl.querySelector('h1, h2');
+        const title = titleEl?.textContent?.trim() || '';
+        
+        // Get text content, skipping code editors and interactive elements
+        const clone = mainEl.cloneNode(true) as HTMLElement;
+        // Remove elements that aren't lesson content
+        clone.querySelectorAll('iframe, .monaco-editor, .try-it-now-runner, .code-runner, script, style, .ai-tutor-button, .quiz-container, .homework-container, .lab-submission').forEach(el => el.remove());
+        
+        const rawText = clone.textContent || '';
+        // Clean up whitespace
+        const cleanText = rawText.replace(/\s+/g, ' ').trim();
+        // Truncate to keep token usage reasonable (first ~4000 chars captures the key content)
+        pageContent = cleanText.slice(0, 4000);
+        if (title && !pageContent.startsWith(title)) {
+          pageContent = title + '\n\n' + pageContent;
+        }
+      }
+    } catch (err) {
+      console.log('[AITutor] Could not extract page content:', err);
+    }
+
     try {
       // Get auth token so the tutor can fetch student grades securely
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -186,6 +213,7 @@ const AITutor: React.FC = () => {
           studentName,
           studentCode: studentCode || null,
           homeworkText: homeworkText || null,
+          pageContent: pageContent || null,
         }),
       });
 
