@@ -9,8 +9,8 @@ const COURSE_INFO = {
   code: "CIS 118M",
   title: "Introduction to C# Programming",
   term: "Spring 2026",
-  instructor: "Nicole Phillips",
-  email: "MCCCISOnline1@ccsnh.edu",
+  instructor: "Nicole Phillips & Peter LaMonica",
+  email: "MCCCISOnline1@ccsnh.edu or plamonica@ccsnh.edu",
   officeHours: "Contact via email to schedule a Zoom meeting",
   passingGrade: "C or higher (70%)"
 };

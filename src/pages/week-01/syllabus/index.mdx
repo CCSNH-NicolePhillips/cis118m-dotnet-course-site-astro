@@ -42,12 +42,22 @@ import { MarkCompleteButton } from '../../../components/progress/MarkCompleteBut
 
 ## 👩‍🏫 Instructor
 
-<div class="instructor-card">
-  <div class="instructor-avatar">👩‍💻</div>
-  <div class="instructor-details">
-    <h3>Nicole Phillips</h3>
-    <p>✉️ <a href="mailto:MCCCISOnline1@ccsnh.edu">MCCCISOnline1@ccsnh.edu</a></p>
-    <p>🕐 Office Hours: Contact via email to schedule a Zoom meeting</p>
+<div class="instructor-cards">
+  <div class="instructor-card">
+    <div class="instructor-avatar">👩‍💻</div>
+    <div class="instructor-details">
+      <h3>Nicole Phillips</h3>
+      <p>✉️ <a href="mailto:MCCCISOnline1@ccsnh.edu">MCCCISOnline1@ccsnh.edu</a></p>
+      <p>🕐 Office Hours: Contact via email to schedule a Zoom meeting</p>
+    </div>
+  </div>
+  <div class="instructor-card">
+    <div class="instructor-avatar">👨‍💻</div>
+    <div class="instructor-details">
+      <h3>Peter LaMonica</h3>
+      <p>✉️ <a href="mailto:plamonica@ccsnh.edu">plamonica@ccsnh.edu</a></p>
+      <p>🕐 Office Hours: Contact via email to schedule a Zoom meeting</p>
+    </div>
   </div>
 </div>
 
@@ -460,6 +470,12 @@ import { MarkCompleteButton } from '../../../components/progress/MarkCompleteBut
   .section-card p { color: rgba(255,255,255,0.8); line-height: 1.7; }
 
   /* ===== INSTRUCTOR ===== */
+  .instructor-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
   .instructor-card {
     display: flex;
     align-items: center;
@@ -468,7 +484,6 @@ import { MarkCompleteButton } from '../../../components/progress/MarkCompleteBut
     border: 1px solid rgba(78,201,176,0.2);
     border-radius: 12px;
     padding: 24px;
-    margin: 20px 0;
   }
   .instructor-avatar {
     font-size: 48px;
@@ -818,6 +833,7 @@ import { MarkCompleteButton } from '../../../components/progress/MarkCompleteBut
   body[data-theme="light"] .section-card p { color: #555 !important; }
 
   body[data-theme="light"] .instructor-card { background: #f8f9fa !important; border-color: #ddd !important; }
+  body[data-theme="light"] .instructor-cards { margin: 20px 0; }
   body[data-theme="light"] .instructor-details h3 { color: #0d7377 !important; }
   body[data-theme="light"] .instructor-details p { color: #555 !important; }
   body[data-theme="light"] .instructor-details a { color: #0d7377 !important; }
