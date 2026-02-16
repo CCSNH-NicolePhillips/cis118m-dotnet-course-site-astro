@@ -856,48 +856,6 @@ const InstructorDashboard: React.FC = () => {
     }
   };
 
-  const handleWaivePenalty = async () => {
-    if (!modalData) return;
-    if (!confirm('Waive the late penalty for this submission? The original score will be restored.')) return;
-    
-    try {
-      const token = await getAccessToken();
-      if (!token) {
-        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh the page and log in again.' });
-        return;
-      }
-      console.log('[Override] WAIVE_PENALTY:', modalData.student.sub, modalData.assignmentId);
-      const res = await fetch('/.netlify/functions/manual-override', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: modalData.student.sub,
-          pageId: modalData.assignmentId,
-          action: 'WAIVE_PENALTY',
-          reason: overrideReason || 'Instructor waived late penalty'
-        })
-      });
-      
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Waive penalty failed');
-      }
-      
-      const result = await res.json();
-      setActionFeedback({ type: 'success', message: result.message || 'Late penalty waived' });
-      // Optimistically update modal data
-      const updatedStudent = { ...modalData.student };
-      if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
-      const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
-      pp.penaltyWaived = true;
-      if (pp.originalScore !== undefined) pp.score = pp.originalScore;
-      updatedStudent.parsedProgress[modalData.assignmentId] = pp;
-      setModalData({ ...modalData, student: updatedStudent });
-    } catch (err) {
-      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
-    }
-  };
-
   const handleForceSetGrade = async () => {
     if (!modalData) return;
     const scoreStr = prompt('Enter the grade to set (0-100):');
@@ -1888,115 +1846,6 @@ const InstructorDashboard: React.FC = () => {
                 );
               })()}
 
-              {/* Late Penalty Toggle */}
-              {(() => {
-                const progress = modalData.student.parsedProgress?.[modalData.assignmentId];
-                const hasOriginalScore = progress?.originalScore !== undefined;
-                const daysLate = progress?.daysLate;
-                const isLate = daysLate !== undefined && daysLate > 0;
-                
-                if (hasOriginalScore && isLate) {
-                  const penaltyWaived = progress?.penaltyWaived === true;
-                  return (
-                    <div style={{
-                      marginBottom: '20px',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      background: '#2d2d2d',
-                      border: '1px solid #444',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '10px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '1.1rem' }}>⏰</span>
-                        <div>
-                          <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.9rem' }}>Late Penalty</div>
-                          <div style={{ color: '#888', fontSize: '0.8rem' }}>
-                            {daysLate} day{daysLate > 1 ? 's' : ''} late
-                            {progress?.penaltyPercent !== undefined && ` • ${progress.penaltyPercent}% penalty`}
-                          </div>
-                        </div>
-                      </div>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                        <span style={{ color: penaltyWaived ? '#4ec9b0' : '#fbbf24', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                          {penaltyWaived ? 'Penalty Waived' : 'Penalty Applied'}
-                        </span>
-                        <div 
-                          onClick={async () => {
-                            if (!modalData) return;
-                            try {
-                              const token = await getAccessToken();
-                              if (!token) return;
-                              
-                              const action = penaltyWaived ? 'REAPPLY_PENALTY' : 'WAIVE_PENALTY';
-                              const res = await fetch('/.netlify/functions/manual-override', {
-                                method: 'POST',
-                                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                  userId: modalData.student.sub,
-                                  pageId: modalData.assignmentId,
-                                  action,
-                                  reason: penaltyWaived ? 'Instructor toggled late penalty back on' : 'Instructor toggled late penalty off'
-                                })
-                              });
-                              if (res.ok) {
-                                const result = await res.json();
-                                setActionFeedback({ type: 'success', message: result.message || (penaltyWaived ? 'Late penalty re-applied' : 'Late penalty waived — original score restored') });
-                                // Optimistically update modal data so toggle flips immediately
-                                const updatedStudent = { ...modalData.student };
-                                if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
-                                const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
-                                if (penaltyWaived) {
-                                  // Re-applied: recalculate penalized score
-                                  pp.penaltyWaived = false;
-                                  if (pp.originalScore !== undefined && pp.daysLate !== undefined && pp.daysLate > 0) {
-                                    const penalty = Math.min(pp.daysLate * 10, 100);
-                                    pp.score = pp.daysLate > 3 ? 0 : Math.max(0, Math.round(pp.originalScore * (1 - penalty / 100)));
-                                  }
-                                } else {
-                                  // Waived: restore original score
-                                  pp.penaltyWaived = true;
-                                  if (pp.originalScore !== undefined) pp.score = pp.originalScore;
-                                }
-                                updatedStudent.parsedProgress[modalData.assignmentId] = pp;
-                                setModalData({ ...modalData, student: updatedStudent });
-                              }
-                            } catch (err) {
-                              setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
-                            }
-                          }}
-                          style={{
-                            width: '44px',
-                            height: '24px',
-                            borderRadius: '12px',
-                            background: penaltyWaived ? '#4ec9b0' : '#fbbf24',
-                            position: 'relative',
-                            cursor: 'pointer',
-                            transition: 'background 0.2s'
-                          }}
-                        >
-                          <div style={{
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            background: '#fff',
-                            position: 'absolute',
-                            top: '2px',
-                            left: penaltyWaived ? '22px' : '2px',
-                            transition: 'left 0.2s',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
-                          }} />
-                        </div>
-                      </label>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-
               {/* Student Code */}
               <details open style={{ marginBottom: '20px' }}>
                 <summary style={{ cursor: 'pointer', color: '#4ec9b0', fontWeight: 'bold', padding: '10px 0' }}>
@@ -2373,37 +2222,6 @@ const InstructorDashboard: React.FC = () => {
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
                       Create/set grade from scratch.
                     </p>
-                  </div>
-                  
-                  {/* Late Submission Controls */}
-                  <div style={{ flex: 1 }}>
-                    <p style={{ color: '#ddd', marginTop: 0 }}>
-                      Late submission options:
-                    </p>
-
-                    {(modalData?.assignmentId?.includes('lab') || modalData?.assignmentId?.includes('homework')) && (
-                      <>
-                        <button
-                          onClick={handleWaivePenalty}
-                          style={{
-                            background: '#569cd6',
-                            color: '#000',
-                            border: 'none',
-                            padding: '10px 20px',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            width: '100%',
-                            marginBottom: '10px'
-                          }}
-                        >
-                          💰 Waive Late Penalty
-                        </button>
-                        <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '0', marginBottom: 0 }}>
-                          Restore original score (remove penalty).
-                        </p>
-                      </>
-                    )}
                   </div>
                 </div>
 
