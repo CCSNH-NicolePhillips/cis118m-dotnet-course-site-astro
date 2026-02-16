@@ -52,6 +52,7 @@ interface Message {
 
 const AITutor: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -280,12 +281,12 @@ const AITutor: React.FC = () => {
         <div
           style={{
             position: 'fixed',
-            bottom: '90px',
+            bottom: isExpanded ? '20px' : '90px',
             right: '20px',
-            width: '380px',
-            maxWidth: 'calc(100vw - 40px)',
-            height: '500px',
-            maxHeight: 'calc(100vh - 120px)',
+            width: isExpanded ? 'calc(100vw - 40px)' : '380px',
+            maxWidth: isExpanded ? '900px' : 'calc(100vw - 40px)',
+            height: isExpanded ? 'calc(100vh - 40px)' : '500px',
+            maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
             background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
             border: '1px solid #4ec9b0',
             borderRadius: '16px',
@@ -294,6 +295,7 @@ const AITutor: React.FC = () => {
             flexDirection: 'column',
             overflow: 'hidden',
             zIndex: 9998,
+            transition: 'all 0.3s ease',
           }}
         >
           {/* Header */}
@@ -306,7 +308,7 @@ const AITutor: React.FC = () => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '20px' }}>👨‍💻</span>
-              <div>
+              <div style={{ flex: 1 }}>
                 <div style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
                   TECHNICAL SUPPORT
                 </div>
@@ -314,6 +316,25 @@ const AITutor: React.FC = () => {
                   Lead Architect Online • {pageId || 'Ready'}
                 </div>
               </div>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                title={isExpanded ? 'Collapse' : 'Expand'}
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(78, 201, 176, 0.3)',
+                  borderRadius: '6px',
+                  color: '#4ec9b0',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  fontSize: '16px',
+                  lineHeight: 1,
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(78, 201, 176, 0.15)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+              >
+                {isExpanded ? '⊖' : '⊕'}
+              </button>
             </div>
           </div>
 
