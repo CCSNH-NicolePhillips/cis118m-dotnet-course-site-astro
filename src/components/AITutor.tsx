@@ -244,11 +244,10 @@ const AITutor: React.FC = () => {
       {/* Floating Button */}
       <button
         className="ai-tutor-button"
-        onClick={() => { if (isExpanded && isOpen) setIsExpanded(false); setIsOpen(!isOpen); }}
+        onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
-          bottom: isOpen && isExpanded ? 'auto' : '20px',
-          top: isOpen && isExpanded ? '28px' : 'auto',
+          bottom: '20px',
           right: '20px',
           width: '60px',
           height: '60px',
@@ -282,11 +281,11 @@ const AITutor: React.FC = () => {
         <div
           style={{
             position: 'fixed',
-            bottom: isExpanded ? '20px' : '90px',
+            bottom: isExpanded ? '90px' : '90px',
             right: '20px',
             width: isExpanded ? 'calc(100vw - 40px)' : '380px',
             maxWidth: isExpanded ? '900px' : 'calc(100vw - 40px)',
-            height: isExpanded ? 'calc(100vh - 40px)' : '500px',
+            height: isExpanded ? 'calc(100vh - 110px)' : '500px',
             maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
             background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
             border: '1px solid #4ec9b0',
@@ -335,6 +334,25 @@ const AITutor: React.FC = () => {
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 {isExpanded ? '⊖' : '⊕'}
+              </button>
+              <button
+                onClick={() => { setIsOpen(false); setIsExpanded(false); }}
+                title="Close"
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(78, 201, 176, 0.3)',
+                  borderRadius: '6px',
+                  color: '#4ec9b0',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  fontSize: '16px',
+                  lineHeight: 1,
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(78, 201, 176, 0.15)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+              >
+                ✕
               </button>
             </div>
           </div>
