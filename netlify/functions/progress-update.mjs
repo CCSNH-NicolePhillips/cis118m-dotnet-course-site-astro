@@ -3,6 +3,15 @@ import { getRedis } from "./_lib/redis.mjs";
 import { calculateLatePenalty } from "./_lib/weeks-config.mjs";
 
 /**
+ * Normalize student email to always use @students.ccsnh.edu domain.
+ * Auth0 sometimes returns @students.snhu.edu for CCSNH students.
+ */
+function normalizeCcsnhEmail(email) {
+  if (!email) return email;
+  return email.replace(/@students\.[a-z]+\.edu$/i, '@students.ccsnh.edu');
+}
+
+/**
  * Netlify Function: Update user's progress
  * 
  * POST /api/progress-update
@@ -88,7 +97,7 @@ export default async function handler(request, context) {
       
       // Store student email and name for instructor dashboard
       if (user.email) {
-        await redis.set(`cis118m:studentEmail:${userId}`, user.email);
+        await redis.set(`cis118m:studentEmail:${userId}`, normalizeCcsnhEmail(user.email));
       }
       if (user.name) {
         await redis.set(`cis118m:studentName:${userId}`, user.name);
@@ -138,7 +147,7 @@ export default async function handler(request, context) {
       
       // Store student email and name for instructor dashboard
       if (user.email) {
-        await redis.set(`cis118m:studentEmail:${userId}`, user.email);
+        await redis.set(`cis118m:studentEmail:${userId}`, normalizeCcsnhEmail(user.email));
       }
       if (user.name) {
         await redis.set(`cis118m:studentName:${userId}`, user.name);
@@ -235,7 +244,7 @@ export default async function handler(request, context) {
     
     // Store student email and name for instructor dashboard
     if (user.email) {
-      await redis.set(`cis118m:studentEmail:${user.sub}`, user.email);
+      await redis.set(`cis118m:studentEmail:${user.sub}`, normalizeCcsnhEmail(user.email));
     }
     if (user.name) {
       await redis.set(`cis118m:studentName:${user.sub}`, user.name);
