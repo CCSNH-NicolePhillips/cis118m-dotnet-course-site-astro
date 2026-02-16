@@ -157,7 +157,7 @@ interface Student {
   name?: string;
   progress: StudentProgress;
   lastLogin?: string;
-  parsedProgress?: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string } };
+  parsedProgress?: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; penaltyPreWaived?: boolean; preWaivedBy?: string; status?: string; feedback?: string; savedCode?: string; rubric?: { [category: string]: RubricCategory }; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string } };
 }
 
 interface SubmissionModalData {
@@ -436,7 +436,7 @@ const InstructorDashboard: React.FC = () => {
   }, [students]);
 
   const parseProgressData = (progress: StudentProgress) => {
-    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; status?: string; feedback?: string; savedCode?: string; rubric?: object; detailedReport?: string; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string } } = {};
+    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; penaltyPreWaived?: boolean; preWaivedBy?: string; status?: string; feedback?: string; savedCode?: string; rubric?: object; detailedReport?: string; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string } } = {};
     
     for (const [key, value] of Object.entries(progress || {})) {
       const parts = key.split(':');
@@ -457,6 +457,8 @@ const InstructorDashboard: React.FC = () => {
         else if (field === 'savedCode') parsed[pageId].savedCode = String(value);
         else if (field === 'detailedReport') parsed[pageId].detailedReport = String(value);
         else if (field === 'gradedAt') parsed[pageId].gradedAt = String(value);
+        else if (field === 'penaltyPreWaived') parsed[pageId].penaltyPreWaived = String(value) === 'true';
+        else if (field === 'preWaivedBy') parsed[pageId].preWaivedBy = String(value);
         else if (field === 'quizUnlocked') parsed[pageId].quizUnlocked = String(value) === 'true';
         else if (field === 'unlockedBy') parsed[pageId].unlockedBy = String(value);
         else if (field === 'unlockedAt') parsed[pageId].unlockedAt = String(value);
@@ -1521,6 +1523,7 @@ const InstructorDashboard: React.FC = () => {
                             title={isQuizUnlocked ? `Quiz unlocked for late submission` : undefined}
                           >
                             {isQuizUnlocked && <span style={{ fontSize: '0.65rem', marginRight: '2px' }}>🔓</span>}
+                            {progress?.penaltyPreWaived && !progress?.penaltyWaived && <span style={{ fontSize: '0.65rem', marginRight: '2px' }} title="Late penalty pre-waived">🛡️</span>}
                             {cellContent}
                             {progress?.penaltyWaived && <span style={{ fontSize: '0.65rem', marginLeft: '2px' }} title="Late penalty waived">✓</span>}
                           </span>
@@ -1771,6 +1774,107 @@ const InstructorDashboard: React.FC = () => {
                           position: 'absolute',
                           top: '2px',
                           left: isUnlocked ? '22px' : '2px',
+                          transition: 'left 0.2s',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+                        }} />
+                      </div>
+                    </label>
+                  </div>
+                );
+              })()}
+
+              {/* Pre-Waive Late Penalty Toggle (for students who haven't submitted yet, or to prevent future penalties) */}
+              {(() => {
+                // Only show for lab and homework assignments
+                if (!modalData.assignmentId?.includes('lab') && !modalData.assignmentId?.includes('homework')) return null;
+                
+                const progress = modalData.student.parsedProgress?.[modalData.assignmentId];
+                const isPreWaived = progress?.penaltyPreWaived === true;
+                const alreadySubmitted = progress?.status === 'completed';
+                const alreadyWaived = progress?.penaltyWaived === true;
+                
+                // If already submitted AND waived via the post-submission toggle, don't show pre-waive
+                if (alreadySubmitted && alreadyWaived && !isPreWaived) return null;
+                
+                return (
+                  <div style={{
+                    marginBottom: '10px',
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    background: isPreWaived ? 'rgba(78, 201, 176, 0.08)' : '#2d2d2d',
+                    border: `1px solid ${isPreWaived ? '#4ec9b0' : '#444'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1rem' }}>🛡️</span>
+                      <div>
+                        <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.85rem' }}>Pre-Waive Late Penalty</div>
+                        <div style={{ color: '#888', fontSize: '0.75rem' }}>
+                          {isPreWaived 
+                            ? <>Waived{progress?.preWaivedBy && ` by ${progress.preWaivedBy}`} — no penalty on submit</>
+                            : 'Waive penalty before student submits (late starters)'}
+                        </div>
+                      </div>
+                    </div>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                      <span style={{ color: isPreWaived ? '#4ec9b0' : '#888', fontSize: '0.8rem', fontWeight: 'bold' }}>
+                        {isPreWaived ? 'Pre-Waived' : 'Normal'}
+                      </span>
+                      <div
+                        onClick={async () => {
+                          if (!modalData) return;
+                          try {
+                            const token = await getAccessToken();
+                            if (!token) return;
+                            const action = isPreWaived ? 'REMOVE_PRE_WAIVE' : 'PRE_WAIVE_PENALTY';
+                            const res = await fetch('/.netlify/functions/manual-override', {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                userId: modalData.student.sub,
+                                pageId: modalData.assignmentId,
+                                action,
+                                reason: isPreWaived ? 'Instructor removed pre-waive' : 'Instructor pre-waived late penalty (late start)'
+                              })
+                            });
+                            if (res.ok) {
+                              const result = await res.json();
+                              setActionFeedback({ type: 'success', message: result.message || (isPreWaived ? 'Pre-waive removed' : 'Late penalty pre-waived') });
+                              // Optimistically update modal
+                              const updatedStudent = { ...modalData.student };
+                              if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
+                              const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
+                              pp.penaltyPreWaived = !isPreWaived;
+                              updatedStudent.parsedProgress[modalData.assignmentId] = pp;
+                              setModalData({ ...modalData, student: updatedStudent });
+                              loadGradebook();
+                            }
+                          } catch (err) {
+                            setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+                          }
+                        }}
+                        style={{
+                          width: '44px',
+                          height: '24px',
+                          borderRadius: '12px',
+                          background: isPreWaived ? '#4ec9b0' : '#555',
+                          position: 'relative',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          background: '#fff',
+                          position: 'absolute',
+                          top: '2px',
+                          left: isPreWaived ? '22px' : '2px',
                           transition: 'left 0.2s',
                           boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }} />

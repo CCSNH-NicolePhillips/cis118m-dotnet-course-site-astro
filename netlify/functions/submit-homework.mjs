@@ -122,11 +122,21 @@ Return JSON:
     let finalGrade = aiGrade;
     let latePenaltyMessage = '';
     let penaltyInfo = { daysLate: 0, penaltyPercent: 0, finalScore: aiGrade };
+    let penaltyPreWaived = false;
     
     if (aiGrade !== null) {
+      // Check if instructor pre-waived penalty for this student/assignment
+      const prewaiveKey = `penalty:prewaive:${sub}:${assignmentId}`;
+      const prewaive = await redis.get(prewaiveKey);
+      
       penaltyInfo = getLatePenaltyInfo(assignmentId, aiGrade, new Date(submittedAt), email);
       
-      if (penaltyInfo.daysLate > 0) {
+      if (prewaive && penaltyInfo.daysLate > 0) {
+        // Penalty was pre-waived by instructor — skip penalty, record it
+        console.log(`[submit-homework] Late penalty PRE-WAIVED for ${sub}/${assignmentId} (${penaltyInfo.daysLate} days late)`);
+        penaltyPreWaived = true;
+        // Don't modify finalGrade — keep original aiGrade
+      } else if (penaltyInfo.daysLate > 0) {
         finalGrade = penaltyInfo.finalScore;
         latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
         aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
@@ -137,7 +147,7 @@ Return JSON:
     // Update progress in the standard hash format used by gradebook
     // Include savedCode and feedback so instructor dashboard can display them
     if (aiGrade !== null) {
-      await redis.hset(`user:progress:data:${sub}`, {
+      const progressData = {
         [`${assignmentId}:score`]: finalGrade,
         [`${assignmentId}:originalScore`]: aiGrade,
         [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
@@ -148,7 +158,12 @@ Return JSON:
         [`${assignmentId}:rubric`]: JSON.stringify(aiRubric),
         [`${assignmentId}:detailedReport`]: aiDetailedReport,
         [`${assignmentId}:gradedAt`]: new Date().toISOString()
-      });
+      };
+      if (penaltyPreWaived) {
+        progressData[`${assignmentId}:penaltyWaived`] = 'true';
+        progressData[`${assignmentId}:penaltyPreWaived`] = 'true';
+      }
+      await redis.hset(`user:progress:data:${sub}`, progressData);
       
       // Update aiGrade to reflect final score for the response
       aiGrade = finalGrade;

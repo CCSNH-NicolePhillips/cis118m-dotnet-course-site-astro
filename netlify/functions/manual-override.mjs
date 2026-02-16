@@ -511,6 +511,74 @@ export default async function handler(request, context) {
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
       
+    } else if (action === 'PRE_WAIVE_PENALTY') {
+      // Pre-waive late penalty for a student who hasn't submitted yet
+      // When they submit, the penalty will be skipped automatically
+      const prewaiveKey = `penalty:prewaive:${userId}:${pageId}`;
+      await redis.set(prewaiveKey, JSON.stringify({
+        waivedBy: instructor.email || instructor.sub,
+        waivedAt: overrideTime,
+        reason: reason || 'Instructor pre-waived late penalty (late start)'
+      }));
+      
+      // Also store in progress hash so the dashboard can see it
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${pageId}:penaltyPreWaived`]: 'true',
+        [`${pageId}:preWaivedBy`]: instructor.email || instructor.sub,
+        [`${pageId}:preWaivedAt`]: overrideTime
+      });
+      
+      const auditEntry = JSON.stringify({
+        action: "PRE_WAIVE_PENALTY",
+        userId, pageId,
+        reason: reason || "Instructor pre-waived late penalty",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+      
+      console.log(`[PRE_WAIVE_PENALTY] ${instructor.email} pre-waived penalty for ${userId}/${pageId}`);
+      
+      return new Response(
+        JSON.stringify({ 
+          ok: true, action: 'PRE_WAIVE_PENALTY',
+          message: `Late penalty pre-waived for ${pageId}. When this student submits, no penalty will be applied.`
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
+    } else if (action === 'REMOVE_PRE_WAIVE') {
+      // Remove a pre-waive so future submissions will be penalized normally
+      const prewaiveKey = `penalty:prewaive:${userId}:${pageId}`;
+      await redis.del(prewaiveKey);
+      
+      await redis.hdel(`user:progress:data:${userId}`,
+        `${pageId}:penaltyPreWaived`,
+        `${pageId}:preWaivedBy`,
+        `${pageId}:preWaivedAt`
+      );
+      
+      const auditEntry = JSON.stringify({
+        action: "REMOVE_PRE_WAIVE",
+        userId, pageId,
+        reason: reason || "Instructor removed pre-waive",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+      
+      console.log(`[REMOVE_PRE_WAIVE] ${instructor.email} removed pre-waive for ${userId}/${pageId}`);
+      
+      return new Response(
+        JSON.stringify({ 
+          ok: true, action: 'REMOVE_PRE_WAIVE',
+          message: `Pre-waive removed for ${pageId}. Normal late penalties will apply.`
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
     } else {
       // UPDATE_GRADE action
       if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {

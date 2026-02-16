@@ -122,10 +122,19 @@ Return JSON:
           hasExtension: penaltyInfo.hasExtension 
         };
         
+        // Check if instructor pre-waived penalty for this student/assignment
+        const prewaiveKey = `penalty:prewaive:${sub}:${assignmentId}`;
+        const prewaive = await redis.get(prewaiveKey);
+        let penaltyPreWaived = false;
+        
         // Apply late penalty to the grade
         let finalGrade = aiGrade;
         let latePenaltyMessage = '';
-        if (penaltyInfo.daysLate > 0) {
+        if (prewaive && penaltyInfo.daysLate > 0) {
+          // Penalty was pre-waived by instructor — skip penalty
+          console.log(`[submit-lab] Late penalty PRE-WAIVED for ${sub}/${assignmentId} (${penaltyInfo.daysLate} days late)`);
+          penaltyPreWaived = true;
+        } else if (penaltyInfo.daysLate > 0) {
           finalGrade = penaltyInfo.finalScore;
           latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
           aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
@@ -149,7 +158,7 @@ Return JSON:
         
         // Update progress in the standard hash format used by gradebook
         // Include savedCode and feedback so instructor dashboard can display them
-        await redis.hset(`user:progress:data:${sub}`, {
+        const labProgressData = {
           [`${assignmentId}:score`]: finalGrade,
           [`${assignmentId}:originalScore`]: originalGrade,
           [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
@@ -160,7 +169,12 @@ Return JSON:
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
           [`${assignmentId}:detailedReport`]: gradeData.detailedReport || '',
           [`${assignmentId}:gradedAt`]: new Date().toISOString()
-        });
+        };
+        if (penaltyPreWaived) {
+          labProgressData[`${assignmentId}:penaltyWaived`] = 'true';
+          labProgressData[`${assignmentId}:penaltyPreWaived`] = 'true';
+        }
+        await redis.hset(`user:progress:data:${sub}`, labProgressData);
         
         // Update aiGrade to reflect final score for the response
         aiGrade = finalGrade;

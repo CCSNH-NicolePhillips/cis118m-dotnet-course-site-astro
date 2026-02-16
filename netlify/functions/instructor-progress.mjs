@@ -187,6 +187,22 @@ export default async function handler(request, context) {
               }
             }
           }
+          
+          // Check pre-waive keys for labs and homework
+          const labId = `week-${wStr}-lab`;
+          const hwId = `week-${wStr}-homework`;
+          for (const aId of [labId, hwId]) {
+            const prewaiveKey = `penalty:prewaive:${sub}:${aId}`;
+            const prewaiveData = await redis.get(prewaiveKey);
+            if (prewaiveData) {
+              mergedProgress[`${aId}:penaltyPreWaived`] = 'true';
+              try {
+                const parsed = typeof prewaiveData === 'string' ? JSON.parse(prewaiveData) : prewaiveData;
+                if (parsed.waivedBy) mergedProgress[`${aId}:preWaivedBy`] = parsed.waivedBy;
+                if (parsed.waivedAt) mergedProgress[`${aId}:preWaivedAt`] = parsed.waivedAt;
+              } catch {}
+            }
+          }
         }
         
         // Calculate last active from timestamps
