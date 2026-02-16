@@ -1217,9 +1217,7 @@ const InstructorDashboard: React.FC = () => {
           border: '1px solid #4ec9b0',
           borderRadius: '6px',
           overflow: 'hidden',
-          maxHeight: '320px',
-          display: 'flex',
-          flexDirection: 'column'
+          display: 'inline-block'
         }}>
           <div style={{ padding: '6px 12px', borderBottom: '1px solid #333', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
             <span style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem' }}>📅 Schedule Manager</span>
@@ -1230,8 +1228,8 @@ const InstructorDashboard: React.FC = () => {
             )}
           </div>
           
-          <div style={{ overflowY: 'auto', overflowX: 'auto', flex: 1 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.75rem' }}>
+          <div style={{ overflowY: 'auto', maxHeight: '400px' }}>
+            <table style={{ borderCollapse: 'collapse', fontSize: '0.75rem' }}>
               <thead>
                 <tr style={{ position: 'sticky', top: 0, background: '#1a1a2e', zIndex: 1 }}>
                   <th style={{ padding: '4px 8px', textAlign: 'left', color: '#4ec9b0', borderBottom: '1px solid #333', whiteSpace: 'nowrap' }}>Wk</th>
