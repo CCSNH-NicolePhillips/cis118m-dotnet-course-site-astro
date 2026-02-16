@@ -145,7 +145,17 @@ export default async function handler(request, context) {
         }
         
         // Add completion details (score, passed, status from completion records)
+        // BUT: don't let completion score overwrite a waived penalty score
         for (const [key, value] of Object.entries(completionDetails)) {
+          // If this is a score field, check if penalty was waived in dataProgress
+          if (key.endsWith(':score')) {
+            const pageId = key.replace(':score', '');
+            const penaltyWaived = dataProgress[`${pageId}:penaltyWaived`];
+            if (penaltyWaived === 'true') {
+              // Don't overwrite — the dataProgress score (waived) is authoritative
+              continue;
+            }
+          }
           mergedProgress[key] = value;
         }
         

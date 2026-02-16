@@ -151,7 +151,7 @@ Return JSON:
         // Include savedCode and feedback so instructor dashboard can display them
         await redis.hset(`user:progress:data:${sub}`, {
           [`${assignmentId}:score`]: finalGrade,
-          [`${assignmentId}:originalScore`]: aiGrade,
+          [`${assignmentId}:originalScore`]: originalGrade,
           [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
           [`${assignmentId}:penaltyPercent`]: penaltyInfo.penaltyPercent,
           [`${assignmentId}:status`]: 'completed',

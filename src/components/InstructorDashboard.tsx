@@ -1868,6 +1868,7 @@ const InstructorDashboard: React.FC = () => {
                                 });
                                 if (res.ok) {
                                   setActionFeedback({ type: 'success', message: 'Late penalty waived — original score restored' });
+                                  closeModal();
                                   loadGradebook();
                                 }
                               } else {
@@ -1884,6 +1885,7 @@ const InstructorDashboard: React.FC = () => {
                                 });
                                 if (res.ok) {
                                   setActionFeedback({ type: 'success', message: 'Late penalty re-applied' });
+                                  closeModal();
                                   loadGradebook();
                                 }
                               }
