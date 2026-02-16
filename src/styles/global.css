@@ -1127,25 +1127,34 @@ body[data-theme="dark"] .mark-complete-button.completed {
 .main table {
   width: 100%;
   border-collapse: collapse;
-  margin: 16px 0;
+  margin: 24px 0;
   font-size: 15px;
+  background: var(--panel2);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
 }
 
 .main table th,
 .main table td {
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-align: left;
-  border: 1px solid var(--border);
 }
 
 .main table th {
   background: var(--panel2);
   font-weight: 600;
   color: var(--text);
+  border-bottom: 2px solid rgba(78, 201, 176, 0.3);
 }
 
 .main table td {
-  background: var(--panel);
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.main table tr:last-child td {
+  border-bottom: none;
 }
 
 .main table tr:hover td {
@@ -1155,6 +1164,35 @@ body[data-theme="dark"] .mark-complete-button.completed {
 .main table td:first-child {
   white-space: nowrap;
   font-weight: 500;
+}
+
+.main table code {
+  color: #4ec9b0;
+  background: rgba(78, 201, 176, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+body[data-theme="light"] .main table code {
+  color: #0e7c62;
+  background: rgba(14, 124, 98, 0.08);
+}
+
+/* Styled table container — enhanced table wrapper used across lessons */
+.styled-table-container {
+  background: var(--panel2);
+  border-radius: 12px;
+  padding: 8px 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+.styled-table-container table {
+  margin: 0;
+  border: none;
+  border-radius: 0;
 }
 
 /* Monaco Editor - Suggestion Widget Fix */
