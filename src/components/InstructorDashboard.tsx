@@ -502,6 +502,13 @@ const InstructorDashboard: React.FC = () => {
         parsedProgress: parseProgressData(s.progress)
       }));
       
+      // Sort alphabetically by display name
+      studentsWithParsed.sort((a: Student, b: Student) => {
+        const nameA = (a.studentName || a.displayName || a.name || '').toLowerCase();
+        const nameB = (b.studentName || b.displayName || b.name || '').toLowerCase();
+        return nameA.localeCompare(nameB);
+      });
+      
       setStudents(studentsWithParsed);
       setLastUpdated(new Date());
     } catch (err) {
@@ -886,7 +893,6 @@ const InstructorDashboard: React.FC = () => {
       if (pp.originalScore !== undefined) pp.score = pp.originalScore;
       updatedStudent.parsedProgress[modalData.assignmentId] = pp;
       setModalData({ ...modalData, student: updatedStudent });
-      loadGradebook();
     } catch (err) {
       setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
     }
@@ -1750,7 +1756,6 @@ const InstructorDashboard: React.FC = () => {
                               }
                               updatedStudent.parsedProgress[modalData.assignmentId] = pp;
                               setModalData({ ...modalData, student: updatedStudent });
-                              loadGradebook();
                             }
                           } catch (err) {
                             setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
@@ -1851,7 +1856,6 @@ const InstructorDashboard: React.FC = () => {
                               pp.penaltyPreWaived = !isPreWaived;
                               updatedStudent.parsedProgress[modalData.assignmentId] = pp;
                               setModalData({ ...modalData, student: updatedStudent });
-                              loadGradebook();
                             }
                           } catch (err) {
                             setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
@@ -1959,7 +1963,6 @@ const InstructorDashboard: React.FC = () => {
                                 }
                                 updatedStudent.parsedProgress[modalData.assignmentId] = pp;
                                 setModalData({ ...modalData, student: updatedStudent });
-                                loadGradebook();
                               }
                             } catch (err) {
                               setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
