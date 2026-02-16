@@ -1,0 +1,95 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 06 • Decision Reflection"
+description: "Reflect on decision structures and program flow control"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 06: Reflection - (GRADED)
+
+<DueDateBanner week={6} type="Homework" />
+
+## 📝 Homework 06: The Decision Matrix
+
+<p>Now that you've built decision structures with <code>if</code>, <code>else if</code>, <code>else</code>, and logical operators, it's time to demonstrate your understanding of <strong>how programs make decisions</strong>.</p>
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🔀 Decision Structures Reflection</h5>
+    <p>In 3-5 sentences, explain <strong>Decision Flow in C#</strong>:</p>
+    <ol>
+      <li>What is the difference between using <strong>separate <code>if</code> statements</strong> vs. an <strong><code>else if</code> chain</strong>? When would you use each?</li>
+      <li>Why does the <strong>order of conditions</strong> matter in an <code>else if</code> chain? What goes wrong if you check the least restrictive condition first?</li>
+      <li>Explain what <strong>short-circuit evaluation</strong> means with <code>&&</code> — how does it prevent errors like <code>NullReferenceException</code>?</li>
+    </ol>
+    <p style="margin-top: 12px; padding: 10px; background: rgba(78, 201, 176, 0.1); border-radius: 6px; font-size: 0.9rem;">
+      <strong>Tip:</strong> Think about the "Control Tower" metaphor from Section 6.4 — the first matching condition wins, and all others are skipped.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-06-homework" />
+
+---
+
+## 📚 Reference Material
+
+If you need to review, revisit these sections:
+- [Section 6.1: The Boolean Gate](/week-06/6-1-boolean-gate/) — Bool type and comparison operators
+- [Section 6.2: The Binary Branch](/week-06/6-2-binary-branch/) — if/else flow control
+- [Section 6.3: Logical Combinators](/week-06/6-3-logical-operators/) — &&, ||, ! operators
+- [Section 6.4: The Multi-Branch](/week-06/6-4-multi-branch/) — else if chains
+
+---
+
+<div class="next-section">
+  <p>After submitting your homework, complete the <strong>Weekly Assessment</strong> to finish Week 6!</p>
+  <a href="/week-06/weekly-assessment/" class="vscode-button">Take Weekly Assessment →</a>
+</div>
+
+<style>{`
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; margin-top: 16px; }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .component-cards {
+    display: grid;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid #475569;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .component-card h5 { color: #93c5fd; margin: 0 0 0.75rem 0; font-size: 1.1rem; }
+  .component-card p { color: #e2e8f0; margin: 0.5rem 0; }
+  .component-card ol { color: #e2e8f0; margin: 0.5rem 0; padding-left: 1.5rem; }
+  .component-card li { margin: 0.5rem 0; }
+
+  body[data-theme="light"] .component-card {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+  }
+  body[data-theme="light"] .component-card h5 { color: #1e40af !important; }
+  body[data-theme="light"] .component-card p,
+  body[data-theme="light"] .component-card ol { color: #334155 !important; }
+`}</style>

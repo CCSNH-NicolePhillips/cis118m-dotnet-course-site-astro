@@ -389,6 +389,84 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["Console.ReadLine", "decimal.Parse", "$"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  // ===== WEEK 06 =====
+  "week-06-lab": {
+    title: "Week 6: Lab - The Security Gatekeeper",
+    type: "lab",
+    week: "06",
+    taughtConcepts: `
+      - bool type stores true/false values
+      - Comparison operators: == != < > <= >=
+      - if/else statements for binary decisions
+      - else if chains for multiple outcomes (first true condition wins)
+      - Logical operators: && (AND), || (OR), ! (NOT)
+      - Short-circuit evaluation: && stops if left is false, || stops if left is true
+      - K&R (Egyptian) brace style: opening brace on same line
+      - Console.ReadLine() for string input, int.Parse() for integer parsing
+      - String equality comparison with ==
+    `,
+    assignmentPrompt: `
+      Build a Security Gatekeeper access control system:
+      1. Prompt for Security Level (integer 1-3) using int.Parse(Console.ReadLine())
+      2. Prompt for Password (string) using Console.ReadLine()
+      3. Use if/else if/else with && to check BOTH level AND password:
+         - Level 1 + "guest123"    → Print "🟢 GUEST ACCESS GRANTED" + guest messages
+         - Level 2 + "admin456"    → Print "🔵 ADMIN ACCESS GRANTED" + admin messages
+         - Level 3 + "superSecret" → Print "🟣 SUPERUSER ACCESS GRANTED" + superuser messages
+         - Anything else           → Print "🔴 ACCESS DENIED" + denial message
+      
+      Required format:
+      === SECURITY GATEKEEPER ===
+      Enter Security Level (1-3): [input]
+      Enter Password: [input]
+      
+      [Access result with emoji and description]
+      ============================
+    `,
+    rubric: `
+      Prompts for Security Level (int) and Password (string) (10pts): Both inputs captured correctly with proper parsing
+      Level 1 + "guest123" grants Guest access (15pts): Correct condition using && and correct output message
+      Level 2 + "admin456" grants Admin access (15pts): Correct condition using && and correct output message
+      Level 3 + "superSecret" grants Superuser access (15pts): Correct condition using && and correct output message
+      Invalid credentials show Access Denied (15pts): else block catches all invalid combinations
+      Uses if/else if/else structure correctly (10pts): Proper decision chain, not multiple independent ifs
+      Uses && to combine level + password checks (10pts): Each condition checks both level AND password
+      Code compiles, runs, and uses K&R braces (10pts): Opening braces on same line as if/else if/else
+    `,
+    requiredKeywords: ["if", "else", "&&", "Console.ReadLine"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-06-homework": {
+    title: "Week 6: Decision Structures Reflection",
+    type: "homework",
+    week: "06",
+    taughtConcepts: `
+      - Separate if statements: each condition is checked independently
+      - else if chain: first true condition wins, rest are skipped
+      - Order matters: most restrictive first in else if chains
+      - && (AND) requires both sides true
+      - || (OR) requires at least one side true
+      - ! (NOT) reverses boolean
+      - Short-circuit evaluation prevents crashes (e.g., null checks before .Length)
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, explain Decision Flow in C#:
+      1. What is the difference between separate if statements vs an else if chain? When would you use each?
+      2. Why does the order of conditions matter in an else if chain? What goes wrong if you check the least restrictive condition first?
+      3. Explain what short-circuit evaluation means with && — how does it prevent errors like NullReferenceException?
+      
+      Tip: Think about the "Control Tower" metaphor from Section 6.4.
+    `,
+    rubric: `
+      if vs else if explanation (35pts): Explains separate ifs check independently while else if stops at first match. Gives appropriate use case for each.
+      Order of conditions (35pts): Explains most restrictive first. Shows what happens when least restrictive catches everything (e.g., score >= 60 before score >= 90).
+      Short-circuit evaluation (20pts): Explains that && stops at first false without checking right side. Gives example like null check before .Length.
+      Clarity and terminology (10pts): Clear writing, uses terms like "short-circuit", "else if chain", "condition order"
+    `,
+    requiredKeywords: ["if", "else"]
   }
 };
 
@@ -428,6 +506,16 @@ export const TUTOR_CONTEXTS = {
   'week-05-5-2-type-parsing': "Week 5 Section 5.2: The Data Refiner. Focus: Why 'int x = Console.ReadLine()' fails (type mismatch). Using int.Parse(), double.Parse(), decimal.Parse(). CRITICAL: decimal.Parse() is required for money!",
   'week-05-5-3-boss-fight': "Week 5 Section 5.3: Boss Fight - Project Budget Estimator. Combine all Phase I skills: Console.ReadLine() for input, decimal.Parse() for money, string interpolation for output. Must prompt for project name, hours, rate, then calculate and display total.",
   'week-05-boss-fight': "Week 5 Boss Fight: Project Budget Estimator. Students must use Console.ReadLine() for all inputs, decimal.Parse() for hourly rate (it's money!), calculate hours * rate, and display with string interpolation and currency formatting. Success unlocks Week 6.",
+  
+  // Week 6 - Professor is traveling with limited connectivity (Feb 23 - Mar 01)
+  // Be HIGHLY PROACTIVE — guide students thoroughly since instructor response may be delayed
+  'week-06': "Week 6: Decision Structures (if/else). Students learn boolean logic and program flow control. Topics: bool type, comparison operators (==, !=, <, >, <=, >=), if/else statements with K&R brace style, logical operators (&&, ||, !), else if chains, short-circuit evaluation. IMPORTANT: The instructor is traveling with limited connectivity this week — be extra proactive and detailed in your explanations. Always use K&R (Egyptian) brace style in examples. camelCase for variables.",
+  'week-06-6-1-boolean-gate': "Week 6 Section 6.1: The Boolean Gate. Focus: bool type as binary switch (true/false only). Comparison operators: == != < > <= >=. CRITICAL: = is assignment, == is comparison. Boolean naming: isActive, hasPermission, canEdit. Professor is traveling — be thorough.",
+  'week-06-6-2-binary-branch': "Week 6 Section 6.2: The Binary Branch. Focus: if/else as fork in the road. K&R brace style required. Always use braces even for single-line blocks (missing braces = hidden bug). Code block scope. Multiple independent ifs vs single if/else. Professor traveling — be detailed.",
+  'week-06-6-3-logical-operators': "Week 6 Section 6.3: Logical Combinators. AND (&&): both must be true. OR (||): at least one true. NOT (!): reverses boolean. Short-circuit evaluation: && stops if left false, || stops if left true. This prevents null crashes. Use parentheses for clarity. Professor traveling — be thorough.",
+  'week-06-6-4-multi-branch': "Week 6 Section 6.4: The Multi-Branch. else if chains: first true condition wins. Order matters: most restrictive first. Avoid nesting hell — flatten with else if. Control Tower metaphor. Professor traveling — guide students step by step.",
+  'week-06-lab': "Week 6 Lab: The Security Gatekeeper. Build access control: prompt for level (int) and password (string). Level 1+'guest123'→Guest, Level 2+'admin456'→Admin, Level 3+'superSecret'→Superuser, else→Denied. Must use if/else if/else with && for combined checks. K&R braces. Professor traveling — provide detailed Technical Forensic hints.",
+  'week-06-homework': "Week 6 Homework: Decision Reflection. Students explain: (1) separate if vs else if chain differences, (2) why condition order matters, (3) short-circuit evaluation with && preventing NullReferenceException. Reference Control Tower metaphor.",
 };
 
 export function getTutorContext(pageId) {

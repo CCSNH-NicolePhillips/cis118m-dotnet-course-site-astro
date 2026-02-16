@@ -603,63 +603,96 @@ Summary: # Week 05: User Input & Type Parsing 🚰 The Intake System Until now, 
 
 ## Week 6: Decision Structures (if/else)
 
-### 📚 Overview: Week 06 • Extra Practice
-
-Summary: # Week 6 Extra Practice: Tiny method library Pick **1–2** items (optional). - Make a Min(int a, int b) method that returns the smaller number. - Make a Max(int a, int b) method that returns the bigger number. - Challenge: Make FormatMoney(double amount) that returns a string like $12.34 (keep it sim...
-
-### 📝 Homework: Week 06 • Week 6 Homework: Utility Methods Pack
-
-Summary: # Week 6 Homework: Utility Methods Pack ## Overview Create a small set of utility methods (mini toolbelt). Then demonstrate them in the main program. ## Requirements checklist (acceptance criteria) - [ ] Includes at least 4 methods you wrote - [ ] At least 2 methods return values - [ ] At least 1 me...
-
-### 📚 Overview: Week 06
+### 📚 Overview: Section 6.1 • The Boolean Gate
 Key Concepts:
-- Focus:
+- Boolean
+- two possible values
+- assignment
+- comparison
+- case-sensitive
 
-Summary: # Week 6 **Focus:** Methods: organize your code so it’s easier to read, reuse, and test. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework...
+Summary: # Section 6.1: The Boolean Gate 🔘 The Binary Switch ⏱️ Estimated Time: 25 minutes --- ✦ The Binary Switch: Two States, Infinite Power Every decision a computer makes comes down to a single question: true or false? The bool type is the most fundamental data type in programming — a switch that can on...
 
-### 🔬 Lab: Week 06 • Week 6 Lab: Refactor into Methods
-
-Summary: # Week 6 Lab: Refactor into Methods ## Overview Take a small program and split it into methods so it’s easier to read. Your main program should become short and clean. ## Requirements checklist (acceptance criteria) - [ ] Program runs without errors - [ ] Uses at least 3 methods you wrote - [ ] At l...
-
-### 📖 Lesson: Week 06 • Lesson 1
+### 📚 Overview: Section 6.2 • The Binary Branch
 Key Concepts:
-- Method
-- Parameter
-- 1) What is the main reason we use methods?
+- only when the condition is true
+- K&R style
+- same line
+- one thing or another
+- fork in the road
 
-Summary: # Week 6 Lesson 1: Methods (your code’s “superpowers”) ## Goal - Understand what a method is - Write and call a simple method - Use methods to avoid copying/pasting code ## What to know - **Method**: A named block of code you can run when you call it. - **Call**: To run a method. - **void**: A metho...
+Summary: # Section 6.2: The Binary Branch (if/else) 🔀 The Logic Diverter ⏱️ Estimated Time: 30 minutes --- ✦ The Logic Diverter: Choosing a Path Imagine a mechanical rail switch at a train junction. A data packet arrives, the switch evaluates a condition, and the packet is diverted down Path A or Path B . T...
 
-Code Example:
-```csharp
-static void SayHello()
-{
-    Console.WriteLine("Hello!");
-}
-
-SayHello();
-SayHello();
-// Prints Hello twice without copy/paste.
-```
-
-### 📖 Lesson: Week 06 • Lesson 2
+### 📚 Overview: Section 6.3 • Logical Combinators
 Key Concepts:
-- Return value
-- return
-- Pure method
-- 1) What’s the difference between printing and returning?
+- series
 
-Summary: # Week 6 Lesson 2: Return values (methods that give you an answer) ## Goal - Write a method that returns a value - Use parameters + return together - Know when to print vs return ## What to know - **Return value**: The result a method gives back. - **return**: Sends a value back to the caller and en...
+Summary: # Section 6.3: Logical Combinators (&&, ||, !) ⚡ The Circuit Filter ⏱️ Estimated Time: 30 minutes --- ✦ The Circuit Filter: Combining Conditions A single boolean condition is like a single gate. But real-world decisions are rarely that simple. "Is the user an admin AND is the session active?" — "Is ...
 
-Code Example:
-```csharp
-static int Add(int a, int b)
-{
-    return a + b;
-}
+### 📚 Overview: Section 6.4 • The Multi-Branch
+Key Concepts:
+- Critical rule
+- first true condition
+- least restrictive
 
-int total = Add(3, 4);
-Console.WriteLine(total);
-```
+Summary: # Section 6.4: The Multi-Branch (else if) 🗼 The Control Tower ⏱️ Estimated Time: 30 minutes --- ✦ The Control Tower: Managing Multiple Flight Paths An air traffic control tower doesn't just say "land" or "don't land." It evaluates altitude, weather, runway availability, and fuel — then routes each ...
+
+### 📝 Homework: Homework 06 • Decision Reflection
+
+Summary: # Homework 06: Reflection - (GRADED) ## 📝 Homework 06: The Decision Matrix Now that you've built decision structures with if , else if , else , and logical operators, it's time to demonstrate your understanding of how programs make decisions . 🔀 Decision Structures Reflection In 3-5 sentences, exp...
+
+### 📚 Overview: Week 06 • Decision Structures (if/else)
+Key Concepts:
+- top to bottom
+- first path that evaluates to true
+
+Summary: # Week 06: Decision Structures (if/else) ⚡ The Logic Gateway Until now, your programs have been linear —every line executes in order, every time. This week, your code gains intelligence . We move beyond sequential execution to Conditional Logic , allowing our systems to evaluate state and choose the...
+
+### 🔬 Lab: Lab 06 • The Security Gatekeeper
+Key Concepts:
+- Time: 45 minutes
+- Points: 100
+- security access control system
+- Security Level
+- Password
+
+Summary: # Lab 06: The Security Gatekeeper **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective You are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access b...
+
+### 📋 Quiz: Week 06 • Technical Assessment
+
+Summary: # 🏁 Week 06 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
+
+Quiz Questions (10 questions):
+1. Q: What are the only two values a bool variable can hold?
+   A: true and false
+   Why: In C#, the bool type has exactly two possible values: true and false. These are keywords, not strings.
+2. Q: What is the difference between = and == in C#?
+   A: = assigns a value; == compares two values
+   Why: The single = is the assignment operator (puts a value INTO a variable). The double == is the equality comparison operator (checks if two values are the SAME). Mixing them up is a common bug!
+3. Q: What does this code print?\n\nint x = 5;\nif (x > 10) {\n    Console.WriteLine(\
+   A: B
+   Why: Since x is 5 and 5 > 10 is false, the else block executes, printing \
+4. Q: What happens if you write an if statement WITHOUT braces and put two lines after it?
+   A: Only the first line is conditional — the second always runs
+   Why: Without braces, only the very first statement after if is conditional. Every subsequent line runs unconditionally. This is why we ALWAYS use braces — even for single-line blocks.
+5. Q: What does the && (AND) operator require to return true?
+   A: Both sides must be true
+   Why: The AND operator (&&) requires BOTH operands to be true. If either side is false, the entire expression evaluates to false. Think of it as two switches wired in series.
+6. Q: What does the || (OR) operator require to return true?
+   A: At least one side must be true
+   Why: The OR operator (||) returns true if AT LEAST ONE operand is true. It only returns false when BOTH sides are false. Think of two switches wired in parallel.
+7. Q: What is short-circuit evaluation?
+   A: C# stops evaluating a logical expression as soon as the result is determined
+   Why: Short-circuit evaluation means: with &&, if the left side is false, the right side is never checked (result is already false). With ||, if the left side is true, the right side is never checked. This is a safety feature — it prevents crashes like checking .Length on null.
+8. Q: In an else if chain, what happens when the FIRST condition is true?
+   A: Only that block runs — everything else is skipped
+   Why: In an else if chain, the first true condition wins. Its code block executes, and ALL remaining else if and else blocks are completely skipped — they are never even evaluated.
+9. Q: Why should you check the MOST restrictive condition first in an else if chain?
+   A: A less restrictive condition would catch values meant for stricter checks
+   Why: If you check score >= 60 before score >= 90, then a score of 95 matches the >= 60 check first and gets a 'D' instead of an 'A'. The first match wins, so always go from most restrictive to least restrictive.
+10. Q: What does the ! (NOT) operator do?
+   A: Reverses a boolean value (true becomes false, false becomes true)
+   Why: The NOT operator (!) flips a boolean. !true is false, and !false is true. It's commonly used like: if (!isLocked) means 'if it is NOT locked'.
 
 ---
 

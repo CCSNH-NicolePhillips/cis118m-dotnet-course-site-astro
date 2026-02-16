@@ -1,0 +1,206 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 06 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 06 Technical Assessment
+
+<DueDateBanner week={6} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-06-quiz"
+  title="Week 06: Decision Structures (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What are the only two values a bool variable can hold?",
+      options: [
+        "0 and 1",
+        "yes and no",
+        "true and false",
+        "on and off"
+      ],
+      correctAnswer: "true and false",
+      explanation: "In C#, the bool type has exactly two possible values: true and false. These are keywords, not strings."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the difference between = and == in C#?",
+      options: [
+        "They are the same — both compare values",
+        "= assigns a value; == compares two values",
+        "== assigns a value; = compares two values",
+        "= is for numbers; == is for strings"
+      ],
+      correctAnswer: "= assigns a value; == compares two values",
+      explanation: "The single = is the assignment operator (puts a value INTO a variable). The double == is the equality comparison operator (checks if two values are the SAME). Mixing them up is a common bug!"
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What does this code print?\n\nint x = 5;\nif (x > 10) {\n    Console.WriteLine(\"A\");\n} else {\n    Console.WriteLine(\"B\");\n}",
+      options: [
+        "A",
+        "B",
+        "AB",
+        "Nothing — it causes an error"
+      ],
+      correctAnswer: "B",
+      explanation: "Since x is 5 and 5 > 10 is false, the else block executes, printing \"B\". In an if/else, exactly one path always executes."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What happens if you write an if statement WITHOUT braces and put two lines after it?",
+      options: [
+        "Both lines are conditional",
+        "Only the first line is conditional — the second always runs",
+        "Neither line runs",
+        "The compiler throws an error"
+      ],
+      correctAnswer: "Only the first line is conditional — the second always runs",
+      explanation: "Without braces, only the very first statement after if is conditional. Every subsequent line runs unconditionally. This is why we ALWAYS use braces — even for single-line blocks."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "What does the && (AND) operator require to return true?",
+      options: [
+        "At least one side must be true",
+        "Both sides must be true",
+        "Neither side can be true",
+        "Only the left side matters"
+      ],
+      correctAnswer: "Both sides must be true",
+      explanation: "The AND operator (&&) requires BOTH operands to be true. If either side is false, the entire expression evaluates to false. Think of it as two switches wired in series."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What does the || (OR) operator require to return true?",
+      options: [
+        "Both sides must be true",
+        "Neither side can be true",
+        "At least one side must be true",
+        "The sides must be different values"
+      ],
+      correctAnswer: "At least one side must be true",
+      explanation: "The OR operator (||) returns true if AT LEAST ONE operand is true. It only returns false when BOTH sides are false. Think of two switches wired in parallel."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What is short-circuit evaluation?",
+      options: [
+        "The compiler optimizes code to run faster",
+        "C# stops evaluating a logical expression as soon as the result is determined",
+        "Variables are automatically converted to booleans",
+        "Only the first condition in an else if chain is checked"
+      ],
+      correctAnswer: "C# stops evaluating a logical expression as soon as the result is determined",
+      explanation: "Short-circuit evaluation means: with &&, if the left side is false, the right side is never checked (result is already false). With ||, if the left side is true, the right side is never checked. This is a safety feature — it prevents crashes like checking .Length on null."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "In an else if chain, what happens when the FIRST condition is true?",
+      options: [
+        "All remaining conditions are still checked",
+        "Only that block runs — everything else is skipped",
+        "The else block also runs",
+        "The program exits immediately"
+      ],
+      correctAnswer: "Only that block runs — everything else is skipped",
+      explanation: "In an else if chain, the first true condition wins. Its code block executes, and ALL remaining else if and else blocks are completely skipped — they are never even evaluated."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Why should you check the MOST restrictive condition first in an else if chain?",
+      options: [
+        "It makes the code run faster",
+        "C# requires it or the code won't compile",
+        "A less restrictive condition would catch values meant for stricter checks",
+        "It doesn't matter — order has no effect"
+      ],
+      correctAnswer: "A less restrictive condition would catch values meant for stricter checks",
+      explanation: "If you check score >= 60 before score >= 90, then a score of 95 matches the >= 60 check first and gets a 'D' instead of an 'A'. The first match wins, so always go from most restrictive to least restrictive."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What does the ! (NOT) operator do?",
+      options: [
+        "Multiplies a value by -1",
+        "Checks if a variable is null",
+        "Reverses a boolean value (true becomes false, false becomes true)",
+        "Throws an exception"
+      ],
+      correctAnswer: "Reverses a boolean value (true becomes false, false becomes true)",
+      explanation: "The NOT operator (!) flips a boolean. !true is false, and !false is true. It's commonly used like: if (!isLocked) means 'if it is NOT locked'."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 06 Complete!</strong></p>
+  <p>You've mastered decision structures. Next week: Loops &amp; Iteration!</p>
+  <a href="/week-07/" class="vscode-button">Preview Week 07 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 { margin-top: 0; color: #818cf8; }
+  .mission-brief ul { margin-bottom: 0; }
+  .mission-brief li { margin: 8px 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #4f46e5 !important; }
+  body[data-theme="light"] .mission-brief li { color: #334155 !important; }
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important;
+  }
+  body[data-theme="light"] .next-section p { color: #1e293b !important; }
+`}</style>

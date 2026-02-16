@@ -114,6 +114,34 @@ Console.WriteLine($"\\nHello, {name}!");
 Console.WriteLine($"In 10 years you'll be {age + 10}");
 Console.WriteLine($"Your rate: {rate:C}");
 `,
+  "06": `// Week 6: Decision Structures (if/else)
+// Practice boolean logic and branching
+using System;
+
+Console.Write("Enter a number: ");
+int number = int.Parse(Console.ReadLine());
+
+// if/else — the binary branch
+if (number > 0) {
+    Console.WriteLine($"{number} is positive.");
+} else if (number < 0) {
+    Console.WriteLine($"{number} is negative.");
+} else {
+    Console.WriteLine("Zero — perfectly balanced.");
+}
+
+// Combining conditions with && and ||
+bool isEven = (number % 2 == 0);
+bool isPositive = (number > 0);
+
+if (isEven && isPositive) {
+    Console.WriteLine("It's both even AND positive!");
+} else if (isEven || isPositive) {
+    Console.WriteLine("It's either even OR positive (but not both).");
+} else {
+    Console.WriteLine("It's neither even nor positive.");
+}
+`,
 };
 
 // Multi-file starters for weeks introducing classes

@@ -1,0 +1,295 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 6.4 • The Multi-Branch"
+description: "Managing complex decisions with else if chains"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 6.4: The Multi-Branch (else if)
+
+<div class="section-header">
+  <div class="section-badge">🗼 The Control Tower</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Control Tower: Managing Multiple Flight Paths</h2>
+      <p>
+        An air traffic control tower doesn't just say "land" or "don't land." It evaluates altitude, weather, runway availability, and fuel — then routes each aircraft to the appropriate action. The <code>else if</code> chain works the same way: it checks conditions <strong>in order</strong>, and the <em>first</em> match wins. Everything below is skipped. This is how you handle decisions with <strong>more than two outcomes</strong>.
+      </p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🔗 The else if Chain
+
+When you have more than two possible outcomes, chain multiple conditions together:
+
+```csharp
+int score = 85;
+
+if (score >= 90) {
+    Console.WriteLine("Grade: A");
+} else if (score >= 80) {
+    Console.WriteLine("Grade: B");
+} else if (score >= 70) {
+    Console.WriteLine("Grade: C");
+} else if (score >= 60) {
+    Console.WriteLine("Grade: D");
+} else {
+    Console.WriteLine("Grade: F");
+}
+```
+
+### How the Chain Works
+
+```
+  score = 85
+
+  Is score >= 90? → NO (85 < 90)  ──→ skip
+  Is score >= 80? → YES (85 ≥ 80) ──→ ✅ "Grade: B"
+  Is score >= 70? → NEVER CHECKED (already matched)
+  Is score >= 60? → NEVER CHECKED
+  else            → NEVER CHECKED
+```
+
+**Critical rule**: The chain stops at the **first true condition**. Order matters!
+
+---
+
+## ⚠️ Order Matters: A Common Trap
+
+If you check the **least restrictive** condition first, it catches everything:
+
+```csharp
+int score = 95;
+
+// ❌ WRONG ORDER — score >= 60 catches everything above 60!
+if (score >= 60) {
+    Console.WriteLine("Grade: D");  // A 95 gets "D"!?
+} else if (score >= 70) {
+    Console.WriteLine("Grade: C");  // Never reached
+} else if (score >= 80) {
+    Console.WriteLine("Grade: B");  // Never reached
+} else if (score >= 90) {
+    Console.WriteLine("Grade: A");  // Never reached
+}
+```
+
+<div class="architect-rule">
+  <h4>🏗️ Architect's Rule: Most Restrictive First</h4>
+  <p>Always order <code>else if</code> chains from <strong>most restrictive to least restrictive</strong>. Check for 90+ before 80+, 80+ before 70+, and so on. The first <code>true</code> condition wins — everything below is dead code if you get the order wrong.</p>
+</div>
+
+---
+
+## 🔬 Try It: Grade Calculator
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={450}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter your score (0-100): ");
+        int score = int.Parse(Console.ReadLine());
+        
+        string grade;
+        string message;
+        
+        if (score >= 90) {
+            grade = "A";
+            message = "Outstanding work!";
+        } else if (score >= 80) {
+            grade = "B";
+            message = "Great job!";
+        } else if (score >= 70) {
+            grade = "C";
+            message = "Satisfactory.";
+        } else if (score >= 60) {
+            grade = "D";
+            message = "Needs improvement.";
+        } else {
+            grade = "F";
+            message = "Please see the instructor.";
+        }
+        
+        Console.WriteLine($"Score: {score}");
+        Console.WriteLine($"Grade: {grade}");
+        Console.WriteLine($"Feedback: {message}");
+    }
+}`}
+  instructions="Enter different scores to see the grade calculation. Try 95, 85, 72, 65, and 40. Notice that only ONE grade is ever assigned." 
+  testInputs="85"
+/>
+
+---
+
+## 🚫 Avoiding Nesting Hell
+
+Beginners often nest `if` statements deep. This creates hard-to-read "arrow code":
+
+```csharp
+// ❌ NESTING HELL — hard to read and maintain
+if (age >= 18) {
+    if (hasID) {
+        if (!isExpired) {
+            Console.WriteLine("Entry granted.");
+        } else {
+            Console.WriteLine("ID is expired.");
+        }
+    } else {
+        Console.WriteLine("No ID.");
+    }
+} else {
+    Console.WriteLine("Too young.");
+}
+```
+
+Flatten with logical operators and early returns:
+
+```csharp
+// ✅ FLAT AND CLEAR — same logic, much easier to read
+if (age < 18) {
+    Console.WriteLine("Too young.");
+} else if (!hasID) {
+    Console.WriteLine("No ID.");
+} else if (isExpired) {
+    Console.WriteLine("ID is expired.");
+} else {
+    Console.WriteLine("Entry granted.");
+}
+```
+
+---
+
+## 🔬 Try It: The Control Tower
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={500}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter altitude (feet): ");
+        int altitude = int.Parse(Console.ReadLine());
+        
+        Console.Write("Is weather clear? (true/false): ");
+        bool isClear = bool.Parse(Console.ReadLine());
+        
+        Console.WriteLine("\\n--- CONTROL TOWER REPORT ---");
+        Console.WriteLine($"Altitude: {altitude} ft");
+        Console.WriteLine($"Weather: {(isClear ? "Clear" : "Overcast")}");
+        Console.WriteLine();
+        
+        if (altitude <= 0) {
+            Console.WriteLine("STATUS: On the ground.");
+            Console.WriteLine("ACTION: Taxi to gate.");
+        } else if (altitude < 1000 && !isClear) {
+            Console.WriteLine("STATUS: ⚠️ DANGER ZONE");
+            Console.WriteLine("ACTION: Abort landing — go around!");
+        } else if (altitude < 1000) {
+            Console.WriteLine("STATUS: Final approach.");
+            Console.WriteLine("ACTION: Landing gear down. Clear to land.");
+        } else if (altitude < 10000) {
+            Console.WriteLine("STATUS: Descent phase.");
+            Console.WriteLine("ACTION: Begin approach procedures.");
+        } else if (altitude < 30000) {
+            Console.WriteLine("STATUS: Cruising altitude.");
+            Console.WriteLine("ACTION: Maintain heading.");
+        } else {
+            Console.WriteLine("STATUS: High altitude.");
+            Console.WriteLine("ACTION: Monitor cabin pressure.");
+        }
+    }
+}`}
+  instructions="Try different altitudes and weather conditions. Notice how conditions combine altitude AND weather, and order matters for correct routing." 
+  testInputs="500\ntrue"
+/>
+
+---
+
+## 🔍 When to Use What
+
+| Situation | Use |
+|-----------|-----|
+| Yes or no decision | `if` / `if-else` |
+| Multiple exclusive outcomes | `else if` chain |
+| Multiple independent checks | Separate `if` statements |
+| Complex combined conditions | `&&`, `\|\|`, `!` |
+
+---
+
+<Checkpoint
+  checkpointId="week-06-6-4-checkpoint"
+  title="🔍 Section 6.4 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "In an else if chain, what happens when the FIRST condition is true?",
+      options: ["All conditions are still checked", "Only that block runs — all remaining conditions are skipped", "The else block also runs", "The program restarts the chain"],
+      correctAnswer: "Only that block runs — all remaining conditions are skipped",
+      explanation: "In an else if chain, the FIRST true condition wins. Its block executes, and all remaining else if / else blocks are completely skipped. Order matters!"
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "You're writing a grade calculator with else if. What should the FIRST condition check?",
+      options: ["The lowest grade (score >= 60) — to catch most students", "The highest grade (score >= 90) — most restrictive first", "The middle grade (score >= 70) — to split evenly", "It doesn't matter — the order has no effect"],
+      correctAnswer: "The highest grade (score >= 90) — most restrictive first",
+      explanation: "Always check the MOST restrictive condition first. If you check score >= 60 first, it catches ALL passing scores (including 95), and the higher grade checks never execute."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Ready to apply everything you've learned? Build <strong>The Security Gatekeeper</strong>!</p>
+  <a href="/week-06/lab/" class="vscode-button">Continue to Lab: The Security Gatekeeper →</a>
+</div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  .architect-rule p { color: #e2e8f0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

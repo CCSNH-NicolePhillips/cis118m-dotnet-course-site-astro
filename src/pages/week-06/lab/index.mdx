@@ -1,0 +1,269 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 06 • The Security Gatekeeper"
+description: "Build an access control system using if/else if/else decision structures"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 06: The Security Gatekeeper
+
+<DueDateBanner week={6} type="Lab" />
+
+**Time: 45 minutes**  
+**Points: 100**
+
+## 🎯 Mission Objective
+
+You are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access based on decision logic. You'll use `if`, `else if`, `else`, comparison operators, logical operators (`&&`), and string comparison to implement the gatekeeper.
+
+---
+
+## 📋 The Problem
+
+The facility has three access tiers:
+
+```
+╔════════════════════════════════════════════════════════════╗
+║              SECURITY ACCESS CONTROL SYSTEM               ║
+╠════════════════════════════════════════════════════════════╣
+║  Level 1 + "guest123"     → 🟢 GUEST ACCESS              ║
+║  Level 2 + "admin456"     → 🔵 ADMIN ACCESS               ║
+║  Level 3 + "superSecret"  → 🟣 SUPERUSER ACCESS           ║
+║  Anything else            → 🔴 ACCESS DENIED              ║
+╚════════════════════════════════════════════════════════════╝
+```
+
+The user enters a **security level** (integer) and a **password** (string). Your program must check **both** values to determine the correct access tier.
+
+---
+
+## 📋 Requirements
+
+Your program must:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Prompt for Security Level</strong></td>
+        <td>Read an integer from the user using <code>Console.ReadLine()</code> and <code>int.Parse()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Prompt for Password</strong></td>
+        <td>Read a string from the user using <code>Console.ReadLine()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Level 1 + "guest123"</strong></td>
+        <td>Print <code>🟢 GUEST ACCESS GRANTED</code> and guest-appropriate messages</td>
+      </tr>
+      <tr>
+        <td><strong>Level 2 + "admin456"</strong></td>
+        <td>Print <code>🔵 ADMIN ACCESS GRANTED</code> and admin-appropriate messages</td>
+      </tr>
+      <tr>
+        <td><strong>Level 3 + "superSecret"</strong></td>
+        <td>Print <code>🟣 SUPERUSER ACCESS GRANTED</code> and superuser-appropriate messages</td>
+      </tr>
+      <tr>
+        <td><strong>Invalid credentials</strong></td>
+        <td>Print <code>🔴 ACCESS DENIED</code> for wrong level, wrong password, or both</td>
+      </tr>
+      <tr>
+        <td><strong>Use <code>if/else if/else</code></strong></td>
+        <td>Must use decision structures (not switch)</td>
+      </tr>
+      <tr>
+        <td><strong>Use <code>&&</code></strong></td>
+        <td>Combine level AND password check in each condition</td>
+      </tr>
+      <tr>
+        <td><strong>K&amp;R brace style</strong></td>
+        <td>Opening brace on same line as the <code>if</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 📤 Example Output
+
+**Successful Guest Login:**
+```
+=== SECURITY GATEKEEPER ===
+Enter Security Level (1-3): 1
+Enter Password: guest123
+
+🟢 GUEST ACCESS GRANTED
+Welcome, Guest. You may view public documents.
+Access expires in 30 minutes.
+============================
+```
+
+**Successful Admin Login:**
+```
+=== SECURITY GATEKEEPER ===
+Enter Security Level (1-3): 2
+Enter Password: admin456
+
+🔵 ADMIN ACCESS GRANTED
+Welcome, Administrator. Full system access enabled.
+You may modify records and manage users.
+============================
+```
+
+**Successful Superuser Login:**
+```
+=== SECURITY GATEKEEPER ===
+Enter Security Level (1-3): 3
+Enter Password: superSecret
+
+🟣 SUPERUSER ACCESS GRANTED
+Welcome, Superuser. All restrictions lifted.
+Database access, audit logs, and system config unlocked.
+============================
+```
+
+**Failed Login:**
+```
+=== SECURITY GATEKEEPER ===
+Enter Security Level (1-3): 2
+Enter Password: wrongpass
+
+🔴 ACCESS DENIED
+Invalid credentials. This attempt has been logged.
+============================
+```
+
+---
+
+## 🏗️ Code Editor
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-06-lab" 
+    style="width: 100%; height: 600px; border: none;"
+    title="Lab 6 Code Editor"
+  ></iframe>
+</div>
+
+---
+
+## ✅ Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prompts for Security Level (int) and Password (string)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Level 1 + "guest123" → Guest access message</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Level 2 + "admin456" → Admin access message</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Level 3 + "superSecret" → Superuser access message</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Invalid credentials → Access Denied message</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Uses <code>if/else if/else</code> structure correctly</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Uses <code>&&</code> to combine level + password checks</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Code compiles, runs, and uses K&amp;R braces</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 📝 Submission
+
+When your program runs correctly and handles all access tiers:
+
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    🚀 Submit Lab
+  </button>
+  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Decision Reflection</strong></p>
+  <p>Explain how decision structures control program flow.</p>
+  <a href="/week-06/homework/" class="vscode-button">Continue to Homework →</a>
+</div>
+
+<style>{`
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; margin-top: 16px; }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-15T23:16:21.105Z",
+  "generatedAt": "2026-02-16T02:07:16.062Z",
   "courseInfo": {
     "code": "CIS 118M",
     "title": "Introduction to C# Programming",
@@ -988,75 +988,164 @@
       "title": "Decision Structures (if/else)",
       "sections": [
         {
-          "path": "week-06\\extra-practice\\index.md",
-          "title": "Week 06 • Extra Practice",
-          "summary": "# Week 6 Extra Practice: Tiny method library Pick **1–2** items (optional). - Make a Min(int a, int b) method that returns the smaller number. - Make a Max(int a, int b) method that returns the bigger number. - Challenge: Make FormatMoney(double amount) that returns a string like $12.34 (keep it simple). ## Open in Editor - Use: /editor/?week=06&starter=week-06-extra-practice",
+          "path": "week-06\\6-1-boolean-gate\\index.mdx",
+          "title": "Section 6.1 • The Boolean Gate",
+          "summary": "# Section 6.1: The Boolean Gate 🔘 The Binary Switch ⏱️ Estimated Time: 25 minutes --- ✦ The Binary Switch: Two States, Infinite Power Every decision a computer makes comes down to a single question: true or false? The bool type is the most fundamental data type in programming — a switch that can only exist in two states, like a light that is either ON or OFF . From this simple binary foundation, we build all the complex logic that powers modern software. --- ## 🎬 Technical Briefing: If Statements in C# Watch this briefing on how C# uses boolean conditions to make decisions. This covers if ,",
+          "keyConcepts": [
+            "Boolean",
+            "two possible values",
+            "assignment",
+            "comparison",
+            "case-sensitive"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Section 6.1: The Boolean Gate\r\n\r\n \r\n 🔘 The Binary Switch \r\n ⏱️ Estimated Time: 25 minutes \r\n \r\n\r\n---\r\n\r\n \r\n \r\n \r\n ✦ The Binary Switch: Two States, Infinite Power \r\n \r\n Every decision a computer makes comes down to a single question: true or false? The bool type is the most fundamental data type in programming — a switch that can only exist in two states, like a light that is either ON or OFF . From this simple binary foundation, we build all the complex logic that powers modern software.\r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 🎬 Technical Briefing: If Statements in C#\r\n\r\n \r\n Watch this briefing on how C# uses boolean conditions to make decisions. This covers if , else , and comparison operators. \r\n \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 🧠 What Is a Boolean?\r\n\r\nA bool (short for **Boolean**, named after mathematician George Boole) is a data type that can hold exactly **two possible values**:\r\n\r\n\r\n\r\nThat's it. No maybes, no \"kind of.\" A boolean is an absolute binary state — the digital equivalent of flipping a switch.\r\n\r\n \r\n 🔘 The Binary Switch Metaphor \r\n \r\n \r\n 💡 \r\n \r\n ON = true \r\n The circuit is complete. Current flows. The condition is met. \r\n \r\n \r\n \r\n 🌑 \r\n \r\n OFF = false \r\n The circuit is broken. No current. The condition is NOT met. \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## ⚖️ Comparison Operators: Asking Questions\r\n\r\nComparison operators compare two values and produce a bool result. They're the questions your program asks to make decisions:\r\n\r\n \r\n \r\n \r\n \r\n Operator \r\n Meaning \r\n Example \r\n Result \r\n \r\n \r\n \r\n \r\n == \r\n Equal to \r\n 5 == 5 \r\n true \r\n \r\n \r\n != \r\n Not equal to \r\n 5 != 3 \r\n true \r\n \r\n \r\n &lt; \r\n Less than \r\n 3 &lt; 5 \r\n true \r\n \r\n \r\n &gt; \r\n Greater than \r\n 5 &gt; 3 \r\n true \r\n \r\n \r\n &lt;= \r\n Less than or equal \r\n 5 &lt;= 5 \r\n true \r\n \r\n \r\n &gt;= \r\n Greater than or equal \r\n 7 &gt;= 10 \r\n false \r\n \r\n \r\n \r\n \r\n\r\n \r\n\r\n#### ⚠️ Architect's Warning: = vs ==\r\n\r\nA single = is **assignment** (storing a value). A double == is **comparison** (asking a question). Mixing them up is one of the most common bugs in programming.\r\n\r\n\r\n\r\n \r\n\r\n---\r\n\r\n## 🔬 Try It: Boolean Expressions\r\n\r\nLet's see comparison operators in action. Each expression evaluates to either true or false:\r\n\r\n\r\n\r\n---\r\n\r\n## 🔍 Storing Booleans in Variables\r\n\r\nYou can store comparison results in bool variables and use them later. This makes your code more readable:\r\n\r\n\r\n\r\n \r\n 💡 Pro Tip: Name Your Booleans Well \r\n Boolean variables should read like questions: isActive , hasPermission , canProceed . If you see bool x = true; in production code, that's a code smell. \r\n \r\n\r\n---\r\n\r\n## 🔬 Try It: String Comparisons\r\n\r\nComparisons work with strings too, but be careful — string comparison is **case-sensitive** by default:\r\n\r\n\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Now that you understand boolean expressions, let's use them to control the flow of your program! \r\n Continue to 6.2: The Binary Branch →"
+        },
+        {
+          "path": "week-06\\6-2-binary-branch\\index.mdx",
+          "title": "Section 6.2 • The Binary Branch",
+          "summary": "# Section 6.2: The Binary Branch (if/else) 🔀 The Logic Diverter ⏱️ Estimated Time: 30 minutes --- ✦ The Logic Diverter: Choosing a Path Imagine a mechanical rail switch at a train junction. A data packet arrives, the switch evaluates a condition, and the packet is diverted down Path A or Path B . There is no third option. The condition is either true or false, and the program follows exactly one path. This is the if/else statement — the most fundamental decision structure in all of programming. --- ## 🧠 The if Statement The if statement executes a block of code **only when the condition is t",
+          "keyConcepts": [
+            "only when the condition is true",
+            "K&R style",
+            "same line",
+            "one thing or another",
+            "fork in the road"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Section 6.2: The Binary Branch (if/else)\r\n\r\n \r\n 🔀 The Logic Diverter \r\n ⏱️ Estimated Time: 30 minutes \r\n \r\n\r\n---\r\n\r\n \r\n \r\n \r\n ✦ The Logic Diverter: Choosing a Path \r\n \r\n Imagine a mechanical rail switch at a train junction. A data packet arrives, the switch evaluates a condition, and the packet is diverted down Path A or Path B . There is no third option. The condition is either true or false, and the program follows exactly one path. This is the if/else statement — the most fundamental decision structure in all of programming.\r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 🧠 The if Statement\r\n\r\nThe if statement executes a block of code **only when the condition is true**:\r\n\r\n\r\n\r\n \r\n\r\n#### 🏗️ Architect's Rule: K&R Brace Style\r\n\r\nIn this course, we use **K&R style** (also called \"Egyptian braces\") — the opening brace goes on the **same line** as the statement. This is the industry standard for many teams and keeps code compact.\r\n\r\n\r\n\r\n \r\n\r\n---\r\n\r\n## 🔀 The if/else Fork\r\n\r\nWhen you need your program to do **one thing or another**, use if/else:\r\n\r\n\r\n\r\nThink of it as a **fork in the road**: the program MUST take one path or the other. It can never take both.\r\n\r\n\r\n\r\n---\r\n\r\n## 🔬 Try It: The Fork in the Road\r\n\r\n\r\n\r\n---\r\n\r\n## 🎯 The Code Block: Braces Matter\r\n\r\nEverything between { and } is a **code block**. Only the code inside the matching block executes:\r\n\r\n\r\n\r\n \r\n\r\n#### ⚠️ Common Bug: Missing Braces\r\n\r\nWithout braces, only the **first line** after if is conditional. The rest always runs. **Always use braces**, even for single-line blocks.\r\n\r\n\r\n\r\n \r\n\r\n---\r\n\r\n## 🔬 Try It: Nested Code Blocks\r\n\r\nVariables declared inside an if block only exist within that block (**scope**):\r\n\r\n\r\n\r\n---\r\n\r\n## 🔍 Checking Multiple Things in Sequence\r\n\r\nYou can have multiple independent if statements. Each one is checked separately:\r\n\r\n\r\n\r\nWith a score of 85, only the first message prints. With 95, the first two print. With 100, all three print. Each if is a separate decision.\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Next: Learn to combine multiple conditions with logical operators ! \r\n Continue to 6.3: Logical Combinators →"
+        },
+        {
+          "path": "week-06\\6-3-logical-operators\\index.mdx",
+          "title": "Section 6.3 • Logical Combinators",
+          "summary": "# Section 6.3: Logical Combinators (&&, ||, !) ⚡ The Circuit Filter ⏱️ Estimated Time: 30 minutes --- ✦ The Circuit Filter: Combining Conditions A single boolean condition is like a single gate. But real-world decisions are rarely that simple. \"Is the user an admin AND is the session active?\" — \"Is the input empty OR is it too long?\" — Logical operators let you combine multiple conditions into a single, powerful expression. Think of them as circuit logic gates that wire conditions together. --- ## 📺 Video: Logical Operators in C\\# --- ## ⚡ The Three Logical Operators | Operator | Name | Meani",
+          "keyConcepts": [
+            "series"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Section 6.3: Logical Combinators (&&, ||, !)\r\n\r\n \r\n ⚡ The Circuit Filter \r\n ⏱️ Estimated Time: 30 minutes \r\n \r\n\r\n---\r\n\r\n \r\n \r\n \r\n ✦ The Circuit Filter: Combining Conditions \r\n \r\n A single boolean condition is like a single gate. But real-world decisions are rarely that simple. \"Is the user an admin AND is the session active?\" — \"Is the input empty OR is it too long?\" — Logical operators let you combine multiple conditions into a single, powerful expression. Think of them as circuit logic gates that wire conditions together.\r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 📺 Video: Logical Operators in C\\#\r\n\r\n \r\n \r\n \r\n\r\n---\r\n\r\n## ⚡ The Three Logical Operators\r\n\r\n| Operator | Name | Meaning | Example |\r\n|----------|------|---------|---------|\r\n| && | **AND** | Both must be true | age >= 18 && hasID |\r\n| \\|\\| | **OR** | At least one must be true | isAdmin \\|\\| isModerator |\r\n| ! | **NOT** | Reverses the value | !isLocked |\r\n\r\n---\r\n\r\n## 🔌 AND (&&): Both Must Pass\r\n\r\nThe && operator returns true only when **both** conditions are true. Think of two switches in **series** — both must be ON for current to flow:\r\n\r\n\r\n\r\n### AND Truth Table\r\n\r\n| Left | Right | Result |\r\n|------|-------|--------|\r\n| true | true | true ✅ |\r\n| true | false | false ❌ |\r\n| false | true | false ❌ |\r\n| false | false | false ❌ |\r\n\r\n**Key insight**: AND is strict — if **either** side is false, the whole thing is false.\r\n\r\n---\r\n\r\n## 🔌 OR (||): At Least One Must Pass\r\n\r\nThe || operator returns true when **at least one** condition is true. Think of two switches in **parallel** — if either is ON, current flows:\r\n\r\n\r\n\r\n### OR Truth Table\r\n\r\n| Left | Right | Result |\r\n|------|-------|--------|\r\n| true | true | true ✅ |\r\n| true | false | true ✅ |\r\n| false | true | true ✅ |\r\n| false | false | false ❌ |\r\n\r\n**Key insight**: OR is generous — if **either** side is true, the whole thing is true. Only fails when BOTH are false.\r\n\r\n---\r\n\r\n## 🔌 NOT (!): Flip the Switch\r\n\r\nThe ! operator **reverses** a boolean value. True becomes false, false becomes true:\r\n\r\n\r\n\r\n---\r\n\r\n## 🔬 Try It: Combining Conditions\r\n\r\n\r\n\r\n---\r\n\r\n## 🧠 Short-Circuit Evaluation\r\n\r\nC# is smart about logical operators. It **stops evaluating** as soon as it knows the answer:\r\n\r\n- **AND (&&)**: If the left side is false, the right side is **never checked** (because the result is already false)\r\n- **OR (||)**: If the left side is true, the right side is **never checked** (because the result is already true)\r\n\r\n\r\n\r\nThis is called **short-circuit evaluation** and it's not just an optimization — it's a critical safety feature.\r\n\r\n---\r\n\r\n## 🔬 Try It: Operator Precedence\r\n\r\nNOT (!) binds tighter than AND (&&), which binds tighter than OR (||). Use parentheses to make your intent clear:\r\n\r\n\r\n\r\n \r\n\r\n#### 🏗️ Architect's Rule: Parenthesize for Clarity\r\n\r\nEven when you know the precedence rules, **use parentheses** to make your intent obvious. Future you (and your teammates) will thank you.\r\n\r\n\r\n\r\n \r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Next: Handle multiple decision path"
+        },
+        {
+          "path": "week-06\\6-4-multi-branch\\index.mdx",
+          "title": "Section 6.4 • The Multi-Branch",
+          "summary": "# Section 6.4: The Multi-Branch (else if) 🗼 The Control Tower ⏱️ Estimated Time: 30 minutes --- ✦ The Control Tower: Managing Multiple Flight Paths An air traffic control tower doesn't just say \"land\" or \"don't land.\" It evaluates altitude, weather, runway availability, and fuel — then routes each aircraft to the appropriate action. The else if chain works the same way: it checks conditions in order , and the first match wins. Everything below is skipped. This is how you handle decisions with more than two outcomes . --- ## 🔗 The else if Chain When you have more than two possible outcomes, c",
+          "keyConcepts": [
+            "Critical rule",
+            "first true condition",
+            "least restrictive"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Section 6.4: The Multi-Branch (else if)\r\n\r\n \r\n 🗼 The Control Tower \r\n ⏱️ Estimated Time: 30 minutes \r\n \r\n\r\n---\r\n\r\n \r\n \r\n \r\n ✦ The Control Tower: Managing Multiple Flight Paths \r\n \r\n An air traffic control tower doesn't just say \"land\" or \"don't land.\" It evaluates altitude, weather, runway availability, and fuel — then routes each aircraft to the appropriate action. The else if chain works the same way: it checks conditions in order , and the first match wins. Everything below is skipped. This is how you handle decisions with more than two outcomes .\r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 🔗 The else if Chain\r\n\r\nWhen you have more than two possible outcomes, chain multiple conditions together:\r\n\r\n\r\n\r\n### How the Chain Works\r\n\r\n\r\n\r\n**Critical rule**: The chain stops at the **first true condition**. Order matters!\r\n\r\n---\r\n\r\n## ⚠️ Order Matters: A Common Trap\r\n\r\nIf you check the **least restrictive** condition first, it catches everything:\r\n\r\n\r\n\r\n \r\n 🏗️ Architect's Rule: Most Restrictive First \r\n Always order else if chains from most restrictive to least restrictive . Check for 90+ before 80+, 80+ before 70+, and so on. The first true condition wins — everything below is dead code if you get the order wrong. \r\n \r\n\r\n---\r\n\r\n## 🔬 Try It: Grade Calculator\r\n\r\n\r\n\r\n---\r\n\r\n## 🚫 Avoiding Nesting Hell\r\n\r\nBeginners often nest if statements deep. This creates hard-to-read \"arrow code\":\r\n\r\n\r\n\r\nFlatten with logical operators and early returns:\r\n\r\n\r\n\r\n---\r\n\r\n## 🔬 Try It: The Control Tower\r\n\r\n\r\n\r\n---\r\n\r\n## 🔍 When to Use What\r\n\r\n| Situation | Use |\r\n|-----------|-----|\r\n| Yes or no decision | if / if-else |\r\n| Multiple exclusive outcomes | else if chain |\r\n| Multiple independent checks | Separate if statements |\r\n| Complex combined conditions | &&, \\|\\|, ! |\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Ready to apply everything you've learned? Build The Security Gatekeeper ! \r\n Continue to Lab: The Security Gatekeeper →"
+        },
+        {
+          "path": "week-06\\homework\\index.mdx",
+          "title": "Homework 06 • Decision Reflection",
+          "summary": "# Homework 06: Reflection - (GRADED) ## 📝 Homework 06: The Decision Matrix Now that you've built decision structures with if , else if , else , and logical operators, it's time to demonstrate your understanding of how programs make decisions . 🔀 Decision Structures Reflection In 3-5 sentences, explain Decision Flow in C# : What is the difference between using separate if statements vs. an else if chain ? When would you use each? Why does the order of conditions matter in an else if chain? What goes wrong if you check the least restrictive condition first? Explain what short-circuit evaluatio",
           "keyConcepts": [],
           "codeExamples": [],
           "quizQuestions": [],
-          "fullText": "# Week 6 Extra Practice: Tiny method library\n\nPick **1–2** items (optional).\n\n- Make a Min(int a, int b) method that returns the smaller number.\n- Make a Max(int a, int b) method that returns the bigger number.\n- Challenge: Make FormatMoney(double amount) that returns a string like $12.34 (keep it simple).\n\n## Open in Editor\n- Use: /editor/?week=06&starter=week-06-extra-practice"
+          "fullText": "# Homework 06: Reflection - (GRADED)\r\n\r\n\r\n\r\n## 📝 Homework 06: The Decision Matrix\r\n\r\n Now that you've built decision structures with if , else if , else , and logical operators, it's time to demonstrate your understanding of how programs make decisions . \r\n\r\n \r\n \r\n 🔀 Decision Structures Reflection \r\n In 3-5 sentences, explain Decision Flow in C# : \r\n \r\n What is the difference between using separate if statements vs. an else if chain ? When would you use each? \r\n Why does the order of conditions matter in an else if chain? What goes wrong if you check the least restrictive condition first? \r\n Explain what short-circuit evaluation means with && — how does it prevent errors like NullReferenceException ? \r\n \r\n \r\n Tip: Think about the \"Control Tower\" metaphor from Section 6.4 — the first matching condition wins, and all others are skipped.\r\n \r\n \r\n \r\n\r\n\r\n\r\n---\r\n\r\n## 📚 Reference Material\r\n\r\nIf you need to review, revisit these sections:\r\n- [Section 6.1: The Boolean Gate](/week-06/6-1-boolean-gate/) — Bool type and comparison operators\r\n- [Section 6.2: The Binary Branch](/week-06/6-2-binary-branch/) — if/else flow control\r\n- [Section 6.3: Logical Combinators](/week-06/6-3-logical-operators/) — &&, ||, ! operators\r\n- [Section 6.4: The Multi-Branch](/week-06/6-4-multi-branch/) — else if chains\r\n\r\n---\r\n\r\n \r\n After submitting your homework, complete the Weekly Assessment to finish Week 6! \r\n Take Weekly Assessment →"
         },
         {
-          "path": "week-06\\homework\\index.md",
-          "title": "Week 06 • Week 6 Homework: Utility Methods Pack",
-          "summary": "# Week 6 Homework: Utility Methods Pack ## Overview Create a small set of utility methods (mini toolbelt). Then demonstrate them in the main program. ## Requirements checklist (acceptance criteria) - [ ] Includes at least 4 methods you wrote - [ ] At least 2 methods return values - [ ] At least 1 method accepts parameters - [ ] Main program calls every method at least once - [ ] Output is labeled and easy to read - [ ] Runs without errors ## Submit to Canvas - Submit code (paste/export) - Submit screenshot of output ## Open in Editor - Start here: /editor/?week=06&starter=week-06-lesson-2 Mark",
+          "path": "week-06\\index.mdx",
+          "title": "Week 06 • Decision Structures (if/else)",
+          "summary": "# Week 06: Decision Structures (if/else) ⚡ The Logic Gateway Until now, your programs have been linear —every line executes in order, every time. This week, your code gains intelligence . We move beyond sequential execution to Conditional Logic , allowing our systems to evaluate state and choose the correct path of execution. Think of it as installing a decision engine into your programs. Based on input, data, or system state, your code will now choose which instructions to execute. This is the foundation of every interactive application ever built. 🌍 Instructor Note: I am currently traveling",
+          "keyConcepts": [
+            "top to bottom",
+            "first path that evaluates to true"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Week 06: Decision Structures (if/else)\r\n\r\n\r\n\r\n \r\n ⚡ The Logic Gateway \r\n \r\n Until now, your programs have been linear —every line executes in order, every time. This week, your code gains intelligence . We move beyond sequential execution to Conditional Logic , allowing our systems to evaluate state and choose the correct path of execution.\r\n \r\n \r\n Think of it as installing a decision engine into your programs. Based on input, data, or system state, your code will now choose which instructions to execute. This is the foundation of every interactive application ever built.\r\n \r\n \r\n\r\n \r\n 🌍 Instructor Note: I am currently traveling with limited connectivity (Feb 23 – Mar 01). For immediate technical support, please use the AI Architect Tutor on the platform — it has full knowledge of this week's content and can help debug your code. I will be checking in periodically to review your labs and reflections. \r\n \r\n\r\n---\r\n\r\n## 🗺️ Week 06 Learning Path\r\n\r\n \r\n \r\n 🔘 \r\n \r\n 6.1 The Boolean Gate \r\n The Binary Switch \r\n bool type, comparison operators (==, !=, &lt;, &gt;, &lt;=, &gt;=) \r\n \r\n \r\n \r\n \r\n 🔀 \r\n \r\n 6.2 The Binary Branch \r\n The Logic Diverter \r\n if/else flow of control — the fork in the road \r\n \r\n \r\n \r\n \r\n ⚡ \r\n \r\n 6.3 Logical Combinators \r\n The Circuit Filter \r\n AND (&&), OR (||), NOT (!) — combining conditions \r\n \r\n \r\n \r\n \r\n 🗼 \r\n \r\n 6.4 The Multi-Branch \r\n The Control Tower \r\n else if chains — managing complex system states \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 📋 Week Overview Table\r\n\r\n \r\n \r\n \r\n \r\n Section \r\n Topic \r\n Key Metaphor \r\n Time \r\n \r\n \r\n \r\n \r\n 6.1 \r\n The Boolean Gate \r\n 🔘 The Binary Switch \r\n 25 min \r\n \r\n \r\n 6.2 \r\n The Binary Branch \r\n 🔀 The Logic Diverter \r\n 30 min \r\n \r\n \r\n 6.3 \r\n Logical Combinators \r\n ⚡ The Circuit Filter \r\n 25 min \r\n \r\n \r\n 6.4 \r\n The Multi-Branch \r\n 🗼 The Control Tower \r\n 25 min \r\n \r\n \r\n Lab \r\n The Security Gatekeeper \r\n Access Control System \r\n 60 min \r\n \r\n \r\n HW \r\n Decision Reflection \r\n Written Analysis \r\n 20 min \r\n \r\n \r\n Quiz \r\n Weekly Assessment \r\n Checkpoint \r\n 15 min \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 🧠 The Decision Engine\r\n\r\nEvery if statement is a **gate** — it evaluates a condition and opens or closes the path:\r\n\r\n\r\n\r\nThe computer evaluates each condition **top to bottom** and takes the **first path that evaluates to true**.\r\n\r\n---\r\n\r\n## 🔧 The Decision Toolkit\r\n\r\n \r\n \r\n 🔘 bool \r\n The binary type — can only be true or false . \r\n bool isActive = true; \r\n \r\n \r\n ⚖️ Comparison Operators \r\n Compare values to produce a boolean result. \r\n == != &lt; &gt; &lt;= &gt;= \r\n \r\n \r\n 🔀 if / else \r\n Execute code only when a condition is true (or false). \r\n if (score &gt;= 70) &#123; ... &#125; \r\n \r\n \r\n ⚡ Logical Operators \r\n Combine multiple conditions into one expression. \r\n &amp;&amp; (AND) || (OR) ! (NOT) \r\n \r\n \r\n\r\n---\r\n\r\n## 📋 Week 06 Deliverables\r\n\r\n \r\n \r\n \r\n 🔬 Lab 06: The Security Gatekeeper \r\n 40% \r\n \r\n \r\n 📝 Homework 06: Decision Reflection \r\n 20% \r\n \r\n \r\n 🧪 Weekly Assessment 06: Decision Structures \r\n 20% \r\n \r\n \r\n ✅ Knowledge Che"
+        },
+        {
+          "path": "week-06\\lab\\index.mdx",
+          "title": "Lab 06 • The Security Gatekeeper",
+          "summary": "# Lab 06: The Security Gatekeeper **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective You are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access based on decision logic. You'll use if, else if, else, comparison operators, logical operators (&&), and string comparison to implement the gatekeeper. --- ## 📋 The Problem The facility has three access tiers: The user enters a **security level** (integer) and a **password** (string). Your program m",
+          "keyConcepts": [
+            "Time: 45 minutes",
+            "Points: 100",
+            "security access control system",
+            "Security Level",
+            "Password"
+          ],
+          "codeExamples": [],
+          "quizQuestions": [],
+          "fullText": "# Lab 06: The Security Gatekeeper\r\n\r\n\r\n\r\n**Time: 45 minutes** \r\n**Points: 100**\r\n\r\n## 🎯 Mission Objective\r\n\r\nYou are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access based on decision logic. You'll use if, else if, else, comparison operators, logical operators (&&), and string comparison to implement the gatekeeper.\r\n\r\n---\r\n\r\n## 📋 The Problem\r\n\r\nThe facility has three access tiers:\r\n\r\n\r\n\r\nThe user enters a **security level** (integer) and a **password** (string). Your program must check **both** values to determine the correct access tier.\r\n\r\n---\r\n\r\n## 📋 Requirements\r\n\r\nYour program must:\r\n\r\n \r\n \r\n \r\n \r\n Requirement \r\n Details \r\n \r\n \r\n \r\n \r\n Prompt for Security Level \r\n Read an integer from the user using Console.ReadLine() and int.Parse() \r\n \r\n \r\n Prompt for Password \r\n Read a string from the user using Console.ReadLine() \r\n \r\n \r\n Level 1 + \"guest123\" \r\n Print 🟢 GUEST ACCESS GRANTED and guest-appropriate messages \r\n \r\n \r\n Level 2 + \"admin456\" \r\n Print 🔵 ADMIN ACCESS GRANTED and admin-appropriate messages \r\n \r\n \r\n Level 3 + \"superSecret\" \r\n Print 🟣 SUPERUSER ACCESS GRANTED and superuser-appropriate messages \r\n \r\n \r\n Invalid credentials \r\n Print 🔴 ACCESS DENIED for wrong level, wrong password, or both \r\n \r\n \r\n Use if/else if/else \r\n Must use decision structures (not switch) \r\n \r\n \r\n Use && \r\n Combine level AND password check in each condition \r\n \r\n \r\n K&amp;R brace style \r\n Opening brace on same line as the if \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 📤 Example Output\r\n\r\n**Successful Guest Login:**\r\n\r\n\r\n**Successful Admin Login:**\r\n\r\n\r\n**Successful Superuser Login:**\r\n\r\n\r\n**Failed Login:**\r\n\r\n\r\n---\r\n\r\n## 🏗️ Code Editor\r\n\r\n \r\n \r\n \r\n\r\n---\r\n\r\n## ✅ Grading Rubric\r\n\r\n \r\n \r\n \r\n \r\n Criteria \r\n Points \r\n \r\n \r\n \r\n \r\n Prompts for Security Level (int) and Password (string) \r\n 10 \r\n \r\n \r\n Level 1 + \"guest123\" → Guest access message \r\n 15 \r\n \r\n \r\n Level 2 + \"admin456\" → Admin access message \r\n 15 \r\n \r\n \r\n Level 3 + \"superSecret\" → Superuser access message \r\n 15 \r\n \r\n \r\n Invalid credentials → Access Denied message \r\n 15 \r\n \r\n \r\n Uses if/else if/else structure correctly \r\n 10 \r\n \r\n \r\n Uses && to combine level + password checks \r\n 10 \r\n \r\n \r\n Code compiles, runs, and uses K&amp;R braces \r\n 10 \r\n \r\n \r\n Total \r\n 100 \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## 📝 Submission\r\n\r\nWhen your program runs correctly and handles all access tiers:\r\n\r\n1. Make sure your name is in the header comment\r\n2. Click **Save** to save your work\r\n3. Click **Submit Lab** below\r\n\r\n \r\n \r\n 🚀 Submit Lab\r\n \r\n \r\n \r\n \r\n \r\n\r\n \r\n\r\n---\r\n\r\n \r\n Next up: Decision Reflection \r\n Explain how decision structures control program flow. \r\n Continue to Homework →"
+        },
+        {
+          "path": "week-06\\weekly-assessment\\index.mdx",
+          "title": "Week 06 • Technical Assessment",
+          "summary": "# 🏁 Week 06 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --- 🎉 Week 06 Complete! You've mastered decision structures. Next week: Loops &amp; Iteration! Preview Week 07 →",
           "keyConcepts": [],
           "codeExamples": [],
-          "quizQuestions": [],
-          "fullText": "# Week 6 Homework: Utility Methods Pack\n\n## Overview\nCreate a small set of utility methods (mini toolbelt). Then demonstrate them in the main program.\n\n## Requirements checklist (acceptance criteria)\n- [ ] Includes at least 4 methods you wrote\n- [ ] At least 2 methods return values\n- [ ] At least 1 method accepts parameters\n- [ ] Main program calls every method at least once\n- [ ] Output is labeled and easy to read\n- [ ] Runs without errors\n\n## Submit to Canvas\n- Submit code (paste/export)\n- Submit screenshot of output\n\n## Open in Editor\n- Start here: /editor/?week=06&starter=week-06-lesson-2\n\n \n Mark complete\n \n\n \n Status:"
-        },
-        {
-          "path": "week-06\\index.md",
-          "title": "Week 06",
-          "summary": "# Week 6 **Focus:** Methods: organize your code so it’s easier to read, reuse, and test. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/) — ## By the end of this week, you can: - Explain why methods exist (reuse + readability) - Write a method and call it - Use parameters and return values ## Open the editor - /editor/?week=06&starter=week-06-lesson-1",
-          "keyConcepts": [
-            "Focus:"
+          "quizQuestions": [
+            {
+              "id": "q1",
+              "question": "What are the only two values a bool variable can hold?",
+              "correctAnswer": "true and false",
+              "explanation": "In C#, the bool type has exactly two possible values: true and false. These are keywords, not strings."
+            },
+            {
+              "id": "q2",
+              "question": "What is the difference between = and == in C#?",
+              "correctAnswer": "= assigns a value; == compares two values",
+              "explanation": "The single = is the assignment operator (puts a value INTO a variable). The double == is the equality comparison operator (checks if two values are the SAME). Mixing them up is a common bug!"
+            },
+            {
+              "id": "q3",
+              "question": "What does this code print?\\n\\nint x = 5;\\nif (x > 10) {\\n    Console.WriteLine(\\",
+              "correctAnswer": "B",
+              "explanation": "Since x is 5 and 5 > 10 is false, the else block executes, printing \\"
+            },
+            {
+              "id": "q4",
+              "question": "What happens if you write an if statement WITHOUT braces and put two lines after it?",
+              "correctAnswer": "Only the first line is conditional — the second always runs",
+              "explanation": "Without braces, only the very first statement after if is conditional. Every subsequent line runs unconditionally. This is why we ALWAYS use braces — even for single-line blocks."
+            },
+            {
+              "id": "q5",
+              "question": "What does the && (AND) operator require to return true?",
+              "correctAnswer": "Both sides must be true",
+              "explanation": "The AND operator (&&) requires BOTH operands to be true. If either side is false, the entire expression evaluates to false. Think of it as two switches wired in series."
+            },
+            {
+              "id": "q6",
+              "question": "What does the || (OR) operator require to return true?",
+              "correctAnswer": "At least one side must be true",
+              "explanation": "The OR operator (||) returns true if AT LEAST ONE operand is true. It only returns false when BOTH sides are false. Think of two switches wired in parallel."
+            },
+            {
+              "id": "q7",
+              "question": "What is short-circuit evaluation?",
+              "correctAnswer": "C# stops evaluating a logical expression as soon as the result is determined",
+              "explanation": "Short-circuit evaluation means: with &&, if the left side is false, the right side is never checked (result is already false). With ||, if the left side is true, the right side is never checked. This is a safety feature — it prevents crashes like checking .Length on null."
+            },
+            {
+              "id": "q8",
+              "question": "In an else if chain, what happens when the FIRST condition is true?",
+              "correctAnswer": "Only that block runs — everything else is skipped",
+              "explanation": "In an else if chain, the first true condition wins. Its code block executes, and ALL remaining else if and else blocks are completely skipped — they are never even evaluated."
+            },
+            {
+              "id": "q9",
+              "question": "Why should you check the MOST restrictive condition first in an else if chain?",
+              "correctAnswer": "A less restrictive condition would catch values meant for stricter checks",
+              "explanation": "If you check score >= 60 before score >= 90, then a score of 95 matches the >= 60 check first and gets a 'D' instead of an 'A'. The first match wins, so always go from most restrictive to least restrictive."
+            },
+            {
+              "id": "q10",
+              "question": "What does the ! (NOT) operator do?",
+              "correctAnswer": "Reverses a boolean value (true becomes false, false becomes true)",
+              "explanation": "The NOT operator (!) flips a boolean. !true is false, and !false is true. It's commonly used like: if (!isLocked) means 'if it is NOT locked'."
+            }
           ],
-          "codeExamples": [],
-          "quizQuestions": [],
-          "fullText": "# Week 6\n\n**Focus:** Methods: organize your code so it’s easier to read, reuse, and test.\n\n## This week’s pages\n- Lesson 1: [./lesson-1/](./lesson-1/) — \n- Lesson 2: [./lesson-2/](./lesson-2/) — \n- Extra practice: [./extra-practice/](./extra-practice/) — \n- Lab: [./lab/](./lab/) — \n- Homework: [./homework/](./homework/) — \n\n## By the end of this week, you can:\n- Explain why methods exist (reuse + readability)\n- Write a method and call it\n- Use parameters and return values\n\n## Open the editor\n- /editor/?week=06&starter=week-06-lesson-1"
-        },
-        {
-          "path": "week-06\\lab\\index.md",
-          "title": "Week 06 • Week 6 Lab: Refactor into Methods",
-          "summary": "# Week 6 Lab: Refactor into Methods ## Overview Take a small program and split it into methods so it’s easier to read. Your main program should become short and clean. ## Requirements checklist (acceptance criteria) - [ ] Program runs without errors - [ ] Uses at least 3 methods you wrote - [ ] At least 1 method has parameters - [ ] At least 1 method returns a value - [ ] Main program is easy to read (calls methods instead of doing everything inline) ## Submit to Canvas - Submit code (paste/export) - Submit a short note (2–3 sentences): what methods you created and why ## Open in Editor - Star",
-          "keyConcepts": [],
-          "codeExamples": [],
-          "quizQuestions": [],
-          "fullText": "# Week 6 Lab: Refactor into Methods\n\n## Overview\nTake a small program and split it into methods so it’s easier to read. Your main program should become short and clean.\n\n## Requirements checklist (acceptance criteria)\n- [ ] Program runs without errors\n- [ ] Uses at least 3 methods you wrote\n- [ ] At least 1 method has parameters\n- [ ] At least 1 method returns a value\n- [ ] Main program is easy to read (calls methods instead of doing everything inline)\n\n## Submit to Canvas\n- Submit code (paste/export)\n- Submit a short note (2–3 sentences): what methods you created and why\n\n## Open in Editor\n- Start here: /editor/?week=06&starter=week-06-lesson-1\n\n \n Mark complete\n \n\n \n Status:"
-        },
-        {
-          "path": "week-06\\lesson-1\\index.md",
-          "title": "Week 06 • Lesson 1",
-          "summary": "# Week 6 Lesson 1: Methods (your code’s “superpowers”) ## Goal - Understand what a method is - Write and call a simple method - Use methods to avoid copying/pasting code ## What to know - **Method**: A named block of code you can run when you call it. - **Call**: To run a method. - **void**: A method that returns nothing (it just *does* something). - **Parameter**: Information you pass into a method. ## Examples ## Try it - Create a SayHi() method that prints your name. - Create a PrintHeader(string title) method that prints a header line. - Call your methods from the main program at least 2 t",
-          "keyConcepts": [
-            "Method",
-            "Parameter",
-            "1) What is the main reason we use methods?"
-          ],
-          "codeExamples": [
-            "static void SayHello()\n{\n    Console.WriteLine(\"Hello!\");\n}\n\nSayHello();\nSayHello();\n// Prints Hello twice without copy/paste.",
-            "static void PrintLine(string message)\n{\n    Console.WriteLine(message);\n}\n\nPrintLine(\"One\");\nPrintLine(\"Two\");"
-          ],
-          "quizQuestions": [],
-          "fullText": "# Week 6 Lesson 1: Methods (your code’s “superpowers”)\n\n## Goal\n- Understand what a method is\n- Write and call a simple method\n- Use methods to avoid copying/pasting code\n\n## What to know\n- **Method**: A named block of code you can run when you call it.\n- **Call**: To run a method.\n- **void**: A method that returns nothing (it just *does* something).\n- **Parameter**: Information you pass into a method.\n\n## Examples\n\n## Try it\n- Create a SayHi() method that prints your name.\n- Create a PrintHeader(string title) method that prints a header line.\n- Call your methods from the main program at least 2 times.\n\n## Common mistakes\n- Forgetting to call the method (writing it doesn’t run it).\n- Putting code in the wrong place (methods can’t be inside other methods).\n- Mixing up parameters and variables (parameters are like input slots).\n\n## Mini-check\n**1) What is the main reason we use methods?**\n\n \n Show answer \n\nTo organize code, reuse code, and make it easier to read/test.\n\n \n\n**2) Does void return a value?**\n\n \n Show answer \n\nNo. void methods return nothing.\n\n \n\n## Next\n- Go to Lesson 2: [Return values + clean design](../lesson-2/)\n- Open the editor: [Open the code editor](/editor/?week=06&starter=week-06-lesson-1)"
-        },
-        {
-          "path": "week-06\\lesson-2\\index.md",
-          "title": "Week 06 • Lesson 2",
-          "summary": "# Week 6 Lesson 2: Return values (methods that give you an answer) ## Goal - Write a method that returns a value - Use parameters + return together - Know when to print vs return ## What to know - **Return value**: The result a method gives back. - **return**: Sends a value back to the caller and ends the method. - **Pure method**: A method that just computes and returns (no printing). Great for testing. ## Examples ## Try it - Write Multiply(int a, int b) that returns the product. - Write IsEven(int n) that returns true for even numbers. - Use your methods in the main program and print the re",
-          "keyConcepts": [
-            "Return value",
-            "return",
-            "Pure method",
-            "1) What’s the difference between printing and returning?"
-          ],
-          "codeExamples": [
-            "static int Add(int a, int b)\n{\n    return a + b;\n}\n\nint total = Add(3, 4);\nConsole.WriteLine(total);",
-            "static bool IsBetween1And10(int n)\n{\n    return n >= 1 && n <= 10;\n}\n\nConsole.WriteLine(IsBetween1And10(7)); // True\nConsole.WriteLine(IsBetween1And10(20)); // False"
-          ],
-          "quizQuestions": [],
-          "fullText": "# Week 6 Lesson 2: Return values (methods that give you an answer)\n\n## Goal\n- Write a method that returns a value\n- Use parameters + return together\n- Know when to print vs return\n\n## What to know\n- **Return value**: The result a method gives back.\n- **return**: Sends a value back to the caller and ends the method.\n- **Pure method**: A method that just computes and returns (no printing). Great for testing.\n\n## Examples\n\n## Try it\n- Write Multiply(int a, int b) that returns the product.\n- Write IsEven(int n) that returns true for even numbers.\n- Use your methods in the main program and print the results.\n\n## Common mistakes\n- Printing inside a method that’s supposed to return a value (harder to test).\n- Forgetting to return on every path (example: missing return in an if/else).\n- Using the wrong return type (returning int from a bool method).\n\n## Mini-check\n**1) What’s the difference between printing and returning?**\n\n \n Show answer \n\nPrinting shows something to the user. Returning gives a value back to your code.\n\n \n\n## Next\n- Optional extra practice: [Extra practice](../extra-practice/)\n- Open the editor: [Open the code editor](/editor/?week=06&starter=week-06-lesson-2)"
+          "fullText": "# 🏁 Week 06 Technical Assessment\r\n\r\n\r\n\r\n \r\n 📋 Assessment Parameters \r\n \r\n Attempts: Unlimited — keep trying until you master it! \r\n Scoring: Your highest score will be recorded \r\n Passing: 70% required to pass \r\n Time: No time limit — take your time to think \r\n Answers: Correct answers revealed after your final attempt \r\n \r\n \r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n 🎉 Week 06 Complete! \r\n You've mastered decision structures. Next week: Loops &amp; Iteration! \r\n Preview Week 07 →"
         }
       ]
     },

@@ -1,0 +1,325 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 6.3 • Logical Combinators"
+description: "Combining conditions with AND (&&), OR (||), and NOT (!) operators"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 6.3: Logical Combinators (&&, ||, !)
+
+<div class="section-header">
+  <div class="section-badge">⚡ The Circuit Filter</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Circuit Filter: Combining Conditions</h2>
+      <p>
+        A single boolean condition is like a single gate. But real-world decisions are rarely that simple. <em>"Is the user an admin <strong>AND</strong> is the session active?"</em> — <em>"Is the input empty <strong>OR</strong> is it too long?"</em> — Logical operators let you combine multiple conditions into a single, powerful expression. Think of them as <strong>circuit logic gates</strong> that wire conditions together.
+      </p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 📺 Video: Logical Operators in C\#
+
+<div class="video-container">
+  <iframe 
+    src="https://www.youtube.com/embed/IF4boq-mYOI" 
+    title="Logical Operators (AND, OR, NOT) in C#"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen
+    loading="lazy"
+  ></iframe>
+</div>
+
+---
+
+## ⚡ The Three Logical Operators
+
+| Operator | Name | Meaning | Example |
+|----------|------|---------|---------|
+| `&&` | **AND** | Both must be true | `age >= 18 && hasID` |
+| `\|\|` | **OR** | At least one must be true | `isAdmin \|\| isModerator` |
+| `!` | **NOT** | Reverses the value | `!isLocked` |
+
+---
+
+## 🔌 AND (&&): Both Must Pass
+
+The `&&` operator returns `true` only when **both** conditions are true. Think of two switches in **series** — both must be ON for current to flow:
+
+```csharp
+int age = 21;
+bool hasID = true;
+
+if (age >= 18 && hasID) {
+    Console.WriteLine("✅ Entry granted.");
+} else {
+    Console.WriteLine("❌ Entry denied.");
+}
+```
+
+### AND Truth Table
+
+| Left | Right | Result |
+|------|-------|--------|
+| `true` | `true` | `true` ✅ |
+| `true` | `false` | `false` ❌ |
+| `false` | `true` | `false` ❌ |
+| `false` | `false` | `false` ❌ |
+
+**Key insight**: AND is strict — if **either** side is false, the whole thing is false.
+
+---
+
+## 🔌 OR (||): At Least One Must Pass
+
+The `||` operator returns `true` when **at least one** condition is true. Think of two switches in **parallel** — if either is ON, current flows:
+
+```csharp
+bool isAdmin = false;
+bool isModerator = true;
+
+if (isAdmin || isModerator) {
+    Console.WriteLine("🔑 You have moderation privileges.");
+} else {
+    Console.WriteLine("🔒 Standard user access only.");
+}
+```
+
+### OR Truth Table
+
+| Left | Right | Result |
+|------|-------|--------|
+| `true` | `true` | `true` ✅ |
+| `true` | `false` | `true` ✅ |
+| `false` | `true` | `true` ✅ |
+| `false` | `false` | `false` ❌ |
+
+**Key insight**: OR is generous — if **either** side is true, the whole thing is true. Only fails when BOTH are false.
+
+---
+
+## 🔌 NOT (!): Flip the Switch
+
+The `!` operator **reverses** a boolean value. True becomes false, false becomes true:
+
+```csharp
+bool isLocked = false;
+
+if (!isLocked) {
+    Console.WriteLine("🔓 Door is unlocked — you may enter.");
+}
+// !false evaluates to true, so the message prints
+```
+
+---
+
+## 🔬 Try It: Combining Conditions
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={450}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter temperature (°F): ");
+        int temp = int.Parse(Console.ReadLine());
+        
+        Console.Write("Is it raining? (true/false): ");
+        bool isRaining = bool.Parse(Console.ReadLine());
+        
+        // AND: Both conditions must be true
+        if (temp >= 60 && temp <= 85 && !isRaining) {
+            Console.WriteLine("🌤️ Perfect weather for a walk!");
+        }
+        
+        // OR: At least one bad condition
+        if (temp > 100 || temp < 0) {
+            Console.WriteLine("🚨 EXTREME temperature warning!");
+        }
+        
+        // Combined logic
+        if (isRaining && temp < 40) {
+            Console.WriteLine("🥶 Cold rain — stay inside!");
+        } else if (isRaining && temp >= 40) {
+            Console.WriteLine("🌧️ Bring an umbrella.");
+        } else if (temp > 85) {
+            Console.WriteLine("☀️ Hot but dry — stay hydrated!");
+        } else {
+            Console.WriteLine("👍 Conditions are manageable.");
+        }
+    }
+}`}
+  instructions="Try different temperatures and rain values. See how AND, OR, and NOT combine to create complex decisions." 
+  testInputs="72\nfalse"
+/>
+
+---
+
+## 🧠 Short-Circuit Evaluation
+
+C# is smart about logical operators. It **stops evaluating** as soon as it knows the answer:
+
+- **AND (`&&`)**: If the left side is `false`, the right side is **never checked** (because the result is already `false`)
+- **OR (`||`)**: If the left side is `true`, the right side is **never checked** (because the result is already `true`)
+
+```csharp
+string input = null;
+
+// SAFE — the second condition only runs if input is NOT null
+if (input != null && input.Length > 0) {
+    Console.WriteLine("Input has content.");
+}
+// Without short-circuit, input.Length would crash on null!
+```
+
+This is called **short-circuit evaluation** and it's not just an optimization — it's a critical safety feature.
+
+---
+
+## 🔬 Try It: Operator Precedence
+
+NOT (`!`) binds tighter than AND (`&&`), which binds tighter than OR (`||`). Use parentheses to make your intent clear:
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={400}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        bool isWeekend = true;
+        bool isHoliday = false;
+        bool hasDeadline = true;
+        
+        // Without parentheses — hard to read
+        // && binds tighter than ||
+        bool canRelax1 = isWeekend || isHoliday && !hasDeadline;
+        
+        // With parentheses — intent is CLEAR
+        bool canRelax2 = (isWeekend || isHoliday) && !hasDeadline;
+        
+        Console.WriteLine($"Weekend: {isWeekend}");
+        Console.WriteLine($"Holiday: {isHoliday}");
+        Console.WriteLine($"Has Deadline: {hasDeadline}");
+        Console.WriteLine();
+        Console.WriteLine($"canRelax (no parens):   {canRelax1}");
+        Console.WriteLine($"canRelax (with parens): {canRelax2}");
+        Console.WriteLine();
+        Console.WriteLine("The parentheses change the result!");
+        Console.WriteLine("Always use parentheses to make intent clear.");
+    }
+}`}
+  instructions="Notice how parentheses change the result! The first expression evaluates && before ||, the second groups differently." 
+  testInputs=""
+/>
+
+<div class="architect-rule">
+
+#### 🏗️ Architect's Rule: Parenthesize for Clarity
+
+Even when you know the precedence rules, **use parentheses** to make your intent obvious. Future you (and your teammates) will thank you.
+
+```csharp
+// ❌  Relies on precedence knowledge
+if (a || b && c)
+
+// ✅  Intent is crystal clear  
+if (a || (b && c))
+```
+
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-06-6-3-checkpoint"
+  title="🔍 Section 6.3 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What does the expression true && false evaluate to?",
+      options: ["true — because one side is true", "false — because AND requires BOTH sides to be true", "null — because the values conflict", "An error — you can't AND different values"],
+      correctAnswer: "false — because AND requires BOTH sides to be true",
+      explanation: "The AND operator (&&) requires BOTH operands to be true. Since the right side is false, the entire expression evaluates to false."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Given: string name = null; — What happens with if (name != null && name.Length > 5)?",
+      options: ["It crashes with a NullReferenceException", "It safely evaluates to false without crashing", "It evaluates to true", "It skips the entire if statement"],
+      correctAnswer: "It safely evaluates to false without crashing",
+      explanation: "Short-circuit evaluation! Since name != null is false, the && operator immediately returns false WITHOUT evaluating name.Length (which would crash). This is a critical safety pattern."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next: Handle multiple decision paths with <strong>else if chains</strong>!</p>
+  <a href="/week-06/6-4-multi-branch/" class="vscode-button">Continue to 6.4: The Multi-Branch →</a>
+</div>
+
+<style>{`
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 2px solid rgba(107, 159, 255, 0.3);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  .architect-rule p { color: #e2e8f0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

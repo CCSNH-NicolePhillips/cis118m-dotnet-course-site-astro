@@ -1,0 +1,393 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 6.1 • The Boolean Gate"
+description: "Understanding bool as the binary foundation and comparison operators"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 6.1: The Boolean Gate
+
+<div class="section-header">
+  <div class="section-badge">🔘 The Binary Switch</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Binary Switch: Two States, Infinite Power</h2>
+      <p>
+        Every decision a computer makes comes down to a single question: <strong>true or false?</strong> The <code>bool</code> type is the most fundamental data type in programming — a switch that can only exist in two states, like a light that is either <strong>ON</strong> or <strong>OFF</strong>. From this simple binary foundation, we build all the complex logic that powers modern software.
+      </p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: If Statements in C#
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on how C# uses boolean conditions to make decisions. This covers <code>if</code>, <code>else</code>, and comparison operators.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/0Wrk3LAib0I" 
+      title="C# If Statements for Beginners"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 What Is a Boolean?
+
+A `bool` (short for **Boolean**, named after mathematician George Boole) is a data type that can hold exactly **two possible values**:
+
+```csharp
+bool isOnline = true;
+bool isMaintenance = false;
+```
+
+That's it. No maybes, no "kind of." A boolean is an absolute binary state — the digital equivalent of flipping a switch.
+
+<div class="concept-highlight">
+  <h3>🔘 The Binary Switch Metaphor</h3>
+  <div class="metaphor-grid">
+    <div class="metaphor-item">
+      <div class="metaphor-icon">💡</div>
+      <div class="metaphor-text">
+        <strong>ON = true</strong>
+        <p>The circuit is complete. Current flows. The condition is met.</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🌑</div>
+      <div class="metaphor-text">
+        <strong>OFF = false</strong>
+        <p>The circuit is broken. No current. The condition is NOT met.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## ⚖️ Comparison Operators: Asking Questions
+
+Comparison operators compare two values and produce a `bool` result. They're the questions your program asks to make decisions:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Operator</th>
+        <th>Meaning</th>
+        <th>Example</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>==</code></td>
+        <td>Equal to</td>
+        <td><code>5 == 5</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>!=</code></td>
+        <td>Not equal to</td>
+        <td><code>5 != 3</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>&lt;</code></td>
+        <td>Less than</td>
+        <td><code>3 &lt; 5</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>&gt;</code></td>
+        <td>Greater than</td>
+        <td><code>5 &gt; 3</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>&lt;=</code></td>
+        <td>Less than or equal</td>
+        <td><code>5 &lt;= 5</code></td>
+        <td><code>true</code></td>
+      </tr>
+      <tr>
+        <td><code>&gt;=</code></td>
+        <td>Greater than or equal</td>
+        <td><code>7 &gt;= 10</code></td>
+        <td><code>false</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Warning: = vs ==
+
+A single `=` is **assignment** (storing a value). A double `==` is **comparison** (asking a question). Mixing them up is one of the most common bugs in programming.
+
+```csharp
+int x = 5;           // Assignment: x now holds 5
+bool result = x == 5; // Comparison: is x equal to 5? (true)
+```
+
+</div>
+
+---
+
+## 🔬 Try It: Boolean Expressions
+
+Let's see comparison operators in action. Each expression evaluates to either `true` or `false`:
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={420}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        int score = 85;
+        int passingGrade = 70;
+        int perfectScore = 100;
+        
+        // Comparison operators produce bool values
+        Console.WriteLine("=== Boolean Gate Tests ===");
+        Console.WriteLine($"Score: {score}");
+        Console.WriteLine();
+        
+        bool isPassing = score >= passingGrade;
+        bool isPerfect = score == perfectScore;
+        bool isNotPerfect = score != perfectScore;
+        bool isBelow90 = score < 90;
+        
+        Console.WriteLine($"Is passing (>= {passingGrade})? {isPassing}");
+        Console.WriteLine($"Is perfect (== {perfectScore})? {isPerfect}");
+        Console.WriteLine($"Is NOT perfect (!= {perfectScore})? {isNotPerfect}");
+        Console.WriteLine($"Is below 90 (< 90)? {isBelow90}");
+    }
+}`}
+  instructions="Run the code to see how each comparison operator evaluates to true or false. Try changing the score to see how the results change!" 
+/>
+
+---
+
+## 🔍 Storing Booleans in Variables
+
+You can store comparison results in `bool` variables and use them later. This makes your code more readable:
+
+```csharp
+int temperature = 95;
+int MAX_SAFE_TEMP = 100;
+int MIN_SAFE_TEMP = 32;
+
+// Store conditions in named booleans
+bool isTooHot = temperature > MAX_SAFE_TEMP;
+bool isTooFreezing = temperature < MIN_SAFE_TEMP;
+bool isInSafeRange = temperature >= MIN_SAFE_TEMP && temperature <= MAX_SAFE_TEMP;
+
+Console.WriteLine($"Temperature: {temperature}°F");
+Console.WriteLine($"Too hot? {isTooHot}");
+Console.WriteLine($"Freezing? {isTooFreezing}");
+Console.WriteLine($"Safe range? {isInSafeRange}");
+```
+
+<div class="pro-tip">
+  <h4>💡 Pro Tip: Name Your Booleans Well</h4>
+  <p>Boolean variables should read like questions: <code>isActive</code>, <code>hasPermission</code>, <code>canProceed</code>. If you see <code>bool x = true;</code> in production code, that's a code smell.</p>
+</div>
+
+---
+
+## 🔬 Try It: String Comparisons
+
+Comparisons work with strings too, but be careful — string comparison is **case-sensitive** by default:
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={380}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        string password = "OpenSesame";
+        string attempt = "opensesame";
+        
+        // Case-sensitive comparison (default)
+        bool exactMatch = password == attempt;
+        Console.WriteLine($"Exact match: {exactMatch}");  // false!
+        
+        // Case-insensitive comparison
+        bool caseInsensitive = password.ToLower() == attempt.ToLower();
+        Console.WriteLine($"Case-insensitive match: {caseInsensitive}");  // true
+        
+        // String equality is about content, not identity
+        string a = "Hello";
+        string b = "Hello";
+        Console.WriteLine($"a == b: {a == b}");  // true (same content)
+        
+        // Not equal
+        Console.WriteLine($"a != b: {a != b}");  // false
+    }
+}`}
+  instructions="Notice how 'OpenSesame' and 'opensesame' are NOT equal with ==. Use .ToLower() to compare case-insensitively!" 
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-06-6-1-checkpoint"
+  title="🔍 Section 6.1 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What is the result of the expression: 10 >= 10?",
+      options: ["true", "false", "10", "Compiler error"],
+      correctAnswer: "true",
+      explanation: "The >= operator checks 'greater than OR equal to.' Since 10 is equal to 10, the result is true."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Which symbol is the comparison operator (checks equality)?",
+      options: ["=", "==", "!=", ":="],
+      correctAnswer: "==",
+      explanation: "== is the equality comparison operator. A single = is assignment (stores a value). != checks for inequality."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Now that you understand boolean expressions, let's use them to <strong>control the flow</strong> of your program!</p>
+  <a href="/week-06/6-2-binary-branch/" class="vscode-button">Continue to 6.2: The Binary Branch →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #c4b5fd;
+    margin-top: 0;
+  }
+  
+  .metaphor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .metaphor-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .metaphor-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .metaphor-text strong {
+    color: #e2e8f0;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .metaphor-text p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .concept-highlight {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  
+  body[data-theme="light"] .concept-highlight h3 { color: #5b21b6 !important; }
+  body[data-theme="light"] .metaphor-text strong { color: #1e293b !important; }
+  body[data-theme="light"] .metaphor-text p { color: #475569 !important; }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

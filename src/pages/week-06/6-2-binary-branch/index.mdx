@@ -1,0 +1,294 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 6.2 • The Binary Branch"
+description: "Controlling program flow with if/else — the fork in the road"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 6.2: The Binary Branch (if/else)
+
+<div class="section-header">
+  <div class="section-badge">🔀 The Logic Diverter</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Logic Diverter: Choosing a Path</h2>
+      <p>
+        Imagine a mechanical rail switch at a train junction. A data packet arrives, the switch evaluates a condition, and the packet is diverted down <strong>Path A</strong> or <strong>Path B</strong>. There is no third option. The condition is either true or false, and the program follows exactly one path. This is the <code>if/else</code> statement — the most fundamental decision structure in all of programming.
+      </p>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 The if Statement
+
+The `if` statement executes a block of code **only when the condition is true**:
+
+```csharp
+if (condition) {
+    // This code runs ONLY if condition is true
+}
+```
+
+<div class="architect-rule">
+
+#### 🏗️ Architect's Rule: K&R Brace Style
+
+In this course, we use **K&R style** (also called "Egyptian braces") — the opening brace goes on the **same line** as the statement. This is the industry standard for many teams and keeps code compact.
+
+```csharp
+// ✅ K&R Style (our standard)
+if (score >= 70) {
+    Console.WriteLine("Passing!");
+}
+
+// ❌ Allman Style (NOT our standard)
+if (score >= 70)
+{
+    Console.WriteLine("Passing!");
+}
+```
+
+</div>
+
+---
+
+## 🔀 The if/else Fork
+
+When you need your program to do **one thing or another**, use `if/else`:
+
+```csharp
+int score = 85;
+
+if (score >= 70) {
+    Console.WriteLine("You passed! ✅");
+} else {
+    Console.WriteLine("Keep practicing. ❌");
+}
+```
+
+Think of it as a **fork in the road**: the program MUST take one path or the other. It can never take both.
+
+```
+         ┌──────────────┐
+         │ score >= 70?  │
+         └──────┬───────┘
+          YES ↙     ↘ NO
+    ┌──────────┐   ┌──────────┐
+    │ "Passed!" │   │ "Keep    │
+    │           │   │ trying!" │
+    └──────────┘   └──────────┘
+          ↘          ↙
+       ┌────────────────┐
+       │  Continue...   │
+       └────────────────┘
+```
+
+---
+
+## 🔬 Try It: The Fork in the Road
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={400}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter your age: ");
+        string ageText = Console.ReadLine();
+        int age = int.Parse(ageText);
+        
+        if (age >= 18) {
+            Console.WriteLine("ACCESS GRANTED: You are an adult.");
+            Console.WriteLine("You can vote, sign contracts, and serve.");
+        } else {
+            Console.WriteLine("ACCESS RESTRICTED: You are a minor.");
+            int yearsLeft = 18 - age;
+            Console.WriteLine($"You must wait {yearsLeft} more year(s).");
+        }
+        
+        Console.WriteLine("\\nProgram complete.");
+    }
+}`}
+  instructions="Enter different ages to see how the program chooses different paths. Notice how code AFTER the if/else always runs." 
+  testInputs="21"
+/>
+
+---
+
+## 🎯 The Code Block: Braces Matter
+
+Everything between `{` and `}` is a **code block**. Only the code inside the matching block executes:
+
+```csharp
+if (temperature > 100) {
+    // ALL of these lines run together (or none of them)
+    Console.WriteLine("WARNING: Overheating!");
+    Console.WriteLine("Shutting down systems...");
+    Console.WriteLine("Emergency cooling activated.");
+}
+// This line ALWAYS runs, regardless of temperature
+Console.WriteLine("System check complete.");
+```
+
+<div class="architect-rule">
+
+#### ⚠️ Common Bug: Missing Braces
+
+Without braces, only the **first line** after `if` is conditional. The rest always runs. **Always use braces**, even for single-line blocks.
+
+```csharp
+// ❌ DANGEROUS — only the first line is conditional!
+if (isAdmin)
+    Console.WriteLine("Welcome, Admin.");
+    Console.WriteLine("Loading admin panel...");  // ALWAYS runs!
+
+// ✅ SAFE — both lines are inside the block
+if (isAdmin) {
+    Console.WriteLine("Welcome, Admin.");
+    Console.WriteLine("Loading admin panel...");
+}
+```
+
+</div>
+
+---
+
+## 🔬 Try It: Nested Code Blocks
+
+Variables declared inside an `if` block only exist within that block (**scope**):
+
+<TryItNowRunner 
+  starterId="week-06-lesson-1" 
+  height={400}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int number = int.Parse(Console.ReadLine());
+        
+        if (number > 0) {
+            string status = "positive";
+            Console.WriteLine($"{number} is {status}.");
+            Console.WriteLine($"Double: {number * 2}");
+        } else {
+            string status = "zero or negative";
+            Console.WriteLine($"{number} is {status}.");
+            Console.WriteLine($"Absolute value: {Math.Abs(number)}");
+        }
+        
+        // 'status' doesn't exist here — it was declared inside the blocks
+        Console.WriteLine("Analysis complete.");
+    }
+}`}
+  instructions="Try entering positive numbers, zero, and negative numbers. Each path has its own 'status' variable that only exists within its block." 
+  testInputs="-5"
+/>
+
+---
+
+## 🔍 Checking Multiple Things in Sequence
+
+You can have multiple independent `if` statements. Each one is checked separately:
+
+```csharp
+int score = 85;
+
+// These are INDEPENDENT checks — each runs on its own
+if (score >= 70) {
+    Console.WriteLine("✅ Passing grade");
+}
+
+if (score >= 90) {
+    Console.WriteLine("🌟 Honor roll!");
+}
+
+if (score == 100) {
+    Console.WriteLine("🏆 Perfect score!");
+}
+```
+
+With a score of 85, only the first message prints. With 95, the first two print. With 100, all three print. Each `if` is a separate decision.
+
+---
+
+<Checkpoint
+  checkpointId="week-06-6-2-checkpoint"
+  title="🔍 Section 6.2 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What happens if you write an if statement WITHOUT braces and put two lines after it?",
+      options: ["Both lines are conditional", "Only the first line is conditional — the second always runs", "Neither line runs", "The compiler throws an error"],
+      correctAnswer: "Only the first line is conditional — the second always runs",
+      explanation: "Without braces, only the FIRST line after if is conditional. The second line always executes regardless of the condition. Always use braces to avoid this bug!"
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "In an if/else block, how many paths will the program take?",
+      options: ["Both paths always execute", "Neither path — it skips to the next line", "Exactly one path — either if or else, never both", "It depends on the data type"],
+      correctAnswer: "Exactly one path — either if or else, never both",
+      explanation: "An if/else is a binary fork — the program MUST take exactly one path. If the condition is true, it takes the if path. If false, it takes the else path. Never both, never neither."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next: Learn to combine multiple conditions with <strong>logical operators</strong>!</p>
+  <a href="/week-06/6-3-logical-operators/" class="vscode-button">Continue to 6.3: Logical Combinators →</a>
+</div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

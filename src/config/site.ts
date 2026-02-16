@@ -78,11 +78,13 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '06', title: 'Week 06: Decision Structures (if/else)', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-06/' },
-      { title: '6.1 Lesson 1', href: '/week-06/lesson-1/' },
-      { title: '6.2 Lesson 2', href: '/week-06/lesson-2/' },
+      { title: '6.1 The Boolean Gate', href: '/week-06/6-1-boolean-gate/' },
+      { title: '6.2 The Binary Branch', href: '/week-06/6-2-binary-branch/' },
+      { title: '6.3 Logical Combinators', href: '/week-06/6-3-logical-operators/' },
+      { title: '6.4 The Multi-Branch', href: '/week-06/6-4-multi-branch/' },
       { title: 'Lab (Graded)', href: '/week-06/lab/' },
       { title: 'Technical Reflection (Graded)', href: '/week-06/homework/' },
-      { title: 'Extra Practice', href: '/week-06/extra-practice/' }
+      { title: 'Weekly Assessment (Graded)', href: '/week-06/weekly-assessment/' }
     ] },
   { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-07/' },

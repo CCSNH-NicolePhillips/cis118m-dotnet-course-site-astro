@@ -1,0 +1,393 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 06 • Decision Structures (if/else)"
+description: "Your code gains intelligence — conditional logic and branching"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 06: Decision Structures (if/else)
+
+<DueDateBanner week={6} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>⚡ The Logic Gateway</h2>
+  <p>
+    Until now, your programs have been <strong>linear</strong>—every line executes in order, every time. This week, your code gains <strong>intelligence</strong>. We move beyond sequential execution to <strong>Conditional Logic</strong>, allowing our systems to evaluate state and choose the correct path of execution.
+  </p>
+  <p>
+    Think of it as installing a <strong>decision engine</strong> into your programs. Based on input, data, or system state, your code will now <em>choose</em> which instructions to execute. This is the foundation of every interactive application ever built.
+  </p>
+</div>
+
+<div class="instructor-note">
+  <p><strong>🌍 Instructor Note:</strong> I am currently traveling with limited connectivity (Feb 23 – Mar 01). For immediate technical support, please use the <strong>AI Architect Tutor</strong> on the platform — it has full knowledge of this week's content and can help debug your code. I will be checking in periodically to review your labs and reflections.</p>
+</div>
+
+---
+
+## 🗺️ Week 06 Learning Path
+
+<div class="section-cards">
+  <a href="/week-06/6-1-boolean-gate/" class="section-card boolean">
+    <div class="card-icon">🔘</div>
+    <div class="card-content">
+      <h3>6.1 The Boolean Gate</h3>
+      <p class="metaphor">The Binary Switch</p>
+      <p>bool type, comparison operators (==, !=, &lt;, &gt;, &lt;=, &gt;=)</p>
+    </div>
+  </a>
+  
+  <a href="/week-06/6-2-binary-branch/" class="section-card branch">
+    <div class="card-icon">🔀</div>
+    <div class="card-content">
+      <h3>6.2 The Binary Branch</h3>
+      <p class="metaphor">The Logic Diverter</p>
+      <p>if/else flow of control — the fork in the road</p>
+    </div>
+  </a>
+  
+  <a href="/week-06/6-3-logical-operators/" class="section-card logic">
+    <div class="card-icon">⚡</div>
+    <div class="card-content">
+      <h3>6.3 Logical Combinators</h3>
+      <p class="metaphor">The Circuit Filter</p>
+      <p>AND (&&), OR (||), NOT (!) — combining conditions</p>
+    </div>
+  </a>
+  
+  <a href="/week-06/6-4-multi-branch/" class="section-card multi">
+    <div class="card-icon">🗼</div>
+    <div class="card-content">
+      <h3>6.4 The Multi-Branch</h3>
+      <p class="metaphor">The Control Tower</p>
+      <p>else if chains — managing complex system states</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Metaphor</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>6.1</strong></td>
+        <td><a href="/week-06/6-1-boolean-gate/">The Boolean Gate</a></td>
+        <td>🔘 The Binary Switch</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>6.2</strong></td>
+        <td><a href="/week-06/6-2-binary-branch/">The Binary Branch</a></td>
+        <td>🔀 The Logic Diverter</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>6.3</strong></td>
+        <td><a href="/week-06/6-3-logical-operators/">Logical Combinators</a></td>
+        <td>⚡ The Circuit Filter</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>6.4</strong></td>
+        <td><a href="/week-06/6-4-multi-branch/">The Multi-Branch</a></td>
+        <td>🗼 The Control Tower</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-06/lab/">The Security Gatekeeper</a></td>
+        <td>Access Control System</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-06/homework/">Decision Reflection</a></td>
+        <td>Written Analysis</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td><strong>Quiz</strong></td>
+        <td><a href="/week-06/weekly-assessment/">Weekly Assessment</a></td>
+        <td>Checkpoint</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🧠 The Decision Engine
+
+Every `if` statement is a **gate** — it evaluates a condition and opens or closes the path:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  DECISION ENGINE                        │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│   Input: score = 85                                     │
+│                                                         │
+│          ┌──────────────┐                               │
+│          │ score >= 90?  │                               │
+│          └──────┬───────┘                               │
+│           NO ↙     ↘ YES                                │
+│          ┌──────────────┐                               │
+│          │ score >= 80?  │     → "Grade: A"             │
+│          └──────┬───────┘                               │
+│           NO ↙     ↘ YES                                │
+│                        → "Grade: B" ✓                   │
+│          → "Grade: C or below"                          │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+The computer evaluates each condition **top to bottom** and takes the **first path that evaluates to true**.
+
+---
+
+## 🔧 The Decision Toolkit
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🔘 bool</h5>
+    <p>The binary type — can only be <code>true</code> or <code>false</code>.</p>
+    <code>bool isActive = true;</code>
+  </div>
+  <div class="component-card">
+    <h5>⚖️ Comparison Operators</h5>
+    <p>Compare values to produce a boolean result.</p>
+    <code>==  !=  &lt;  &gt;  &lt;=  &gt;=</code>
+  </div>
+  <div class="component-card">
+    <h5>🔀 if / else</h5>
+    <p>Execute code only when a condition is true (or false).</p>
+    <code>if (score &gt;= 70) &#123; ... &#125;</code>
+  </div>
+  <div class="component-card">
+    <h5>⚡ Logical Operators</h5>
+    <p>Combine multiple conditions into one expression.</p>
+    <code>&amp;&amp; (AND)  || (OR)  ! (NOT)</code>
+  </div>
+</div>
+
+---
+
+## 📋 Week 06 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>🔬 Lab 06:</strong> The Security Gatekeeper</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Homework 06:</strong> Decision Reflection</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 06:</strong> Decision Structures</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks:</strong> Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>💬 Participation:</strong> Class engagement</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-06/6-1-boolean-gate/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 6.1 →
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  
+  .section-card.boolean {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    border-color: #8b5cf6;
+  }
+  
+  .section-card.branch {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border-color: #06b6d4;
+  }
+  
+  .section-card.logic {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    border-color: #10b981;
+  }
+  
+  .section-card.multi {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    border-color: #f59e0b;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .card-content h3 {
+    color: white;
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .card-content .metaphor {
+    color: #fcd34d;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .card-content p:last-child {
+    color: #d1d5db;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .mission-brief {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid #3b82f6;
+    margin: 2rem 0;
+  }
+  
+  .mission-brief h2 {
+    color: #93c5fd;
+    margin-top: 0;
+  }
+  
+  .mission-brief p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+
+  .instructor-note {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+    border-left: 5px solid #0ea5e9;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .instructor-note p {
+    margin: 0;
+    color: #e2e8f0;
+    line-height: 1.6;
+  }
+
+  body[data-theme="light"] .section-card.boolean {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  
+  body[data-theme="light"] .section-card.branch {
+    background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%) !important;
+    border-color: #06b6d4 !important;
+  }
+  
+  body[data-theme="light"] .section-card.logic {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border-color: #10b981 !important;
+  }
+  
+  body[data-theme="light"] .section-card.multi {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-color: #f59e0b !important;
+  }
+  
+  body[data-theme="light"] .card-content h3 {
+    color: #1e293b !important;
+  }
+  
+  body[data-theme="light"] .card-content .metaphor {
+    color: #92400e !important;
+  }
+  
+  body[data-theme="light"] .card-content p:last-child {
+    color: #475569 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border-left-color: #3b82f6 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief h2 {
+    color: #1e40af !important;
+  }
+  
+  body[data-theme="light"] .mission-brief p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .instructor-note {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%) !important;
+  }
+
+  body[data-theme="light"] .instructor-note p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .component-card h5 {
+    color: #1e40af !important;
+  }
+
+  body[data-theme="light"] .component-card p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card code {
+    color: #0a7c62 !important;
+    background: rgba(78, 201, 176, 0.15) !important;
+  }
+`}</style>
