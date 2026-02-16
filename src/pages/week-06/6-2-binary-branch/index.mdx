@@ -24,6 +24,9 @@ import TryItNowRunner from '../../../components/TryItNowRunner.astro';
         Imagine a mechanical rail switch at a train junction. A data packet arrives, the switch evaluates a condition, and the packet is diverted down <strong>Path A</strong> or <strong>Path B</strong>. There is no third option. The condition is either true or false, and the program follows exactly one path. This is the <code>if/else</code> statement — the most fundamental decision structure in all of programming.
       </p>
     </div>
+    <div class="header-image">
+      <img src="/media/week%206/6.2/binaryBranch.jpeg" alt="Binary branch concept — choosing between two paths" />
+    </div>
   </div>
 </div>
 
@@ -78,20 +81,7 @@ if (score >= 70) {
 
 Think of it as a **fork in the road**: the program MUST take one path or the other. It can never take both.
 
-```
-         ┌──────────────┐
-         │ score >= 70?  │
-         └──────┬───────┘
-          YES ↙     ↘ NO
-    ┌──────────┐   ┌──────────┐
-    │ "Passed!" │   │ "Keep    │
-    │           │   │ trying!" │
-    └──────────┘   └──────────┘
-          ↘          ↙
-       ┌────────────────┐
-       │  Continue...   │
-       └────────────────┘
-```
+<img src="/media/week%206/6.2/logicDiverter.jpeg" alt="If/else fork diagram — program takes one path or the other" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 
