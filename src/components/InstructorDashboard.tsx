@@ -1523,7 +1523,7 @@ const InstructorDashboard: React.FC = () => {
                             title={isQuizUnlocked ? `Quiz unlocked for late submission` : undefined}
                           >
                             {isQuizUnlocked && <span style={{ fontSize: '0.65rem', marginRight: '2px' }}>🔓</span>}
-                            {progress?.penaltyPreWaived && !progress?.penaltyWaived && <span style={{ fontSize: '0.65rem', marginRight: '2px' }} title="Late penalty pre-waived">🛡️</span>}
+                            {progress?.penaltyPreWaived && !progress?.penaltyWaived && <span style={{ fontSize: '0.65rem', marginRight: '2px' }} title="Late penalty waived">🛡️</span>}
                             {cellContent}
                             {progress?.penaltyWaived && <span style={{ fontSize: '0.65rem', marginLeft: '2px' }} title="Late penalty waived">✓</span>}
                           </span>
@@ -1783,7 +1783,7 @@ const InstructorDashboard: React.FC = () => {
                 );
               })()}
 
-              {/* Pre-Waive Late Penalty Toggle (for students who haven't submitted yet, or to prevent future penalties) */}
+              {/* Waive Late Penalty Toggle */}
               {(() => {
                 // Only show for lab and homework assignments
                 if (!modalData.assignmentId?.includes('lab') && !modalData.assignmentId?.includes('homework')) return null;
@@ -1793,36 +1793,36 @@ const InstructorDashboard: React.FC = () => {
                 const alreadySubmitted = progress?.status === 'completed';
                 const alreadyWaived = progress?.penaltyWaived === true;
                 
-                // If already submitted AND waived via the post-submission toggle, don't show pre-waive
+                // If already submitted AND waived via the post-submission toggle, don't show this
                 if (alreadySubmitted && alreadyWaived && !isPreWaived) return null;
                 
                 return (
                   <div style={{
-                    marginBottom: '10px',
-                    padding: '10px 14px',
+                    marginBottom: '20px',
+                    padding: '12px 16px',
                     borderRadius: '8px',
-                    background: isPreWaived ? 'rgba(78, 201, 176, 0.08)' : '#2d2d2d',
-                    border: `1px solid ${isPreWaived ? '#4ec9b0' : '#444'}`,
+                    background: '#2d2d2d',
+                    border: '1px solid #444',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     flexWrap: 'wrap',
-                    gap: '8px'
+                    gap: '10px'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '1rem' }}>🛡️</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '1.1rem' }}>{isPreWaived ? '🛡️' : '⏰'}</span>
                       <div>
-                        <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.85rem' }}>Pre-Waive Late Penalty</div>
-                        <div style={{ color: '#888', fontSize: '0.75rem' }}>
+                        <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.9rem' }}>Late Penalty</div>
+                        <div style={{ color: '#888', fontSize: '0.8rem' }}>
                           {isPreWaived 
-                            ? <>Waived{progress?.preWaivedBy && ` by ${progress.preWaivedBy}`} — no penalty on submit</>
-                            : 'Waive penalty before student submits (late starters)'}
+                            ? <>Waived{progress?.preWaivedBy && ` by ${progress.preWaivedBy}`} — student won't be penalized for late submission</>
+                            : 'Student will lose points if submitted late'}
                         </div>
                       </div>
                     </div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                      <span style={{ color: isPreWaived ? '#4ec9b0' : '#888', fontSize: '0.8rem', fontWeight: 'bold' }}>
-                        {isPreWaived ? 'Pre-Waived' : 'Normal'}
+                      <span style={{ color: isPreWaived ? '#4ec9b0' : '#888', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        {isPreWaived ? 'Waived' : 'Active'}
                       </span>
                       <div
                         onClick={async () => {
@@ -1838,12 +1838,12 @@ const InstructorDashboard: React.FC = () => {
                                 userId: modalData.student.sub,
                                 pageId: modalData.assignmentId,
                                 action,
-                                reason: isPreWaived ? 'Instructor removed pre-waive' : 'Instructor pre-waived late penalty (late start)'
+                                reason: isPreWaived ? 'Instructor restored late penalty' : 'Instructor waived late penalty'
                               })
                             });
                             if (res.ok) {
                               const result = await res.json();
-                              setActionFeedback({ type: 'success', message: result.message || (isPreWaived ? 'Pre-waive removed' : 'Late penalty pre-waived') });
+                              setActionFeedback({ type: 'success', message: result.message || (isPreWaived ? 'Late penalty restored' : 'Late penalty waived') });
                               // Optimistically update modal
                               const updatedStudent = { ...modalData.student };
                               if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
