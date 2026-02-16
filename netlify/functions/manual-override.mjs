@@ -396,6 +396,91 @@ export default async function handler(request, context) {
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
       
+    } else if (action === 'REAPPLY_PENALTY') {
+      // Re-apply late penalty that was previously waived
+      
+      const originalScore = await redis.hget(`user:progress:data:${userId}`, `${pageId}:originalScore`);
+      const daysLate = parseInt(await redis.hget(`user:progress:data:${userId}`, `${pageId}:daysLate`) || '0');
+      const penaltyWaived = await redis.hget(`user:progress:data:${userId}`, `${pageId}:penaltyWaived`);
+      
+      if (!penaltyWaived || penaltyWaived !== 'true') {
+        return new Response(
+          JSON.stringify({ 
+            ok: true, 
+            action: 'REAPPLY_PENALTY',
+            message: 'No waived penalty to re-apply',
+            noChange: true
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      if (!originalScore || daysLate <= 0) {
+        return new Response(
+          JSON.stringify({ 
+            ok: true, 
+            action: 'REAPPLY_PENALTY',
+            message: 'No late penalty data found',
+            noChange: true
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Recalculate penalty: 10 points per day, max 3 days = 0
+      const origScore = parseInt(originalScore);
+      let penalizedScore;
+      let penaltyPercent;
+      if (daysLate > 3) {
+        penalizedScore = 0;
+        penaltyPercent = 100;
+      } else {
+        const penaltyPoints = daysLate * 10;
+        penalizedScore = Math.max(0, origScore - penaltyPoints);
+        penaltyPercent = daysLate * 10;
+      }
+      
+      await redis.hset(`user:progress:data:${userId}`, {
+        [`${pageId}:score`]: penalizedScore,
+        [`${pageId}:penaltyWaived`]: 'false',
+        [`${pageId}:penaltyPercent`]: penaltyPercent,
+      });
+      // Remove waiver fields
+      await redis.hdel(`user:progress:data:${userId}`, 
+        `${pageId}:waivedBy`, 
+        `${pageId}:waivedAt`, 
+        `${pageId}:waivedReason`
+      );
+      
+      // Audit log
+      const auditEntry = JSON.stringify({
+        action: "REAPPLY_PENALTY",
+        userId,
+        pageId,
+        originalScore: origScore,
+        penalizedScore,
+        daysLate,
+        reason: reason || "Instructor re-applied late penalty",
+        instructor: instructor.email || instructor.sub,
+        timestamp: overrideTime
+      });
+      
+      await redis.lpush("cis118m:audit:overrides", auditEntry);
+      await redis.ltrim("cis118m:audit:overrides", 0, 999);
+
+      console.log(`[REAPPLY_PENALTY] ${instructor.email} re-applied penalty for ${userId}/${pageId}: ${origScore} -> ${penalizedScore}`);
+
+      return new Response(
+        JSON.stringify({ 
+          ok: true, 
+          action: 'REAPPLY_PENALTY',
+          originalScore: origScore,
+          penalizedScore,
+          message: `Late penalty re-applied. Score changed from ${origScore}% to ${penalizedScore}%.`
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+      
     } else {
       // UPDATE_GRADE action
       if (typeof newScore !== "number" || newScore < 0 || newScore > 100) {

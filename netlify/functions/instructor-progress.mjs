@@ -154,6 +154,31 @@ export default async function handler(request, context) {
           mergedProgress[`${assignmentId}:savedCode`] = code;
         }
         
+        // Check quiz unlock status for all quiz assignments
+        const quizUnlocks = {};
+        for (let w = 1; w <= 16; w++) {
+          const wStr = w.toString().padStart(2, '0');
+          const quizIds = w === 1 
+            ? [`week-${wStr}-quiz`, `week-${wStr}-required-quiz`] 
+            : [`week-${wStr}-quiz`];
+          for (const qId of quizIds) {
+            const unlockKey = `quiz:unlock:${sub}:${qId}`;
+            const unlockData = await redis.get(unlockKey);
+            if (unlockData) {
+              try {
+                const parsed = typeof unlockData === 'string' ? JSON.parse(unlockData) : unlockData;
+                quizUnlocks[qId] = parsed;
+                mergedProgress[`${qId}:quizUnlocked`] = 'true';
+                mergedProgress[`${qId}:unlockedBy`] = parsed.unlockedBy || '';
+                mergedProgress[`${qId}:unlockedAt`] = parsed.unlockedAt || '';
+              } catch {
+                quizUnlocks[qId] = { unlockedAt: 'unknown' };
+                mergedProgress[`${qId}:quizUnlocked`] = 'true';
+              }
+            }
+          }
+        }
+        
         // Calculate last active from timestamps
         let lastActive = null;
         const timestamps = [];
