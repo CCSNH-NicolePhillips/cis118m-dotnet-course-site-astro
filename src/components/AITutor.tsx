@@ -244,10 +244,11 @@ const AITutor: React.FC = () => {
       {/* Floating Button */}
       <button
         className="ai-tutor-button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => { if (isExpanded && isOpen) setIsExpanded(false); setIsOpen(!isOpen); }}
         style={{
           position: 'fixed',
-          bottom: '20px',
+          bottom: isOpen && isExpanded ? 'auto' : '20px',
+          top: isOpen && isExpanded ? '28px' : 'auto',
           right: '20px',
           width: '60px',
           height: '60px',
