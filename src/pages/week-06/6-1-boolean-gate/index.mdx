@@ -6,6 +6,8 @@ description: "Understanding bool as the binary foundation and comparison operato
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 6.1: The Boolean Gate
 
@@ -60,6 +62,44 @@ bool isMaintenance = false;
 ```
 
 That's it. No maybes, no "kind of." A boolean is an absolute binary state — the digital equivalent of flipping a switch.
+
+### 🖱️ Hover to Explore: A Boolean Declaration
+
+<AnnotatedCode
+  title="Anatomy of a Boolean Declaration"
+  tokens={[
+    { text: "bool", type: "keyword", tooltip: "The boolean data type — can only hold 'true' or 'false'. Named after George Boole." },
+    { text: " " },
+    { text: "isOnline", type: "parameter", tooltip: "A descriptive variable name. Boolean names should read like yes/no questions: 'is...', 'has...', 'can...'." },
+    { text: " = ", type: "punctuation" },
+    { text: "true", type: "keyword", tooltip: "One of only two possible values. 'true' means the condition is met, the switch is ON." },
+    { text: ";", type: "punctuation", tooltip: "Every statement in C# ends with a semicolon." }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="Where do booleans show up in real life?"
+  tabs={[
+    {
+      id: "everyday",
+      label: "Everyday Examples",
+      content: "<h3>Booleans Are Everywhere</h3><p>You use boolean logic constantly without realizing it:</p><ul><li><strong>Door lock:</strong> locked (true) or unlocked (false)</li><li><strong>Wi-Fi:</strong> connected (true) or disconnected (false)</li><li><strong>Phone alarm:</strong> enabled (true) or disabled (false)</li><li><strong>Dark mode:</strong> on (true) or off (false)</li></ul>",
+      keyPoints: ["Every toggle, checkbox, and switch in software is a boolean!"]
+    },
+    {
+      id: "software",
+      label: "In Software Systems",
+      content: "<h3>Booleans in Production Code</h3><p>Real applications depend on booleans for critical decisions:</p><ul><li><code>isAuthenticated</code> — Can the user access this page?</li><li><code>hasPermission</code> — Can they delete this record?</li><li><code>isMaintenanceMode</code> — Should we show a maintenance page?</li><li><code>canRetry</code> — Has the max number of attempts been reached?</li></ul>",
+      keyPoints: ["Name booleans as yes/no questions for readable code"]
+    },
+    {
+      id: "hardware",
+      label: "At the Hardware Level",
+      content: "<h3>All Data Is Boolean</h3><p>At the deepest level, your CPU processes everything as sequences of <strong>bits</strong> — each one is a boolean (0 or 1). A byte is 8 booleans. An integer is 32 booleans. Your screen displays millions of boolean color channels.</p><p>George Boole's 1854 insight — that logic could be expressed as math — literally powers every computer on Earth.</p>",
+      keyPoints: ["Every pixel, every calculation, every instruction is booleans all the way down"]
+    }
+  ]}
+/>
 
 <div class="concept-highlight">
   <h3>🔘 The Binary Switch Metaphor</h3>
@@ -188,6 +228,48 @@ class Program
 }`}
   instructions="Run the code to see how each comparison operator evaluates to true or false. Try changing the score to see how the results change!" 
 />
+
+<div class="experiment-box">
+  <h4>🧪 Experiment</h4>
+  <ol>
+    <li>Run the code — observe each boolean result</li>
+    <li>Change <code>score</code> to <code>100</code> — what happens to <code>isPerfect</code>?</li>
+    <li>Change <code>score</code> to <code>65</code> — now what's <code>isPassing</code>?</li>
+    <li>Try <code>score = passingGrade</code> (exactly 70) — is that passing?</li>
+  </ol>
+</div>
+
+---
+
+## 🧩 Predict the Output Challenge
+
+<div class="predict-challenge">
+  <h4>🔮 What will this print?</h4>
+  <div class="predict-code">
+
+```csharp
+int apples = 5;
+int oranges = 5;
+int bananas = 3;
+
+Console.WriteLine(apples == oranges);
+Console.WriteLine(apples != bananas);
+Console.WriteLine(bananas > apples);
+Console.WriteLine(apples >= 5);
+```
+
+  </div>
+  <details class="predict-reveal">
+    <summary>Click to reveal the answer</summary>
+    <div class="predict-answer">
+      <p><code>True</code> — 5 equals 5</p>
+      <p><code>True</code> — 5 is not equal to 3</p>
+      <p><code>False</code> — 3 is NOT greater than 5</p>
+      <p><code>True</code> — 5 is greater than or equal to 5</p>
+      <p><strong>Key insight:</strong> <code>&gt;=</code> returns true when the values are EQUAL, not just when the left side is bigger!</p>
+    </div>
+  </details>
+</div>
 
 ---
 
@@ -393,4 +475,50 @@ class Program
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: linear-gradient(135deg, #1e2a1e 0%, #1a2a1a 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .experiment-box h4 { margin-top: 0; color: #4ec9b0; }
+  .experiment-box ol { margin-bottom: 0; }
+  body[data-theme="light"] .experiment-box { background: linear-gradient(135deg, #e8f8e8 0%, #e0f0e0 100%) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .experiment-box li, body[data-theme="light"] .experiment-box ol { color: #333 !important; }
+  body[data-theme="light"] .experiment-box code { background: rgba(78, 201, 176, 0.2) !important; color: #0a7c62 !important; }
+
+  .predict-challenge {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #f0ad4e;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .predict-challenge h4 { color: #f0ad4e; margin-top: 0; }
+  .predict-code { margin: 16px 0; }
+  .predict-reveal { margin-top: 16px; }
+  .predict-reveal summary {
+    cursor: pointer;
+    color: #4ec9b0;
+    font-weight: 600;
+    padding: 12px 16px;
+    background: rgba(78, 201, 176, 0.1);
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+  .predict-reveal summary:hover { background: rgba(78, 201, 176, 0.2); }
+  .predict-answer {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(78, 201, 176, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+  }
+  .predict-answer p { margin: 6px 0; }
+  body[data-theme="light"] .predict-challenge { background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%) !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(78, 201, 176, 0.05) !important; }
+  body[data-theme="light"] .predict-answer p { color: #333 !important; }
 `}</style>

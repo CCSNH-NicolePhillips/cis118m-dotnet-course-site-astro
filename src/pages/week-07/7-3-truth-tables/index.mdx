@@ -6,6 +6,8 @@ description: "Visualizing all possible boolean combinations with truth tables"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 7.3: Truth Table Matrices
 
@@ -117,6 +119,30 @@ Only **one row** is `false` — the case where both A and B are false.
   <p><strong>AND</strong> is pessimistic — looks for a reason to say NO. <strong>OR</strong> is optimistic — looks for a reason to say YES.</p>
 </div>
 
+<DeepDiveTabs
+  title="🔌 Truth Tables Beyond Software"
+  tabs={[
+    {
+      id: "hardware",
+      label: "🔧 Digital Circuits",
+      content: "Every processor chip in your computer is built from AND, OR, and NOT gates — physical transistor circuits that implement truth tables in silicon. A modern CPU has billions of these gates. The same truth tables you draw on paper are literally etched into hardware!",
+      keyPoints: ["CPUs are made of logic gates", "AND/OR/NOT gates are physical circuits", "Truth tables describe hardware behavior"]
+    },
+    {
+      id: "database",
+      label: "🗄️ Database Queries",
+      content: "SQL WHERE clauses use the same boolean logic: SELECT * FROM users WHERE isAdmin = true OR (isActive = true AND role = 'editor'). The database builds a truth table internally to evaluate which rows match. Understanding truth tables makes you better at writing queries!",
+      keyPoints: ["SQL WHERE uses AND, OR, NOT", "Database engines evaluate like truth tables", "Complex queries = complex boolean expressions"]
+    },
+    {
+      id: "testing",
+      label: "🧪 Test Coverage",
+      content: "QA engineers use truth tables to ensure every combination of inputs is tested. If you have 3 boolean conditions, you need 8 test cases (2³). Missing even one row means untested logic paths — and that's where bugs hide in production!",
+      keyPoints: ["2^n combinations for n variables", "Each row = one test case", "Missing rows = missing test coverage"]
+    }
+  ]}
+/>
+
 ---
 
 ## 📐 Building Complex Truth Tables
@@ -198,6 +224,21 @@ class Program
 }`}
   instructions="Run to see the complete truth table for AND, OR, and NOT. Count the true/false rows — AND has only 1 true, OR has only 1 false!" 
 />
+
+<div class="experiment-box">
+
+#### 🧪 Experiment: Extend the Truth Table
+
+Try modifying the code above to explore more operators:
+
+1. **Add XOR column**: XOR is true when inputs are **different**. Add `(a != b)` as a new column. How many true rows does it have?
+2. **Add NAND column**: NAND is the opposite of AND. Add `!(a && b)` as a column. Compare it to the AND column!
+3. **Add NOR column**: NOR is the opposite of OR. Add `!(a || b)`. Only ONE row is true — which one?
+4. **Count the true rows**: AND=1, OR=3, XOR=2, NAND=3, NOR=1. Notice the symmetry!
+
+💡 **Discovery**: NAND and NOR are the "inverse" of AND and OR. Every logic gate has a mirror image that flips all outputs!
+
+</div>
 
 ---
 
@@ -309,6 +350,48 @@ This means `!A || B && C` is evaluated as `(!A) || (B && C)` — NOT binds first
 
 ---
 
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output: De Morgan's Law
+
+These two expressions look different. Do they produce the same result?
+
+```csharp
+bool a = true, b = false;
+
+// Expression 1
+bool result1 = !(a && b);
+
+// Expression 2
+bool result2 = !a || !b;
+
+Console.WriteLine($"!(a && b)  = {result1}");
+Console.WriteLine($"!a || !b   = {result2}");
+Console.WriteLine($"Same? {result1 == result2}");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output:**
+```
+!(a && b)  = True
+!a || !b   = True
+Same? True
+```
+
+This is **De Morgan's Law** — one of the most important rules in boolean algebra:
+- `!(A && B)` is the same as `!A || !B`
+- `!(A || B)` is the same as `!A && !B`
+
+🔑 **Key takeaway**: When you "distribute" NOT across AND, it flips to OR (and vice versa). This is how you simplify complex boolean expressions!
+</div>
+</details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-07-7-3-checkpoint"
   title="🔍 Section 7.3 Knowledge Check"
@@ -409,4 +492,37 @@ This means `!A || B && C` is evaluated as `(!A) || (B && C)` — NOT binds first
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

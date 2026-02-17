@@ -6,6 +6,8 @@ description: "Combining conditions with AND (&&), OR (||), and NOT (!) operators
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 6.3: Logical Combinators (&&, ||, !)
 
@@ -81,6 +83,42 @@ if (age >= 18 && hasID) {
 | `false` | `false` | `false` ❌ |
 
 **Key insight**: AND is strict — if **either** side is false, the whole thing is false.
+
+<AnnotatedCode
+  title="🔬 Anatomy of an AND Expression"
+  tokens={[
+    { text: "if", type: "keyword", tooltip: "The decision keyword — starts the conditional check" },
+    { text: " (", type: "punctuation" },
+    { text: "age >= 18", type: "parameter", tooltip: "Left condition — must be true for AND to pass" },
+    { text: " && ", type: "keyword", tooltip: "AND operator — requires BOTH sides to be true" },
+    { text: "hasID", type: "parameter", tooltip: "Right condition — also must be true for AND to pass" },
+    { text: ")", type: "punctuation" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🔌 AND in the Real World"
+  tabs={[
+    {
+      id: "series",
+      label: "⚡ Series Circuit",
+      content: "In electronics, AND is like two switches wired in SERIES. Current only flows when Switch A AND Switch B are both ON. If either switch is OFF, the circuit is broken and nothing happens. This is why AND is the 'strict' operator.",
+      keyPoints: ["Both switches must be ON", "One OFF switch breaks the entire circuit", "This models real-world safety interlocks"]
+    },
+    {
+      id: "security",
+      label: "🔐 Security Gate",
+      content: "Think of a secure building: you need a valid badge AND a correct PIN to enter. Having just a badge isn't enough. Having just the PIN isn't enough. Both checks must pass — that's AND logic in action.",
+      keyPoints: ["Badge alone = denied", "PIN alone = denied", "Badge AND PIN = access granted"]
+    },
+    {
+      id: "cooking",
+      label: "🍳 Recipe Check",
+      content: "Before baking: Is the oven preheated? AND do I have all ingredients? If the oven isn't ready, you can't bake even with perfect ingredients. If you're missing flour, a hot oven doesn't help. Both conditions matter!",
+      keyPoints: ["Oven ready + ingredients ready = start baking", "Missing either one = wait", "Order doesn't matter, but both are required"]
+    }
+  ]}
+/>
 
 ---
 
@@ -170,6 +208,21 @@ class Program
   instructions="Try different temperatures and rain values. See how AND, OR, and NOT combine to create complex decisions." 
 />
 
+<div class="experiment-box">
+
+#### 🧪 Experiment: Break the Weather Logic
+
+Try these inputs in the code editor above and predict what happens before you run them:
+
+1. **Temperature: 72, Raining: false** → What messages print? (Hint: check ALL the conditions, not just the first)
+2. **Temperature: 105, Raining: false** → Which warning triggers?
+3. **Temperature: 35, Raining: true** → Cold rain! What does the combined logic say?
+4. **Temperature: -5, Raining: true** → Multiple conditions can be true at once! What happens?
+
+💡 **Discovery**: Notice how a single input can match multiple `if` blocks (the extreme warning AND the cold rain message). Separate `if` statements are checked independently!
+
+</div>
+
 ---
 
 ## 🧠 Short-Circuit Evaluation
@@ -249,6 +302,87 @@ if (a || (b && c))
 
 ---
 
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output
+
+Study this code carefully, then predict what it prints **before** clicking reveal:
+
+```csharp
+bool hasFuel = true;
+bool engineOn = false;
+bool lightsOn = true;
+
+Console.WriteLine(hasFuel && engineOn);    // Line 1
+Console.WriteLine(hasFuel || engineOn);    // Line 2
+Console.WriteLine(!lightsOn);              // Line 3
+Console.WriteLine(hasFuel && !engineOn);   // Line 4
+Console.WriteLine(!hasFuel || lightsOn);   // Line 5
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+- **Line 1**: `False` — AND needs both true, but `engineOn` is false
+- **Line 2**: `True` — OR needs at least one true, `hasFuel` is true  
+- **Line 3**: `False` — NOT flips `true` to `false`
+- **Line 4**: `True` — `hasFuel` is true AND `!engineOn` flips false→true. Both true!
+- **Line 5**: `True` — `!hasFuel` is false, BUT `lightsOn` is true. OR only needs one!
+
+🔑 **Key takeaway**: Line 4 is the tricky one! `!engineOn` reverses `false` to `true`, so the AND sees `true && true`.
+</div>
+</details>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### 🎯 Short-Circuit Showdown
+
+This one tests whether you understand short-circuit evaluation:
+
+```csharp
+int x = 0;
+bool a = false;
+bool b = true;
+
+// Does the right side of && get evaluated?
+if (a && (++x > 0)) {
+    Console.WriteLine("Inside if");
+}
+Console.WriteLine($"x after AND: {x}");
+
+// Does the right side of || get evaluated?
+if (b || (++x > 0)) {
+    Console.WriteLine("Inside if");
+}
+Console.WriteLine($"x after OR: {x}");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output:**
+```
+x after AND: 0
+Inside if
+x after OR: 0
+```
+
+- **AND short-circuits**: `a` is false, so `++x` is **never executed**. `x` stays 0.
+- **OR short-circuits**: `b` is true, so `++x` is **never executed**. `x` stays 0.
+- In both cases, C# skips the right side because the left side already determines the answer!
+
+🔑 **Key takeaway**: Short-circuit evaluation doesn't just skip the check — it skips **all side effects** on the right side too, including `++x`.
+</div>
+</details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-06-6-3-checkpoint"
   title="🔍 Section 6.3 Knowledge Check"
@@ -324,4 +458,37 @@ if (a || (b && c))
   body[data-theme="light"] .architect-rule p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

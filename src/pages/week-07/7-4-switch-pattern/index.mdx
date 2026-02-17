@@ -6,6 +6,8 @@ description: "Clean multi-way branching when comparing a value against discrete 
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 7.4: The Switch Pattern
 
@@ -73,6 +75,24 @@ switch (variable) {
 
 Each `case` checks for an exact match. When a match is found, that block runs. The `break` statement exits the switch — **without it, C# will give a compile error** (unlike some other languages that "fall through").
 
+<AnnotatedCode
+  title="🔬 Anatomy of a Switch Statement"
+  tokens={[
+    { text: "switch", type: "keyword", tooltip: "The switch keyword — evaluates the expression ONCE, then routes to matching case" },
+    { text: " (", type: "punctuation" },
+    { text: "command", type: "parameter", tooltip: "The expression being tested — compared against each case label" },
+    { text: ") { ", type: "punctuation" },
+    { text: "case", type: "keyword", tooltip: "A case label — checks for an exact match" },
+    { text: " \"deploy\":", type: "type", tooltip: "The value to match — must be a compile-time constant" },
+    { text: " ... ", type: "plain" },
+    { text: "break;", type: "keyword", tooltip: "REQUIRED in C# — exits the switch. Without it, compiler error!" },
+    { text: " " },
+    { text: "default:", type: "keyword", tooltip: "Catches everything that didn't match any case — the safety net" },
+    { text: " ... ", type: "plain" },
+    { text: "}", type: "punctuation" }
+  ]}
+/>
+
 ---
 
 ## 🔀 Switch vs. else-if: A Side-by-Side
@@ -117,6 +137,30 @@ Notice how `case "Saturday":` and `case "Sunday":` **stack** — when two cases 
   <h4>💡 When to Use Switch vs. else-if</h4>
   <p><strong>Switch</strong>: Comparing one variable against specific discrete values (strings, ints, enums). <strong>else-if</strong>: Complex conditions with ranges (<code>&gt; 90</code>), multiple variables, or boolean logic (<code>&&</code>, <code>||</code>).</p>
 </div>
+
+<DeepDiveTabs
+  title="🔀 Switch in Different Contexts"
+  tabs={[
+    {
+      id: "menus",
+      label: "📋 Menu Systems",
+      content: "Switch is perfect for menu-driven apps. User enters 1, 2, 3, or 4 — each option routes to different functionality. This is cleaner than a chain of if (choice == 1) else if (choice == 2)... because the intent is immediately clear.",
+      keyPoints: ["Each menu option = one case", "default handles invalid choices", "Clean, readable routing"]
+    },
+    {
+      id: "state",
+      label: "🔄 State Machines",
+      content: "Games and UI frameworks use switch to handle state transitions: if state is 'menu', show menu. If state is 'playing', update game. If state is 'paused', show pause screen. The switch becomes the central router for the entire application flow.",
+      keyPoints: ["Each state = one case", "Transitions happen by changing the variable", "Central control point for app behavior"]
+    },
+    {
+      id: "api",
+      label: "🌐 API Routing",
+      content: "Web frameworks route HTTP requests using switch-like logic: GET → fetch data. POST → create data. PUT → update data. DELETE → remove data. Each HTTP method maps to a specific handler — a perfect fit for switch.",
+      keyPoints: ["Each HTTP method = one case", "default returns 405 Method Not Allowed", "Clean separation of concerns"]
+    }
+  ]}
+/>
 
 ---
 
@@ -168,6 +212,21 @@ class Program
 }`}
   instructions="Enter a severity level 1-4 to see the classification. Try entering 5 or 0 to see the default case handle invalid input!" 
 />
+
+<div class="experiment-box">
+
+#### 🧪 Experiment: Expand the Switch
+
+Try these modifications in the severity classifier above:
+
+1. **Add case 5**: Create a new severity level called "APOCALYPTIC" with its own emoji and action
+2. **Stack cases 3 and 4**: Make them share the same output by removing the break between them. What error do you get?
+3. **Remove the default case**: What happens when you enter 99? (Hint: nothing prints — silent failure!)
+4. **Try negative numbers**: Does `case -1:` work? Add it and find out!
+
+💡 **Discovery**: C# enforces `break` in every case. You CAN stack empty cases (like Saturday/Sunday), but you CANNOT fall through from a case with code!
+
+</div>
 
 ---
 
@@ -278,6 +337,52 @@ Even if you think you've covered every possible value, add a `default` case. New
 
 ---
 
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output: Switch Traps
+
+What does this code print?
+
+```csharp
+string color = "RED";
+
+switch (color) {
+    case "red":
+        Console.WriteLine("Lowercase red");
+        break;
+    case "RED":
+        Console.WriteLine("Uppercase RED");
+        break;
+    case "Red":
+        Console.WriteLine("Mixed case Red");
+        break;
+    default:
+        Console.WriteLine("Unknown color");
+        break;
+}
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `Uppercase RED`
+
+Switch compares with **exact equality**, including case sensitivity! `"RED"` does NOT match `"red"` or `"Red"`. This is why production code often uses `.ToLower()` before switching:
+
+```csharp
+switch (color.ToLower()) {
+    case "red": ...  // Now matches "RED", "Red", "rEd", etc.
+}
+```
+
+🔑 **Key takeaway**: String switch is case-sensitive! Always normalize case before comparing if user input is involved.
+</div>
+</details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-07-7-4-checkpoint"
   title="🔍 Section 7.4 Knowledge Check"
@@ -378,4 +483,37 @@ Even if you think you've covered every possible value, add a `default` case. New
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

@@ -6,6 +6,8 @@ description: "Deep-dive into nested if statements, guard clauses, and keeping co
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 7.1: Nested Labyrinths
 
@@ -50,6 +52,46 @@ if (isLoggedIn) {
 ```
 
 The inner `if (hasAdminRole)` is only reachable when `isLoggedIn` is `true`. This creates a **decision tree** — a branching hierarchy of conditions.
+
+<AnnotatedCode
+  title="🔬 Anatomy of a Nested Decision"
+  tokens={[
+    { text: "if", type: "keyword", tooltip: "Outer gate — this must be true before ANY inner code runs" },
+    { text: " (", type: "punctuation" },
+    { text: "isLoggedIn", type: "parameter", tooltip: "First checkpoint — all inner code depends on this being true" },
+    { text: ") {", type: "punctuation" },
+    { text: " " },
+    { text: "if", type: "keyword", tooltip: "Inner gate — only evaluated when the outer condition passed" },
+    { text: " (", type: "punctuation" },
+    { text: "hasAdminRole", type: "parameter", tooltip: "Second checkpoint — only checked because isLoggedIn was true" },
+    { text: ") { ... }", type: "punctuation" },
+    { text: " }", type: "punctuation", tooltip: "Closing brace of the outer if block" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🏗️ Nesting in the Real World"
+  tabs={[
+    {
+      id: "airport",
+      label: "✈️ Airport Security",
+      content: "At an airport, you first pass through a ticket check (outer gate). Only THEN do you reach the metal detector (inner gate). And only after passing THAT do you reach the boarding gate (deepest gate). Each layer depends on passing the previous one.",
+      keyPoints: ["Ticket → Security → Boarding", "Can't reach gate without passing security", "Each checkpoint depends on the previous"]
+    },
+    {
+      id: "software",
+      label: "💻 API Design",
+      content: "In APIs, you first check if the request has a valid auth token. Then you check if the user has the right permissions. Then you check if the requested resource exists. Each layer is a nested decision that only matters if the previous check passed.",
+      keyPoints: ["Authentication → Authorization → Resource check", "No point checking permissions without valid auth", "Each check narrows the valid path"]
+    },
+    {
+      id: "game",
+      label: "🎮 Game Logic",
+      content: "In a game: Is the player alive? → Is the player near a shop? → Does the player have enough gold? You wouldn't check gold if the player is dead! Each nested condition builds on the previous reality check.",
+      keyPoints: ["Alive → Near shop → Has gold", "Dead players don't need shop logic", "Each layer adds context-dependent logic"]
+    }
+  ]}
+/>
 
 ---
 
@@ -122,6 +164,21 @@ class Program
 }`}
   instructions="Run the code, then try changing isLoggedIn to false, or role to 'admin' or 'viewer'. Watch how the nested decision tree routes to different outcomes!" 
 />
+
+<div class="experiment-box">
+
+#### 🧪 Experiment: Trace the Decision Tree
+
+Modify the variables in the code above and predict the path BEFORE running:
+
+1. **Set `isLoggedIn = false`** — Does the inner role check run? Why not?
+2. **Set `role = "admin"` and `hasPermissionX = false`** — How deep does the nesting go?
+3. **Set `role = "viewer"`** — Which path do you land on?
+4. **Set `isLoggedIn = true`, `role = "admin"`, `hasPermissionX = true`** — What's the deepest path?
+
+💡 **Discovery**: Each nesting level acts like a checkpoint. You can NEVER reach an inner block without passing ALL the outer gates first!
+
+</div>
 
 ---
 
@@ -294,6 +351,54 @@ class Program
 
 ---
 
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output: Nested vs. Flat
+
+What does each approach print? Are the results identical?
+
+```csharp
+// Approach 1: Nested
+bool a = true, b = false, c = true;
+
+if (a) {
+    if (b) {
+        Console.WriteLine("Path 1");
+    } else {
+        if (c) {
+            Console.WriteLine("Path 2");
+        } else {
+            Console.WriteLine("Path 3");
+        }
+    }
+} else {
+    Console.WriteLine("Path 4");
+}
+
+// Approach 2: Flat guard clauses
+if (!a) { Console.WriteLine("Path 4"); }
+else if (b) { Console.WriteLine("Path 1"); }
+else if (c) { Console.WriteLine("Path 2"); }
+else { Console.WriteLine("Path 3"); }
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Both print**: `Path 2`
+
+- `a` is true → enter outer block
+- `b` is false → go to else
+- `c` is true → print "Path 2"
+
+🔑 **Key takeaway**: The nested version and the flat guard-clause version produce **identical results**, but the flat version is much easier to read and trace. When you can flatten, always flatten!
+</div>
+</details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-07-7-1-checkpoint"
   title="🔍 Section 7.1 Knowledge Check"
@@ -430,4 +535,37 @@ class Program
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

@@ -6,6 +6,7 @@ description: "Controlling program flow with if/else — the fork in the road"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 
 # Section 6.2: The Binary Branch (if/else)
 
@@ -59,6 +60,20 @@ if (condition) {
     // This code runs ONLY if condition is true
 }
 ```
+
+### 🖱️ Hover to Explore: The if Statement
+
+<AnnotatedCode
+  title="Anatomy of an if Statement"
+  tokens={[
+    { text: "if", type: "keyword", tooltip: "The 'if' keyword starts a conditional check. The program decides whether to run the next block." },
+    { text: " (", type: "punctuation" },
+    { text: "score >= 70", type: "parameter", tooltip: "The condition — must evaluate to true or false. This checks: 'is score greater than or equal to 70?'" },
+    { text: ") {", type: "punctuation", tooltip: "Opening brace on same line = K&R style. Everything between { and } is the conditional block." },
+    { text: " ... ", type: "plain" },
+    { text: "}", type: "punctuation", tooltip: "Closing brace ends the conditional block. Code after this runs regardless of the condition." }
+  ]}
+/>
 
 <div class="architect-rule">
 
@@ -133,6 +148,54 @@ class Program
 }`}
   instructions="Enter different ages to see how the program chooses different paths. Notice how code AFTER the if/else always runs." 
 />
+
+<div class="experiment-box">
+  <h4>🧪 Experiment</h4>
+  <ol>
+    <li>Enter age <code>25</code> — you get the "adult" path</li>
+    <li>Enter age <code>14</code> — you get the "minor" path with years countdown</li>
+    <li>Enter age <code>18</code> — which path? The condition is <code>&gt;=</code> so 18 counts!</li>
+    <li>Notice <code>"Program complete."</code> ALWAYS prints — it's outside the if/else</li>
+  </ol>
+</div>
+
+---
+
+## 🔄 Execution Flow: How if/else Works
+
+<div class="flow-diagram">
+  <div class="flow-step">
+    <span class="flow-number">1</span>
+    <div class="flow-content">
+      <strong>Evaluate Condition</strong>
+      <p>The expression inside <code>()</code> is checked</p>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step">
+    <span class="flow-number">2</span>
+    <div class="flow-content">
+      <strong>Condition is true?</strong>
+      <p>Execute the <code>if</code> block, skip the <code>else</code> block</p>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step">
+    <span class="flow-number">3</span>
+    <div class="flow-content">
+      <strong>Condition is false?</strong>
+      <p>Skip the <code>if</code> block, execute the <code>else</code> block</p>
+    </div>
+  </div>
+  <div class="flow-arrow">↓</div>
+  <div class="flow-step">
+    <span class="flow-number">4</span>
+    <div class="flow-content">
+      <strong>Continue</strong>
+      <p>Code after the if/else runs no matter what</p>
+    </div>
+  </div>
+</div>
 
 ---
 
@@ -235,6 +298,37 @@ With a score of 85, only the first message prints. With 95, the first two print.
 
 ---
 
+## 🧩 Predict the Output Challenge
+
+<div class="predict-challenge">
+  <h4>🔮 What prints when x = 7?</h4>
+  <div class="predict-code">
+
+```csharp
+int x = 7;
+
+if (x > 10) {
+    Console.WriteLine("Big");
+} else {
+    Console.WriteLine("Small");
+}
+
+Console.WriteLine("Done");
+```
+
+  </div>
+  <details class="predict-reveal">
+    <summary>Click to reveal the answer</summary>
+    <div class="predict-answer">
+      <p><code>Small</code></p>
+      <p><code>Done</code></p>
+      <p><strong>Why?</strong> 7 is NOT greater than 10, so the <code>else</code> block runs. Then <code>"Done"</code> prints because it's <em>outside</em> the if/else — it always runs.</p>
+    </div>
+  </details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-06-6-2-checkpoint"
   title="🔍 Section 6.2 Knowledge Check"
@@ -299,4 +393,88 @@ With a score of 85, only the first message prints. With 95, the first two print.
   body[data-theme="light"] .architect-rule p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: linear-gradient(135deg, #1e2a1e 0%, #1a2a1a 100%);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+  .experiment-box h4 { margin-top: 0; color: #4ec9b0; }
+  .experiment-box ol { margin-bottom: 0; }
+  body[data-theme="light"] .experiment-box { background: linear-gradient(135deg, #e8f8e8 0%, #e0f0e0 100%) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .experiment-box li { color: #333 !important; }
+  body[data-theme="light"] .experiment-box code { background: rgba(78, 201, 176, 0.2) !important; color: #0a7c62 !important; }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    padding: 24px;
+    background: #0d1117;
+    border-radius: 12px;
+  }
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #1e1e2e;
+    padding: 16px 24px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .flow-number {
+    background: #4ec9b0;
+    color: #000;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .flow-content strong { display: block; color: #e0e0e0; }
+  .flow-content p { margin: 4px 0 0; color: #888; font-size: 0.9rem; }
+  .flow-arrow { color: #4ec9b0; font-size: 1.5rem; }
+  body[data-theme="light"] .flow-diagram { background: #f5f5f5 !important; border: 1px solid #ddd; }
+  body[data-theme="light"] .flow-step { background: #fff !important; border: 1px solid #ddd; }
+  body[data-theme="light"] .flow-content strong { color: #333 !important; }
+  body[data-theme="light"] .flow-content p { color: #555 !important; }
+
+  .predict-challenge {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #f0ad4e;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .predict-challenge h4 { color: #f0ad4e; margin-top: 0; }
+  .predict-code { margin: 16px 0; }
+  .predict-reveal { margin-top: 16px; }
+  .predict-reveal summary {
+    cursor: pointer;
+    color: #4ec9b0;
+    font-weight: 600;
+    padding: 12px 16px;
+    background: rgba(78, 201, 176, 0.1);
+    border-radius: 8px;
+  }
+  .predict-reveal summary:hover { background: rgba(78, 201, 176, 0.2); }
+  .predict-answer {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(78, 201, 176, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #4ec9b0;
+  }
+  .predict-answer p { margin: 6px 0; }
+  body[data-theme="light"] .predict-challenge { background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%) !important; }
+  body[data-theme="light"] .predict-answer p { color: #333 !important; }
 `}</style>

@@ -6,6 +6,8 @@ description: "How C# optimizes && and || by stopping evaluation early"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 7.2: Short-Circuit Logic
 
@@ -122,6 +124,42 @@ if (name != null && name.Length > 0) {
 
 Because `&&` short-circuits, `name.Length` is **never evaluated** when `name` is `null`. Without short-circuiting, this would throw a `NullReferenceException`.
 
+<AnnotatedCode
+  title="🔬 Anatomy of a Short-Circuit Null Check"
+  tokens={[
+    { text: "if", type: "keyword" },
+    { text: " (", type: "punctuation" },
+    { text: "name != null", type: "parameter", tooltip: "GUARD — evaluated first. If false, everything after && is SKIPPED" },
+    { text: " && ", type: "keyword", tooltip: "Short-circuit AND — if left is false, right is NEVER touched" },
+    { text: "name.Length > 0", type: "parameter", tooltip: "GUARDED — only safe to evaluate because we already confirmed name isn't null" },
+    { text: ")", type: "punctuation" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="⚡ Short-Circuit: Why It Matters"
+  tabs={[
+    {
+      id: "safety",
+      label: "🛡️ Crash Prevention",
+      content: "The #1 use of short-circuiting is preventing null reference crashes. If you check 'obj != null && obj.Property' — the property access only happens when the object exists. Without short-circuiting, your production app crashes at 3 AM.",
+      keyPoints: ["Null check ALWAYS goes on the left", "Property access goes on the right", "Prevents NullReferenceException crashes"]
+    },
+    {
+      id: "performance",
+      label: "🏎️ Performance Boost",
+      content: "Short-circuiting is also an optimization. If checking the right side involves a database query or network call, but the left side is almost always false — you save enormous amounts of time by skipping expensive operations.",
+      keyPoints: ["Cheap checks on the left", "Expensive checks on the right", "80% of work can be skipped if ordered well"]
+    },
+    {
+      id: "trap",
+      label: "⚠️ The Side-Effect Trap",
+      content: "Short-circuiting can cause bugs if the right side has side effects! If you write 'condition && counter++' — the counter only increments when condition is true. If you ALWAYS need the counter to increment, don't rely on short-circuit evaluation.",
+      keyPoints: ["Side effects may be skipped", "Never put critical operations in short-circuit paths", "Use separate statements for operations that must always run"]
+    }
+  ]}
+/>
+
 <div class="architect-rule">
 
 #### ⚠️ Architect's Rule: Always Put the Safety Check First
@@ -200,6 +238,21 @@ class Program
   instructions="Run to see which side of && and || actually gets evaluated. Notice how CheckRight is NOT called when short-circuiting kicks in!" 
 />
 
+<div class="experiment-box">
+
+#### 🧪 Experiment: Prove Short-Circuiting
+
+Modify the code above to confirm short-circuiting behavior:
+
+1. **Change `leftFalse` to `true`** — Does `CheckRight` get called now for Demo 1? Why?
+2. **Change `leftTrue` to `false`** — Does `CheckRight` get called now for Demo 2? Why?
+3. **Try `true && CheckRight("test") && false`** — How many times is `CheckRight` called?
+4. **Try `false || false || CheckRight("test")`** — When does `CheckRight` finally get called?
+
+💡 **Discovery**: Short-circuiting only skips when the answer is **already determined**. Once the outcome is uncertain, evaluation continues!
+
+</div>
+
 ---
 
 ## 🔬 Try It: The Null Check Pattern
@@ -259,6 +312,43 @@ Each `&&` acts as a gate. If any check fails, everything to the right is skipped
 <div class="pro-tip">
   <h4>💡 Pro Tip: Order Matters for Performance Too</h4>
   <p>Put the <strong>cheapest</strong> or <strong>most likely to fail</strong> check on the left. If 80% of users fail the first check, the expensive second check runs only 20% of the time.</p>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output: Short-Circuit Side Effects
+
+How many times does `Count()` get called? What is the final value of `calls`?
+
+```csharp
+int calls = 0;
+
+bool Count() { calls++; return true; }
+
+bool result1 = true || Count();    // Line 1
+bool result2 = false && Count();   // Line 2
+bool result3 = false || Count();   // Line 3
+bool result4 = true && Count();    // Line 4
+
+Console.WriteLine($"Count was called {calls} times");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `Count was called 2 times`
+
+- **Line 1**: `true || Count()` → left is true, OR short-circuits → `Count()` **skipped** → calls = 0
+- **Line 2**: `false && Count()` → left is false, AND short-circuits → `Count()` **skipped** → calls = 0
+- **Line 3**: `false || Count()` → left is false, OR needs to check right → `Count()` **called** → calls = 1
+- **Line 4**: `true && Count()` → left is true, AND needs to check right → `Count()` **called** → calls = 2
+
+🔑 **Key takeaway**: Lines 1 & 2 short-circuit (answer already known). Lines 3 & 4 must evaluate the right side because the answer depends on it!
+</div>
+</details>
 </div>
 
 ---
@@ -363,4 +453,37 @@ Each `&&` acts as a gate. If any check fails, everything to the right is skipped
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

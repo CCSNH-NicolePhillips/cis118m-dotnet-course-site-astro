@@ -6,6 +6,8 @@ description: "Managing complex decisions with else if chains"
 
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 6.4: The Multi-Branch (else if)
 
@@ -84,6 +86,50 @@ if (score >= 90) {
 
 **Critical rule**: The chain stops at the **first true condition**. Order matters!
 
+<AnnotatedCode
+  title="🔬 Anatomy of an else if Chain"
+  tokens={[
+    { text: "if", type: "keyword", tooltip: "First check — most restrictive condition tested first" },
+    { text: " (", type: "punctuation" },
+    { text: "score >= 90", type: "parameter", tooltip: "Most restrictive condition — only scores 90+ pass this gate" },
+    { text: ") { ... }", type: "punctuation" },
+    { text: " " },
+    { text: "else if", type: "keyword", tooltip: "Only checked when ALL previous conditions were false" },
+    { text: " (", type: "punctuation" },
+    { text: "score >= 80", type: "parameter", tooltip: "We already know score < 90, so this catches 80-89" },
+    { text: ") { ... }", type: "punctuation" },
+    { text: " " },
+    { text: "else", type: "keyword", tooltip: "The safety net — catches everything that failed ALL conditions above" },
+    { text: " { ... }", type: "punctuation" }
+  ]}
+/>
+
+<div class="flow-diagram">
+  <h4>🔄 How First-Match-Wins Works</h4>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-number">1</div>
+      <div>Check <code>score &gt;= 90</code> — if true → run block → <strong>STOP</strong></div>
+    </div>
+    <div class="flow-arrow">↓ false</div>
+    <div class="flow-step">
+      <div class="flow-number">2</div>
+      <div>Check <code>score &gt;= 80</code> — if true → run block → <strong>STOP</strong></div>
+    </div>
+    <div class="flow-arrow">↓ false</div>
+    <div class="flow-step">
+      <div class="flow-number">3</div>
+      <div>Check <code>score &gt;= 70</code> — if true → run block → <strong>STOP</strong></div>
+    </div>
+    <div class="flow-arrow">↓ false</div>
+    <div class="flow-step">
+      <div class="flow-number">4</div>
+      <div><code>else</code> block runs — the final safety net catches everything left</div>
+    </div>
+  </div>
+  <p style="margin-top: 1rem; opacity: 0.8; font-style: italic;">💡 Only ONE block ever executes. The chain exits the moment it finds a match.</p>
+</div>
+
 ---
 
 ## ⚠️ Order Matters: A Common Trap
@@ -153,6 +199,45 @@ class Program
     }
 }`}
   instructions="Enter different scores to see the grade calculation. Try 95, 85, 72, 65, and 40. Notice that only ONE grade is ever assigned." 
+/>
+
+<div class="experiment-box">
+
+#### 🧪 Experiment: The Order Trap
+
+Try these modifications in the grade calculator above to see order-of-conditions in action:
+
+1. **Enter 95** — You get an A. Now swap the first condition from `>= 90` to `>= 60`. What grade does 95 get now?
+2. **Enter 80** — You get a B. What if you move the `>= 80` check to be the FIRST condition?
+3. **Enter 59** — You get an F. What if you remove the `else` block entirely? (Hint: the variable won't be assigned!)
+4. **Try boundary values**: 90, 80, 70, 60 — each sits right on the edge. Which block catches them?
+
+💡 **Discovery**: The order of conditions is the difference between correct and completely broken code!
+
+</div>
+
+<DeepDiveTabs
+  title="📊 else if vs. Separate ifs"
+  tabs={[
+    {
+      id: "chain",
+      label: "🔗 else if Chain",
+      content: "An else if chain is EXCLUSIVE — only ONE block runs. Once a condition matches, all remaining conditions are skipped. Use this when your outcomes are mutually exclusive: a score can only be ONE grade letter.",
+      keyPoints: ["First match wins", "All remaining conditions skipped", "Exactly ONE block executes"]
+    },
+    {
+      id: "separate",
+      label: "📋 Separate ifs",
+      content: "Separate if statements are INDEPENDENT — each one is checked regardless of previous results. A temperature of -10 could trigger BOTH a 'freezing warning' AND a 'dangerous cold alert' if they're separate ifs.",
+      keyPoints: ["Every condition is checked", "Multiple blocks can run", "No 'first match wins' behavior"]
+    },
+    {
+      id: "choose",
+      label: "🤔 How to Choose",
+      content: "Ask yourself: 'Can multiple conditions be true at the same time, and should they all execute?' If YES → separate ifs. If only ONE should execute → else if chain. Getting this wrong is a common bug!",
+      keyPoints: ["Mutually exclusive? → else if", "Independent checks? → separate ifs", "Wrong choice = subtle bugs"]
+    }
+  ]}
 />
 
 ---
@@ -255,6 +340,49 @@ class Program
 
 ---
 
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output
+
+What does this code print? Think carefully about which condition matches first:
+
+```csharp
+int temp = 75;
+
+if (temp > 100) {
+    Console.WriteLine("Boiling!");
+} else if (temp > 70) {
+    Console.WriteLine("Warm");
+} else if (temp > 50) {
+    Console.WriteLine("Cool");
+} else {
+    Console.WriteLine("Cold");
+}
+Console.WriteLine("Done checking.");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output:**
+```
+Warm
+Done checking.
+```
+
+- `temp > 100`? 75 > 100 → **false** → skip
+- `temp > 70`? 75 > 70 → **true** → prints "Warm" → **chain exits**
+- `temp > 50`? **NEVER CHECKED** (chain already matched)
+- "Done checking." always prints — it's **outside** the chain
+
+🔑 **Key takeaway**: Even though 75 > 50 is also true, it's never evaluated because the chain already found its match at `temp > 70`.
+</div>
+</details>
+</div>
+
+---
+
 <Checkpoint
   checkpointId="week-06-6-4-checkpoint"
   title="🔍 Section 6.4 Knowledge Check"
@@ -313,4 +441,60 @@ class Program
   body[data-theme="light"] .architect-rule p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .flow-diagram {
+    background: rgba(99, 102, 241, 0.1);
+    border: 2px solid #818cf8;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .flow-diagram h4 { color: #a5b4fc; margin-top: 0; }
+  .flow-steps { display: flex; flex-direction: column; gap: 4px; }
+  .flow-step {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px 14px;
+  }
+  .flow-number {
+    background: #818cf8; color: #1e1b4b; font-weight: 700;
+    border-radius: 50%; width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .flow-arrow { text-align: center; color: #818cf8; font-weight: 700; font-size: 1.1rem; }
+
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+  body[data-theme="light"] .flow-diagram { background: rgba(99, 102, 241, 0.05) !important; }
+  body[data-theme="light"] .flow-diagram h4 { color: #4f46e5 !important; }
+  body[data-theme="light"] .flow-step { background: rgba(0,0,0,0.03) !important; }
 `}</style>
