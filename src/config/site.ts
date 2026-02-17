@@ -88,11 +88,13 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00', pages: [
       { title: '00. Week Overview', href: '/week-07/' },
-      { title: '7.1 Lesson 1', href: '/week-07/lesson-1/' },
-      { title: '7.2 Lesson 2', href: '/week-07/lesson-2/' },
+      { title: '7.1 Nested Labyrinths', href: '/week-07/7-1-nested-logic/' },
+      { title: '7.2 Short-Circuit Logic', href: '/week-07/7-2-short-circuit/' },
+      { title: '7.3 Truth Table Matrices', href: '/week-07/7-3-truth-tables/' },
+      { title: '7.4 The Switch Pattern', href: '/week-07/7-4-switch-pattern/' },
       { title: 'Lab (Graded)', href: '/week-07/lab/' },
       { title: 'Technical Reflection (Graded)', href: '/week-07/homework/' },
-      { title: 'Extra Practice', href: '/week-07/extra-practice/' }
+      { title: 'Weekly Assessment (Graded)', href: '/week-07/weekly-assessment/' }
     ] },
   { slug: '08', title: 'Week 08: While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-15T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-08/' },

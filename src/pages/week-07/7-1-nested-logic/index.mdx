@@ -1,0 +1,433 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 7.1 • Nested Labyrinths"
+description: "Deep-dive into nested if statements, guard clauses, and keeping code flat"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 7.1: Nested Labyrinths
+
+<div class="section-header">
+  <div class="section-badge">🏗️ The Decision Maze</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Decisions Inside Decisions</h2>
+      <p>
+        In Week 6, every decision was a single fork — one condition, two paths. But real systems are <strong>layered</strong>. A security system checks if you're logged in, <em>then</em> checks your permission level, <em>then</em> checks if the resource is available. Each decision depends on the outcome of the previous one. This is <strong>nested logic</strong> — an <code>if</code> inside another <code>if</code>.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-7/7.1/nestedLabyrinth.jpeg" alt="A 3D glass maze representing nested decision structures" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 What Is Nesting?
+
+**Nesting** means placing one `if` block inside another. The inner block only runs if the outer condition is true:
+
+```csharp
+if (isLoggedIn) {
+    // Only check permissions if the user is logged in
+    if (hasAdminRole) {
+        Console.WriteLine("Welcome, Administrator!");
+    } else {
+        Console.WriteLine("Welcome, standard user.");
+    }
+} else {
+    Console.WriteLine("Please log in first.");
+}
+```
+
+The inner `if (hasAdminRole)` is only reachable when `isLoggedIn` is `true`. This creates a **decision tree** — a branching hierarchy of conditions.
+
+---
+
+## 🏗️ When to Nest
+
+Nesting is appropriate when the second decision **only makes sense** if the first condition is true:
+
+```csharp
+// Good nesting: inner check depends on outer
+if (order != null) {
+    if (order.Total > 100) {
+        Console.WriteLine("Free shipping applied!");
+    }
+}
+```
+
+If `order` is `null`, checking `order.Total` would crash your program. The nested structure ensures safety.
+
+<div class="pro-tip">
+  <h4>💡 The Nesting Rule</h4>
+  <p>Nest when the <strong>inner condition cannot be evaluated</strong> unless the outer condition is true. If both conditions are independent, use <code>&&</code> instead.</p>
+</div>
+
+---
+
+## 🔬 Try It: Nested Access Check
+
+Build a system that checks login status first, then permission level:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={480}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Simulate system state
+        bool isLoggedIn = true;
+        string role = "editor";
+        bool hasPermissionX = true;
+        
+        Console.WriteLine("=== NESTED ACCESS CHECK ===");
+        
+        // Outer gate: Are they logged in?
+        if (isLoggedIn) {
+            Console.WriteLine("✅ User is authenticated.");
+            
+            // Inner gate: What's their role?
+            if (role == "admin") {
+                Console.WriteLine("🔑 Admin panel access granted.");
+                
+                // Deepest gate: Specific permission
+                if (hasPermissionX) {
+                    Console.WriteLine("📋 Permission X: ACTIVE");
+                } else {
+                    Console.WriteLine("⚠️ Permission X: DENIED");
+                }
+            } else if (role == "editor") {
+                Console.WriteLine("📝 Editor tools enabled.");
+                Console.WriteLine("🚫 Admin panel: NOT AVAILABLE");
+            } else {
+                Console.WriteLine("👁️ Read-only access.");
+            }
+        } else {
+            Console.WriteLine("🔒 Access denied. Please log in.");
+        }
+    }
+}`}
+  instructions="Run the code, then try changing isLoggedIn to false, or role to 'admin' or 'viewer'. Watch how the nested decision tree routes to different outcomes!" 
+/>
+
+---
+
+## ⚠️ The Nesting Trap
+
+Nesting is powerful but dangerous. More than **2-3 levels deep** creates an unreadable mess called the **"Arrow Anti-Pattern"** or **"Nesting Hell"**:
+
+```csharp
+// ❌ BAD: Arrow anti-pattern — too deeply nested
+if (user != null) {
+    if (user.IsActive) {
+        if (user.HasSubscription) {
+            if (user.Subscription.IsValid) {
+                if (user.Subscription.Tier == "Premium") {
+                    Console.WriteLine("Premium content unlocked!");
+                }
+            }
+        }
+    }
+}
+```
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Maximum 2 Levels of Nesting
+
+If your code has more than 2 levels of nesting, it's time to refactor. Deep nesting is a code smell — it indicates your logic needs restructuring.
+
+</div>
+
+---
+
+## 🛡️ The Guard Clause Pattern
+
+**Guard clauses** invert the condition and exit early, eliminating nesting entirely. Instead of asking "if everything is okay, proceed," you ask "if anything is wrong, stop":
+
+```csharp
+// ✅ GOOD: Guard clauses — flat and readable
+if (user == null) {
+    Console.WriteLine("No user found.");
+    return;
+}
+
+if (!user.IsActive) {
+    Console.WriteLine("Account is deactivated.");
+    return;
+}
+
+if (!user.HasSubscription || !user.Subscription.IsValid) {
+    Console.WriteLine("No valid subscription.");
+    return;
+}
+
+if (user.Subscription.Tier != "Premium") {
+    Console.WriteLine("Upgrade to Premium for this content.");
+    return;
+}
+
+// If we get here, everything is valid!
+Console.WriteLine("Premium content unlocked!");
+```
+
+Notice how the "happy path" (the successful outcome) is at the **bottom** of the method, and all the rejection cases are handled first. This is much easier to read and maintain.
+
+<div class="concept-highlight">
+  <h3>🛡️ Guard Clause vs. Nested Logic</h3>
+  <div class="metaphor-grid">
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🏗️</div>
+      <div class="metaphor-text">
+        <strong>Nested: Check then proceed</strong>
+        <p>"If you pass gate 1, enter. If you pass gate 2, enter further..."</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🛡️</div>
+      <div class="metaphor-text">
+        <strong>Guard: Reject then proceed</strong>
+        <p>"If you fail any check, leave immediately. Survivors proceed."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🔬 Try It: Nesting vs. Guard Clauses
+
+Compare both approaches side by side:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={520}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Test data
+        string username = "architect";
+        bool isActive = true;
+        int clearanceLevel = 3;
+        
+        Console.WriteLine("=== NESTED APPROACH ===");
+        // Nested version (harder to read)
+        if (username != "") {
+            if (isActive) {
+                if (clearanceLevel >= 3) {
+                    Console.WriteLine("✅ Full access granted!");
+                } else {
+                    Console.WriteLine("⚠️ Insufficient clearance.");
+                }
+            } else {
+                Console.WriteLine("🚫 Account deactivated.");
+            }
+        } else {
+            Console.WriteLine("🚫 No username provided.");
+        }
+        
+        Console.WriteLine();
+        Console.WriteLine("=== GUARD CLAUSE APPROACH ===");
+        // Guard clause version (flat and clean)
+        if (username == "") {
+            Console.WriteLine("🚫 No username provided.");
+        } else if (!isActive) {
+            Console.WriteLine("🚫 Account deactivated.");
+        } else if (clearanceLevel < 3) {
+            Console.WriteLine("⚠️ Insufficient clearance.");
+        } else {
+            Console.WriteLine("✅ Full access granted!");
+        }
+    }
+}`}
+  instructions="Both blocks produce the same result, but the guard clause version is flat and easy to read. Try changing the variables to test different paths!" 
+/>
+
+---
+
+## 📐 When to Use Which Pattern
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Pattern</th>
+        <th>Use When</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nested if</strong></td>
+        <td>Inner condition <em>depends</em> on outer being true</td>
+        <td>Check if object exists before accessing its properties</td>
+      </tr>
+      <tr>
+        <td><strong>Guard Clause</strong></td>
+        <td>You can <em>reject invalid cases early</em> and keep the happy path clean</td>
+        <td>Validate inputs at the top of a method, then proceed</td>
+      </tr>
+      <tr>
+        <td><strong>Flat &&</strong></td>
+        <td>Both conditions are <em>independent</em> and simple</td>
+        <td><code>if (age >= 18 && hasID)</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-07-7-1-checkpoint"
+  title="🔍 Section 7.1 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What is the 'Arrow Anti-Pattern' in nested if statements?",
+      options: ["Using too many else clauses", "Nesting so deep the code forms an arrow shape pointing right", "Using && instead of nested ifs", "Writing if statements on one line"],
+      correctAnswer: "Nesting so deep the code forms an arrow shape pointing right",
+      explanation: "The Arrow Anti-Pattern happens when code is nested so deeply that the indentation creates an arrow shape (pointing right). It makes code hard to read and maintain. Guard clauses fix this by exiting early."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What do guard clauses do to improve code readability?",
+      options: ["Add more nesting levels", "Check conditions and return/exit early to keep the happy path flat", "Replace all if statements with switch", "Remove all else blocks"],
+      correctAnswer: "Check conditions and return/exit early to keep the happy path flat",
+      explanation: "Guard clauses invert conditions and exit early (return, break, continue) when something is wrong. This keeps the main logic flat at the bottom instead of deeply nested."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next: learn how C# <strong>optimizes</strong> your boolean expressions for speed and safety!</p>
+  <a href="/week-07/7-2-short-circuit/" class="vscode-button">Continue to 7.2: Short-Circuit Logic →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #c4b5fd;
+    margin-top: 0;
+  }
+  
+  .metaphor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .metaphor-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .metaphor-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .metaphor-text strong {
+    color: #e2e8f0;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .metaphor-text p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .concept-highlight {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  body[data-theme="light"] .concept-highlight h3 { color: #5b21b6 !important; }
+  body[data-theme="light"] .metaphor-text strong { color: #1e293b !important; }
+  body[data-theme="light"] .metaphor-text p { color: #475569 !important; }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

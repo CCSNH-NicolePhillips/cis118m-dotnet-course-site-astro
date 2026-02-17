@@ -111,6 +111,34 @@ export const lessonContexts: Record<string, LessonContext> = {
       Clarity (10pts): Clear, understandable writing
     `
   },
+
+  "week-07-homework": {
+    title: "Week 7: Logic Reflection",
+    taughtConcepts: `
+      - Nested if statements place one if block inside another, creating decision trees
+      - The Arrow Anti-Pattern: too-deep nesting creates unreadable code that points right
+      - Guard clauses invert conditions and exit early (return) to keep code flat
+      - Short-circuit evaluation: && stops at first false, || stops at first true
+      - Null safety: put null check on LEFT side of && so .Length is never checked on null
+      - Truth tables map every combination of inputs to outputs for verification
+      - Operator precedence: ! (highest), then &&, then || (lowest)
+      - Switch statements compare one variable against discrete constant values
+      - Switch requires break in C# (no fall-through allowed)
+      - Use switch for discrete values, else-if for ranges and complex boolean logic
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, answer Advanced Logic in C#:
+      1. What is the "Arrow Anti-Pattern" in nested if statements, and how do guard clauses fix it? Give a brief example of when you'd use each approach.
+      2. Explain short-circuit evaluation with &&. Why is it critical to put a null check on the left side of the expression?
+      3. When should you use a switch statement instead of an else-if chain? What kinds of values work best with switch?
+    `,
+    rubric: `
+      Arrow Anti-Pattern & Guard Clauses (35pts): Student explains deep nesting creates arrow shape / unreadable code. Guard clauses invert and exit early to keep code flat. Gives appropriate use case.
+      Short-circuit evaluation (35pts): Student explains && stops at first false (right side skipped). Null check on left prevents crash because .Length is never evaluated on null. 
+      Switch vs else-if (20pts): Student explains switch for discrete values (ints, strings), else-if for ranges/complex boolean. Mentions break is required, or constants needed.
+      Clarity (10pts): Clear, understandable writing using terms like "guard clause", "short-circuit", "switch"
+    `
+  },
 };
 
 export function getLessonContext(assignmentId: string): LessonContext | null {
@@ -175,11 +203,15 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-06-homework': "Week 6 Homework: Decision Reflection. Students explain: (1) difference between separate if statements vs else if chain, (2) why order of conditions matters in else if, (3) short-circuit evaluation with && and how it prevents NullReferenceException. Reference the Control Tower metaphor from Section 6.4.",
   
   // Week 7
-  'week-07': "Topic: Logical Operators and Switch. Focus: Combining conditions and clean branching.",
-  'week-07-lesson-1': "Topic: Logical Operators. Focus: && (and), || (or), ! (not) for compound conditions.",
-  'week-07-lesson-2': "Topic: Switch Statements. Focus: Clean multi-way branching for discrete values.",
-  'week-07-lab': "Topic: Logic Gates. Mission: Programs with complex conditional logic.",
-  'week-07-homework': "Topic: Reflection. Focus: Understanding truth tables and logical combinations.",
+  'week-07': "Week 7: Logic & Multiple Conditions. Students learn nested if statements (decisions inside decisions), guard clauses to flatten deeply nested code, short-circuit evaluation (&& stops if left is false, || stops if left is true), truth tables to verify boolean logic, and the switch statement for clean multi-way branching with discrete values. Key concepts: Arrow Anti-Pattern (too-deep nesting), guard clauses (exit early), null safety via short-circuit, operator precedence (! then && then ||), switch with break/default. Uses K&R brace style.",
+  'week-07-7-1-nested-logic': "Week 7 Section 7.1: Nested Labyrinths. Focus: Placing if blocks inside other if blocks to create decision trees. When to nest (inner condition depends on outer). The Arrow Anti-Pattern: nesting too deeply creates unreadable code. Guard clauses: invert the condition and exit early (return) to keep the happy path flat. Rule: maximum 2 levels of nesting. Flat && for independent conditions.",
+  'week-07-7-2-short-circuit': "Week 7 Section 7.2: Short-Circuit Logic. Focus: && short-circuits when left side is false (skips right side). || short-circuits when left side is true (skips right side). Critical safety pattern: put null check on LEFT side of && so .Length is never checked on null. Order matters for performance too — put cheapest/most-likely-to-fail check first. Chain multiple && for robust validation.",
+  'week-07-7-3-truth-tables': "Week 7 Section 7.3: Truth Table Matrices. Focus: NOT (!) flips one value. AND (&&) has 1 true row out of 4 (both must be true). OR (||) has 1 false row out of 4 (both must be false). Building complex truth tables with 3 variables (8 rows). Operator precedence: ! highest, then &&, then ||. Always use parentheses for clarity. Verify logic with truth tables BEFORE coding.",
+  'week-07-7-4-switch-pattern': "Week 7 Section 7.4: The Switch Pattern. Focus: switch statement compares ONE variable against discrete values (ints, strings, chars, enums). Each case needs break (C# compiler enforces this — no fall-through). Stack multiple case labels to share a block. Always include default case. Use switch for discrete values, else-if for ranges/complex boolean logic. Case labels must be compile-time constants.",
+  'week-07-lesson-1': "Week 7 Lesson 1: Covers nested if statements, guard clauses, short-circuit evaluation, truth tables, and switch statements. Students practice flattening nested code and using switch for clean routing.",
+  'week-07-lesson-2': "Week 7 Lesson 2: Covers switch statements and truth tables. Students practice switch with discrete values and verify boolean logic with truth tables.",
+  'week-07-lab': "Week 7 Lab: The Adaptive Firewall. Students build a firewall decision engine with 3 inputs: threatLevel (int 1-10), isInternalSource (bool), protocolType (string). Rules: threat > 8 → BLOCKED, SSH + internal → ALLOWED, threat > 4 → 2FA REQUIRED, default → BLOCKED. Must use if/else if/else with && for rules and switch on protocol for protocol details. K&R braces. 100 points.",
+  'week-07-homework': "Week 7 Homework: Logic Reflection. Students explain: (1) Arrow Anti-Pattern and how guard clauses fix it, (2) short-circuit evaluation with && and why null checks go on the left, (3) when to use switch vs else-if. Written reflection referencing sections 7.1-7.4.",
   
   // Week 8
   'week-08': "Topic: While Loops. Focus: Repeating code based on conditions.",

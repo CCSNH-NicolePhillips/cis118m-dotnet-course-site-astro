@@ -1,0 +1,100 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 07 • Logic Reflection"
+description: "Reflect on nested logic, short-circuit evaluation, and the switch statement"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 07: Reflection - (GRADED)
+
+<DueDateBanner week={7} type="Homework" />
+
+## 📝 Homework 07: The Logic Matrix
+
+<p>Now that you've worked with nested <code>if</code> statements, short-circuit evaluation, truth tables, and <code>switch</code> statements, it's time to demonstrate your understanding of <strong>advanced logic patterns</strong>.</p>
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🧠 Advanced Logic Reflection</h5>
+    <p>In 3-5 sentences, answer <strong>Advanced Logic in C#</strong>:</p>
+    <ol>
+      <li>What is the <strong>"Arrow Anti-Pattern"</strong> in nested if statements, and how do <strong>guard clauses</strong> fix it? Give a brief example of when you'd use each approach.</li>
+      <li>Explain <strong>short-circuit evaluation</strong> with <code>&&</code>. Why is it critical to put a <strong>null check on the left side</strong> of the expression?</li>
+      <li>When should you use a <strong>switch</strong> statement instead of an <strong>else-if chain</strong>? What kinds of values work best with switch?</li>
+    </ol>
+    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; font-size: 0.9rem;">
+      <strong>Tip:</strong> Think about the "Guard Clause" pattern from Section 7.1, the "Safety Pattern" from Section 7.2, and the "Router" metaphor from Section 7.4.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-07-homework" />
+
+---
+
+## 📚 Reference Material
+
+If you need to review, revisit these sections:
+- [Section 7.1: Nested Labyrinths](/week-07/7-1-nested-logic/) — Nested if statements and guard clauses
+- [Section 7.2: Short-Circuit Logic](/week-07/7-2-short-circuit/) — && and || evaluation optimization
+- [Section 7.3: Truth Table Matrices](/week-07/7-3-truth-tables/) — Verifying boolean logic with truth tables
+- [Section 7.4: The Switch Pattern](/week-07/7-4-switch-pattern/) — Clean multi-way branching
+
+---
+
+<div class="next-section">
+  <p>After submitting your homework, complete the <strong>Weekly Assessment</strong> to finish Week 7!</p>
+  <a href="/week-07/weekly-assessment/" class="vscode-button">Take Weekly Assessment →</a>
+</div>
+
+<style>{`
+  .component-cards {
+    margin: 1.5rem 0;
+  }
+  
+  .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  
+  .component-card h5 {
+    color: #a78bfa;
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+  
+  .component-card ol {
+    margin-bottom: 0;
+  }
+  
+  .component-card li {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%) !important;
+    border-color: rgba(139, 92, 246, 0.2) !important;
+  }
+  body[data-theme="light"] .component-card h5 { color: #6d28d9 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

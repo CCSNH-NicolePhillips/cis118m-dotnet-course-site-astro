@@ -1,0 +1,366 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 7.2 • Short-Circuit Logic"
+description: "How C# optimizes && and || by stopping evaluation early"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 7.2: Short-Circuit Logic
+
+<div class="section-header">
+  <div class="section-badge">⚡ The Fast Gate</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Short-Circuit Gate: Evaluate Smarter, Not Harder</h2>
+      <p>
+        When C# evaluates a boolean expression like <code>A && B</code>, it doesn't always need to check <strong>both</strong> sides. If <code>A</code> is false, the entire expression is already false — there's no point evaluating <code>B</code>. This optimization is called <strong>short-circuit evaluation</strong>, and it saves CPU cycles <em>and</em> prevents runtime crashes.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-7/7.2/shortCircuitGate.jpeg" alt="A circuit diagram with one bright path and one dark skipped path" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: Boolean Expression Evaluation
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on how short-circuit evaluation works — stopping early to save processing time and prevent errors.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/T8NPaFXp8X4" 
+      title="Short-Circuit Evaluation in C#"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 How Short-Circuit Works
+
+### The `&&` (AND) Short-Circuit
+
+With `&&`, **both sides must be true** for the result to be true. So if the left side is `false`, C# already knows the answer — it skips the right side entirely:
+
+```csharp
+// If isLoggedIn is false, C# NEVER checks hasPermission
+if (isLoggedIn && hasPermission) {
+    Console.WriteLine("Access granted!");
+}
+```
+
+```
+╔═══════════════════════════════════════════════════════╗
+║          && SHORT-CIRCUIT                             ║
+╠═══════════════════════════════════════════════════════╣
+║                                                       ║
+║  Left Side    Right Side    Result                    ║
+║  ─────────    ──────────    ──────                    ║
+║  false        ⚡ SKIPPED    false  (already known!)   ║
+║  true         false         false                     ║
+║  true         true          true                      ║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝
+```
+
+### The `||` (OR) Short-Circuit
+
+With `||`, **at least one side must be true**. So if the left side is `true`, C# already knows the answer — it skips the right side:
+
+```csharp
+// If isAdmin is true, C# NEVER checks hasSpecialOverride
+if (isAdmin || hasSpecialOverride) {
+    Console.WriteLine("Elevated access granted!");
+}
+```
+
+```
+╔═══════════════════════════════════════════════════════╗
+║          || SHORT-CIRCUIT                             ║
+╠═══════════════════════════════════════════════════════╣
+║                                                       ║
+║  Left Side    Right Side    Result                    ║
+║  ─────────    ──────────    ──────                    ║
+║  true         ⚡ SKIPPED    true  (already known!)    ║
+║  false        true          true                      ║
+║  false        false         false                     ║
+║                                                       ║
+╚═══════════════════════════════════════════════════════╝
+```
+
+---
+
+## 🛡️ The Safety Pattern: Null Checks
+
+Short-circuit evaluation isn't just about performance — it's a **safety mechanism**. The most common use is checking if something exists before accessing it:
+
+```csharp
+string name = null;
+
+// ❌ CRASH! Can't call .Length on null
+// if (name.Length > 0)
+
+// ✅ Safe! If name is null, .Length is never checked
+if (name != null && name.Length > 0) {
+    Console.WriteLine($"Hello, {name}!");
+}
+```
+
+Because `&&` short-circuits, `name.Length` is **never evaluated** when `name` is `null`. Without short-circuiting, this would throw a `NullReferenceException`.
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Always Put the Safety Check First
+
+In a `&&` expression, the **left side** should be the check that guards against crashes. Put the null check, bounds check, or existence check on the left.
+
+```csharp
+// ✅ Correct order: null check FIRST
+if (input != null && input.Length > 5) { ... }
+
+// ❌ Wrong order: .Length crashes if input is null
+if (input.Length > 5 && input != null) { ... }  // 💥 CRASH
+```
+
+</div>
+
+---
+
+## 🔬 Try It: Short-Circuit in Action
+
+Watch which side gets evaluated:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={480}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== SHORT-CIRCUIT DEMO ===\\n");
+        
+        // Demo 1: && stops at first false
+        Console.WriteLine("--- Demo 1: && with false left side ---");
+        bool leftFalse = false;
+        bool rightSide = CheckRight("Demo 1");
+        
+        // This won't call CheckRight because left is false
+        if (leftFalse && CheckRight("&& test")) {
+            Console.WriteLine("Both true!");
+        }
+        Console.WriteLine("Notice: CheckRight was NOT called!\\n");
+        
+        // Demo 2: || stops at first true
+        Console.WriteLine("--- Demo 2: || with true left side ---");
+        bool leftTrue = true;
+        
+        if (leftTrue || CheckRight("|| test")) {
+            Console.WriteLine("At least one true!");
+        }
+        Console.WriteLine("Notice: CheckRight was NOT called!\\n");
+        
+        // Demo 3: Safety pattern - null check
+        Console.WriteLine("--- Demo 3: Null Safety Pattern ---");
+        string validName = "Architect";
+        string nullName = null;
+        
+        if (validName != null && validName.Length > 3) {
+            Console.WriteLine($"Valid name: {validName} ({validName.Length} chars)");
+        }
+        
+        if (nullName != null && nullName.Length > 3) {
+            Console.WriteLine("This won't print.");
+        } else {
+            Console.WriteLine("Null check prevented a crash! ✅");
+        }
+    }
+    
+    static bool CheckRight(string caller)
+    {
+        Console.WriteLine($"  → CheckRight was called by: {caller}");
+        return true;
+    }
+}`}
+  instructions="Run to see which side of && and || actually gets evaluated. Notice how CheckRight is NOT called when short-circuiting kicks in!" 
+/>
+
+---
+
+## 🔬 Try It: The Null Check Pattern
+
+Practice the most important use of short-circuiting — protecting against null:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={420}
+  enableInteractiveTerminal={true}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Enter your username (or press Enter for none): ");
+        string input = Console.ReadLine();
+        
+        // Make it null if empty to simulate missing data
+        string username = string.IsNullOrEmpty(input) ? null : input;
+        
+        Console.WriteLine();
+        
+        // Safe null check using short-circuit &&
+        if (username != null && username.Length >= 3) {
+            Console.WriteLine($"✅ Welcome, {username}!");
+            Console.WriteLine($"   Username length: {username.Length} characters");
+        } else if (username != null && username.Length < 3) {
+            Console.WriteLine("⚠️ Username too short (minimum 3 characters).");
+        } else {
+            Console.WriteLine("🚫 No username provided.");
+        }
+    }
+}`}
+  instructions="Try entering a name, a short name (1-2 chars), or just pressing Enter. The null check ALWAYS comes first in the && expression!" 
+/>
+
+---
+
+## 🧩 Combining Short-Circuit Patterns
+
+You can chain multiple short-circuit checks together for robust validation:
+
+```csharp
+// All checks short-circuit left to right
+if (user != null && user.Email != null && user.Email.Contains("@")) {
+    Console.WriteLine($"Valid email: {user.Email}");
+}
+```
+
+Each `&&` acts as a gate. If any check fails, everything to the right is skipped:
+1. Is `user` null? → Stop if yes
+2. Is `user.Email` null? → Stop if yes  
+3. Does `user.Email` contain "@"? → Only checked if #1 and #2 passed
+
+<div class="pro-tip">
+  <h4>💡 Pro Tip: Order Matters for Performance Too</h4>
+  <p>Put the <strong>cheapest</strong> or <strong>most likely to fail</strong> check on the left. If 80% of users fail the first check, the expensive second check runs only 20% of the time.</p>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-07-7-2-checkpoint"
+  title="🔍 Section 7.2 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "In the expression: false && SomeMethod() — does SomeMethod() get called?",
+      options: ["Yes, both sides are always evaluated", "No — && short-circuits when the left side is false", "Only if SomeMethod returns true", "It depends on the compiler"],
+      correctAnswer: "No — && short-circuits when the left side is false",
+      explanation: "With &&, if the left side is false, the entire expression is already false. C# skips the right side entirely — SomeMethod() is never called. This is short-circuit evaluation."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Why should you put null checks on the LEFT side of an && expression?",
+      options: ["It makes the code look cleaner", "Because C# reads right to left", "So the null check runs FIRST — if it fails, the right side (which would crash) is skipped", "It doesn't matter which side the null check is on"],
+      correctAnswer: "So the null check runs FIRST — if it fails, the right side (which would crash) is skipped",
+      explanation: "With &&, the left side is evaluated first. If name is null, then name != null is false and && short-circuits — name.Length is never checked, preventing a NullReferenceException crash."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Now let's <strong>visualize</strong> all possible boolean combinations with truth tables!</p>
+  <a href="/week-07/7-3-truth-tables/" class="vscode-button">Continue to 7.3: Truth Table Matrices →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border: 2px solid #06b6d4;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #67e8f9;
+    margin-top: 0;
+  }
+
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

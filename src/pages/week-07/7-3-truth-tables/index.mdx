@@ -1,0 +1,412 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 7.3 • Truth Table Matrices"
+description: "Visualizing all possible boolean combinations with truth tables"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 7.3: Truth Table Matrices
+
+<div class="section-header">
+  <div class="section-badge">📊 The Logic Matrix</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Mapping Every Possible Outcome</h2>
+      <p>
+        In sections 7.1 and 7.2, you learned how to <em>nest</em> conditions and how C# <em>short-circuits</em> boolean expressions. But how do you <strong>prove</strong> your logic handles every scenario? The answer is a <strong>truth table</strong> — a matrix that lists every combination of inputs and their corresponding output. Engineers use truth tables to <strong>verify</strong> that complex boolean expressions work correctly before writing a single line of code.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-7/7.3/truthTableMatrix.jpeg" alt="A glowing data matrix displaying boolean truth values in rows and columns" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: Truth Tables & Boolean Logic
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on how truth tables map every combination of inputs to outputs — the foundation of digital logic and program verification.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/Jwukl7dFurE" 
+      title="Truth Tables and Boolean Logic"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 The Three Fundamental Gates
+
+Every boolean expression in C# is built from three fundamental operations: **AND**, **OR**, and **NOT**. A truth table shows the output for **every** possible input combination.
+
+### NOT (`!`) — The Inverter
+
+The simplest gate — it has **one** input and flips it:
+
+```
+╔═══════════════════════════╗
+║       NOT (!) Gate        ║
+╠═══════════════════════════╣
+║   Input A    │  !A        ║
+║   ─────────  │  ──────    ║
+║   true       │  false     ║
+║   false      │  true      ║
+╚═══════════════════════════╝
+```
+
+```csharp
+bool isLocked = true;
+bool isUnlocked = !isLocked;  // false — the NOT flips it
+```
+
+### AND (`&&`) — Both Must Pass
+
+The AND gate requires **both** inputs to be true:
+
+```
+╔═══════════════════════════════════════╗
+║          AND (&&) Gate                ║
+╠═══════════════════════════════════════╣
+║   A       │  B       │  A && B       ║
+║   ──────  │  ──────  │  ──────       ║
+║   false   │  false   │  false        ║
+║   false   │  true    │  false        ║
+║   true    │  false   │  false        ║
+║   true    │  true    │  true   ✅    ║
+╚═══════════════════════════════════════╝
+```
+
+Only **one row** produces `true` — the case where both A and B are true.
+
+### OR (`||`) — At Least One Must Pass
+
+The OR gate needs **at least one** input to be true:
+
+```
+╔═══════════════════════════════════════╗
+║          OR (||) Gate                 ║
+╠═══════════════════════════════════════╣
+║   A       │  B       │  A || B       ║
+║   ──────  │  ──────  │  ──────       ║
+║   false   │  false   │  false        ║
+║   false   │  true    │  true   ✅    ║
+║   true    │  false   │  true   ✅    ║
+║   true    │  true    │  true   ✅    ║
+╚═══════════════════════════════════════╝
+```
+
+Only **one row** is `false` — the case where both A and B are false.
+
+<div class="pro-tip">
+  <h4>💡 Memory Trick</h4>
+  <p><strong>AND</strong> is pessimistic — looks for a reason to say NO. <strong>OR</strong> is optimistic — looks for a reason to say YES.</p>
+</div>
+
+---
+
+## 📐 Building Complex Truth Tables
+
+Real systems combine multiple operators. For example, a system that grants access when the user **is an admin** OR (**is logged in** AND **has permission**):
+
+```csharp
+bool accessGranted = isAdmin || (isLoggedIn && hasPermission);
+```
+
+To verify this, you build a truth table with **all 8 combinations** (2³ = 8 rows for 3 variables):
+
+```
+╔═══════════════════════════════════════════════════════════════════╗
+║   isAdmin  │  isLoggedIn  │  hasPerm  │  loggedIn && hasPerm  │  Result   ║
+║   ───────  │  ──────────  │  ───────  │  ───────────────────  │  ──────   ║
+║   false    │  false       │  false    │  false                │  false    ║
+║   false    │  false       │  true     │  false                │  false    ║
+║   false    │  true        │  false    │  false                │  false    ║
+║   false    │  true        │  true     │  true                 │  true  ✅ ║
+║   true     │  false       │  false    │  false                │  true  ✅ ║
+║   true     │  false       │  true     │  false                │  true  ✅ ║
+║   true     │  true        │  false    │  false                │  true  ✅ ║
+║   true     │  true        │  true     │  true                 │  true  ✅ ║
+╚═══════════════════════════════════════════════════════════════════╝
+```
+
+Notice: Admins **always** get access (bottom 4 rows). Non-admins only get access when **both** logged in AND have permission (row 4).
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Verify Before You Code
+
+Before writing a complex boolean expression, build its truth table on paper. If **any row** produces an unexpected result, fix the logic **before** coding it. A truth table takes 2 minutes. Debugging wrong logic in production takes 2 hours.
+
+</div>
+
+---
+
+## 🔬 Try It: Truth Table Generator
+
+Build a program that generates a truth table for all combinations of two boolean variables:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={520}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("╔═══════════════════════════════════════════════════╗");
+        Console.WriteLine("║         COMPLETE TRUTH TABLE MATRIX              ║");
+        Console.WriteLine("╠═══════════════════════════════════════════════════╣");
+        Console.WriteLine("║  A      │  B      │  A && B  │  A || B  │  !A   ║");
+        Console.WriteLine("║  ─────  │  ─────  │  ──────  │  ──────  │  ──── ║");
+        
+        // Generate all 4 combinations
+        bool[] values = { false, true };
+        
+        foreach (bool a in values) {
+            foreach (bool b in values) {
+                string aStr = a.ToString().PadRight(5);
+                string bStr = b.ToString().PadRight(5);
+                string andStr = (a && b).ToString().PadRight(6);
+                string orStr = (a || b).ToString().PadRight(6);
+                string notStr = (!a).ToString().PadRight(4);
+                
+                Console.WriteLine($"║  {aStr}  │  {bStr}  │  {andStr}  │  {orStr}  │  {notStr} ║");
+            }
+        }
+        
+        Console.WriteLine("╚═══════════════════════════════════════════════════╝");
+        
+        Console.WriteLine();
+        Console.WriteLine("Key insight: AND has 1 true row, OR has 1 false row!");
+    }
+}`}
+  instructions="Run to see the complete truth table for AND, OR, and NOT. Count the true/false rows — AND has only 1 true, OR has only 1 false!" 
+/>
+
+---
+
+## 🔬 Try It: System Validation Gate
+
+Use a truth table to verify a three-condition access check:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={560}
+  enableInteractiveTerminal={true}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== SYSTEM VALIDATION GATE ===\\n");
+        
+        // Collect inputs
+        Console.Write("Is user an admin? (true/false): ");
+        bool isAdmin = bool.Parse(Console.ReadLine());
+        
+        Console.Write("Is user logged in? (true/false): ");
+        bool isLoggedIn = bool.Parse(Console.ReadLine());
+        
+        Console.Write("Has special permission? (true/false): ");
+        bool hasPermission = bool.Parse(Console.ReadLine());
+        
+        Console.WriteLine();
+        
+        // Complex boolean expression
+        bool accessGranted = isAdmin || (isLoggedIn && hasPermission);
+        
+        // Show the evaluation step by step
+        Console.WriteLine("--- EVALUATION BREAKDOWN ---");
+        Console.WriteLine($"  isAdmin:                  {isAdmin}");
+        Console.WriteLine($"  isLoggedIn:               {isLoggedIn}");
+        Console.WriteLine($"  hasPermission:            {hasPermission}");
+        Console.WriteLine($"  isLoggedIn && hasPermission: {isLoggedIn && hasPermission}");
+        Console.WriteLine($"  isAdmin || (above):       {accessGranted}");
+        Console.WriteLine();
+        
+        if (accessGranted) {
+            Console.WriteLine("✅ ACCESS GRANTED");
+            if (isAdmin) {
+                Console.WriteLine("   Reason: Administrator override");
+            } else {
+                Console.WriteLine("   Reason: Authenticated with permission");
+            }
+        } else {
+            Console.WriteLine("🔴 ACCESS DENIED");
+            if (!isLoggedIn) {
+                Console.WriteLine("   Reason: Not logged in");
+            } else {
+                Console.WriteLine("   Reason: Missing required permission");
+            }
+        }
+    }
+}`}
+  instructions="Enter true/false for each input. Check the evaluation breakdown to see how the expression is resolved step by step. Try different combinations to verify the truth table!" 
+/>
+
+---
+
+## 🧩 Operator Precedence
+
+When combining `!`, `&&`, and `||` in one expression, C# follows a strict evaluation order:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Priority</th>
+        <th>Operator</th>
+        <th>Name</th>
+        <th>Evaluates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1st</strong> (highest)</td>
+        <td><code>!</code></td>
+        <td>NOT</td>
+        <td>Flips a single value</td>
+      </tr>
+      <tr>
+        <td><strong>2nd</strong></td>
+        <td><code>&&</code></td>
+        <td>AND</td>
+        <td>Both must be true</td>
+      </tr>
+      <tr>
+        <td><strong>3rd</strong> (lowest)</td>
+        <td><code>||</code></td>
+        <td>OR</td>
+        <td>At least one must be true</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+This means `!A || B && C` is evaluated as `(!A) || (B && C)` — NOT binds first, then AND, then OR.
+
+<div class="pro-tip">
+  <h4>💡 Pro Tip: Use Parentheses</h4>
+  <p>Even when precedence is on your side, <strong>always use parentheses</strong> to make your intent clear. Future-you (and your teammates) will thank you. <code>isAdmin || (isLoggedIn && hasPermission)</code> is much clearer than <code>isAdmin || isLoggedIn && hasPermission</code>.</p>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-07-7-3-checkpoint"
+  title="🔍 Section 7.3 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "In an AND (&&) truth table with two inputs, how many rows produce 'true'?",
+      options: ["Zero — AND never produces true", "One — only when BOTH inputs are true", "Two — whenever at least one is true", "Three — all except both false"],
+      correctAnswer: "One — only when BOTH inputs are true",
+      explanation: "The AND (&&) operator requires BOTH sides to be true. With two inputs, only the row where A=true AND B=true produces true. That's 1 out of 4 rows."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What is the correct operator precedence for !, &&, and || (highest to lowest)?",
+      options: ["|| then && then !", "&& then || then !", "! then && then ||", "They all have equal precedence"],
+      correctAnswer: "! then && then ||",
+      explanation: "NOT (!) has the highest precedence and evaluates first, then AND (&&), then OR (||). So !A || B && C means (!A) || (B && C). Use parentheses to make intent explicit."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Now let's learn a <strong>cleaner alternative</strong> to long else-if chains — the switch statement!</p>
+  <a href="/week-07/7-4-switch-pattern/" class="vscode-button">Continue to 7.4: The Switch Pattern →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border: 2px solid #06b6d4;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #67e8f9;
+    margin-top: 0;
+  }
+
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

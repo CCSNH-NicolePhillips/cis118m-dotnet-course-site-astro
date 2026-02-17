@@ -1,0 +1,381 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 7.4 • The Switch Pattern"
+description: "Clean multi-way branching when comparing a value against discrete options"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Section 7.4: The Switch Pattern
+
+<div class="section-header">
+  <div class="section-badge">🔀 The Router</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ The Switch: A Cleaner Way to Route</h2>
+      <p>
+        You've been using <code>if/else if/else</code> chains to handle multiple outcomes. But when you're comparing <strong>one variable</strong> against several specific values, there's a cleaner tool: the <strong>switch statement</strong>. Think of it as a train dispatcher routing a variable down the correct track — each <code>case</code> is a platform, and <code>break</code> stops the train at the right one.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week-7/7.4/switchPattern.jpeg" alt="A railway switching station routing trains down different tracks" />
+    </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: The Switch Statement
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on how the switch statement provides clean multi-way branching for discrete values.</p>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/KdTyXz05Nrg" 
+      title="Switch Statements in C#"
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+---
+
+## 🧠 The Switch Syntax
+
+A switch statement takes **one expression** and compares it against multiple `case` labels:
+
+```csharp
+switch (variable) {
+    case value1:
+        // Code for value1
+        break;
+    case value2:
+        // Code for value2
+        break;
+    case value3:
+        // Code for value3
+        break;
+    default:
+        // Code when no case matches
+        break;
+}
+```
+
+Each `case` checks for an exact match. When a match is found, that block runs. The `break` statement exits the switch — **without it, C# will give a compile error** (unlike some other languages that "fall through").
+
+---
+
+## 🔀 Switch vs. else-if: A Side-by-Side
+
+Here's the same logic written both ways:
+
+```csharp
+// ❌ else-if chain — works but repetitive
+if (day == "Monday") {
+    Console.WriteLine("Start of work week");
+} else if (day == "Friday") {
+    Console.WriteLine("Almost the weekend!");
+} else if (day == "Saturday" || day == "Sunday") {
+    Console.WriteLine("Weekend!");
+} else {
+    Console.WriteLine("Midweek grind");
+}
+```
+
+```csharp
+// ✅ Switch — cleaner for matching ONE variable against values
+switch (day) {
+    case "Monday":
+        Console.WriteLine("Start of work week");
+        break;
+    case "Friday":
+        Console.WriteLine("Almost the weekend!");
+        break;
+    case "Saturday":
+    case "Sunday":
+        Console.WriteLine("Weekend!");
+        break;
+    default:
+        Console.WriteLine("Midweek grind");
+        break;
+}
+```
+
+Notice how `case "Saturday":` and `case "Sunday":` **stack** — when two cases should do the same thing, list them together without a `break` between them.
+
+<div class="pro-tip">
+  <h4>💡 When to Use Switch vs. else-if</h4>
+  <p><strong>Switch</strong>: Comparing one variable against specific discrete values (strings, ints, enums). <strong>else-if</strong>: Complex conditions with ranges (<code>&gt; 90</code>), multiple variables, or boolean logic (<code>&&</code>, <code>||</code>).</p>
+</div>
+
+---
+
+## 🔬 Try It: Severity Classifier
+
+Build a switch that categorizes project issue severity levels:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={520}
+  enableInteractiveTerminal={true}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== PROJECT SEVERITY CLASSIFIER ===\\n");
+        Console.Write("Enter severity level (1-4): ");
+        int severity = int.Parse(Console.ReadLine());
+        
+        switch (severity) {
+            case 1:
+                Console.WriteLine("🟢 LOW — Cosmetic issue");
+                Console.WriteLine("   Action: Add to backlog");
+                Console.WriteLine("   Timeline: Next sprint");
+                break;
+            case 2:
+                Console.WriteLine("🟡 MEDIUM — Functional issue");
+                Console.WriteLine("   Action: Assign to developer");
+                Console.WriteLine("   Timeline: This sprint");
+                break;
+            case 3:
+                Console.WriteLine("🟠 HIGH — Critical bug");
+                Console.WriteLine("   Action: Stop current work");
+                Console.WriteLine("   Timeline: Within 24 hours");
+                break;
+            case 4:
+                Console.WriteLine("🔴 CRITICAL — System down");
+                Console.WriteLine("   Action: All hands on deck!");
+                Console.WriteLine("   Timeline: IMMEDIATE");
+                break;
+            default:
+                Console.WriteLine("⚠️ INVALID — Severity must be 1-4");
+                Console.WriteLine("   Please re-enter a valid level.");
+                break;
+        }
+    }
+}`}
+  instructions="Enter a severity level 1-4 to see the classification. Try entering 5 or 0 to see the default case handle invalid input!" 
+/>
+
+---
+
+## 🔬 Try It: Command Router
+
+Use switch with string matching to build a command-line router:
+
+<TryItNowRunner 
+  starterId="week-07-lesson-1" 
+  height={540}
+  enableInteractiveTerminal={true}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== COMMAND ROUTER ===");
+        Console.WriteLine("Available commands: status, deploy, rollback, help, exit\\n");
+        Console.Write("Enter command: ");
+        string command = Console.ReadLine().ToLower().Trim();
+        
+        switch (command) {
+            case "status":
+                Console.WriteLine("\\n📊 System Status:");
+                Console.WriteLine("   Server: ONLINE");
+                Console.WriteLine("   CPU: 42%");
+                Console.WriteLine("   Memory: 67%");
+                Console.WriteLine("   Uptime: 14 days");
+                break;
+            case "deploy":
+                Console.WriteLine("\\n🚀 Deploying latest build...");
+                Console.WriteLine("   Step 1: Building project... ✅");
+                Console.WriteLine("   Step 2: Running tests...    ✅");
+                Console.WriteLine("   Step 3: Pushing to prod...  ✅");
+                Console.WriteLine("   Deployment complete!");
+                break;
+            case "rollback":
+                Console.WriteLine("\\n⏪ Rolling back to previous version...");
+                Console.WriteLine("   Restoring v2.3.1... ✅");
+                Console.WriteLine("   Rollback complete.");
+                break;
+            case "help":
+                Console.WriteLine("\\n📖 Help Menu:");
+                Console.WriteLine("   status   — View system status");
+                Console.WriteLine("   deploy   — Deploy latest build");
+                Console.WriteLine("   rollback — Revert to previous version");
+                Console.WriteLine("   exit     — Shut down");
+                break;
+            case "exit":
+            case "quit":
+                Console.WriteLine("\\n👋 Shutting down. Goodbye!");
+                break;
+            default:
+                Console.WriteLine($"\\n❌ Unknown command: \\"{command}\\"");
+                Console.WriteLine("   Type \\"help\\" to see available commands.");
+                break;
+        }
+    }
+}`}
+  instructions="Enter a command like 'status', 'deploy', or 'help'. Notice how 'exit' and 'quit' share the same case block — both shut down the system!" 
+/>
+
+---
+
+## 📐 Switch Rules and Gotchas
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Rule</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>break is required</strong></td>
+        <td>C# requires <code>break</code> (or <code>return</code>) at the end of each case. No accidental fall-through.</td>
+      </tr>
+      <tr>
+        <td><strong>Cases must be constants</strong></td>
+        <td>Case labels must be compile-time constants — literals like <code>1</code>, <code>"hello"</code>, not variables.</td>
+      </tr>
+      <tr>
+        <td><strong>Stacking cases</strong></td>
+        <td>Multiple cases can share one block: list them vertically without break between them.</td>
+      </tr>
+      <tr>
+        <td><strong>default is optional</strong></td>
+        <td>But always include it — it catches unexpected values and prevents silent failures.</td>
+      </tr>
+      <tr>
+        <td><strong>Works with int, string, char, enum</strong></td>
+        <td>Switch works great with discrete types. It does <strong>not</strong> work with ranges like <code>&gt; 90</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Always Include default
+
+Even if you think you've covered every possible value, add a `default` case. New values may be added later, and `default` catches them instead of silently doing nothing.
+
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-07-7-4-checkpoint"
+  title="🔍 Section 7.4 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What happens if you forget the 'break' statement in a C# switch case?",
+      options: ["The code falls through to the next case silently", "The compiler gives an error — break is required in C#", "The program crashes at runtime", "Nothing — break is optional"],
+      correctAnswer: "The compiler gives an error — break is required in C#",
+      explanation: "Unlike C or JavaScript, C# does NOT allow fall-through. If you forget break (or return), the compiler will give you an error. This prevents a common bug found in other languages."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "When should you use switch instead of else-if?",
+      options: ["When checking ranges like score > 90", "When comparing one variable against several specific discrete values", "When combining multiple conditions with && or ||", "Switch and else-if are always interchangeable"],
+      correctAnswer: "When comparing one variable against several specific discrete values",
+      explanation: "Switch excels when you have one variable being compared to specific values (1, 2, 3 or \"Monday\", \"Friday\"). Use else-if for ranges (> 90), multiple variables, or complex boolean expressions with && and ||."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Section lessons complete! Time to put it all together in the <strong>lab challenge</strong>.</p>
+  <a href="/week-07/lab/" class="vscode-button">Continue to Lab: The Adaptive Firewall →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border: 2px solid #06b6d4;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #67e8f9;
+    margin-top: 0;
+  }
+
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .architect-rule p {
+    color: #e2e8f0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

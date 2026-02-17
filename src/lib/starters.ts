@@ -142,6 +142,45 @@ if (isEven && isPositive) {
     Console.WriteLine("It's neither even nor positive.");
 }
 `,
+  "07": `// Week 7: Logic & Multiple Conditions
+// Practice nested if, short-circuit, truth tables, and switch
+using System;
+
+Console.Write("Enter a value (1-10): ");
+int value = int.Parse(Console.ReadLine());
+
+// Nested if — decisions inside decisions
+if (value >= 1 && value <= 10) {
+    if (value > 7) {
+        Console.WriteLine($"{value} is HIGH");
+    } else if (value > 3) {
+        Console.WriteLine($"{value} is MEDIUM");
+    } else {
+        Console.WriteLine($"{value} is LOW");
+    }
+} else {
+    Console.WriteLine("Out of range!");
+}
+
+// Switch — clean routing for discrete values
+Console.Write("\\nEnter a command (start/stop/status): ");
+string cmd = Console.ReadLine().ToLower();
+
+switch (cmd) {
+    case "start":
+        Console.WriteLine("🟢 System started.");
+        break;
+    case "stop":
+        Console.WriteLine("🔴 System stopped.");
+        break;
+    case "status":
+        Console.WriteLine("📊 System running.");
+        break;
+    default:
+        Console.WriteLine("❓ Unknown command.");
+        break;
+}
+`,
 };
 
 // Multi-file starters for weeks introducing classes

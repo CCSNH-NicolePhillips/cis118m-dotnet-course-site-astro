@@ -1,0 +1,204 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 07 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 07 Technical Assessment
+
+<DueDateBanner week={7} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-07-quiz"
+  title="Week 07: Logic & Multiple Conditions (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the 'Arrow Anti-Pattern' in nested if statements?",
+      options: [
+        "Using too many else clauses",
+        "Nesting so deep the code forms an arrow shape pointing right",
+        "Using && instead of nested ifs",
+        "Writing if statements on one line"
+      ],
+      correctAnswer: "Nesting so deep the code forms an arrow shape pointing right",
+      explanation: "The Arrow Anti-Pattern happens when code is nested so deeply that the indentation creates an arrow shape (pointing right). This makes code very hard to read and maintain."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What do guard clauses do to improve nested code?",
+      options: [
+        "Add more nesting levels",
+        "Check conditions and return/exit early to keep the main logic flat",
+        "Replace all if statements with switch",
+        "Remove all else blocks"
+      ],
+      correctAnswer: "Check conditions and return/exit early to keep the main logic flat",
+      explanation: "Guard clauses invert conditions and exit early (return, break, continue) when something is wrong. This keeps the main 'happy path' flat at the bottom instead of deeply nested."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "In the expression: false && SomeMethod() — does SomeMethod() get called?",
+      options: [
+        "Yes, both sides are always evaluated",
+        "No — && short-circuits when the left side is false",
+        "Only if SomeMethod returns true",
+        "It depends on the runtime"
+      ],
+      correctAnswer: "No — && short-circuits when the left side is false",
+      explanation: "With && (AND), if the left side is false, the entire expression is already false. C# skips the right side entirely — SomeMethod() is never called. This is short-circuit evaluation."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Why should null checks be placed on the LEFT side of a && expression?",
+      options: [
+        "It makes the code look cleaner",
+        "C# reads expressions right to left",
+        "So the null check runs first — if it fails, the right side (which could crash) is skipped",
+        "It doesn't matter which side"
+      ],
+      correctAnswer: "So the null check runs first — if it fails, the right side (which could crash) is skipped",
+      explanation: "With &&, the left side evaluates first. If name is null, then name != null is false and && short-circuits — name.Length is never checked, preventing a NullReferenceException crash."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "In an AND (&&) truth table with two inputs, how many rows produce 'true'?",
+      options: [
+        "Zero — AND never produces true",
+        "One — only when BOTH inputs are true",
+        "Two — whenever at least one is true",
+        "Three — all except both false"
+      ],
+      correctAnswer: "One — only when BOTH inputs are true",
+      explanation: "The AND truth table has 4 rows (FF, FT, TF, TT). Only the TT row produces true — both inputs must be true for AND to be true."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What is the correct operator precedence for !, &&, and || (highest to lowest)?",
+      options: [
+        "|| then && then !",
+        "&& then || then !",
+        "! then && then ||",
+        "They all have equal precedence"
+      ],
+      correctAnswer: "! then && then ||",
+      explanation: "NOT (!) evaluates first (highest precedence), then AND (&&), then OR (||). So !A || B && C means (!A) || (B && C). Use parentheses to make your intent clear."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What happens if you forget the 'break' statement in a C# switch case?",
+      options: [
+        "The code falls through to the next case silently",
+        "The compiler gives an error — break is required in C#",
+        "The program crashes at runtime",
+        "Nothing — break is optional"
+      ],
+      correctAnswer: "The compiler gives an error — break is required in C#",
+      explanation: "Unlike C or JavaScript, C# does NOT allow fall-through. If you forget break (or return), the compiler will give you an error. This prevents a common bug found in other languages."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "When is a switch statement the BEST choice over else-if?",
+      options: [
+        "When checking ranges like score > 90",
+        "When comparing one variable against several specific discrete values",
+        "When combining conditions with && or ||",
+        "Switch is always better than else-if"
+      ],
+      correctAnswer: "When comparing one variable against several specific discrete values",
+      explanation: "Switch excels when you have one variable being compared to specific values (1, 2, 3 or 'Monday', 'Friday'). Use else-if for ranges, multiple variables, or complex boolean logic."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "What does the 'default' case in a switch statement do?",
+      options: [
+        "It runs before all other cases",
+        "It handles the value that occurs most frequently",
+        "It catches any value that doesn't match a case label",
+        "It is required or the code won't compile"
+      ],
+      correctAnswer: "It catches any value that doesn't match a case label",
+      explanation: "The default case is the 'catch-all' — it runs when no other case matches. While optional, you should always include it to handle unexpected values and prevent silent failures."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What does this expression evaluate to?\n\ntrue || false && false",
+      options: [
+        "true — because || evaluates first",
+        "true — because && evaluates first: false && false = false, then true || false = true",
+        "false — because false && false dominates",
+        "Error — you can't mix || and &&"
+      ],
+      correctAnswer: "true — because && evaluates first: false && false = false, then true || false = true",
+      explanation: "&& has higher precedence than ||, so it evaluates first: false && false = false. Then: true || false = true. The result is true. Using parentheses: true || (false && false) makes this clearer."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 07 Complete!</strong></p>
+  <p>You've mastered advanced logic! Next week: Loops &amp; Iteration!</p>
+  <a href="/week-08/" class="vscode-button">Preview Week 08 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 { margin-top: 0; color: #818cf8; }
+  .mission-brief ul { margin-bottom: 0; }
+  .mission-brief li { margin: 8px 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: #6366f1 !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #4f46e5 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

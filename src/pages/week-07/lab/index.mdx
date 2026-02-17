@@ -1,0 +1,295 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 07 • The Adaptive Firewall"
+description: "Build a network firewall using nested logic, short-circuit evaluation, and switch statements"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 07: The Adaptive Firewall
+
+<DueDateBanner week={7} type="Lab" />
+
+**Time: 45 minutes**  
+**Points: 100**
+
+## 🎯 Mission Objective
+
+You are building an **Adaptive Firewall** for a corporate network. The firewall evaluates three inputs — a **Threat Level** (integer), whether the source is **Internal** (boolean), and the **Protocol Type** (string) — and decides whether to **allow**, **require 2FA**, or **block** the connection. You'll use nested `if` statements, short-circuit `&&`, and `switch` to implement the decision engine.
+
+---
+
+## 📋 The Problem
+
+The firewall must evaluate incoming network requests based on three pieces of data:
+
+<img src="/media/week-7/lab/adaptiveFirewall.jpeg" alt="Adaptive Firewall Decision Engine diagram" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+
+The user enters a **threat level** (integer 1-10), whether the source is **internal** (true/false), and a **protocol** (string: HTTP, SSH, FTP, or SMTP). Your program must apply the firewall rules to determine the correct action.
+
+---
+
+## 📋 Requirements
+
+Your program must:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Prompt for Threat Level</strong></td>
+        <td>Read an integer (1-10) using <code>Console.ReadLine()</code> and <code>int.Parse()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Prompt for Internal Source</strong></td>
+        <td>Read a boolean using <code>Console.ReadLine()</code> and <code>bool.Parse()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Prompt for Protocol</strong></td>
+        <td>Read a string using <code>Console.ReadLine()</code> and convert to uppercase with <code>.ToUpper()</code></td>
+      </tr>
+      <tr>
+        <td><strong>Rule 1: Critical threat</strong></td>
+        <td>If threat level &gt; 8 → Print <code>🔴 BLOCKED — Critical threat level</code> (regardless of source or protocol)</td>
+      </tr>
+      <tr>
+        <td><strong>Rule 2: Internal SSH</strong></td>
+        <td>If protocol is SSH AND source is internal → Print <code>🟢 ALLOWED — Trusted internal SSH</code></td>
+      </tr>
+      <tr>
+        <td><strong>Rule 3: Medium threat</strong></td>
+        <td>If threat level &gt; 4 → Print <code>🟡 2FA REQUIRED — Elevated threat detected</code></td>
+      </tr>
+      <tr>
+        <td><strong>Rule 4: Default deny</strong></td>
+        <td>All other combinations → Print <code>🔴 BLOCKED — Default deny policy</code></td>
+      </tr>
+      <tr>
+        <td><strong>Protocol display (switch)</strong></td>
+        <td>Use a <code>switch</code> statement on the protocol to print protocol-specific info after the decision</td>
+      </tr>
+      <tr>
+        <td><strong>K&R brace style</strong></td>
+        <td>Opening brace on same line as the <code>if</code> / <code>switch</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 📤 Example Output
+
+**Critical Threat (Blocked):**
+```
+=== ADAPTIVE FIREWALL ===
+Enter Threat Level (1-10): 9
+Is source internal? (true/false): true
+Enter Protocol (HTTP/SSH/FTP/SMTP): SSH
+
+🔴 BLOCKED — Critical threat level
+   Threat Level 9 exceeds maximum threshold.
+   All connections blocked regardless of source.
+
+Protocol Details (SSH):
+   Port: 22
+   Encryption: Required
+============================
+```
+
+**Internal SSH (Allowed):**
+```
+=== ADAPTIVE FIREWALL ===
+Enter Threat Level (1-10): 3
+Is source internal? (true/false): true
+Enter Protocol (HTTP/SSH/FTP/SMTP): SSH
+
+🟢 ALLOWED — Trusted internal SSH
+   Internal source verified with low threat.
+   Secure shell session established.
+
+Protocol Details (SSH):
+   Port: 22
+   Encryption: Required
+============================
+```
+
+**Elevated Threat (2FA Required):**
+```
+=== ADAPTIVE FIREWALL ===
+Enter Threat Level (1-10): 6
+Is source internal? (true/false): false
+Enter Protocol (HTTP/SSH/FTP/SMTP): HTTP
+
+🟡 2FA REQUIRED — Elevated threat detected
+   Threat Level 6 requires additional verification.
+   Two-factor authentication challenge sent.
+
+Protocol Details (HTTP):
+   Port: 80/443
+   Encryption: Optional (HTTPS recommended)
+============================
+```
+
+**Default Deny:**
+```
+=== ADAPTIVE FIREWALL ===
+Enter Threat Level (1-10): 2
+Is source internal? (true/false): false
+Enter Protocol (HTTP/SSH/FTP/SMTP): FTP
+
+🔴 BLOCKED — Default deny policy
+   External FTP connection denied.
+   Contact network admin for access.
+
+Protocol Details (FTP):
+   Port: 21
+   Encryption: None (not recommended)
+============================
+```
+
+---
+
+## 🏗️ Code Editor
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-07-lab" 
+    style="width: 100%; height: 600px; border: none;"
+    title="Lab 7 Code Editor"
+  ></iframe>
+</div>
+
+---
+
+## ✅ Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Prompts for Threat Level (int), Internal Source (bool), and Protocol (string)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Rule 1: Threat &gt; 8 → BLOCKED (overrides all other rules)</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Rule 2: SSH + internal → ALLOWED</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Rule 3: Threat &gt; 4 → 2FA REQUIRED</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Rule 4: Default deny for all other combinations</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Uses <code>switch</code> on protocol to display protocol details</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Uses <code>if/else if/else</code> with <code>&&</code> for firewall rules</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Code compiles, runs, and uses K&R braces</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 📝 Submission
+
+When your program runs correctly and handles all firewall rules:
+
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #4ec9b0 0%, #3ba897 100%);
+    color: #000;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(78, 201, 176, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  ">
+    🚀 Submit Lab
+  </button>
+  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    display: none;
+    white-space: pre-wrap;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-height: 400px;
+    overflow-y: auto;
+  "></div>
+  <div id="last-submitted" style="
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+  "></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>Logic Reflection</strong></p>
+  <p>Explain how advanced logic patterns improve code quality.</p>
+  <a href="/week-07/homework/" class="vscode-button">Continue to Homework →</a>
+</div>
+
+<style>{`
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

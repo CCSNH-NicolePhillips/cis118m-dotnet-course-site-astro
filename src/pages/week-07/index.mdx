@@ -1,0 +1,360 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 07 • Logic & Multiple Conditions"
+description: "Advanced logic patterns — nested decisions, short-circuit evaluation, truth tables, and the switch statement"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 07: Logic & Multiple Conditions
+
+<DueDateBanner week={7} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>⚡ Advanced Logic Integration</h2>
+  <p>
+    Last week you installed the <strong>decision engine</strong> — <code>if</code>, <code>else</code>, and basic boolean logic. This week, we go deeper. You'll learn to build <strong>nested decision labyrinths</strong>, harness <strong>short-circuit evaluation</strong> for efficiency and safety, master <strong>truth tables</strong> for complex boolean combinations, and discover the <strong>switch statement</strong> as a clean alternative to sprawling <code>else if</code> chains.
+  </p>
+  <p>
+    Think of this week as upgrading your decision engine from a simple fork in the road to a <strong>multi-level routing system</strong> — capable of handling real-world complexity with precision and elegance.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 07 Learning Path
+
+<div class="section-cards">
+  <a href="/week-07/7-1-nested-logic/" class="section-card nested">
+    <div class="card-icon">🏗️</div>
+    <div class="card-content">
+      <h3>7.1 Nested Labyrinths</h3>
+      <p class="metaphor">The Decision Maze</p>
+      <p>if inside if — when to nest and when to use guard clauses</p>
+    </div>
+  </a>
+  
+  <a href="/week-07/7-2-short-circuit/" class="section-card circuit">
+    <div class="card-icon">⚡</div>
+    <div class="card-content">
+      <h3>7.2 Short-Circuit Logic</h3>
+      <p class="metaphor">The Fast Gate</p>
+      <p>How C# optimizes && and || by stopping evaluation early</p>
+    </div>
+  </a>
+  
+  <a href="/week-07/7-3-truth-tables/" class="section-card truth">
+    <div class="card-icon">📊</div>
+    <div class="card-content">
+      <h3>7.3 Truth Table Matrices</h3>
+      <p class="metaphor">The Logic Blueprint</p>
+      <p>Visualizing complex boolean combinations with AND, OR, NOT</p>
+    </div>
+  </a>
+  
+  <a href="/week-07/7-4-switch-pattern/" class="section-card switch">
+    <div class="card-icon">🔀</div>
+    <div class="card-content">
+      <h3>7.4 The Switch Pattern</h3>
+      <p class="metaphor">The Multi-Path Sorter</p>
+      <p>switch statements — clean routing for discrete value matching</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Metaphor</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>7.1</strong></td>
+        <td><a href="/week-07/7-1-nested-logic/">Nested Labyrinths</a></td>
+        <td>🏗️ The Decision Maze</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>7.2</strong></td>
+        <td><a href="/week-07/7-2-short-circuit/">Short-Circuit Logic</a></td>
+        <td>⚡ The Fast Gate</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>7.3</strong></td>
+        <td><a href="/week-07/7-3-truth-tables/">Truth Table Matrices</a></td>
+        <td>📊 The Logic Blueprint</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>7.4</strong></td>
+        <td><a href="/week-07/7-4-switch-pattern/">The Switch Pattern</a></td>
+        <td>🔀 The Multi-Path Sorter</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-07/lab/">The Adaptive Firewall</a></td>
+        <td>Threat Analysis System</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-07/homework/">Logic Reflection</a></td>
+        <td>Written Analysis</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td><strong>Quiz</strong></td>
+        <td><a href="/week-07/weekly-assessment/">Weekly Assessment</a></td>
+        <td>Checkpoint</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🧠 The Logic Upgrade
+
+Week 6 gave you the basics — `if`, `else`, `else if`. This week you learn how professionals **combine, optimize, and structure** those decisions:
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║                   LOGIC UPGRADE PATH                        ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  Week 6: Simple Gates        Week 7: Advanced Routing        ║
+║  ─────────────────────       ────────────────────────        ║
+║  if / else                →  Nested if (decisions inside)    ║
+║  else if chain            →  Guard clauses (flat & clean)    ║
+║  && and ||                →  Short-circuit optimization      ║
+║  Boolean expressions      →  Truth tables (all combos)       ║
+║  else if chains           →  switch (discrete matching)      ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## 🔧 The Advanced Logic Toolkit
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🏗️ Nested if</h5>
+    <p>Decisions inside decisions — checking multiple layers of conditions.</p>
+    <code>if (isLoggedIn) &#123; if (hasPermission) &#123; ... &#125; &#125;</code>
+  </div>
+  <div class="component-card">
+    <h5>🛡️ Guard Clauses</h5>
+    <p>Exit early to avoid deep nesting — keep code flat and readable.</p>
+    <code>if (!isValid) return; // guard clause</code>
+  </div>
+  <div class="component-card">
+    <h5>⚡ Short-Circuit</h5>
+    <p><code>&&</code> stops if left is false. <code>||</code> stops if left is true.</p>
+    <code>if (name != null && name.Length > 0)</code>
+  </div>
+  <div class="component-card">
+    <h5>🔀 switch</h5>
+    <p>Clean routing for matching a variable against specific values.</p>
+    <code>switch (level) &#123; case 1: ... break; &#125;</code>
+  </div>
+</div>
+
+---
+
+## 📋 Week 07 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>🔬 Lab 07:</strong> The Adaptive Firewall</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Homework 07:</strong> Logic Reflection</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 07:</strong> Logic & Conditions</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks:</strong> Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>💬 Participation:</strong> Class engagement</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-07/7-1-nested-logic/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 7.1 →
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  
+  .section-card.nested {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    border-color: #8b5cf6;
+  }
+  
+  .section-card.circuit {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border-color: #06b6d4;
+  }
+  
+  .section-card.truth {
+    background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    border-color: #10b981;
+  }
+  
+  .section-card.switch {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    border-color: #f59e0b;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .card-content h3 {
+    color: white;
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .card-content .metaphor {
+    color: #fcd34d;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .card-content p:last-child {
+    color: #d1d5db;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .mission-brief {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid #3b82f6;
+    margin: 2rem 0;
+  }
+  
+  .mission-brief h2 {
+    color: #93c5fd;
+    margin-top: 0;
+  }
+  
+  .mission-brief p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+
+  body[data-theme="light"] .section-card.nested {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  
+  body[data-theme="light"] .section-card.circuit {
+    background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%) !important;
+    border-color: #06b6d4 !important;
+  }
+  
+  body[data-theme="light"] .section-card.truth {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border-color: #10b981 !important;
+  }
+  
+  body[data-theme="light"] .section-card.switch {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-color: #f59e0b !important;
+  }
+  
+  body[data-theme="light"] .card-content h3 {
+    color: #1e293b !important;
+  }
+  
+  body[data-theme="light"] .card-content .metaphor {
+    color: #92400e !important;
+  }
+  
+  body[data-theme="light"] .card-content p:last-child {
+    color: #475569 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border-left-color: #3b82f6 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief h2 {
+    color: #1e40af !important;
+  }
+  
+  body[data-theme="light"] .mission-brief p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .component-card h5 {
+    color: #1e40af !important;
+  }
+
+  body[data-theme="light"] .component-card p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card code {
+    color: #0a7c62 !important;
+    background: rgba(78, 201, 176, 0.15) !important;
+  }
+`}</style>
