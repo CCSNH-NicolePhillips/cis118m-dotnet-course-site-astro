@@ -300,6 +300,60 @@ class Program
     }
 }
 `,
+        "week-07-lab": `// Name: Your Name Here
+// Assignment: Lab 7 - The Adaptive Firewall
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== ADAPTIVE FIREWALL ===");
+        
+        // TODO: Step 1 - Prompt for Threat Level (int 1-10)
+        // Use Console.Write() and int.Parse(Console.ReadLine())
+        
+        
+        // TODO: Step 2 - Prompt for Internal Source (bool)
+        // Use Console.Write() and bool.Parse(Console.ReadLine())
+        
+        
+        // TODO: Step 3 - Prompt for Protocol (string)
+        // Use Console.Write() and Console.ReadLine().ToUpper()
+        
+        
+        Console.WriteLine();
+        
+        // TODO: Step 4 - Implement firewall rules using if/else if/else
+        // Check rules IN THIS ORDER (first match wins):
+        //
+        // Rule 1: If threat > 8 → "BLOCKED — Critical threat level"
+        //         (This overrides ALL other rules)
+        //
+        // Rule 2: If protocol is SSH AND source is internal
+        //         → "ALLOWED — Trusted internal SSH"
+        //
+        // Rule 3: If threat > 4 → "2FA REQUIRED — Elevated threat detected"
+        //
+        // Rule 4: All other combinations → "BLOCKED — Default deny policy"
+        //
+        // Remember: Use && for combining conditions
+        // Remember: K&R brace style (opening brace on same line as if)
+        
+        
+        // TODO: Step 5 - Use switch on protocol to print protocol details
+        // HTTP → Port: 80, Encryption: Optional (HTTPS recommended)
+        // SSH  → Port: 22, Encryption: Yes (secure shell)
+        // FTP  → Port: 21, Encryption: None (not recommended)
+        // SMTP → Port: 25, Encryption: Optional (TLS available)
+        // default → Unknown protocol
+        
+        
+        Console.WriteLine("============================");
+    }
+}
+`,
 
       };
 
