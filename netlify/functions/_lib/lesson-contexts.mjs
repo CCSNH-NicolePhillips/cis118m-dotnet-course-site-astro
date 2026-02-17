@@ -412,17 +412,17 @@ export const lessonContexts = {
       1. Prompt for Security Level (integer 1-3) using int.Parse(Console.ReadLine())
       2. Prompt for Password (string) using Console.ReadLine()
       3. Use if/else if/else with && to check BOTH level AND password:
-         - Level 1 + "guest123"    → Print "🟢 GUEST ACCESS GRANTED" + guest messages
-         - Level 2 + "admin456"    → Print "🔵 ADMIN ACCESS GRANTED" + admin messages
-         - Level 3 + "superSecret" → Print "🟣 SUPERUSER ACCESS GRANTED" + superuser messages
-         - Anything else           → Print "🔴 ACCESS DENIED" + denial message
+         - Level 1 + "guest123"    → Print "GUEST ACCESS GRANTED" + guest messages
+         - Level 2 + "admin456"    → Print "ADMIN ACCESS GRANTED" + admin messages
+         - Level 3 + "superSecret" → Print "SUPERUSER ACCESS GRANTED" + superuser messages
+         - Anything else           → Print "ACCESS DENIED" + denial message
       
       Required format:
       === SECURITY GATEKEEPER ===
       Enter Security Level (1-3): [input]
       Enter Password: [input]
       
-      [Access result with emoji and description]
+      [Access result and description]
       ============================
     `,
     rubric: `
