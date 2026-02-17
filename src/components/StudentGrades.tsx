@@ -641,8 +641,14 @@ const StudentGrades: React.FC = () => {
               // Check if week is past due and started (for showing 0 on unsubmitted)
               const weekPastDue = isWeekPastDue(week);
               const weekStarted = isWeekStarted(week);
+              const isBossFightOnly = BOSS_FIGHT_ONLY_WEEKS.has(week);
 
               const renderScore = (score: number | undefined, color: string, assignmentType: string) => {
+                // Boss-fight-only weeks don't have quiz or homework - always show dash
+                if (isBossFightOnly && (assignmentType === 'quiz' || assignmentType === 'homework')) {
+                  return <span style={{ color: '#444' }}>—</span>;
+                }
+                
                 // If score is defined, show it
                 if (score !== undefined && score !== null) {
                   return (
