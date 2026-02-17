@@ -444,6 +444,8 @@ internal static class CheckRunner
             "week-02-lab" => Week02LabChecks(programCs),
             "week-03-lab" => Week03LabChecks(programCs),
             "week-04-lab" => Week04LabChecks(programCs),
+            "week-05-boss-fight" => Week05BossFightChecks(programCs),
+            "week-06-lab" => Week06LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -457,6 +459,8 @@ internal static class CheckRunner
             "week-02-lab" => Week02LabHint(checks),
             "week-03-lab" => Week03LabHint(checks),
             "week-04-lab" => Week04LabHint(checks),
+            "week-05-boss-fight" => Week05BossFightHint(checks),
+            "week-06-lab" => Week06LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -893,6 +897,241 @@ internal static class CheckRunner
             "HasLength" => "Use rawBio.Length to get the number of characters in the bio.",
             "HasInterpolation" => "Use $\"Name: {cleanedName}\" syntax for formatted output.",
             "HasEnoughOutput" => "Print all fields: Name, Email, Phone, Area Code, City, State, Bio, and Bio Length.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ===== WEEK 05 BOSS FIGHT CHECKS =====
+    // Boss Fight: Project Budget Estimator - ReadLine, Parse, decimal, string interpolation
+    private static List<CheckResult> Week05BossFightChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Replace 'Your Name Here' with your actual name in the header comment."));
+
+        // Check 2: Uses Console.ReadLine() for input
+        var readLineCount = Regex.Matches(programCs, @"Console\.ReadLine\s*\(").Count;
+        var hasReadLine = readLineCount >= 3;
+        checks.Add(new CheckResult(
+            Name: "HasThreeReadLines",
+            Passed: hasReadLine,
+            Message: hasReadLine
+                ? $"Found {readLineCount} Console.ReadLine() calls for user input."
+                : $"Need 3 Console.ReadLine() calls (name, hours, rate). Found {readLineCount}."));
+
+        // Check 3: Uses Console.Write() for prompts (not WriteLine)
+        var hasWrite = Regex.IsMatch(programCs, @"Console\.Write\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasConsoleWrite",
+            Passed: hasWrite,
+            Message: hasWrite
+                ? "Found Console.Write() for inline prompts."
+                : "Use Console.Write() (not WriteLine) for prompts so input appears on the same line."));
+
+        // Check 4: Uses double.Parse() for hours
+        var hasDoubleParse = Regex.IsMatch(programCs, @"double\.Parse\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasDoubleParse",
+            Passed: hasDoubleParse,
+            Message: hasDoubleParse
+                ? "Found double.Parse() for parsing estimated hours."
+                : "Use double.Parse(Console.ReadLine()) to convert the hours input to a double."));
+
+        // Check 5: Uses decimal.Parse() for hourly rate (money!)
+        var hasDecimalParse = Regex.IsMatch(programCs, @"decimal\.Parse\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasDecimalParse",
+            Passed: hasDecimalParse,
+            Message: hasDecimalParse
+                ? "Found decimal.Parse() for the hourly rate — correct for money!"
+                : "Use decimal.Parse(Console.ReadLine()) for the hourly rate. Money = decimal!"));
+
+        // Check 6: Has a multiplication for budget calculation
+        var hasMultiplication = programCs.Contains("*");
+        checks.Add(new CheckResult(
+            Name: "HasCalculation",
+            Passed: hasMultiplication,
+            Message: hasMultiplication
+                ? "Found multiplication operator for budget calculation."
+                : "Calculate the total budget: total = hours * rate"));
+
+        // Check 7: Uses string interpolation with currency format
+        var hasCurrencyFormat = Regex.IsMatch(programCs, @"\$""[^""]*\{[^}]+:C\}") ||
+                                 Regex.IsMatch(programCs, @"\$""[^""]*\{[^}]+:c\}");
+        var hasInterpolation = Regex.IsMatch(programCs, @"\$""[^""]*\{[^}]+\}");
+        checks.Add(new CheckResult(
+            Name: "HasCurrencyFormat",
+            Passed: hasCurrencyFormat,
+            Message: hasCurrencyFormat
+                ? "Found currency formatting (:C) in string interpolation."
+                : hasInterpolation
+                    ? "Found string interpolation, but use :C for currency format: $\"{total:C}\""
+                    : "Use string interpolation with currency format: $\"requires {total:C} in funding.\""));
+
+        // Check 8: Has real content (TODOs removed)
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO:").Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult(
+            Name: "HasRealContent",
+            Passed: hasRealContent,
+            Message: hasRealContent
+                ? "TODOs completed — code looks ready!"
+                : $"Still have {todoCount} TODO comments. Complete each step and remove the TODOs."));
+
+        return checks;
+    }
+
+    private static string Week05BossFightHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasThreeReadLines" => "You need Console.ReadLine() for project name, hours, and hourly rate.",
+            "HasConsoleWrite" => "Use Console.Write(\"Enter project name: \"); so the cursor stays on the same line.",
+            "HasDoubleParse" => "Add: double hours = double.Parse(Console.ReadLine());",
+            "HasDecimalParse" => "Add: decimal rate = decimal.Parse(Console.ReadLine()); — money uses decimal!",
+            "HasCalculation" => "Calculate: decimal total = (decimal)hours * rate;",
+            "HasCurrencyFormat" => "Use :C for currency: Console.WriteLine($\"requires {total:C} in funding.\");",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ===== WEEK 06 LAB CHECKS =====
+    // Lab 6: The Security Gatekeeper - if/else if/else with && for access control
+    private static List<CheckResult> Week06LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Replace 'Your Name Here' with your actual name in the header comment."));
+
+        // Check 2: Uses Console.ReadLine() for input
+        var readLineCount = Regex.Matches(programCs, @"Console\.ReadLine\s*\(").Count;
+        var hasReadLine = readLineCount >= 2;
+        checks.Add(new CheckResult(
+            Name: "HasTwoReadLines",
+            Passed: hasReadLine,
+            Message: hasReadLine
+                ? $"Found {readLineCount} Console.ReadLine() calls for user input."
+                : $"Need 2 Console.ReadLine() calls (security level + password). Found {readLineCount}."));
+
+        // Check 3: Uses int.Parse() for security level
+        var hasIntParse = Regex.IsMatch(programCs, @"int\.Parse\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasIntParse",
+            Passed: hasIntParse,
+            Message: hasIntParse
+                ? "Found int.Parse() for parsing security level."
+                : "Use int.Parse(Console.ReadLine()) to convert security level input to an integer."));
+
+        // Check 4: Uses if statement
+        var hasIf = Regex.IsMatch(programCs, @"\bif\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasIfStatement",
+            Passed: hasIf,
+            Message: hasIf
+                ? "Found if statement."
+                : "Use an if statement to check credentials."));
+
+        // Check 5: Uses else if
+        var hasElseIf = Regex.IsMatch(programCs, @"\belse\s+if\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasElseIf",
+            Passed: hasElseIf,
+            Message: hasElseIf
+                ? "Found else if chain for multiple access tiers."
+                : "Use 'else if' to check the next access tier (don't use separate if statements)."));
+
+        // Check 6: Uses else (final fallback)
+        var hasElse = Regex.IsMatch(programCs, @"\belse\s*\{");
+        checks.Add(new CheckResult(
+            Name: "HasElse",
+            Passed: hasElse,
+            Message: hasElse
+                ? "Found else block for ACCESS DENIED fallback."
+                : "Add an else block at the end for ACCESS DENIED (invalid credentials)."));
+
+        // Check 7: Uses && (logical AND) to combine checks
+        var hasLogicalAnd = programCs.Contains("&&");
+        checks.Add(new CheckResult(
+            Name: "HasLogicalAnd",
+            Passed: hasLogicalAnd,
+            Message: hasLogicalAnd
+                ? "Found && operator — combining level AND password checks."
+                : "Use && to check BOTH level and password: if (level == 1 && password == \"guest123\")"));
+
+        // Check 8: Checks all three access levels
+        var hasGuest = Regex.IsMatch(programCs, @"""guest123""", RegexOptions.IgnoreCase);
+        var hasAdmin = Regex.IsMatch(programCs, @"""admin456""", RegexOptions.IgnoreCase);
+        var hasSuperuser = Regex.IsMatch(programCs, @"""superSecret""", RegexOptions.IgnoreCase);
+        var hasAllLevels = hasGuest && hasAdmin && hasSuperuser;
+        checks.Add(new CheckResult(
+            Name: "HasAllAccessLevels",
+            Passed: hasAllLevels,
+            Message: hasAllLevels
+                ? "Found all three password checks (guest123, admin456, superSecret)."
+                : $"Need all 3 passwords: {(hasGuest ? "✅" : "❌")} guest123, {(hasAdmin ? "✅" : "❌")} admin456, {(hasSuperuser ? "✅" : "❌")} superSecret"));
+
+        // Check 9: Uses K&R brace style (opening brace on same line)
+        var hasKnRBraces = Regex.IsMatch(programCs, @"if\s*\([^)]+\)\s*\{");
+        checks.Add(new CheckResult(
+            Name: "HasKnRBraces",
+            Passed: hasKnRBraces,
+            Message: hasKnRBraces
+                ? "Found K&R brace style (opening brace on same line as if)."
+                : "Use K&R brace style: if (condition) { — opening brace on the SAME line."));
+
+        // Check 10: Has real content (TODOs removed)
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO:").Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult(
+            Name: "HasRealContent",
+            Passed: hasRealContent,
+            Message: hasRealContent
+                ? "TODOs completed — code looks ready!"
+                : $"Still have {todoCount} TODO comments. Complete each step and remove the TODOs."));
+
+        return checks;
+    }
+
+    private static string Week06LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasTwoReadLines" => "You need Console.ReadLine() for both security level and password.",
+            "HasIntParse" => "Convert the level input: int level = int.Parse(Console.ReadLine());",
+            "HasIfStatement" => "Start with: if (level == 1 && password == \"guest123\") {",
+            "HasElseIf" => "After the first if block, add: } else if (level == 2 && password == \"admin456\") {",
+            "HasElse" => "After all else if blocks, add: } else { for the ACCESS DENIED case.",
+            "HasLogicalAnd" => "Combine both conditions: if (level == 1 && password == \"guest123\")",
+            "HasAllAccessLevels" => "Check for all 3 passwords: \"guest123\", \"admin456\", \"superSecret\"",
+            "HasKnRBraces" => "Put the opening brace on the same line: if (condition) {",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };
     }
