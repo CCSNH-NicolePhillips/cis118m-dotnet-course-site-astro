@@ -202,12 +202,18 @@ Return JSON:
       }
     }
 
+    // Derive assignment ID for storage
+    const assignmentId = starterId.replace(/-\d+$/, ''); // week-01-lab-1 -> week-01-lab
+    const weekMatch = starterId.match(/week-(\d+)/);
+    const weekNum = weekMatch ? weekMatch[1] : '01';
+    const submissionType = starterId.includes('boss-fight') ? 'boss-fight' : 'lab';
+
     // Create submission object
     const submission = {
       userId: sub,
       email,
-      week: '01',
-      type: 'lab',
+      week: weekNum,
+      type: submissionType,
       starterId,
       code,
       stdin: stdin || '',
@@ -219,9 +225,6 @@ Return JSON:
       aiFeedback
     };
 
-    // Derive assignment ID for storage
-    const assignmentId = starterId.replace(/-\d+$/, ''); // week-01-lab-1 -> week-01-lab
-    
     // Store latest submission for quick access
     const latestKey = `submissions:${sub}:${assignmentId}:latest`;
     await redis.set(latestKey, JSON.stringify(submission));
@@ -238,7 +241,7 @@ Return JSON:
     await redis.set(historyKey, JSON.stringify(history));
 
     // Add to index for instructor view
-    await redis.sadd('submissions:index:week01', sub);
+    await redis.sadd(`submissions:index:week${weekNum}`, sub);
 
     return {
       statusCode: 200,

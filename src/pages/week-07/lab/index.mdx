@@ -232,37 +232,23 @@ When your program runs correctly and handles all firewall rules:
 
 <div id="lab-submit-container" style="margin: 24px 0;">
   <button id="submit-lab-btn" style="
-    background: linear-gradient(135deg, #4ec9b0 0%, #3ba897 100%);
-    color: #000;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
     border: none;
-    padding: 16px 48px;
+    padding: 16px 32px;
     border-radius: 8px;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(78, 201, 176, 0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   ">
     🚀 Submit Lab
   </button>
   <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
-  <div id="ai-feedback" style="
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 8px;
-    display: none;
-    white-space: pre-wrap;
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    max-height: 400px;
-    overflow-y: auto;
-  "></div>
-  <div id="last-submitted" style="
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.5);
-  "></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
 <script src="/scripts/submit-lab.js"></script>

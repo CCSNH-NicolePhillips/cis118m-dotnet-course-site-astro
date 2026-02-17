@@ -138,7 +138,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const token = await getAccessToken();
     if (token) {
-      const response = await fetch(`/api/get-submission?week=${weekNumber}&type=lab`, {
+      // Determine submission type from starterId (boss-fight or lab)
+      const submissionType = starterId.includes('boss-fight') ? 'boss-fight' : 'lab';
+      const response = await fetch(`/api/get-submission?week=${weekNumber}&type=${submissionType}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
