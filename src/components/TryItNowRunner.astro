@@ -967,6 +967,15 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     
     // Expand editor - open in popup window
     expandBtn.addEventListener('click', () => {
+      // Save current code to localStorage so popup can load it
+      const currentCode = editor ? editor.getValue() : originalCode;
+      const storageKey = `cis118m:${starterId}:Program.cs`;
+      try {
+        localStorage.setItem(storageKey, currentCode);
+      } catch (e) {
+        console.warn('Failed to save code to localStorage:', e);
+      }
+      
       const editorUrl = `/editor/embedded?starter=${starterId}`;
       window.open(editorUrl, '_blank', 'width=1200,height=800,resizable=yes,scrollbars=yes,menubar=no,toolbar=no,location=no,status=no');
     });
