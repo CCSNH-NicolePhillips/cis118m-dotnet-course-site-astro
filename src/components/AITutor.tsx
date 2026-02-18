@@ -58,7 +58,34 @@ const AITutor: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pageId, setPageId] = useState('');
   const [studentName, setStudentName] = useState<string | null>(null);
+  const [showExamples, setShowExamples] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Example prompts organized by category
+  const examplePrompts = [
+    { emoji: '📊', text: "How am I doing in this class?", category: 'grades' },
+    { emoji: '🎯', text: "What should I practice?", category: 'coaching' },
+    { emoji: '📈', text: "Am I improving?", category: 'trends' },
+    { emoji: '📝', text: "Review my last lab", category: 'submissions' },
+    { emoji: '💡', text: "Explain this page", category: 'help' },
+    { emoji: '⏰', text: "When is my next deadline?", category: 'schedule' },
+    { emoji: '🔧', text: "Help me debug my code", category: 'code' },
+    { emoji: '🏆', text: "What am I good at?", category: 'strengths' },
+  ];
+
+  // Handle clicking an example prompt
+  const handleExampleClick = (promptText: string) => {
+    setShowExamples(false);
+    setInput(promptText);
+    // Auto-send after a brief delay so user sees what was selected
+    setTimeout(() => {
+      const userMessage = promptText;
+      setInput('');
+      setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+      setIsLoading(true);
+      sendMessageWithContent(userMessage);
+    }, 100);
+  };
 
   // Get current page context and student name
   useEffect(() => {
@@ -97,16 +124,16 @@ const AITutor: React.FC = () => {
           setStudentName(displayName);
           const firstName = displayName.split(' ')[0];
           setMessages([
-            { role: 'assistant', content: `Secure connection active. Senior Architect online. Hello ${firstName}, how can I assist with your technical implementation?` }
+            { role: 'assistant', content: `Hey ${firstName}! I'm your AI tutor. I can help you understand concepts, review your grades and submissions, suggest what to practice, and track your progress. Try one of the options below or ask me anything!` }
           ]);
         } else {
           setMessages([
-            { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
+            { role: 'assistant', content: "Hey there! I'm your AI tutor. I can help you understand concepts, review your grades and submissions, suggest what to practice, and track your progress. Try one of the options below or ask me anything!" }
           ]);
         }
       } catch (err) {
         setMessages([
-          { role: 'assistant', content: 'Secure connection active. Senior Architect online. How can I assist with your technical implementation?' }
+          { role: 'assistant', content: "Hey there! I'm your AI tutor. I can help you understand concepts, review your grades and submissions, suggest what to practice, and track your progress. Try one of the options below or ask me anything!" }
         ]);
       }
     };
@@ -120,14 +147,10 @@ const AITutor: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    setIsLoading(true);
-
+  // Core message sending logic
+  const sendMessageWithContent = async (userMessage: string) => {
+    setShowExamples(false);
+    
     // Try to get current code from embedded editor iframe or page editor
     let studentCode = '';
     try {
@@ -230,6 +253,17 @@ const AITutor: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Wrapper for input-based sending
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+    
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setIsLoading(true);
+    await sendMessageWithContent(userMessage);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -412,6 +446,60 @@ const AITutor: React.FC = () => {
                 }}
               >
                 <span className="typing-dots">Analyzing...</span>
+              </div>
+            )}
+            
+            {/* Example Prompt Chips - shown after initial greeting */}
+            {showExamples && messages.length === 1 && !isLoading && (
+              <div style={{ marginTop: '8px' }}>
+                <div style={{ 
+                  color: '#888', 
+                  fontSize: '12px', 
+                  marginBottom: '8px',
+                  textAlign: 'center' 
+                }}>
+                  Try asking:
+                </div>
+                <div style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '8px',
+                  justifyContent: 'center',
+                }}>
+                  {examplePrompts.map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleExampleClick(prompt.text)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '8px 12px',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(78, 201, 176, 0.4)',
+                        background: 'rgba(78, 201, 176, 0.1)',
+                        color: '#e0e0e0',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(78, 201, 176, 0.25)';
+                        e.currentTarget.style.borderColor = '#4ec9b0';
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(78, 201, 176, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(78, 201, 176, 0.4)';
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    >
+                      <span>{prompt.emoji}</span>
+                      <span>{prompt.text}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             

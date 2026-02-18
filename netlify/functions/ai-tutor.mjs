@@ -220,6 +220,85 @@ function getUpcomingDeadlines() {
 }
 
 /**
+ * Detect missed or zero-score assignments.
+ */
+function detectMissedAssignments(assignments) {
+  const now = new Date();
+  const missed = [];
+  
+  for (const week of WEEKS) {
+    const dueDate = new Date(week.dueDate.replace(' at ', ' ').replace(' EST', ' GMT-0500').replace(' EDT', ' GMT-0400'));
+    
+    // Only check past due weeks
+    if (dueDate > now) continue;
+    
+    const weekNum = week.week.toString().padStart(2, '0');
+    const labId = `week-${weekNum}-lab`;
+    const homeworkId = `week-${weekNum}-homework`;
+    const quizId = `week-${weekNum}-quiz`;
+    
+    // Check lab
+    if (!assignments[labId] || assignments[labId].bestScore === undefined) {
+      missed.push({ type: 'Lab', week: week.week, title: week.title });
+    } else if (parseFloat(assignments[labId].bestScore || 0) === 0) {
+      missed.push({ type: 'Lab', week: week.week, title: week.title, zeroScore: true });
+    }
+    
+    // Check homework (less critical)
+    if (!assignments[homeworkId] || assignments[homeworkId].bestScore === undefined) {
+      missed.push({ type: 'Homework', week: week.week, title: week.title });
+    }
+  }
+  
+  return missed;
+}
+
+/**
+ * Generate personalized study suggestions based on weak areas and upcoming content.
+ */
+function generateStudySuggestions(weakAreas, upcomingDeadlines) {
+  const suggestions = [];
+  
+  // Map weak categories to practice recommendations
+  const practiceMap = {
+    'Code Syntax': 'Practice writing small programs from scratch without looking at examples.',
+    'Completeness': 'Before submitting, use a checklist to verify all requirements are met.',
+    'Input Handling': 'Practice with Console.ReadLine(), parsing, and validating user input.',
+    'Output Formatting': 'Focus on Console.WriteLine() with proper spacing and line breaks.',
+    'Logic Flow': 'Draw flowcharts before coding to visualize the program structure.',
+    'Variable Naming': 'Use descriptive names like userAge instead of x or temp.',
+    'Comments': 'Add a comment explaining each major section of your code.',
+    'Brace Style': 'Consistently use K&R style: opening brace on same line as statement.',
+  };
+  
+  // Add suggestions based on weak areas
+  const seenCategories = new Set();
+  for (const weak of weakAreas.slice(0, 3)) {
+    if (seenCategories.has(weak.category)) continue;
+    seenCategories.add(weak.category);
+    
+    const recommendation = practiceMap[weak.category] || `Review the concepts related to ${weak.category}.`;
+    suggestions.push({
+      category: weak.category,
+      recommendation,
+      priority: weak.score < 50 ? 'high' : 'medium'
+    });
+  }
+  
+  // Add upcoming-specific suggestions
+  if (upcomingDeadlines.length > 0) {
+    const nextWeek = upcomingDeadlines[0];
+    suggestions.push({
+      category: 'Upcoming',
+      recommendation: `Start working on Week ${nextWeek.week} (${nextWeek.title}) early - it's due in ${nextWeek.daysUntil} day(s).`,
+      priority: nextWeek.daysUntil <= 3 ? 'high' : 'low'
+    });
+  }
+  
+  return suggestions;
+}
+
+/**
  * Analyze grade trends (improving, declining, or stable).
  */
 function analyzeGradeTrends(assignments) {
@@ -492,6 +571,33 @@ async function fetchStudentGrades(userId) {
       }
     }
     
+    // Detect missed assignments
+    const missedAssignments = detectMissedAssignments(assignments);
+    if (missedAssignments.length > 0) {
+      lines.push('');
+      lines.push('--- MISSED/INCOMPLETE ASSIGNMENTS ---');
+      const labsMissed = missedAssignments.filter(m => m.type === 'Lab').slice(0, 3);
+      for (const m of labsMissed) {
+        const status = m.zeroScore ? '0 points (submitted but scored 0)' : 'Not submitted';
+        lines.push(`- Week ${m.week} ${m.type}: ${status}`);
+      }
+      if (missedAssignments.length > labsMissed.length) {
+        const otherCount = missedAssignments.length - labsMissed.length;
+        lines.push(`- Plus ${otherCount} other missed homework/assignments`);
+      }
+    }
+    
+    // Generate study suggestions
+    const studySuggestions = generateStudySuggestions(weakAreasAnalysis.weakAreas, upcomingDeadlines);
+    if (studySuggestions.length > 0) {
+      lines.push('');
+      lines.push('--- PERSONALIZED STUDY RECOMMENDATIONS ---');
+      for (const s of studySuggestions) {
+        const priority = s.priority === 'high' ? '⚠️ ' : '';
+        lines.push(`- ${priority}${s.category}: ${s.recommendation}`);
+      }
+    }
+    
     // Extract code submissions
     const submissions = {};
     for (const id of sortedIds) {
@@ -518,7 +624,9 @@ async function fetchStudentGrades(userId) {
         conceptAverages: weakAreasAnalysis.conceptAverages,
         neededForC,
         neededForB,
-        upcomingDeadlines
+        upcomingDeadlines,
+        missedAssignments,
+        studySuggestions
       }
     };
   } catch (err) {
