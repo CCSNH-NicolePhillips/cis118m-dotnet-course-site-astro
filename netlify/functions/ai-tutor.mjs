@@ -84,6 +84,183 @@ SPRING BREAK: March 16-22, 2026 (No classes)
 `;
 
 /**
+ * Fetch a student's code submissions from Redis.
+ * Returns an object mapping assignment IDs to their submitted code.
+ */
+async function fetchStudentSubmissions(userId) {
+  try {
+    const redis = getRedis();
+    const progressKey = `user:progress:data:${userId}`;
+    const progressHash = await redis.hgetall(progressKey) || {};
+    
+    const submissions = {};
+    for (const [key, value] of Object.entries(progressHash)) {
+      if (key.endsWith(':savedCode') && value) {
+        const assignmentId = key.replace(':savedCode', '');
+        submissions[assignmentId] = value;
+      }
+    }
+    return submissions;
+  } catch (err) {
+    console.error('[ai-tutor] Error fetching submissions:', err.message || err);
+    return {};
+  }
+}
+
+/**
+ * Analyze weak areas from rubric data and feedback.
+ * Returns an array of areas needing improvement.
+ */
+function analyzeWeakAreas(assignments) {
+  const weakAreas = [];
+  const strengthAreas = [];
+  const conceptScores = {};
+  
+  for (const [id, data] of Object.entries(assignments)) {
+    // Parse rubric to find low-scoring categories
+    if (data.rubric) {
+      try {
+        const rubricObj = typeof data.rubric === 'string' ? JSON.parse(data.rubric) : data.rubric;
+        for (const [category, details] of Object.entries(rubricObj)) {
+          if (typeof details === 'object' && details.points !== undefined) {
+            const maxPts = details.maxPoints || 100;
+            const pct = (details.points / maxPts) * 100;
+            const categoryName = category.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            
+            if (!conceptScores[categoryName]) {
+              conceptScores[categoryName] = { total: 0, count: 0 };
+            }
+            conceptScores[categoryName].total += pct;
+            conceptScores[categoryName].count += 1;
+            
+            if (pct < 70 && details.rationale) {
+              weakAreas.push({
+                assignment: id,
+                category: categoryName,
+                score: pct,
+                feedback: details.rationale
+              });
+            } else if (pct >= 90) {
+              strengthAreas.push({
+                assignment: id,
+                category: categoryName,
+                score: pct
+              });
+            }
+          }
+        }
+      } catch (e) {
+        // Skip unparseable rubrics
+      }
+    }
+    
+    // Also check overall feedback for patterns
+    if (data.feedback) {
+      const feedback = data.feedback.toLowerCase();
+      if (feedback.includes('missing') || feedback.includes('forgot') || feedback.includes('incomplete')) {
+        weakAreas.push({
+          assignment: id,
+          category: 'Completeness',
+          feedback: data.feedback
+        });
+      }
+      if (feedback.includes('syntax') || feedback.includes('compile') || feedback.includes('error')) {
+        weakAreas.push({
+          assignment: id,
+          category: 'Code Syntax',
+          feedback: data.feedback
+        });
+      }
+    }
+  }
+  
+  // Calculate average scores per concept
+  const conceptAverages = {};
+  for (const [concept, scores] of Object.entries(conceptScores)) {
+    conceptAverages[concept] = Math.round(scores.total / scores.count);
+  }
+  
+  return { weakAreas, strengthAreas, conceptAverages };
+}
+
+/**
+ * Calculate what grade is needed on remaining work to reach target grade.
+ */
+function calculateNeededGrade(currentWeightedSum, currentWeight, targetGrade = 70) {
+  const remainingWeight = 1.0 - currentWeight;
+  if (remainingWeight <= 0) return null;
+  
+  const neededOnRemaining = (targetGrade - currentWeightedSum) / remainingWeight;
+  return Math.round(neededOnRemaining * 10) / 10;
+}
+
+/**
+ * Get upcoming deadlines based on current date.
+ */
+function getUpcomingDeadlines() {
+  const now = new Date();
+  const upcoming = [];
+  
+  for (const week of WEEKS) {
+    const dueDate = new Date(week.dueDate.replace(' at ', ' ').replace(' EST', ' GMT-0500').replace(' EDT', ' GMT-0400'));
+    const daysUntil = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntil >= 0 && daysUntil <= 14) {
+      upcoming.push({
+        week: week.week,
+        title: week.title,
+        dueDate: week.dueDate,
+        daysUntil,
+        isBossFight: week.isBossFight || false
+      });
+    }
+  }
+  
+  return upcoming.slice(0, 3); // Return next 3 deadlines
+}
+
+/**
+ * Analyze grade trends (improving, declining, or stable).
+ */
+function analyzeGradeTrends(assignments) {
+  const labScores = [];
+  
+  // Sort by week number
+  const sortedAssignments = Object.entries(assignments)
+    .filter(([id, data]) => id.includes('-lab') && data.bestScore !== undefined)
+    .sort((a, b) => {
+      const weekA = parseInt(a[0].match(/week-(\d+)/)?.[1] || '99');
+      const weekB = parseInt(b[0].match(/week-(\d+)/)?.[1] || '99');
+      return weekA - weekB;
+    });
+  
+  for (const [id, data] of sortedAssignments) {
+    labScores.push({
+      week: parseInt(id.match(/week-(\d+)/)?.[1] || '0'),
+      score: parseFloat(data.bestScore || data.score || 0)
+    });
+  }
+  
+  if (labScores.length < 2) return null;
+  
+  // Compare first half vs second half
+  const midpoint = Math.floor(labScores.length / 2);
+  const firstHalf = labScores.slice(0, midpoint);
+  const secondHalf = labScores.slice(midpoint);
+  
+  const firstAvg = firstHalf.reduce((s, x) => s + x.score, 0) / firstHalf.length;
+  const secondAvg = secondHalf.reduce((s, x) => s + x.score, 0) / secondHalf.length;
+  const diff = secondAvg - firstAvg;
+  
+  return {
+    trend: diff > 5 ? 'improving' : diff < -5 ? 'declining' : 'stable',
+    recentAvg: Math.round(secondAvg),
+    earlierAvg: Math.round(firstAvg),
+    change: Math.round(diff)
+  };
+}
+
+/**
  * Fetch and format a student's grades from Redis.
  * Returns a human-readable summary string, or empty string if unavailable.
  */
@@ -96,7 +273,7 @@ async function fetchStudentGrades(userId) {
     const progressHash = await redis.hgetall(progressKey) || {};
     
     if (Object.keys(progressHash).length === 0) {
-      return '';
+      return { summary: '', submissions: {}, analysis: null };
     }
     
     // Group by assignment ID
@@ -178,7 +355,7 @@ async function fetchStudentGrades(userId) {
       }
     }
     
-    if (lines.length === 0) return '';
+    if (lines.length === 0) return { summary: '', submissions: {}, analysis: null };
     
     // Calculate cumulative weighted grade
     const BOSS_FIGHT_WEEKS = new Set([5, 9, 13]);
@@ -250,10 +427,103 @@ async function fetchStudentGrades(userId) {
       lines.push(`Note: Based on ${Math.round(totalWeight * 100)}% of total course weight (only categories with submissions are counted).`);
     }
     
-    return lines.join('\n');
+    // Perform enhanced analysis
+    const weakAreasAnalysis = analyzeWeakAreas(assignments);
+    const trendAnalysis = analyzeGradeTrends(assignments);
+    const upcomingDeadlines = getUpcomingDeadlines();
+    const neededForC = cumulativeGrade !== null ? calculateNeededGrade(weightedSum, totalWeight, 70) : null;
+    const neededForB = cumulativeGrade !== null ? calculateNeededGrade(weightedSum, totalWeight, 80) : null;
+    
+    // Add trend analysis to summary
+    if (trendAnalysis) {
+      lines.push('');
+      lines.push('--- GRADE TREND ---');
+      if (trendAnalysis.trend === 'improving') {
+        lines.push(`Trend: IMPROVING! Recent work averages ${trendAnalysis.recentAvg}% vs earlier ${trendAnalysis.earlierAvg}% (+${trendAnalysis.change} points)`);
+      } else if (trendAnalysis.trend === 'declining') {
+        lines.push(`Trend: DECLINING. Recent work averages ${trendAnalysis.recentAvg}% vs earlier ${trendAnalysis.earlierAvg}% (${trendAnalysis.change} points)`);
+      } else {
+        lines.push(`Trend: STABLE. Consistent performance around ${trendAnalysis.recentAvg}%`);
+      }
+    }
+    
+    // Add what's needed to pass/improve
+    if (neededForC !== null && cumulativeGrade < 70) {
+      lines.push('');
+      lines.push('--- PATH TO PASSING ---');
+      lines.push(`To achieve a C (70%): Average ${neededForC}% on remaining assignments`);
+      if (neededForC > 100) {
+        lines.push(`Warning: A 70% may be difficult to achieve. Talk to your instructor about options.`);
+      }
+    } else if (neededForB !== null && cumulativeGrade >= 70 && cumulativeGrade < 80) {
+      lines.push('');
+      lines.push('--- PATH TO B GRADE ---');
+      lines.push(`To achieve a B (80%): Average ${neededForB}% on remaining assignments`);
+    }
+    
+    // Add weak areas summary
+    if (weakAreasAnalysis.weakAreas.length > 0) {
+      lines.push('');
+      lines.push('--- AREAS FOR IMPROVEMENT ---');
+      const uniqueCategories = [...new Set(weakAreasAnalysis.weakAreas.map(w => w.category))];
+      for (const cat of uniqueCategories.slice(0, 3)) {
+        lines.push(`- ${cat}: Focus on this area based on past feedback`);
+      }
+    }
+    
+    // Add strengths
+    if (weakAreasAnalysis.strengthAreas.length > 0) {
+      lines.push('');
+      lines.push('--- STRENGTHS ---');
+      const uniqueStrengths = [...new Set(weakAreasAnalysis.strengthAreas.map(s => s.category))];
+      for (const cat of uniqueStrengths.slice(0, 3)) {
+        lines.push(`- ${cat}: Consistently strong performance`);
+      }
+    }
+    
+    // Add upcoming deadlines
+    if (upcomingDeadlines.length > 0) {
+      lines.push('');
+      lines.push('--- UPCOMING DEADLINES ---');
+      for (const d of upcomingDeadlines) {
+        const urgency = d.daysUntil <= 2 ? ' (URGENT!)' : d.daysUntil <= 5 ? ' (Soon)' : '';
+        const bossFight = d.isBossFight ? ' [BOSS FIGHT - 200 pts]' : '';
+        lines.push(`- Week ${d.week} (${d.title}): Due in ${d.daysUntil} day(s)${urgency}${bossFight}`);
+      }
+    }
+    
+    // Extract code submissions
+    const submissions = {};
+    for (const id of sortedIds) {
+      const a = assignments[id];
+      if (a.savedCode) {
+        submissions[id] = a.savedCode;
+      }
+    }
+    
+    return {
+      summary: lines.join('\n'),
+      submissions,
+      analysis: {
+        cumulativeGrade,
+        letterGrade: cumulativeGrade !== null ? letterGrade(cumulativeGrade) : null,
+        totalWeight,
+        labAvg,
+        quizAvg,
+        homeworkAvg,
+        participationAvg,
+        trend: trendAnalysis,
+        weakAreas: weakAreasAnalysis.weakAreas,
+        strengthAreas: weakAreasAnalysis.strengthAreas,
+        conceptAverages: weakAreasAnalysis.conceptAverages,
+        neededForC,
+        neededForB,
+        upcomingDeadlines
+      }
+    };
   } catch (err) {
     console.error('[ai-tutor] Error fetching grades:', err.message || err);
-    return '';
+    return { summary: '', submissions: {}, analysis: null };
   }
 }
 
@@ -285,26 +555,50 @@ export async function handler(event, context) {
 
   // Optionally verify auth token and fetch student grades
   // Auth is NOT required - tutor still works without grades for unauthenticated users
-  let studentGrades = '';
+  let studentGradesData = { summary: '', submissions: {}, analysis: null };
+  let userId = null;
   try {
     const authHeader = event.headers?.authorization || event.headers?.Authorization;
     if (authHeader) {
       const user = await verifyAuth0Token(authHeader);
       if (user?.sub) {
-        studentGrades = await fetchStudentGrades(user.sub);
-        console.log('[ai-tutor] Fetched grades for user:', user.sub, 'grades found:', !!studentGrades);
+        userId = user.sub;
+        studentGradesData = await fetchStudentGrades(user.sub);
+        console.log('[ai-tutor] Fetched grades for user:', user.sub, 'grades found:', !!studentGradesData.summary);
       }
     }
   } catch (authErr) {
     // Auth failed - continue without grades (non-blocking)
     console.log('[ai-tutor] Auth/grades skipped:', authErr.message || authErr);
   }
+  
+  // If student is asking about a specific submission, fetch that code
+  let requestedSubmissionCode = '';
+  const submissionMatch = message.match(/(?:my|show|see|view|look at|review).*(?:lab|submission|code|work).*(?:week\s*)?(\d+)/i) ||
+                          message.match(/week\s*(\d+).*(?:lab|submission|code|work)/i);
+  if (submissionMatch && userId && Object.keys(studentGradesData.submissions).length === 0) {
+    // Fetch submissions separately if not already included
+    const subs = await fetchStudentSubmissions(userId);
+    studentGradesData.submissions = subs;
+  }
+  
+  // If asking about a specific week's code, extract it
+  if (submissionMatch) {
+    const weekNum = submissionMatch[1].padStart(2, '0');
+    const possibleKeys = [`week-${weekNum}-lab`, `week-${weekNum}-boss-fight`];
+    for (const key of possibleKeys) {
+      if (studentGradesData.submissions[key]) {
+        requestedSubmissionCode = `\nSTUDENT'S SUBMITTED CODE FOR ${key.toUpperCase()}:\n\`\`\`csharp\n${studentGradesData.submissions[key].slice(0, 3000)}\n\`\`\`\n`;
+        break;
+      }
+    }
+  }
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: 800, // Increased for course content summaries
+      maxOutputTokens: 1200, // Increased for detailed grade breakdowns and coaching
     }
   });
 
@@ -364,6 +658,44 @@ export async function handler(event, context) {
     ? `\n\nFULL COURSE KNOWLEDGE BASE (you have access to all lessons):\n${COURSE_CONTENT_SUMMARY.slice(0, 8000)}\n`
     : '';
 
+  // Build coaching section based on analysis
+  let coachingSection = '';
+  if (studentGradesData.analysis) {
+    const a = studentGradesData.analysis;
+    coachingSection = '\n\n=== COACHING ANALYSIS (use this to personalize advice) ===\n';
+    
+    if (a.weakAreas && a.weakAreas.length > 0) {
+      coachingSection += 'AREAS NEEDING PRACTICE:\n';
+      const seen = new Set();
+      for (const w of a.weakAreas.slice(0, 5)) {
+        if (seen.has(w.category)) continue;
+        seen.add(w.category);
+        coachingSection += `- ${w.category}: Lost points on ${w.assignment}${w.feedback ? ` (${w.feedback.slice(0, 100)})` : ''}\n`;
+      }
+    }
+    
+    if (a.strengthAreas && a.strengthAreas.length > 0) {
+      coachingSection += '\nSTRENGTHS TO BUILD ON:\n';
+      const seen = new Set();
+      for (const s of a.strengthAreas.slice(0, 3)) {
+        if (seen.has(s.category)) continue;
+        seen.add(s.category);
+        coachingSection += `- ${s.category}: Consistently strong (${s.score}%+)\n`;
+      }
+    }
+    
+    if (a.conceptAverages && Object.keys(a.conceptAverages).length > 0) {
+      coachingSection += '\nPERFORMANCE BY CONCEPT:\n';
+      const sorted = Object.entries(a.conceptAverages).sort((x, y) => x[1] - y[1]);
+      for (const [concept, avg] of sorted.slice(0, 5)) {
+        const status = avg >= 90 ? 'Excellent' : avg >= 70 ? 'Good' : 'Needs work';
+        coachingSection += `- ${concept}: ${avg}% (${status})\n`;
+      }
+    }
+    
+    coachingSection += '=== END COACHING ANALYSIS ===\n';
+  }
+
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
 
 ${getTutorPromptRules()}
@@ -376,12 +708,14 @@ ${topicContext}
 ${pageContentSection}
 ${codeSection}
 ${homeworkSection}
+${requestedSubmissionCode}
 ${requestedWeekContent}
 ${courseContextSection}
-${studentGrades ? `
+${studentGradesData.summary ? `
 STUDENT'S GRADES & PROGRESS:
-${studentGrades}
+${studentGradesData.summary}
 ` : ''}
+${coachingSection}
 ADDITIONAL GUIDELINES:
 - For SYLLABUS questions (due dates, email, late policy, grading): ALWAYS give the direct answer immediately. NEVER say "check the syllabus" - you ARE the syllabus expert!
 - You have COMPLETE knowledge of ALL course content from Week 1-15. When students ask about ANY week or lesson, use the course knowledge base above to give accurate summaries.
@@ -390,12 +724,32 @@ ADDITIONAL GUIDELINES:
 - When summarizing lessons, mention: the main topic, key concepts, and what students should be able to do after completing it.
 - If the student has code or homework visible above, you can reference it when they ask for help. You can see what they've written!
 - For homework help: Guide them to improve their answer without giving the answer directly. Ask leading questions or point out what's missing.
-- Keep responses to 2-5 sentences max for quick questions, but you can expand to 5-8 sentences for summary requests.
+- Keep responses to 2-5 sentences max for quick questions, but you can expand to 8-12 sentences for detailed grade breakdowns or coaching advice.
 - FORMATTING: Always format your responses with proper line breaks and structure. Use **bold** for emphasis, use bullet points (- item) for lists, and separate sections with blank lines. NEVER output a wall of text. Each assignment score should be on its own line. Use markdown formatting.
-- GRADE QUESTIONS: If the student asks about their grades, scores, or overall grade, use the STUDENT'S GRADES & PROGRESS section above. The CUMULATIVE GRADE SUMMARY at the bottom gives their weighted overall course grade — ALWAYS include this when they ask about their grade or how they're doing. Format grades in a clean table-like layout with each assignment on its own line. Show the category averages and overall grade prominently.
-- If they scored well, congratulate them! If they scored low, identify specific areas from the feedback/rubric where they lost points and suggest concrete steps to improve.
-- If a student asks about grades but no grade data is available, let them know you can only see grades for assignments they've submitted through the course site, and suggest they check with their instructor for any questions about grades not shown.
-- NEVER fabricate or guess grades. Only reference grades that appear in the STUDENT'S GRADES & PROGRESS section above.
+
+GRADE & COACHING CAPABILITIES (you can now do all of these):
+1. **Detailed grade breakdown**: Give full rubric breakdowns showing exactly where points were earned/lost
+2. **Review past submissions**: If STUDENT'S SUBMITTED CODE appears above, analyze their actual code and explain what they did well/poorly
+3. **Practice coaching**: Use the COACHING ANALYSIS to identify weak areas and suggest specific exercises or concepts to practice
+4. **Trend analysis**: If GRADE TREND data is available, tell them if they're improving, declining, or stable
+5. **Path to success**: If PATH TO PASSING/B GRADE appears, explain exactly what they need to achieve their target grade
+6. **Strength recognition**: Celebrate their strengths from the STRENGTHS section
+7. **Upcoming deadlines**: Warn about urgent deadlines from the UPCOMING DEADLINES section
+
+When students ask "what should I practice?", "how can I improve?", "what am I doing wrong?", or similar:
+- Reference specific rubric categories where they lost points
+- Suggest practice exercises related to their weak concepts
+- Praise their strong areas to build confidence
+- Give 2-3 concrete, actionable steps they can take this week
+
+When students ask to see or review their old code/submissions:
+- If their submitted code appears above, walk through it line by line
+- Point out what worked well and what could be improved
+- Relate any issues back to concepts from the relevant week's lessons
+
+If they scored well, congratulate them! If they scored low, be encouraging and focus on growth mindset — emphasize that struggle is part of learning and identify specific next steps.
+If a student asks about grades but no grade data is available, let them know you can only see grades for assignments they've submitted through the course site.
+NEVER fabricate or guess grades. Only reference data that actually appears in the sections above.
 
 Student ${name} asks: "${message}"
 
