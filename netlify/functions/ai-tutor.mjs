@@ -706,6 +706,31 @@ export async function handler(event, context) {
     }
   }
 
+  /**
+   * Retry wrapper with exponential backoff for rate-limited API calls
+   */
+  async function retryWithBackoff(fn, maxRetries = 3, initialDelay = 1000) {
+    let lastError;
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        lastError = error;
+        const isRateLimit = error.message?.includes('429') || error.message?.includes('quota') || error.message?.includes('exhausted');
+        
+        if (!isRateLimit || attempt === maxRetries - 1) {
+          throw error;
+        }
+        
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = initialDelay * Math.pow(2, attempt);
+        console.log(`[ai-tutor] Rate limited, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw lastError;
+  }
+
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
@@ -881,7 +906,10 @@ Student ${name} asks: "${message}"
 Respond helpfully:`;
 
   try {
-    const result = await model.generateContent(prompt);
+    // Use retry wrapper for rate-limited API calls
+    const result = await retryWithBackoff(async () => {
+      return await model.generateContent(prompt);
+    });
     const response = await result.response;
     const reply = response.text();
 
