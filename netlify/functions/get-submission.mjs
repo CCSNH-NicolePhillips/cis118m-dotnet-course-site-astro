@@ -47,9 +47,10 @@ export async function handler(event, context) {
     }
 
     if (!data) {
+      // Return 200 with null submission (not 404) to avoid console errors
       return {
-        statusCode: 404,
-        body: JSON.stringify({ error: 'No submission found' })
+        statusCode: 200,
+        body: JSON.stringify({ success: true, submission: null })
       };
     }
 
