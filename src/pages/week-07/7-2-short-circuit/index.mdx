@@ -27,7 +27,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      <img src="/media/week-7/7.2/shortCircuitGate.jpeg" alt="A circuit diagram with one bright path and one dark skipped path" />
+      <img src="/media/week-7/7.2/shortCircuit.jpeg" alt="A circuit diagram with one bright path and one dark skipped path" />
     </div>
   </div>
 </div>
@@ -65,19 +65,9 @@ if (isLoggedIn && hasPermission) {
 }
 ```
 
-```
-╔═══════════════════════════════════════════════════════╗
-║          && SHORT-CIRCUIT                             ║
-╠═══════════════════════════════════════════════════════╣
-║                                                       ║
-║  Left Side    Right Side    Result                    ║
-║  ─────────    ──────────    ──────                    ║
-║  false        ⚡ SKIPPED    false  (already known!)   ║
-║  true         false         false                     ║
-║  true         true          true                      ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
-```
+<div style="text-align: center; margin: 1.5rem 0;">
+  <img src="/media/week-7/7.2/andShortCircuit.jpeg" alt="AND (&&) Short-Circuit Evaluation" style="max-width: 100%; border-radius: 8px;" />
+</div>
 
 ### The `||` (OR) Short-Circuit
 
@@ -90,19 +80,9 @@ if (isAdmin || hasSpecialOverride) {
 }
 ```
 
-```
-╔═══════════════════════════════════════════════════════╗
-║          || SHORT-CIRCUIT                             ║
-╠═══════════════════════════════════════════════════════╣
-║                                                       ║
-║  Left Side    Right Side    Result                    ║
-║  ─────────    ──────────    ──────                    ║
-║  true         ⚡ SKIPPED    true  (already known!)    ║
-║  false        true          true                      ║
-║  false        false         false                     ║
-║                                                       ║
-╚═══════════════════════════════════════════════════════╝
-```
+<div style="text-align: center; margin: 1.5rem 0;">
+  <img src="/media/week-7/7.2/orShortCircuit.jpeg" alt="OR (||) Short-Circuit Evaluation" style="max-width: 100%; border-radius: 8px;" />
+</div>
 
 ---
 
