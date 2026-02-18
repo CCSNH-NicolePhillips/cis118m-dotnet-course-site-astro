@@ -686,8 +686,12 @@ export async function handler(event, context) {
                           message.match(/week\s*(\d+).*(?:lab|submission|code|work)/i);
   if (submissionMatch && userId && Object.keys(studentGradesData.submissions).length === 0) {
     // Fetch submissions separately if not already included
-    const subs = await fetchStudentSubmissions(userId);
-    studentGradesData.submissions = subs;
+    try {
+      const subs = await fetchStudentSubmissions(userId);
+      studentGradesData.submissions = subs;
+    } catch (subErr) {
+      console.log('[ai-tutor] Could not fetch submissions:', subErr.message || subErr);
+    }
   }
   
   // If asking about a specific week's code, extract it
@@ -804,6 +808,19 @@ export async function handler(event, context) {
     coachingSection += '=== END COACHING ANALYSIS ===\n';
   }
 
+  // Detect if this is a grade-related question
+  const isGradeQuestion = /grade|score|points|how.*doing|doing.*class|pass|fail|average|gpa|improve|practice|submit|miss|deadline/i.test(message);
+  
+  // Truncate course context for grade questions (they don't need full lesson content)
+  const courseContextTruncated = isGradeQuestion 
+    ? '' // Skip course context for grade questions
+    : courseContextSection;
+  
+  // Truncate grade summary to prevent token overflow
+  const gradeSummaryTruncated = studentGradesData.summary 
+    ? studentGradesData.summary.slice(0, 6000) 
+    : '';
+
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
 
 ${getTutorPromptRules()}
@@ -818,10 +835,10 @@ ${codeSection}
 ${homeworkSection}
 ${requestedSubmissionCode}
 ${requestedWeekContent}
-${courseContextSection}
-${studentGradesData.summary ? `
+${courseContextTruncated}
+${gradeSummaryTruncated ? `
 STUDENT'S GRADES & PROGRESS:
-${studentGradesData.summary}
+${gradeSummaryTruncated}
 ` : ''}
 ${coachingSection}
 ADDITIONAL GUIDELINES:
@@ -874,11 +891,26 @@ Respond helpfully:`;
       body: JSON.stringify({ reply })
     };
   } catch (error) {
-    console.error('[ai-tutor] Error:', error.message || error);
+    console.error('[ai-tutor] Gemini API Error:', {
+      message: error.message || error,
+      status: error.status,
+      statusText: error.statusText,
+      errorDetails: error.errorDetails,
+      stack: error.stack?.slice(0, 500)
+    });
+    
+    // Provide more specific error messages
+    let userMessage = "Service temporarily unavailable. Please try again.";
+    if (error.message?.includes('quota') || error.message?.includes('429')) {
+      userMessage = "AI service is busy. Please wait a moment and try again.";
+    } else if (error.message?.includes('API key') || error.message?.includes('401')) {
+      userMessage = "AI service configuration error. Please contact support.";
+    }
+    
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Service temporarily unavailable. Please try again." })
+      body: JSON.stringify({ error: userMessage })
     };
   }
 }
