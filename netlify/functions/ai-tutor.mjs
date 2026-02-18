@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { getTutorPromptRules } from "./_lib/ai-rules.mjs";
 import { COURSE_CONTENT_SUMMARY } from "./_lib/course-summary.mjs";
 import { verifyAuth0Token } from "./_lib/auth0-verify.mjs";
@@ -731,13 +732,53 @@ export async function handler(event, context) {
     throw lastError;
   }
 
+  // Initialize both AI providers
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ 
+  const geminiModel = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: 1200, // Increased for detailed grade breakdowns and coaching
+      maxOutputTokens: 1200,
     }
   });
+  
+  const openai = process.env.OPENAI_API_KEY ? new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  }) : null;
+  
+  /**
+   * Call AI with automatic fallback: Gemini first, then OpenAI
+   */
+  async function callAI(promptText) {
+    // Try Gemini first with retry
+    try {
+      const result = await retryWithBackoff(async () => {
+        return await geminiModel.generateContent(promptText);
+      });
+      const response = await result.response;
+      return response.text();
+    } catch (geminiError) {
+      const isRateLimit = geminiError.message?.includes('429') || geminiError.message?.includes('quota') || geminiError.message?.includes('exhausted');
+      
+      // If not rate limited or no OpenAI fallback, throw
+      if (!isRateLimit || !openai) {
+        throw geminiError;
+      }
+      
+      // Fallback to OpenAI
+      console.log('[ai-tutor] Gemini rate limited, falling back to OpenAI');
+      try {
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: promptText }],
+          max_tokens: 1200,
+        });
+        return completion.choices[0].message.content;
+      } catch (openaiError) {
+        console.error('[ai-tutor] OpenAI fallback error:', openaiError.message);
+        throw openaiError; // Throw OpenAI error if fallback also fails
+      }
+    }
+  }
 
   // Use first name or "there" as fallback
   const name = studentName ? studentName.split(' ')[0] : 'there';
@@ -906,12 +947,8 @@ Student ${name} asks: "${message}"
 Respond helpfully:`;
 
   try {
-    // Use retry wrapper for rate-limited API calls
-    const result = await retryWithBackoff(async () => {
-      return await model.generateContent(prompt);
-    });
-    const response = await result.response;
-    const reply = response.text();
+    // Use dual-provider AI with automatic fallback
+    const reply = await callAI(prompt);
 
     return {
       statusCode: 200,
@@ -919,7 +956,7 @@ Respond helpfully:`;
       body: JSON.stringify({ reply })
     };
   } catch (error) {
-    console.error('[ai-tutor] Gemini API Error:', {
+    console.error('[ai-tutor] AI API Error:', {
       message: error.message || error,
       status: error.status,
       statusText: error.statusText,
