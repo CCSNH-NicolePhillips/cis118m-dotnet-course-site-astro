@@ -57,19 +57,19 @@ Your program must:
       </tr>
       <tr>
         <td><strong>Rule 1: Critical threat</strong></td>
-        <td>If threat level &gt; 8 → Print <code>🔴 BLOCKED — Critical threat level</code> (regardless of source or protocol)</td>
+        <td>If threat level &gt; 8 → Print <code>BLOCKED — Critical threat level</code> (regardless of source or protocol)</td>
       </tr>
       <tr>
         <td><strong>Rule 2: Internal SSH</strong></td>
-        <td>If protocol is SSH AND source is internal → Print <code>🟢 ALLOWED — Trusted internal SSH</code></td>
+        <td>If protocol is SSH AND source is internal → Print <code>ALLOWED — Trusted internal SSH</code></td>
       </tr>
       <tr>
         <td><strong>Rule 3: Medium threat</strong></td>
-        <td>If threat level &gt; 4 → Print <code>🟡 2FA REQUIRED — Elevated threat detected</code></td>
+        <td>If threat level &gt; 4 → Print <code>2FA REQUIRED — Elevated threat detected</code></td>
       </tr>
       <tr>
         <td><strong>Rule 4: Default deny</strong></td>
-        <td>All other combinations → Print <code>🔴 BLOCKED — Default deny policy</code></td>
+        <td>All other combinations → Print <code>BLOCKED — Default deny policy</code></td>
       </tr>
       <tr>
         <td><strong>Protocol display (switch)</strong></td>
@@ -94,7 +94,7 @@ Enter Threat Level (1-10): 9
 Is source internal? (true/false): true
 Enter Protocol (HTTP/SSH/FTP/SMTP): SSH
 
-🔴 BLOCKED — Critical threat level
+BLOCKED — Critical threat level
    Threat Level 9 exceeds maximum threshold.
    All connections blocked regardless of source.
 
@@ -111,7 +111,7 @@ Enter Threat Level (1-10): 3
 Is source internal? (true/false): true
 Enter Protocol (HTTP/SSH/FTP/SMTP): SSH
 
-🟢 ALLOWED — Trusted internal SSH
+ALLOWED — Trusted internal SSH
    Internal source verified with low threat.
    Secure shell session established.
 
@@ -128,7 +128,7 @@ Enter Threat Level (1-10): 6
 Is source internal? (true/false): false
 Enter Protocol (HTTP/SSH/FTP/SMTP): HTTP
 
-🟡 2FA REQUIRED — Elevated threat detected
+2FA REQUIRED — Elevated threat detected
    Threat Level 6 requires additional verification.
    Two-factor authentication challenge sent.
 
@@ -145,7 +145,7 @@ Enter Threat Level (1-10): 2
 Is source internal? (true/false): false
 Enter Protocol (HTTP/SSH/FTP/SMTP): FTP
 
-🔴 BLOCKED — Default deny policy
+BLOCKED — Default deny policy
    External FTP connection denied.
    Contact network admin for access.
 
