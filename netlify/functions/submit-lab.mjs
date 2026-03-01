@@ -163,12 +163,14 @@ Return JSON:
           [`${assignmentId}:originalScore`]: originalGrade,
           [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
           [`${assignmentId}:penaltyPercent`]: penaltyInfo.penaltyPercent,
+          [`${assignmentId}:isLate`]: penaltyInfo.daysLate > 0 ? 'true' : 'false',
+          [`${assignmentId}:submittedAt`]: submittedAt,
           [`${assignmentId}:status`]: 'completed',
           [`${assignmentId}:feedback`]: aiFeedback || '',
           [`${assignmentId}:savedCode`]: code,
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
           [`${assignmentId}:detailedReport`]: gradeData.detailedReport || '',
-          [`${assignmentId}:gradedAt`]: new Date().toISOString()
+          [`${assignmentId}:gradedAt`]: submittedAt
         };
         if (penaltyPreWaived) {
           labProgressData[`${assignmentId}:penaltyWaived`] = 'true';

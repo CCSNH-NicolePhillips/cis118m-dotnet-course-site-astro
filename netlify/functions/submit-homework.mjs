@@ -1,5 +1,6 @@
 import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
+import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
 
@@ -37,6 +38,16 @@ export async function handler(event, context) {
     const redis = getRedis();
     const submittedAt = new Date().toISOString();
 
+    // Derive assignment ID from starterId (week-07-homework-1 -> week-07-homework)
+    const assignmentId = starterId.replace(/-\d+$/, '') || 'week-01-homework';
+
+    // Extract week number from starterId for Redis indexing
+    const weekMatch = starterId.match(/week-(\d+)/);
+    const weekNum = weekMatch ? weekMatch[1] : '01';
+
+    // Get lesson context for AI grading (each week's homework has its own rubric)
+    const lessonContext = getLessonContext(assignmentId);
+
     let aiGrade = null;
     let aiFeedback = null;
     let aiRubric = {};
@@ -46,7 +57,7 @@ export async function handler(event, context) {
     if (reflection && process.env.GEMINI_API_KEY) {
       try {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ 
+        const model = genAI.getGenerativeModel({
           model: "gemini-2.0-flash",
           generationConfig: {
             responseMimeType: "application/json",
@@ -54,21 +65,20 @@ export async function handler(event, context) {
           }
         });
 
+        const rubricText = lessonContext?.rubric || 'Completeness (50pts): Student answered all questions. Quality (30pts): Answers are clear and correct. Writing (20pts): Well-written and uses course terminology.';
+        const assignmentText = lessonContext?.assignmentPrompt || 'Reflect on what you learned this week.';
+        const conceptsText = lessonContext?.taughtConcepts || '';
+
         const prompt = `You are a friendly, encouraging programming instructor grading a homework reflection for COLLEGE FRESHMEN who are brand new to programming. Be warm, supportive, and focus on what they understood well.
 
-ASSIGNMENT: Write a 3-5 sentence reflection explaining the Build Process:
-1. What is Source Code and who creates it?
-2. What does the Compiler do with your Source Code?
-3. Why does a missing semicolon prevent the program from running?
+${conceptsText ? `LESSON CONTEXT - What we taught:\n${conceptsText}\n` : ''}
+ASSIGNMENT: ${assignmentText}
 
 STUDENT REFLECTION:
 ${reflection}
 
 RUBRIC:
-- Source Code definition (35 pts): Student explains that Source Code is the human-readable text they write
-- Compiler role (35 pts): Student explains the Compiler translates Source Code into computer-executable instructions
-- Semicolon = compiler error (20 pts): Student correctly identifies that missing semicolon is caught by the Compiler
-- Clarity and keyword usage (10 pts): Clear writing using both 'Source Code' and 'Compiler' terms
+${rubricText}
 
 Grade the reflection and provide:
 1. "score": total points (0-100)
@@ -81,10 +91,7 @@ Return JSON:
   "score": number,
   "feedback": "warm, encouraging 2-3 sentence feedback",
   "rubric": {
-    "source-code-definition": {"points": number, "maxPoints": 35, "rationale": "why"},
-    "compiler-role": {"points": number, "maxPoints": 35, "rationale": "why"},
-    "semicolon-error": {"points": number, "maxPoints": 20, "rationale": "why"},
-    "clarity": {"points": number, "maxPoints": 10, "rationale": "why"}
+    "category-name": {"points": number, "maxPoints": number, "rationale": "why"}
   },
   "detailedReport": "instructor-facing analysis"
 }`;
@@ -92,12 +99,12 @@ Return JSON:
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
-        
+
         const jsonStart = text.indexOf('{');
         const jsonEnd = text.lastIndexOf('}') + 1;
         const jsonResponse = text.substring(jsonStart, jsonEnd);
         const gradeData = JSON.parse(jsonResponse);
-        
+
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
         aiRubric = gradeData.rubric || {};
@@ -114,9 +121,6 @@ Return JSON:
       aiGrade = 100;
       aiFeedback = 'Thank you for your thoughtful reflection!';
     }
-
-    // Derive assignment ID from starterId (week-01-homework-1 -> week-01-homework)
-    const assignmentId = starterId.replace(/-\d+$/, '') || 'week-01-homework';
 
     // Calculate late penalty if we have a grade
     let finalGrade = aiGrade;
@@ -152,12 +156,14 @@ Return JSON:
         [`${assignmentId}:originalScore`]: aiGrade,
         [`${assignmentId}:daysLate`]: penaltyInfo.daysLate,
         [`${assignmentId}:penaltyPercent`]: penaltyInfo.penaltyPercent,
+        [`${assignmentId}:isLate`]: penaltyInfo.daysLate > 0 ? 'true' : 'false',
+        [`${assignmentId}:submittedAt`]: submittedAt,
         [`${assignmentId}:status`]: 'completed',
         [`${assignmentId}:feedback`]: aiFeedback || '',
         [`${assignmentId}:savedCode`]: reflection || code || '',
         [`${assignmentId}:rubric`]: JSON.stringify(aiRubric),
         [`${assignmentId}:detailedReport`]: aiDetailedReport,
-        [`${assignmentId}:gradedAt`]: new Date().toISOString()
+        [`${assignmentId}:gradedAt`]: submittedAt
       };
       if (penaltyPreWaived) {
         progressData[`${assignmentId}:penaltyWaived`] = 'true';
@@ -173,7 +179,7 @@ Return JSON:
     const submission = {
       userId: sub,
       email,
-      week: '01',
+      week: weekNum,
       type: 'homework',
       starterId,
       code: code || '',
@@ -203,7 +209,7 @@ Return JSON:
     await redis.set(historyKey, JSON.stringify(history));
 
     // Add to index for instructor view
-    await redis.sadd('submissions:index:week01', sub);
+    await redis.sadd(`submissions:index:week${weekNum}`, sub);
 
     return {
       statusCode: 200,
