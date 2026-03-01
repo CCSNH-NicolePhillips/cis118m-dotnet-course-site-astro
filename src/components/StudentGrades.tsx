@@ -836,13 +836,17 @@ const StudentGrades: React.FC = () => {
         const submittedAt = entry.submittedAt ? new Date(entry.submittedAt) : null;
         const attempts = entry.attempts ? parseInt(entry.attempts) : undefined;
         const bestScore = entry.bestScore ? parseFloat(entry.bestScore) : undefined;
-        const feedback = entry.feedback;
-        const savedCode = entry.savedCode;
+        const feedback = typeof entry.feedback === 'string' ? entry.feedback : undefined;
+        const savedCode = typeof entry.savedCode === 'string' ? entry.savedCode : undefined;
         const wasSubmitted = entry.submittedAt !== undefined || finalScore !== undefined;
 
         let rubric: Record<string, { points: number; maxPoints: number; rationale: string }> | null = null;
         if (entry.rubric) {
-          try { rubric = JSON.parse(entry.rubric); } catch {}
+          if (typeof entry.rubric === 'object') {
+            rubric = entry.rubric as Record<string, { points: number; maxPoints: number; rationale: string }>;
+          } else {
+            try { rubric = JSON.parse(entry.rubric); } catch {}
+          }
         }
 
         return (
@@ -996,7 +1000,7 @@ const StudentGrades: React.FC = () => {
                             {data.points}/{data.maxPoints}
                           </span>
                         </div>
-                        {data.rationale && (
+                        {typeof data.rationale === 'string' && data.rationale && (
                           <p style={{ margin: 0, fontSize: '0.8rem', color: '#888', lineHeight: 1.5 }}>
                             {data.rationale}
                           </p>
