@@ -277,7 +277,6 @@ const StudentGrades: React.FC = () => {
     for (const assignment of ASSIGNMENTS) {
       const weekNum = assignment.week;
       const weekPastDue = isWeekPastDue(weekNum);
-      const weekStarted = isWeekStarted(weekNum);
 
       if (assignment.type === 'participation') {
         const weekCount = participationByWeek[weekNum] || 0;
@@ -307,7 +306,7 @@ const StudentGrades: React.FC = () => {
           else if (assignment.type === 'quiz') quizScores.push(score);
           else if (assignment.type === 'homework') homeworkScores.push(score);
           else if (assignment.type === 'final') finalScores.push(score);
-        } else if (weekPastDue && weekStarted) {
+        } else if (weekPastDue) {
           // Week is past due with no submission, count as 0
           if (assignment.type === 'lab') {
             labScores.push(0);
@@ -656,9 +655,8 @@ const StudentGrades: React.FC = () => {
                 ? progress[`week-${wStr}-boss-fight`]?.score
                 : progress[`week-${wStr}-lab`]?.score;
               
-              // Check if week is past due and started (for showing 0 on unsubmitted)
+              // Check if week is past due (for showing 0 on unsubmitted)
               const weekPastDue = isWeekPastDue(week);
-              const weekStarted = isWeekStarted(week);
               const isBossFightOnly = BOSS_FIGHT_ONLY_WEEKS.has(week);
 
               const renderScore = (score: number | undefined, color: string, assignmentType: string, assignmentId?: string) => {
@@ -700,8 +698,8 @@ const StudentGrades: React.FC = () => {
                   return badge;
                 }
 
-                // If no score but week is past due + started, show 0
-                if (weekPastDue && weekStarted) {
+                // If no score but week is past due, show 0
+                if (weekPastDue) {
                   const zeroSpan = (
                     <span style={{
                       display: 'inline-block',
@@ -752,7 +750,7 @@ const StudentGrades: React.FC = () => {
                       }}>
                         {Math.min(100, partScore).toFixed(0)}
                       </span>
-                    ) : weekPastDue && weekStarted ? (
+                    ) : weekPastDue ? (
                       <span style={{
                         display: 'inline-block',
                         padding: '4px 10px',
