@@ -164,7 +164,7 @@ Notice how `case "Saturday":` and `case "Sunday":` **stack** — when two cases 
 
 ---
 
-## 🔬 Try It: Severity Classifier
+## Try It: Severity Classifier
 
 Build a switch that categorizes project issue severity levels:
 
@@ -184,27 +184,27 @@ class Program
         
         switch (severity) {
             case 1:
-                Console.WriteLine("🟢 LOW — Cosmetic issue");
+                Console.WriteLine("LOW — Cosmetic issue");
                 Console.WriteLine("   Action: Add to backlog");
                 Console.WriteLine("   Timeline: Next sprint");
                 break;
             case 2:
-                Console.WriteLine("🟡 MEDIUM — Functional issue");
+                Console.WriteLine("MEDIUM — Functional issue");
                 Console.WriteLine("   Action: Assign to developer");
                 Console.WriteLine("   Timeline: This sprint");
                 break;
             case 3:
-                Console.WriteLine("🟠 HIGH — Critical bug");
+                Console.WriteLine("HIGH — Critical bug");
                 Console.WriteLine("   Action: Stop current work");
                 Console.WriteLine("   Timeline: Within 24 hours");
                 break;
             case 4:
-                Console.WriteLine("🔴 CRITICAL — System down");
+                Console.WriteLine("CRITICAL — System down");
                 Console.WriteLine("   Action: All hands on deck!");
                 Console.WriteLine("   Timeline: IMMEDIATE");
                 break;
             default:
-                Console.WriteLine("⚠️ INVALID — Severity must be 1-4");
+                Console.WriteLine("INVALID — Severity must be 1-4");
                 Console.WriteLine("   Please re-enter a valid level.");
                 break;
         }
@@ -215,7 +215,7 @@ class Program
 
 <div class="experiment-box">
 
-#### 🧪 Experiment: Expand the Switch
+#### Experiment: Expand the Switch
 
 Try these modifications in the severity classifier above:
 
@@ -224,13 +224,13 @@ Try these modifications in the severity classifier above:
 3. **Remove the default case**: What happens when you enter 99? (Hint: nothing prints — silent failure!)
 4. **Try negative numbers**: Does `case -1:` work? Add it and find out!
 
-💡 **Discovery**: C# enforces `break` in every case. You CAN stack empty cases (like Saturday/Sunday), but you CANNOT fall through from a case with code!
+**Discovery**: C# enforces `break` in every case. You CAN stack empty cases (like Saturday/Sunday), but you CANNOT fall through from a case with code!
 
 </div>
 
 ---
 
-## 🔬 Try It: Command Router
+## Try It: Command Router
 
 Use switch with string matching to build a command-line router:
 
@@ -251,26 +251,26 @@ class Program
         
         switch (command) {
             case "status":
-                Console.WriteLine("\\n📊 System Status:");
+                Console.WriteLine("\\nSystem Status:");
                 Console.WriteLine("   Server: ONLINE");
                 Console.WriteLine("   CPU: 42%");
                 Console.WriteLine("   Memory: 67%");
                 Console.WriteLine("   Uptime: 14 days");
                 break;
             case "deploy":
-                Console.WriteLine("\\n🚀 Deploying latest build...");
-                Console.WriteLine("   Step 1: Building project... ✅");
-                Console.WriteLine("   Step 2: Running tests...    ✅");
-                Console.WriteLine("   Step 3: Pushing to prod...  ✅");
+                Console.WriteLine("\\nDeploying latest build...");
+                Console.WriteLine("   Step 1: Building project...");
+                Console.WriteLine("   Step 2: Running tests...");
+                Console.WriteLine("   Step 3: Pushing to prod...");
                 Console.WriteLine("   Deployment complete!");
                 break;
             case "rollback":
-                Console.WriteLine("\\n⏪ Rolling back to previous version...");
-                Console.WriteLine("   Restoring v2.3.1... ✅");
+                Console.WriteLine("\\nRolling back to previous version...");
+                Console.WriteLine("   Restoring v2.3.1...");
                 Console.WriteLine("   Rollback complete.");
                 break;
             case "help":
-                Console.WriteLine("\\n📖 Help Menu:");
+                Console.WriteLine("\\nHelp Menu:");
                 Console.WriteLine("   status   — View system status");
                 Console.WriteLine("   deploy   — Deploy latest build");
                 Console.WriteLine("   rollback — Revert to previous version");
@@ -278,10 +278,10 @@ class Program
                 break;
             case "exit":
             case "quit":
-                Console.WriteLine("\\n👋 Shutting down. Goodbye!");
+                Console.WriteLine("\\nShutting down. Goodbye!");
                 break;
             default:
-                Console.WriteLine($"\\n❌ Unknown command: \\"{command}\\"");
+                Console.WriteLine($"\\nUnknown command: \\"{command}\\"");
                 Console.WriteLine("   Type \\"help\\" to see available commands.");
                 break;
         }

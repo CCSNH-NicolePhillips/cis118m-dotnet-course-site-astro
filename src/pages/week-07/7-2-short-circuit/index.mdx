@@ -158,7 +158,7 @@ if (input.Length > 5 && input != null) { ... }  // 💥 CRASH
 
 ---
 
-## 🔬 Try It: Short-Circuit in Action
+## Try It: Short-Circuit in Action
 
 Watch which side gets evaluated:
 
@@ -205,7 +205,7 @@ class Program
         if (nullName != null && nullName.Length > 3) {
             Console.WriteLine("This won't print.");
         } else {
-            Console.WriteLine("Null check prevented a crash! ✅");
+            Console.WriteLine("Null check prevented a crash!");
         }
     }
     
@@ -220,7 +220,7 @@ class Program
 
 <div class="experiment-box">
 
-#### 🧪 Experiment: Prove Short-Circuiting
+#### Experiment: Prove Short-Circuiting
 
 Modify the code above to confirm short-circuiting behavior:
 
@@ -229,13 +229,13 @@ Modify the code above to confirm short-circuiting behavior:
 3. **Try `true && CheckRight("test") && false`** — How many times is `CheckRight` called?
 4. **Try `false || false || CheckRight("test")`** — When does `CheckRight` finally get called?
 
-💡 **Discovery**: Short-circuiting only skips when the answer is **already determined**. Once the outcome is uncertain, evaluation continues!
+**Discovery**: Short-circuiting only skips when the answer is **already determined**. Once the outcome is uncertain, evaluation continues!
 
 </div>
 
 ---
 
-## 🔬 Try It: The Null Check Pattern
+## Try It: The Null Check Pattern
 
 Practice the most important use of short-circuiting — protecting against null:
 
@@ -259,12 +259,12 @@ class Program
         
         // Safe null check using short-circuit &&
         if (username != null && username.Length >= 3) {
-            Console.WriteLine($"✅ Welcome, {username}!");
+            Console.WriteLine($"Welcome, {username}!");
             Console.WriteLine($"   Username length: {username.Length} characters");
         } else if (username != null && username.Length < 3) {
-            Console.WriteLine("⚠️ Username too short (minimum 3 characters).");
+            Console.WriteLine("Username too short (minimum 3 characters).");
         } else {
-            Console.WriteLine("🚫 No username provided.");
+            Console.WriteLine("No username provided.");
         }
     }
 }`}

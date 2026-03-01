@@ -131,18 +131,18 @@ bool accessGranted = isAdmin || (isLoggedIn && hasPermission);
 To verify this, you build a truth table with **all 8 combinations** (2³ = 8 rows for 3 variables):
 
 ```
-╔═══════════════════════════════════════════════════════════════════╗
+╔═══════════════════════════════════════════════════════════════════════════╗
 ║   isAdmin  │  isLoggedIn  │  hasPerm  │  loggedIn && hasPerm  │  Result   ║
 ║   ───────  │  ──────────  │  ───────  │  ───────────────────  │  ──────   ║
 ║   false    │  false       │  false    │  false                │  false    ║
 ║   false    │  false       │  true     │  false                │  false    ║
 ║   false    │  true        │  false    │  false                │  false    ║
-║   false    │  true        │  true     │  true                 │  true  ✅ ║
-║   true     │  false       │  false    │  false                │  true  ✅ ║
-║   true     │  false       │  true     │  false                │  true  ✅ ║
-║   true     │  true        │  false    │  false                │  true  ✅ ║
-║   true     │  true        │  true     │  true                 │  true  ✅ ║
-╚═══════════════════════════════════════════════════════════════════╝
+║   false    │  true        │  true     │  true                 │  true     ║
+║   true     │  false       │  false    │  false                │  true     ║
+║   true     │  false       │  true     │  false                │  true     ║
+║   true     │  true        │  false    │  false                │  true     ║
+║   true     │  true        │  true     │  true                 │  true     ║
+╚═══════════════════════════════════════════════════════════════════════════╝
 ```
 
 Notice: Admins **always** get access (bottom 4 rows). Non-admins only get access when **both** logged in AND have permission (row 4).
@@ -157,7 +157,7 @@ Before writing a complex boolean expression, build its truth table on paper. If 
 
 ---
 
-## 🔬 Try It: Truth Table Generator
+## Try It: Truth Table Generator
 
 Build a program that generates a truth table for all combinations of two boolean variables:
 
@@ -202,7 +202,7 @@ class Program
 
 <div class="experiment-box">
 
-#### 🧪 Experiment: Extend the Truth Table
+#### Experiment: Extend the Truth Table
 
 Try modifying the code above to explore more operators:
 
@@ -211,13 +211,13 @@ Try modifying the code above to explore more operators:
 3. **Add NOR column**: NOR is the opposite of OR. Add `!(a || b)`. Only ONE row is true — which one?
 4. **Count the true rows**: AND=1, OR=3, XOR=2, NAND=3, NOR=1. Notice the symmetry!
 
-💡 **Discovery**: NAND and NOR are the "inverse" of AND and OR. Every logic gate has a mirror image that flips all outputs!
+**Discovery**: NAND and NOR are the "inverse" of AND and OR. Every logic gate has a mirror image that flips all outputs!
 
 </div>
 
 ---
 
-## 🔬 Try It: System Validation Gate
+## Try It: System Validation Gate
 
 Use a truth table to verify a three-condition access check:
 
@@ -258,14 +258,14 @@ class Program
         Console.WriteLine();
         
         if (accessGranted) {
-            Console.WriteLine("✅ ACCESS GRANTED");
+            Console.WriteLine("ACCESS GRANTED");
             if (isAdmin) {
                 Console.WriteLine("   Reason: Administrator override");
             } else {
                 Console.WriteLine("   Reason: Authenticated with permission");
             }
         } else {
-            Console.WriteLine("🔴 ACCESS DENIED");
+            Console.WriteLine("ACCESS DENIED");
             if (!isLoggedIn) {
                 Console.WriteLine("   Reason: Not logged in");
             } else {

@@ -117,7 +117,7 @@ If `order` is `null`, checking `order.Total` would crash your program. The neste
 
 ---
 
-## 🔬 Try It: Nested Access Check
+## Try It: Nested Access Check
 
 Build a system that checks login status first, then permission level:
 
@@ -139,26 +139,26 @@ class Program
         
         // Outer gate: Are they logged in?
         if (isLoggedIn) {
-            Console.WriteLine("✅ User is authenticated.");
-            
+            Console.WriteLine("User is authenticated.");
+
             // Inner gate: What's their role?
             if (role == "admin") {
-                Console.WriteLine("🔑 Admin panel access granted.");
-                
+                Console.WriteLine("Admin panel access granted.");
+
                 // Deepest gate: Specific permission
                 if (hasPermissionX) {
-                    Console.WriteLine("📋 Permission X: ACTIVE");
+                    Console.WriteLine("Permission X: ACTIVE");
                 } else {
-                    Console.WriteLine("⚠️ Permission X: DENIED");
+                    Console.WriteLine("Permission X: DENIED");
                 }
             } else if (role == "editor") {
-                Console.WriteLine("📝 Editor tools enabled.");
-                Console.WriteLine("🚫 Admin panel: NOT AVAILABLE");
+                Console.WriteLine("Editor tools enabled.");
+                Console.WriteLine("Admin panel: NOT AVAILABLE");
             } else {
-                Console.WriteLine("👁️ Read-only access.");
+                Console.WriteLine("Read-only access.");
             }
         } else {
-            Console.WriteLine("🔒 Access denied. Please log in.");
+            Console.WriteLine("Access denied. Please log in.");
         }
     }
 }`}
@@ -167,7 +167,7 @@ class Program
 
 <div class="experiment-box">
 
-#### 🧪 Experiment: Trace the Decision Tree
+#### Experiment: Trace the Decision Tree
 
 Modify the variables in the code above and predict the path BEFORE running:
 
@@ -176,7 +176,7 @@ Modify the variables in the code above and predict the path BEFORE running:
 3. **Set `role = "viewer"`** — Which path do you land on?
 4. **Set `isLoggedIn = true`, `role = "admin"`, `hasPermissionX = true`** — What's the deepest path?
 
-💡 **Discovery**: Each nesting level acts like a checkpoint. You can NEVER reach an inner block without passing ALL the outer gates first!
+**Discovery**: Each nesting level acts like a checkpoint. You can NEVER reach an inner block without passing ALL the outer gates first!
 
 </div>
 
@@ -265,7 +265,7 @@ Notice how the "happy path" (the successful outcome) is at the **bottom** of the
 
 ---
 
-## 🔬 Try It: Nesting vs. Guard Clauses
+## Try It: Nesting vs. Guard Clauses
 
 Compare both approaches side by side:
 
@@ -288,28 +288,28 @@ class Program
         if (username != "") {
             if (isActive) {
                 if (clearanceLevel >= 3) {
-                    Console.WriteLine("✅ Full access granted!");
+                    Console.WriteLine("Full access granted!");
                 } else {
-                    Console.WriteLine("⚠️ Insufficient clearance.");
+                    Console.WriteLine("Insufficient clearance.");
                 }
             } else {
-                Console.WriteLine("🚫 Account deactivated.");
+                Console.WriteLine("Account deactivated.");
             }
         } else {
-            Console.WriteLine("🚫 No username provided.");
+            Console.WriteLine("No username provided.");
         }
-        
+
         Console.WriteLine();
         Console.WriteLine("=== GUARD CLAUSE APPROACH ===");
         // Guard clause version (flat and clean)
         if (username == "") {
-            Console.WriteLine("🚫 No username provided.");
+            Console.WriteLine("No username provided.");
         } else if (!isActive) {
-            Console.WriteLine("🚫 Account deactivated.");
+            Console.WriteLine("Account deactivated.");
         } else if (clearanceLevel < 3) {
-            Console.WriteLine("⚠️ Insufficient clearance.");
+            Console.WriteLine("Insufficient clearance.");
         } else {
-            Console.WriteLine("✅ Full access granted!");
+            Console.WriteLine("Full access granted!");
         }
     }
 }`}
