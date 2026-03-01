@@ -6,7 +6,6 @@ description: "Build a network firewall using nested logic, short-circuit evaluat
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
-import Checkpoint from '../../../components/Checkpoint.astro';
 
 # Lab 07: The Adaptive Firewall
 
@@ -220,31 +219,6 @@ Protocol Details (FTP):
     </tbody>
   </table>
 </div>
-
----
-
-<Checkpoint
-  checkpointId="week-07-lab-checkpoint"
-  title="🔍 Lab 7 Knowledge Check (Participation)"
-  questions={[
-    {
-      id: "cp1",
-      type: "multiple-choice",
-      question: "In short-circuit evaluation with &&, what happens if the LEFT side evaluates to false?",
-      options: ["The right side is evaluated anyway", "The right side is skipped — the whole expression is false", "A runtime error is thrown", "The expression evaluates to true"],
-      correctAnswer: "The right side is skipped — the whole expression is false",
-      explanation: "With &&, if the left side is false, the entire expression must be false regardless of the right side, so C# skips evaluating the right side. This is why null checks go on the left."
-    },
-    {
-      id: "cp2",
-      type: "multiple-choice",
-      question: "When should you use a switch statement instead of an else-if chain?",
-      options: ["When testing complex boolean conditions with && and ||", "When routing a single value to one of several known cases", "When the number of conditions is exactly 3", "When working with decimal or double values"],
-      correctAnswer: "When routing a single value to one of several known cases",
-      explanation: "switch works best as a 'router' — directing flow based on a single variable matching exact values (like strings or integers). For complex boolean conditions or ranges, if/else if is clearer."
-    }
-  ]}
-/>
 
 ---
 

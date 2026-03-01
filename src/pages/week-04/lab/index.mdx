@@ -6,7 +6,6 @@ description: "Clean and format messy user input using string methods"
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
-import Checkpoint from '../../../components/Checkpoint.astro';
 
 # Lab 04: The Text Sanitizer
 
@@ -154,31 +153,6 @@ Profile sanitization complete!
     </tbody>
   </table>
 </div>
-
----
-
-<Checkpoint
-  checkpointId="week-04-lab-checkpoint"
-  title="🔍 Lab 4 Knowledge Check (Participation)"
-  questions={[
-    {
-      id: "cp1",
-      type: "multiple-choice",
-      question: "Which string method removes extra whitespace from the beginning and end of a string?",
-      options: ["Clean()", "Trim()", "Remove()", "Strip()"],
-      correctAnswer: "Trim()",
-      explanation: "Trim() removes all leading and trailing whitespace characters from a string. It does not affect spaces in the middle of the string."
-    },
-    {
-      id: "cp2",
-      type: "multiple-choice",
-      question: "If phone = \"555-123-4567\", what does phone.Substring(0, 3) return?",
-      options: ["555", "5-1", "-12", "555-"],
-      correctAnswer: "555",
-      explanation: "Substring(startIndex, length) extracts characters starting at index 0 for 3 characters, returning the first 3 characters: \"555\"."
-    }
-  ]}
-/>
 
 ---
 
