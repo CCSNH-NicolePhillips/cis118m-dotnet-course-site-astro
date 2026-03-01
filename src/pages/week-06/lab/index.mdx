@@ -6,6 +6,7 @@ description: "Build an access control system using if/else if/else decision stru
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 
 # Lab 06: The Security Gatekeeper
 
@@ -198,6 +199,31 @@ Invalid credentials. This attempt has been logged.
     </tbody>
   </table>
 </div>
+
+---
+
+<Checkpoint
+  checkpointId="week-06-lab-checkpoint"
+  title="🔍 Lab 6 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "A user enters security level 2 and password \"wrongpass\". What does the gatekeeper print?",
+      options: ["ADMIN ACCESS GRANTED", "GUEST ACCESS GRANTED", "ACCESS DENIED", "SUPERUSER ACCESS GRANTED"],
+      correctAnswer: "ACCESS DENIED",
+      explanation: "Both the level AND password must match. Level 2 requires password \"admin456\". Any wrong combination falls through to the else block and prints ACCESS DENIED."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Why combine the level and password check with && in one condition?",
+      options: ["Both conditions must be true simultaneously to grant access", "Either condition being true is enough for access", "It is just a style preference with no logical difference", "The compiler requires && for string comparisons"],
+      correctAnswer: "Both conditions must be true simultaneously to grant access",
+      explanation: "&& (AND) requires both the correct level AND the correct password to be true at the same time. Using two separate if statements would allow access if either condition passed independently."
+    }
+  ]}
+/>
 
 ---
 

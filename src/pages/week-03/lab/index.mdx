@@ -6,6 +6,7 @@ description: "Build a System Profile using the correct data types"
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 
 # Lab 03: The Data Manifest
 
@@ -186,6 +187,31 @@ Console.WriteLine($"Cost: ${cost}");
 ```
 
 </details>
+
+---
+
+<Checkpoint
+  checkpointId="week-03-lab-checkpoint"
+  title="🔍 Lab 3 Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "Which C# data type is required for storing monetary values to avoid floating-point rounding errors?",
+      options: ["double", "float", "decimal", "int"],
+      correctAnswer: "decimal",
+      explanation: "decimal uses base-10 arithmetic which avoids the binary rounding errors that affect double and float, making it essential for financial calculations."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Which C# type is the most memory-efficient way to store a single character like 'A'?",
+      options: ["string", "char", "byte", "int"],
+      correctAnswer: "char",
+      explanation: "char is a 16-bit Unicode type designed for a single character. string is for text of any length and uses more overhead for just one character."
+    }
+  ]}
+/>
 
 ---
 

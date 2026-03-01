@@ -6,6 +6,7 @@ description: "Build an Interactive Project Budget Estimator"
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
+import Checkpoint from '../../../components/Checkpoint.astro';
 
 # ⚔️ BOSS FIGHT: Project Budget Estimator
 
@@ -188,6 +189,31 @@ The automated grader will verify:
     <label for="check5">Code compiles and runs without errors</label>
   </div>
 </div>
+
+---
+
+<Checkpoint
+  checkpointId="week-05-lab-checkpoint"
+  title="🔍 Boss Fight Knowledge Check (Participation)"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What type does Console.ReadLine() always return, regardless of what the user types?",
+      options: ["int", "double", "string", "decimal"],
+      correctAnswer: "string",
+      explanation: "Console.ReadLine() always returns a string. You must use a Parse() method (like decimal.Parse()) to convert it to a numeric type."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Which symbol prefix is used to create a string interpolation expression in C#?",
+      options: ["@", "$", "#", "&"],
+      correctAnswer: "$",
+      explanation: "The $ prefix creates an interpolated string where {variableName} expressions inside are replaced with the variable's value at runtime."
+    }
+  ]}
+/>
 
 ---
 
