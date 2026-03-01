@@ -120,6 +120,7 @@ interface ProgressEntry {
   submittedAt?: string;
   penaltyWaived?: string;
   waivedBy?: string;
+  savedCode?: string;
 }
 
 interface ProgressData {
@@ -701,7 +702,7 @@ const StudentGrades: React.FC = () => {
 
                 // If no score but week is past due + started, show 0
                 if (weekPastDue && weekStarted) {
-                  return (
+                  const zeroSpan = (
                     <span style={{
                       display: 'inline-block',
                       padding: '4px 10px',
@@ -714,6 +715,19 @@ const StudentGrades: React.FC = () => {
                       0
                     </span>
                   );
+                  const assignment = assignmentId ? ASSIGNMENTS.find(a => a.id === assignmentId) : null;
+                  if (assignment && assignmentId) {
+                    return (
+                      <button
+                        onClick={() => setSelectedDetail(assignment)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        title="View details"
+                      >
+                        {zeroSpan}
+                      </button>
+                    );
+                  }
+                  return zeroSpan;
                 }
 
                 // Week not due yet, show dash
@@ -825,6 +839,8 @@ const StudentGrades: React.FC = () => {
         const attempts = entry.attempts ? parseInt(entry.attempts) : undefined;
         const bestScore = entry.bestScore ? parseFloat(entry.bestScore) : undefined;
         const feedback = entry.feedback;
+        const savedCode = entry.savedCode;
+        const wasSubmitted = entry.submittedAt !== undefined || finalScore !== undefined;
 
         let rubric: Record<string, { points: number; maxPoints: number; rationale: string }> | null = null;
         if (entry.rubric) {
@@ -993,9 +1009,40 @@ const StudentGrades: React.FC = () => {
                 </div>
               )}
 
-              {/* Empty state */}
-              {!feedback && !rubric && finalScore === undefined && (
-                <p style={{ color: '#666', textAlign: 'center', padding: '20px' }}>
+              {/* Submitted Code */}
+              {savedCode && (
+                <div style={{ marginTop: rubric && Object.keys(rubric).length > 0 ? '20px' : '0' }}>
+                  <h4 style={{ margin: '0 0 12px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Your Submission
+                  </h4>
+                  <pre style={{
+                    background: '#0d1117', borderRadius: '8px', padding: '14px',
+                    border: '1px solid #2a2a4a', color: '#9cdcfe', fontSize: '0.78rem',
+                    lineHeight: 1.5, overflowX: 'auto', maxHeight: '280px',
+                    overflowY: 'auto', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word'
+                  }}>
+                    {savedCode}
+                  </pre>
+                </div>
+              )}
+
+              {/* Empty / not-submitted state */}
+              {!wasSubmitted && (
+                <div style={{
+                  textAlign: 'center', padding: '20px',
+                  background: 'rgba(239, 68, 68, 0.08)', borderRadius: '8px',
+                  border: '1px solid rgba(239, 68, 68, 0.2)'
+                }}>
+                  <div style={{ fontSize: '1.5rem', marginBottom: '8px' }}>✗</div>
+                  <p style={{ margin: '0 0 6px 0', color: '#f87171', fontWeight: 600 }}>Not Submitted</p>
+                  <p style={{ margin: 0, fontSize: '0.82rem', color: '#888' }}>
+                    This assignment was not turned in before the deadline.<br />
+                    A score of 0 was recorded. Contact your instructor if you believe this is an error.
+                  </p>
+                </div>
+              )}
+              {wasSubmitted && !feedback && !rubric && !savedCode && (
+                <p style={{ color: '#666', textAlign: 'center', padding: '16px', margin: 0, fontSize: '0.85rem' }}>
                   No detailed feedback available for this assignment.
                 </p>
               )}
