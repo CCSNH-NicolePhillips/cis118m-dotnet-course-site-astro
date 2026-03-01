@@ -131,13 +131,17 @@ const WEIGHTS = {
 // Expected sections per week for participation scoring
 // Week 1: 5 checkpoints (original behavior - don't change, students already graded)
 // Weeks 2-4: 4 numbered sections (e.g., 2-1, 2-2, 2-3, 2-4)
-// Weeks 5+: 2 numbered sections (e.g., 5-1, 5-2) + boss fight or other graded work
+// Week 5: 3 sections (5-1, 5-2, 5-3-boss-fight)
+// Weeks 6-7: 4 numbered sections; Weeks 8+: 2 content sections (default)
 const EXPECTED_SECTIONS_PER_WEEK: { [week: number]: number } = {
   1: 5,  // Original behavior - DO NOT CHANGE
   2: 4,  // 2-1, 2-2, 2-3, 2-4
   3: 4,  // 3-1, 3-2, 3-3, 3-4
   4: 4,  // 4-1, 4-2, 4-3, 4-4
-  // Weeks 5+ have 2 content sections each (default)
+  5: 3,  // 5-1, 5-2, 5-3-boss-fight
+  6: 4,  // 6-1, 6-2, 6-3, 6-4
+  7: 4,  // 7-1, 7-2, 7-3, 7-4
+  // Weeks 8+ have 2 content sections each (default)
 };
 const getExpectedSections = (week: number): number => EXPECTED_SECTIONS_PER_WEEK[week] ?? 2;
 
