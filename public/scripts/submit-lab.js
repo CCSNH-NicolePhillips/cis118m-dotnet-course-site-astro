@@ -11,17 +11,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   
-  // Due dates per week (matches server-side due-dates.mjs)
-  const WEEK_DUE_DATES = {
-    1: '2026-01-25T23:59:59-05:00',
-    2: '2026-02-01T23:59:59-05:00',
-    3: '2026-02-08T23:59:59-05:00',
-    4: '2026-02-15T23:59:59-05:00',
-    5: '2026-02-22T23:59:59-05:00',
-    6: '2026-03-01T23:59:59-05:00',
-    7: '2026-03-08T23:59:59-05:00',
-    8: '2026-03-22T23:59:59-05:00',
-  };
+  // Due dates per week - fetched from /api/due-dates (backed by src/config/site.ts)
+  let WEEK_DUE_DATES = {};
+  try {
+    const dueDatesRes = await fetch('/api/due-dates');
+    if (dueDatesRes.ok) WEEK_DUE_DATES = await dueDatesRes.json();
+  } catch (err) {
+    console.warn('[submit-lab] Could not load due dates:', err);
+  }
   
   // Calculate days late and penalty
   const getLatePenaltyInfo = (weekNum) => {

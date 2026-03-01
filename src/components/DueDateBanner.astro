@@ -1,11 +1,13 @@
 ---
 /**
  * DueDateBanner - Shows a prominent due date notice on graded assignments
- * 
+ *
  * Usage: <DueDateBanner week={1} type="Lab" />
  *        <DueDateBanner week={2} type="Homework" />
  *        <DueDateBanner week={1} type="Quiz" />
  */
+
+import { WEEKS } from '../config/site';
 
 interface Props {
   week: number;
@@ -15,19 +17,9 @@ interface Props {
 
 const { week, type, showLatePolicy = true } = Astro.props;
 
-// Due dates per week (matches due-dates.mjs)
-const WEEK_DUE_DATES: Record<number, string> = {
-  1: '2026-01-25T23:59:59-05:00',
-  2: '2026-02-01T23:59:59-05:00',
-  3: '2026-02-08T23:59:59-05:00',
-  4: '2026-02-15T23:59:59-05:00',
-  5: '2026-02-22T23:59:59-05:00',
-  6: '2026-03-01T23:59:59-05:00',
-  7: '2026-03-08T23:59:59-05:00',
-  8: '2026-03-22T23:59:59-05:00',
-};
-
-const dueDateString = WEEK_DUE_DATES[week];
+// Derive due date from the single source of truth in site.ts
+const weekConfig = WEEKS.find(w => parseInt(w.slug) === week);
+const dueDateString = weekConfig?.dueDate ?? null;
 const dueDate = dueDateString ? new Date(dueDateString) : null;
 
 // Format: "Saturday, January 25 at 11:59 PM"
