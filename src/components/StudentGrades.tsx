@@ -104,12 +104,26 @@ ASSIGNMENTS.push({ id: 'week-15-homework', label: 'Homework', week: 15, type: 'h
 ASSIGNMENTS.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
 ASSIGNMENTS.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
 
+interface ProgressEntry {
+  score?: number;
+  status?: string;
+  type?: string;
+  originalScore?: string;
+  bestScore?: string;
+  attempts?: string;
+  feedback?: string;
+  rubric?: string;
+  isLate?: string;
+  daysLate?: string;
+  penalty?: string;
+  penaltyPercent?: string;
+  submittedAt?: string;
+  penaltyWaived?: string;
+  waivedBy?: string;
+}
+
 interface ProgressData {
-  [pageId: string]: {
-    score?: number;
-    status?: string;
-    type?: string;
-  };
+  [pageId: string]: ProgressEntry;
 }
 
 // Declare global auth interface
@@ -207,6 +221,7 @@ const StudentGrades: React.FC = () => {
   const [progress, setProgress] = useState<ProgressData>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDetail, setSelectedDetail] = useState<Assignment | null>(null);
 
   const loadProgress = useCallback(async () => {
     setLoading(true);
@@ -645,15 +660,18 @@ const StudentGrades: React.FC = () => {
               const weekStarted = isWeekStarted(week);
               const isBossFightOnly = BOSS_FIGHT_ONLY_WEEKS.has(week);
 
-              const renderScore = (score: number | undefined, color: string, assignmentType: string) => {
+              const renderScore = (score: number | undefined, color: string, assignmentType: string, assignmentId?: string) => {
                 // Boss-fight-only weeks don't have quiz or homework - always show dash
                 if (isBossFightOnly && (assignmentType === 'quiz' || assignmentType === 'homework')) {
                   return <span style={{ color: '#444' }}>—</span>;
                 }
-                
+
                 // If score is defined, show it
                 if (score !== undefined && score !== null) {
-                  return (
+                  const entry = assignmentId ? progress[assignmentId] : null;
+                  const hasDetail = entry && (entry.feedback || entry.rubric || entry.submittedAt);
+                  const assignment = assignmentId ? ASSIGNMENTS.find(a => a.id === assignmentId) : null;
+                  const badge = (
                     <span style={{
                       display: 'inline-block',
                       padding: '4px 10px',
@@ -664,10 +682,23 @@ const StudentGrades: React.FC = () => {
                       fontWeight: 500
                     }}>
                       {score.toFixed(0)}
+                      {hasDetail && <span style={{ marginLeft: '5px', fontSize: '0.7rem', opacity: 0.7 }}>ⓘ</span>}
                     </span>
                   );
+                  if (hasDetail && assignment) {
+                    return (
+                      <button
+                        onClick={() => setSelectedDetail(assignment)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        title="View feedback & rubric"
+                      >
+                        {badge}
+                      </button>
+                    );
+                  }
+                  return badge;
                 }
-                
+
                 // If no score but week is past due + started, show 0
                 if (weekPastDue && weekStarted) {
                   return (
@@ -684,7 +715,7 @@ const StudentGrades: React.FC = () => {
                     </span>
                   );
                 }
-                
+
                 // Week not due yet, show dash
                 return <span style={{ color: '#444' }}>—</span>;
               };
@@ -724,16 +755,16 @@ const StudentGrades: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(quizScore, TYPE_COLORS.quiz.text, 'quiz')}
+                    {renderScore(quizScore, TYPE_COLORS.quiz.text, 'quiz', week === 1 ? undefined : `week-${wStr}-quiz`)}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(hwScore, TYPE_COLORS.homework.text, 'homework')}
+                    {renderScore(hwScore, TYPE_COLORS.homework.text, 'homework', `week-${wStr}-homework`)}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
                     {isBossFightWeek && (
                       <span style={{ fontSize: '0.65rem', color: '#f44336', display: 'block', marginBottom: '2px' }}>⚔️ 2x</span>
                     )}
-                    {renderScore(labScore, TYPE_COLORS.lab.text, 'lab')}
+                    {renderScore(labScore, TYPE_COLORS.lab.text, 'lab', isBossFightWeek ? `week-${wStr}-boss-fight` : `week-${wStr}-lab`)}
                   </td>
                 </tr>
               );
@@ -772,7 +803,206 @@ const StudentGrades: React.FC = () => {
             );
           })}
         </div>
+        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #2a2a4a' }}>
+          <h4 style={{ marginBottom: '8px', color: '#888', fontSize: '0.85rem', textTransform: 'uppercase' }}>Late Submission Policy</h4>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: '#666', lineHeight: 1.6 }}>
+            10% penalty per day late &mdash; assignments submitted more than 3 days late receive 0 points.
+            Contact your instructor before the deadline if you need an extension.
+          </p>
+        </div>
       </div>
+
+      {/* Submission Detail Modal */}
+      {selectedDetail && (() => {
+        const entry = progress[selectedDetail.id] || {};
+        const finalScore = entry.score;
+        const originalScore = entry.originalScore ? parseFloat(entry.originalScore) : undefined;
+        const isLate = entry.isLate === 'true';
+        const penaltyWaived = entry.penaltyWaived === 'true';
+        const daysLate = entry.daysLate ? parseInt(entry.daysLate) : 0;
+        const penaltyPercent = entry.penaltyPercent ? parseFloat(entry.penaltyPercent) : 0;
+        const submittedAt = entry.submittedAt ? new Date(entry.submittedAt) : null;
+        const attempts = entry.attempts ? parseInt(entry.attempts) : undefined;
+        const bestScore = entry.bestScore ? parseFloat(entry.bestScore) : undefined;
+        const feedback = entry.feedback;
+
+        let rubric: Record<string, { points: number; maxPoints: number; rationale: string }> | null = null;
+        if (entry.rubric) {
+          try { rubric = JSON.parse(entry.rubric); } catch {}
+        }
+
+        return (
+          <div
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              zIndex: 1000, padding: '16px'
+            }}
+            onClick={() => setSelectedDetail(null)}
+          >
+            <div
+              style={{
+                background: '#1a1a2e', borderRadius: '16px', border: '1px solid #333',
+                maxWidth: '560px', width: '100%', maxHeight: '85vh', overflowY: 'auto',
+                padding: '28px'
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#666', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+                    Week {selectedDetail.week}
+                  </div>
+                  <h3 style={{ margin: 0, color: '#ccc', fontSize: '1.2rem' }}>{selectedDetail.label}</h3>
+                </div>
+                <button
+                  onClick={() => setSelectedDetail(null)}
+                  style={{
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid #444',
+                    borderRadius: '6px', color: '#888', cursor: 'pointer',
+                    padding: '6px 14px', fontSize: '0.85rem'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Score block */}
+              {finalScore !== undefined && (
+                <div style={{
+                  background: '#16213e', borderRadius: '12px', padding: '20px',
+                  marginBottom: '20px', textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '0.75rem', color: '#666', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    {isLate && !penaltyWaived && originalScore !== undefined && originalScore !== finalScore
+                      ? 'Final Score (after penalty)' : 'Score'}
+                  </div>
+                  <div style={{
+                    fontSize: '3rem', fontWeight: 'bold',
+                    color: finalScore >= 70 ? '#4ec9b0' : '#ef4444'
+                  }}>
+                    {finalScore.toFixed(0)}
+                    <span style={{ fontSize: '1.5rem', color: '#666' }}>/100</span>
+                  </div>
+
+                  {isLate && !penaltyWaived && originalScore !== undefined && originalScore !== finalScore && (
+                    <div style={{
+                      marginTop: '12px', padding: '12px',
+                      background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '8px', fontSize: '0.85rem', color: '#f87171'
+                    }}>
+                      <div style={{ fontWeight: 600, marginBottom: '4px' }}>Late Submission Penalty Applied</div>
+                      <div>Original score: <strong>{originalScore.toFixed(0)}/100</strong></div>
+                      <div>{daysLate} day{daysLate !== 1 ? 's' : ''} late &mdash; {penaltyPercent}% penalty</div>
+                    </div>
+                  )}
+
+                  {penaltyWaived && (
+                    <div style={{
+                      marginTop: '12px', padding: '8px 12px',
+                      background: 'rgba(78, 201, 176, 0.1)', border: '1px solid rgba(78, 201, 176, 0.3)',
+                      borderRadius: '8px', fontSize: '0.8rem', color: '#6ee7b7'
+                    }}>
+                      Late penalty waived by instructor
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Meta info row */}
+              <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                {submittedAt && (
+                  <div style={{
+                    flex: '1 1 140px', background: '#16213e', borderRadius: '8px',
+                    padding: '12px', border: '1px solid #2a2a4a'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', marginBottom: '4px' }}>Submitted</div>
+                    <div style={{ fontSize: '0.85rem', color: '#aaa' }}>
+                      {submittedAt.toLocaleDateString()}<br />
+                      <span style={{ color: '#666' }}>{submittedAt.toLocaleTimeString()}</span>
+                    </div>
+                  </div>
+                )}
+                {attempts !== undefined && (
+                  <div style={{
+                    flex: '1 1 100px', background: '#16213e', borderRadius: '8px',
+                    padding: '12px', border: '1px solid #2a2a4a'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', marginBottom: '4px' }}>Attempts</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#aaa' }}>{attempts}</div>
+                  </div>
+                )}
+                {bestScore !== undefined && bestScore !== finalScore && (
+                  <div style={{
+                    flex: '1 1 100px', background: '#16213e', borderRadius: '8px',
+                    padding: '12px', border: '1px solid #2a2a4a'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', color: '#666', textTransform: 'uppercase', marginBottom: '4px' }}>Best Score</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#fbbf24' }}>{bestScore.toFixed(0)}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* AI Feedback */}
+              {feedback && (
+                <div style={{ marginBottom: '20px' }}>
+                  <h4 style={{ margin: '0 0 12px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    AI Feedback
+                  </h4>
+                  <div style={{
+                    background: '#16213e', borderRadius: '8px', padding: '16px',
+                    border: '1px solid #2a2a4a', color: '#ccc', fontSize: '0.9rem', lineHeight: 1.6
+                  }}>
+                    {feedback}
+                  </div>
+                </div>
+              )}
+
+              {/* Rubric */}
+              {rubric && Object.keys(rubric).length > 0 && (
+                <div>
+                  <h4 style={{ margin: '0 0 12px 0', color: '#888', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                    Grading Rubric
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {Object.entries(rubric).map(([category, data]) => (
+                      <div key={category} style={{
+                        background: '#16213e', borderRadius: '8px', padding: '14px',
+                        border: '1px solid #2a2a4a'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <span style={{ color: '#ccc', fontWeight: 500, fontSize: '0.9rem', textTransform: 'capitalize' }}>
+                            {category.replace(/-/g, ' ')}
+                          </span>
+                          <span style={{
+                            fontSize: '0.9rem', fontWeight: 600,
+                            color: data.points >= data.maxPoints * 0.7 ? '#4ec9b0' : '#ef4444'
+                          }}>
+                            {data.points}/{data.maxPoints}
+                          </span>
+                        </div>
+                        {data.rationale && (
+                          <p style={{ margin: 0, fontSize: '0.8rem', color: '#888', lineHeight: 1.5 }}>
+                            {data.rationale}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!feedback && !rubric && finalScore === undefined && (
+                <p style={{ color: '#666', textAlign: 'center', padding: '20px' }}>
+                  No detailed feedback available for this assignment.
+                </p>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
