@@ -20,7 +20,7 @@ Create a well-structured console program that simulates a "System Status Report"
 
 ---
 
-## 🎯 The Mission
+## The Mission
 
 You're building a diagnostic tool that outputs a formatted system status report. This lab focuses on **program structure** - not variables or math. You'll practice:
 
@@ -35,22 +35,22 @@ You're building a diagnostic tool that outputs a formatted system status report.
 
 Your program must include:
 
-### 1. ✅ Header Comments
+### 1. Header Comments
 - Line 1: Your name (e.g., `// Name: Jane Doe`)
 - Line 2: Assignment name (e.g., `// Assignment: Lab 2 - System Status Report`)
 
-### 2. ✅ Namespace & Class Structure
+### 2. Namespace & Class Structure
 - Wrap your code in a `namespace` called `SystemDiagnostics`
 - Create a `class` called `StatusReport`
 
-### 3. ✅ XML Documentation
+### 3. XML Documentation
 - Add an XML `<summary>` comment above your `Main` method explaining what it does
 
-### 4. ✅ Main Method with Exit Code
+### 4. Main Method with Exit Code
 - Use `static int Main()` instead of `static void Main()`
 - Return `0` at the end to indicate success
 
-### 5. ✅ Output (at least 5 lines)
+### 5. Output (at least 5 lines)
 Print a formatted status report with these sections:
 - A header line (e.g., `========== SYSTEM STATUS REPORT ==========`)
 - System name
@@ -153,26 +153,30 @@ Your output can be different, but it should be **formatted** and **professional*
 
 ---
 
-## Submit Your Lab
+## Submission
 
-<div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
-  <p style="margin-bottom: 16px;"><strong>When you're ready:</strong></p>
-  
-  <button 
-    id="submit-lab-btn"
-    style="
-      background: linear-gradient(135deg, #4ec9b0 0%, #3ba892 100%);
-      color: #000;
-      font-weight: 600;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-right: 10px;
+When your program runs correctly and displays the formatted status report:
+
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   ">
-    Submit Lab for Grading
+    Submit Lab
   </button>
-
   <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
   <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
