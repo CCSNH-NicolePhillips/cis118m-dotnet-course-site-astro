@@ -265,8 +265,7 @@ const calculateWeightedTotals = (
   for (const assignment of assignments) {
     const weekNum = assignment.week;
     const weekPastDue = isWeekPastDue(weekNum);
-    const weekStarted = isWeekStarted(weekNum);
-    
+
     if (assignment.type === 'participation') {
       // Calculate per-week participation as 0-100 score
       const weekCount = participationByWeek[weekNum] || 0;
@@ -296,8 +295,7 @@ const calculateWeightedTotals = (
         else if (assignment.type === 'quiz') quizScores.push(score);
         else if (assignment.type === 'homework') homeworkScores.push(score);
         else if (assignment.type === 'final') finalScores.push(score);
-      } else if (weekPastDue && weekStarted) {
-        // Week is past due with no submission, count as 0
+      } else if (weekPastDue) {
         if (assignment.type === 'lab') {
           labScores.push(0);
           if (isBossFight) labScores.push(0); // Boss fights count 2x
@@ -1443,8 +1441,7 @@ const InstructorDashboard: React.FC = () => {
                       let score = progress?.score;
                       let cellContent = '-';
                       const weekPastDue = isWeekPastDue(a.week);
-                      const weekStarted = isWeekStarted(a.week);
-                      
+
                       // For participation, count sections for that week
                       if (a.type === 'participation') {
                         const participationByWeek = countParticipationByWeek(student.progress);
@@ -1458,7 +1455,7 @@ const InstructorDashboard: React.FC = () => {
                           cellContent = `${score}`;
                         } else if (progress?.status === 'in_progress' || progress?.status === 'attempted') {
                           cellContent = '...';
-                        } else if (weekPastDue && weekStarted) {
+                        } else if (weekPastDue) {
                           // Week is past due with no submission - show 0
                           cellContent = '0';
                           score = 0;
