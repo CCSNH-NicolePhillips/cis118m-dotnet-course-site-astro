@@ -446,6 +446,7 @@ internal static class CheckRunner
             "week-04-lab" => Week04LabChecks(programCs),
             "week-05-boss-fight" => Week05BossFightChecks(programCs),
             "week-06-lab" => Week06LabChecks(programCs),
+            "week-07-lab" => Week07LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -461,6 +462,7 @@ internal static class CheckRunner
             "week-04-lab" => Week04LabHint(checks),
             "week-05-boss-fight" => Week05BossFightHint(checks),
             "week-06-lab" => Week06LabHint(checks),
+            "week-07-lab" => Week07LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -1131,6 +1133,128 @@ internal static class CheckRunner
             "HasLogicalAnd" => "Combine both conditions: if (level == 1 && password == \"guest123\")",
             "HasAllAccessLevels" => "Check for all 3 passwords: \"guest123\", \"admin456\", \"superSecret\"",
             "HasKnRBraces" => "Put the opening brace on the same line: if (condition) {",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    private static List<CheckResult> Week07LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var isPlaceholderName = Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        var hasHeaderComment = hasNameComment && !isPlaceholderName;
+        checks.Add(new CheckResult(
+            Name: "HasHeaderComment",
+            Passed: hasHeaderComment,
+            Message: hasHeaderComment
+                ? "Found header comment with your name."
+                : "Replace 'Your Name Here' with your actual name in the header comment."));
+
+        // Check 2: Uses Console.ReadLine() for all three inputs
+        var readLineCount = Regex.Matches(programCs, @"Console\.ReadLine\s*\(").Count;
+        var hasThreeReadLines = readLineCount >= 3;
+        checks.Add(new CheckResult(
+            Name: "HasThreeReadLines",
+            Passed: hasThreeReadLines,
+            Message: hasThreeReadLines
+                ? $"Found {readLineCount} Console.ReadLine() calls for all three inputs."
+                : $"Need 3 Console.ReadLine() calls (threat level, internal source, protocol). Found {readLineCount}."));
+
+        // Check 3: Uses int.Parse() for threat level
+        var hasIntParse = Regex.IsMatch(programCs, @"int\.Parse\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasIntParse",
+            Passed: hasIntParse,
+            Message: hasIntParse
+                ? "Found int.Parse() for parsing threat level."
+                : "Use int.Parse(Console.ReadLine()) to convert the threat level to an integer."));
+
+        // Check 4: Uses bool.Parse() for internal source
+        var hasBoolParse = Regex.IsMatch(programCs, @"bool\.Parse\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasBoolParse",
+            Passed: hasBoolParse,
+            Message: hasBoolParse
+                ? "Found bool.Parse() for parsing internal source flag."
+                : "Use bool.Parse(Console.ReadLine()) to convert the internal source input to a boolean."));
+
+        // Check 5: Uses .ToUpper() on protocol input
+        var hasToUpper = Regex.IsMatch(programCs, @"\.ToUpper\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasToUpper",
+            Passed: hasToUpper,
+            Message: hasToUpper
+                ? "Found .ToUpper() for normalizing protocol input."
+                : "Use .ToUpper() on the protocol input so \"ssh\" and \"SSH\" both match: protocol.ToUpper()"));
+
+        // Check 6: Uses nested if or else if chain for firewall rules
+        var hasElseIf = Regex.IsMatch(programCs, @"\belse\s+if\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasElseIf",
+            Passed: hasElseIf,
+            Message: hasElseIf
+                ? "Found else if chain for firewall rule evaluation."
+                : "Use 'else if' to chain the firewall rules — each rule should be an else if after the critical threat check."));
+
+        // Check 7: Uses else for default deny
+        var hasElse = Regex.IsMatch(programCs, @"\belse\s*\{");
+        checks.Add(new CheckResult(
+            Name: "HasElse",
+            Passed: hasElse,
+            Message: hasElse
+                ? "Found else block for default deny policy."
+                : "Add a final else { block for the BLOCKED — Default deny policy case."));
+
+        // Check 8: Uses && for the internal SSH combined check
+        var hasLogicalAnd = programCs.Contains("&&");
+        checks.Add(new CheckResult(
+            Name: "HasLogicalAnd",
+            Passed: hasLogicalAnd,
+            Message: hasLogicalAnd
+                ? "Found && operator — combining protocol and source checks."
+                : "Use && to combine checks: if (protocol == \"SSH\" && isInternal)"));
+
+        // Check 9: Uses switch statement for protocol display
+        var hasSwitch = Regex.IsMatch(programCs, @"\bswitch\s*\(");
+        checks.Add(new CheckResult(
+            Name: "HasSwitch",
+            Passed: hasSwitch,
+            Message: hasSwitch
+                ? "Found switch statement for protocol-specific output."
+                : "Add a switch statement on the protocol variable to display protocol details (port, encryption)."));
+
+        // Check 10: Has real content (TODOs removed)
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO:").Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult(
+            Name: "HasRealContent",
+            Passed: hasRealContent,
+            Message: hasRealContent
+                ? "TODOs completed — code looks ready!"
+                : $"Still have {todoCount} TODO comments. Complete each step and remove the TODOs."));
+
+        return checks;
+    }
+
+    private static string Week07LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasThreeReadLines" => "You need Console.ReadLine() for threat level, internal source, and protocol — that's 3 calls.",
+            "HasIntParse" => "Convert threat level: int threatLevel = int.Parse(Console.ReadLine());",
+            "HasBoolParse" => "Convert internal flag: bool isInternal = bool.Parse(Console.ReadLine());",
+            "HasToUpper" => "Normalize the protocol: string protocol = Console.ReadLine().ToUpper();",
+            "HasElseIf" => "Chain your rules with else if: } else if (threatLevel > 4) {",
+            "HasElse" => "Add a final } else { block that prints BLOCKED — Default deny policy.",
+            "HasLogicalAnd" => "Combine conditions for internal SSH: if (protocol == \"SSH\" && isInternal)",
+            "HasSwitch" => "After the firewall decision, add: switch (protocol) { case \"HTTP\": ... }",
             "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };
