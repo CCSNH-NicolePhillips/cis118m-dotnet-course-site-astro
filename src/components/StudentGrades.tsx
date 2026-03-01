@@ -247,8 +247,6 @@ const StudentGrades: React.FC = () => {
       }
       
       const data = await res.json();
-      console.log('[StudentGrades] API response keys:', Object.keys(data.progress || {}).length, 'entries');
-      console.log('[StudentGrades] Sample progress:', JSON.stringify(Object.fromEntries(Object.entries(data.progress || {}).slice(0, 5))));
       setProgress(data.progress || {});
     } catch (err) {
       console.error('Error loading progress:', err);
@@ -360,16 +358,6 @@ const StudentGrades: React.FC = () => {
     // Note: averages are already 0-100, so we just divide by totalWeight to normalize
     const courseTotal = totalWeight > 0 ? (weightedSum / totalWeight) : 0;
     const hasAnyGrades = totalWeight > 0;
-
-    console.log('[StudentGrades] Grade calc:', {
-      labScores: labScores.length, labsAvg: labsAvg.toFixed(1),
-      quizScores: quizScores.length, quizzesAvg: quizzesAvg.toFixed(1),
-      homeworkScores: homeworkScores.length, homeworkAvg: homeworkAvg.toFixed(1),
-      participationScores: participationScores.length, participationAvg: participationAvg.toFixed(1),
-      totalWeight: totalWeight.toFixed(2), weightedSum: weightedSum.toFixed(2),
-      courseTotal: courseTotal.toFixed(1)
-    });
-    console.log('[StudentGrades] Past due check - week1:', isWeekPastDue(1), 'week2:', isWeekPastDue(2), 'week3:', isWeekPastDue(3), 'week4:', isWeekPastDue(4), 'week5:', isWeekPastDue(5));
 
     return {
       labsAvg, quizzesAvg, homeworkAvg, finalAvg, participationAvg,
