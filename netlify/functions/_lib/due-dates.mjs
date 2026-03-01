@@ -72,7 +72,7 @@ const WEEK_DUE_DATES = {
   4: '2026-02-15T23:59:59-05:00',  // Week 4 due Sunday 2/15
   5: '2026-02-22T23:59:59-05:00',  // Week 5 due Sunday 2/22
   6: '2026-03-01T23:59:59-05:00',  // Week 6 due Sunday 3/1
-  7: '2026-03-08T23:59:59-05:00',  // Week 7 due Sunday 3/8
+  7: '2026-03-08T23:59:59-04:00',  // Week 7 due Sunday 3/8 (DST starts 2 AM this day → EDT)
   8: '2026-03-15T23:59:59-04:00',  // Week 8 due Sunday 3/15 (EDT starts 3/8)
   // Spring Break: March 16-22
   9: '2026-03-29T23:59:59-04:00',  // Week 9 due Sunday 3/29

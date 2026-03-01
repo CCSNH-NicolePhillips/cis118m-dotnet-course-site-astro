@@ -86,7 +86,7 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection (Graded)', href: '/week-06/homework/' },
       { title: 'Weekly Assessment (Graded)', href: '/week-06/weekly-assessment/' }
     ] },
-  { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00', pages: [
+  { slug: '07', title: 'Week 07: Logic & Multiple Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-07/' },
       { title: '7.1 Nested Labyrinths', href: '/week-07/7-1-nested-logic/' },
       { title: '7.2 Short-Circuit Logic', href: '/week-07/7-2-short-circuit/' },
