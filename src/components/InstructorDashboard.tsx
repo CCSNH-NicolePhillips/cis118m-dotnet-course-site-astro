@@ -438,7 +438,7 @@ const InstructorDashboard: React.FC = () => {
   }, [students]);
 
   const parseProgressData = (progress: StudentProgress) => {
-    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; penaltyPreWaived?: boolean; preWaivedBy?: string; status?: string; feedback?: string; savedCode?: string; rubric?: object; detailedReport?: string; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string } } = {};
+    const parsed: { [pageId: string]: { score?: number; originalScore?: number; daysLate?: number; isLate?: boolean; penaltyPercent?: number; penaltyWaived?: boolean; penaltyPreWaived?: boolean; preWaivedBy?: string; status?: string; feedback?: string; savedCode?: string; rubric?: object; detailedReport?: string; gradedAt?: string; quizUnlocked?: boolean; unlockedBy?: string; unlockedAt?: string; integrityAnalysis?: { riskLevel?: string; flags?: string[]; reasoning?: string }; telemetry?: { keystrokeCount?: number; pasteCount?: number; pasteCharTotal?: number; largestPaste?: number; editDurationSec?: number; totalEdits?: number; codeLength?: number; reflectionLength?: number } } } = {};
     
     for (const [key, value] of Object.entries(progress || {})) {
       const parts = key.split(':');
@@ -468,6 +468,16 @@ const InstructorDashboard: React.FC = () => {
           try {
             parsed[pageId].rubric = typeof value === 'string' ? JSON.parse(value) : value;
           } catch { parsed[pageId].rubric = {}; }
+        }
+        else if (field === 'integrityAnalysis') {
+          try {
+            parsed[pageId].integrityAnalysis = typeof value === 'string' ? JSON.parse(value) : value;
+          } catch { parsed[pageId].integrityAnalysis = {}; }
+        }
+        else if (field === 'telemetry') {
+          try {
+            parsed[pageId].telemetry = typeof value === 'string' ? JSON.parse(value) : value;
+          } catch { parsed[pageId].telemetry = {}; }
         }
       }
     }
@@ -1987,6 +1997,122 @@ const InstructorDashboard: React.FC = () => {
                   </div>
                 </details>
               )}
+
+              {/* Integrity Analysis (Instructor-only) */}
+              {(() => {
+                const integrity = modalData.student.parsedProgress?.[modalData.assignmentId]?.integrityAnalysis;
+                const telemetry = modalData.student.parsedProgress?.[modalData.assignmentId]?.telemetry;
+                if (!integrity && !telemetry) return null;
+                const riskLevel = integrity?.riskLevel || 'unknown';
+                const riskColor = riskLevel === 'high' ? '#ef4444' : riskLevel === 'medium' ? '#f59e0b' : riskLevel === 'low' ? '#22c55e' : '#888';
+                const riskBg = riskLevel === 'high' ? '#1a0505' : riskLevel === 'medium' ? '#1a1505' : '#051a05';
+                return (
+                  <details style={{ marginBottom: '20px' }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: 'bold', padding: '10px 0', color: riskColor }}>
+                      🛡️ Integrity Analysis — Risk: {riskLevel.toUpperCase()}
+                    </summary>
+                    <div style={{
+                      background: riskBg,
+                      border: `1px solid ${riskColor}33`,
+                      padding: '15px',
+                      borderRadius: '8px',
+                      marginTop: '10px',
+                      color: '#ccc',
+                      lineHeight: '1.6'
+                    }}>
+                      {integrity && (
+                        <>
+                          <div style={{ marginBottom: '10px' }}>
+                            <strong style={{ color: riskColor }}>Risk Level:</strong>{' '}
+                            <span style={{
+                              background: riskColor + '22',
+                              color: riskColor,
+                              padding: '2px 10px',
+                              borderRadius: '12px',
+                              fontSize: '13px',
+                              fontWeight: 'bold'
+                            }}>
+                              {riskLevel.toUpperCase()}
+                            </span>
+                          </div>
+                          {integrity.flags && integrity.flags.length > 0 && (
+                            <div style={{ marginBottom: '10px' }}>
+                              <strong style={{ color: '#f59e0b' }}>Flags:</strong>
+                              <ul style={{ margin: '5px 0 0 20px', padding: 0 }}>
+                                {integrity.flags.map((flag: string, i: number) => (
+                                  <li key={i} style={{ color: '#fbbf24', marginBottom: '4px' }}>⚠️ {flag}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {integrity.reasoning && (
+                            <div style={{ marginBottom: '10px' }}>
+                              <strong style={{ color: '#60a5fa' }}>AI Reasoning:</strong>
+                              <div style={{ marginTop: '4px', color: '#aaa', fontStyle: 'italic' }}>{integrity.reasoning}</div>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {telemetry && Object.keys(telemetry).length > 0 && (
+                        <div style={{ marginTop: integrity ? '15px' : '0', borderTop: integrity ? '1px solid #333' : 'none', paddingTop: integrity ? '10px' : '0' }}>
+                          <strong style={{ color: '#60a5fa' }}>Editor Telemetry:</strong>
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+                            gap: '8px',
+                            marginTop: '8px'
+                          }}>
+                            {telemetry.keystrokeCount !== undefined && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Keystrokes</div>
+                                <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.keystrokeCount}</div>
+                              </div>
+                            )}
+                            {telemetry.pasteCount !== undefined && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Paste Events</div>
+                                <div style={{ color: telemetry.pasteCount > 3 ? '#f59e0b' : '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.pasteCount}</div>
+                              </div>
+                            )}
+                            {telemetry.pasteCharTotal !== undefined && telemetry.pasteCharTotal > 0 && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Chars Pasted</div>
+                                <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.pasteCharTotal}</div>
+                              </div>
+                            )}
+                            {telemetry.largestPaste !== undefined && telemetry.largestPaste > 0 && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Largest Paste</div>
+                                <div style={{ color: telemetry.largestPaste > 100 ? '#ef4444' : '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.largestPaste} chars</div>
+                              </div>
+                            )}
+                            {telemetry.editDurationSec !== undefined && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Edit Duration</div>
+                                <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>
+                                  {telemetry.editDurationSec < 60 ? `${telemetry.editDurationSec}s` : `${Math.floor(telemetry.editDurationSec / 60)}m ${telemetry.editDurationSec % 60}s`}
+                                </div>
+                              </div>
+                            )}
+                            {telemetry.totalEdits !== undefined && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Total Edits</div>
+                                <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.totalEdits}</div>
+                              </div>
+                            )}
+                            {(telemetry.codeLength || telemetry.reflectionLength) !== undefined && (
+                              <div style={{ background: '#111', padding: '8px 12px', borderRadius: '6px' }}>
+                                <div style={{ color: '#888', fontSize: '11px' }}>Final Length</div>
+                                <div style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold' }}>{telemetry.codeLength || telemetry.reflectionLength} chars</div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </details>
+                );
+              })()}
 
               {/* Submission History */}
               <details style={{ marginBottom: '20px' }}>

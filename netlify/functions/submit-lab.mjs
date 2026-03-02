@@ -26,7 +26,7 @@ export async function handler(event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { starterId, code, stdin, stdout, stderr, diagnostics } = body;
+    const { starterId, code, stdin, stdout, stderr, diagnostics, telemetry } = body;
 
     if (!starterId || !code) {
       return {
@@ -71,11 +71,24 @@ STUDENT CODE:
 ${code}
 \`\`\`
 
+${telemetry ? `EDITOR TELEMETRY (behavioral data from the code editor - DO NOT share this with the student):
+- Keystrokes: ${telemetry.keystrokeCount || 0}
+- Paste events: ${telemetry.pasteCount || 0} (total chars pasted: ${telemetry.pasteCharTotal || 0}, largest single paste: ${telemetry.largestPaste || 0} chars)
+- Edit duration: ${telemetry.editDurationSec || 0} seconds
+- Total edits: ${telemetry.totalEdits || 0}
+- Final code length: ${telemetry.codeLength || 0} chars
+` : ''}
 Grade the code and provide:
 1. "score": total points (0-100)
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with genuine praise for what they did well. If there are issues, frame them as "Next time you might try..." or "One small thing to polish..." Never say "wrong" or "incorrect" - use "almost there" or "close!"
 3. "rubric": object with each rubric category from the RUBRIC section above, points awarded out of max, and brief rationale explaining WHY
 4. "detailedReport": 3-5 sentence instructor-facing summary explaining the overall grade, what the student did well, what they missed, and specific improvement areas
+5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this submission may have been AI-generated or copied. Consider:
+   - Code style: Is it unusually polished/verbose for a beginner? Are there advanced patterns not taught in the lesson?  
+   - Comments: Are there suspiciously thorough inline comments unusual for a freshman?
+   - Telemetry: Was the code mostly pasted in one large block? Is keystroke count very low relative to code length? Was edit duration suspiciously short?
+   - Structure: Does the code use concepts, libraries, or patterns beyond what was taught?
+   Provide: "riskLevel" (low/medium/high), "flags" (array of specific concerns), "reasoning" (1-2 sentence explanation)
 
 IMPORTANT TONE GUIDELINES:
 - These are college freshmen, many writing their first program ever
@@ -83,6 +96,7 @@ IMPORTANT TONE GUIDELINES:
 - Be specific about what they did RIGHT
 - Frame suggestions as opportunities, not failures
 - Use encouraging phrases like "Great start!", "Nice work on...", "You're on the right track!"
+- DO NOT mention the integrity analysis or telemetry in the student-facing "feedback" field
 
 IMPORTANT: Use the EXACT rubric categories from the RUBRIC section above. Each rubric entry must include "points", "maxPoints", and "rationale".
 
@@ -94,7 +108,12 @@ Return JSON:
     "category-name": {"points": number, "maxPoints": number, "rationale": "specific reason"},
     ...
   },
-  "detailedReport": "3-5 sentence instructor-facing analysis of the submission"
+  "detailedReport": "3-5 sentence instructor-facing analysis of the submission",
+  "integrityAnalysis": {
+    "riskLevel": "low|medium|high",
+    "flags": ["specific concern 1", "specific concern 2"],
+    "reasoning": "1-2 sentence summary"
+  }
 }`;
 
         const result = await model.generateContent(prompt);
@@ -170,7 +189,9 @@ Return JSON:
           [`${assignmentId}:savedCode`]: code,
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
           [`${assignmentId}:detailedReport`]: gradeData.detailedReport || '',
-          [`${assignmentId}:gradedAt`]: submittedAt
+          [`${assignmentId}:gradedAt`]: submittedAt,
+          [`${assignmentId}:integrityAnalysis`]: JSON.stringify(gradeData.integrityAnalysis || {}),
+          [`${assignmentId}:telemetry`]: JSON.stringify(telemetry || {})
         };
         if (penaltyPreWaived) {
           labProgressData[`${assignmentId}:penaltyWaived`] = 'true';

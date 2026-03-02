@@ -86,7 +86,7 @@ Summary: # Week 1 Lesson 1: .NET vs C# + Console Apps 🖥️ Console Foundation
 Summary: # 📋 Course Standards & Syllabus Assessment ⚠️ Gatekeeper Assessment This assessment ensures you understand the course policies before accessing technical modules. Attempts: Unlimited — keep trying until you pass Passing: 100% required to unlock all course content Source: All answers are found in th...
 
 Quiz Questions (5 questions):
-1. Q: What is the instructor's official contact email?
+1. Q: Which of the following is an official instructor email for this course?
    A: MCCCISOnline1@ccsnh.edu
    Why: Always use the official MCCCISOnline1@ccsnh.edu address for course communications.
 2. Q: What percentage of your final grade is determined by Weekly Coding Labs?
@@ -110,14 +110,8 @@ Key Concepts:
 Summary: # Start Here • Your 15-Week Journey Welcome to **CIS118M: Introduction to .NET Development**! Over the next 15 weeks, you'll go from complete beginner to building real applications with C# and .NET. This roadmap breaks your learning into **four quest phases**. Each phase builds on the last, taking y...
 
 ### 🔬 Lab: Syllabus
-Key Concepts:
-- Course Number:
-- Credits:
-- Prerequisites:
-- Format:
-- Instructor:
 
-Summary: # CIS 118M: Introduction to C# Programming ## Course Information **Course Number:** CIS 118M **Credits:** 3 **Prerequisites:** CIS107M or CIS108M **Format:** Fully online, self-paced ## Course Description This course introduces students to programming using the C# language and the .NET platform. Stu...
+Summary: 📜 CIS 118M: Introduction to C# Programming Course Syllabus & Expectations --- ## 🏫 Course Information Course CIS 118M Credits 3 Prerequisites CIS107M or CIS108M Format Fully Online 📄 Course Description This course introduces students to programming using the C# language and the .NET platform. Stu...
 
 ### 🔬 Lab: Syllabus Acknowledgement
 Key Concepts:
@@ -385,7 +379,7 @@ Key Concepts:
 - most memory-efficient and appropriate data types
 - Submit Lab
 
-Summary: # Lab 03: The Data Manifest **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective Build a **System Profile** console application that stores and displays system data using the **most memory-efficient and appropriate data types** for each piece of information. --- ## 📋 Requirements Your progr...
+Summary: # Lab 03: The Data Manifest **Time: 45 minutes** **Points: 100** ## Mission Objective Build a **System Profile** console application that stores and displays system data using the **most memory-efficient and appropriate data types** for each piece of information. --- ## Requirements Your program mus...
 
 ### 📖 Lesson: Week 03 • Lesson 1
 Key Concepts:
@@ -531,7 +525,7 @@ Key Concepts:
 - string methods
 - Your job:
 
-Summary: # Lab 04: The Text Sanitizer **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective You've received **messy user input** that needs to be cleaned up and formatted before it can be stored in the database. Use **string methods** to sanitize the data. --- ## 📋 The Problem A user submitted their ...
+Summary: # Lab 04: The Text Sanitizer **Time: 45 minutes** **Points: 100** ## Mission Objective You've received **messy user input** that needs to be cleaned up and formatted before it can be stored in the database. Use **string methods** to sanitize the data. --- ## The Problem A user submitted their profil...
 
 ### 📋 Quiz: Week 04 • Technical Assessment
 
@@ -634,6 +628,8 @@ Key Concepts:
 - Critical rule
 - first true condition
 - least restrictive
+- Enter 95
+- Enter 80
 
 Summary: # Section 6.4: The Multi-Branch (else if) 🗼 The Control Tower ⏱️ Estimated Time: 30 minutes --- ✦ The Control Tower: Managing Multiple Flight Paths An air traffic control tower doesn't just say "land" or "don't land." It evaluates altitude, weather, runway availability, and fuel — then routes each ...
 
@@ -656,7 +652,7 @@ Key Concepts:
 - Security Level
 - Password
 
-Summary: # Lab 06: The Security Gatekeeper **Time: 45 minutes** **Points: 100** ## 🎯 Mission Objective You are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access b...
+Summary: # Lab 06: The Security Gatekeeper **Time: 45 minutes** **Points: 100** ## Mission Objective You are building a **security access control system** for a classified facility. The system evaluates two inputs — a **Security Level** (integer) and a **Password** (string) — and grants or denies access base...
 
 ### 📋 Quiz: Week 06 • Technical Assessment
 
@@ -698,13 +694,49 @@ Quiz Questions (10 questions):
 
 ## Week 7: Logic & Multiple Conditions
 
+### 📚 Overview: Section 7.1 • Nested Labyrinths
+Key Concepts:
+- clause version produce **identical results**, but the flat version is much easier to read and trace. When you can flatten, always flatten!
+- Nesting
+- decision tree
+- only makes sense
+- Set isLoggedIn = false
+- Set role = "admin" and hasPermissionX = false
+
+Summary: # Section 7.1: Nested Labyrinths 🏗️ The Decision Maze ⏱️ Estimated Time: 25 minutes --- ✦ Decisions Inside Decisions In Week 6, every decision was a single fork — one condition, two paths. But real systems are layered . A security system checks if you're logged in, then checks your permission level...
+
+### 📚 Overview: Section 7.2 • Short-Circuit Logic
+Key Concepts:
+- circuit (answer already known). Lines 3 & 4 must evaluate the right side because the answer depends on it!
+- both sides must be true
+- at least one side must be true
+- safety mechanism
+- never evaluated
+- left side
+
+Summary: # Section 7.2: Short-Circuit Logic ⚡ The Fast Gate ⏱️ Estimated Time: 25 minutes --- ✦ The Short-Circuit Gate: Evaluate Smarter, Not Harder When C# evaluates a boolean expression like A && B , it doesn't always need to check both sides. If A is false, the entire expression is already false — there's...
+
+### 📚 Overview: Section 7.3 • Truth Table Matrices
+
+Summary: # Section 7.3: Truth Table Matrices 📊 The Logic Matrix ⏱️ Estimated Time: 25 minutes --- ✦ Mapping Every Possible Outcome In sections 7.1 and 7.2, you learned how to nest conditions and how C# short-circuits boolean expressions. But how do you prove your logic handles every scenario? The answer is ...
+
+### 📚 Overview: Section 7.4 • The Switch Pattern
+Key Concepts:
+- sensitive! Always normalize case before comparing if user input is involved.
+- one expression
+- without it, C# will give a compile error
+- Add case 5
+- Stack cases 3 and 4
+
+Summary: # Section 7.4: The Switch Pattern 🔀 The Router ⏱️ Estimated Time: 25 minutes --- ✦ The Switch: A Cleaner Way to Route You've been using if/else if/else chains to handle multiple outcomes. But when you're comparing one variable against several specific values, there's a cleaner tool: the switch stat...
+
 ### 📚 Overview: Week 07 • Extra Practice
 
 Summary: # Week 7 Extra Practice: Array drills Pick **1–2** items (optional). - Make an array of 5 test scores. Print the highest score. - Make an array of 6 numbers. Count the even numbers. - Challenge: Reverse-print an array (print from last index to 0). ## Open in Editor - Use: /editor/?week=07&starter=we...
 
-### 📝 Homework: Week 07 • Week 7 Homework: Search + Count Tasks
+### 📝 Homework: Homework 07 • Logic Reflection
 
-Summary: # Week 7 Homework: Search + Count Tasks ## Overview Use arrays to search for values and count things (like how many match a rule). ## Requirements checklist (acceptance criteria) - [ ] Uses at least one array (int[] or string[]) - [ ] Implements at least 2 counting tasks (example: count > 50, count ...
+Summary: # Homework 07: Reflection - (GRADED) ## 📝 Homework 07: The Logic Matrix Now that you've worked with nested if statements, short-circuit evaluation, truth tables, and switch statements, it's time to demonstrate your understanding of advanced logic patterns . 🧠 Advanced Logic Reflection In 3-5 sente...
 
 ### 📚 Overview: Week 07
 Key Concepts:
@@ -712,9 +744,25 @@ Key Concepts:
 
 Summary: # Week 7 **Focus:** Arrays: storing multiple values in one variable (and using indexes). ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework...
 
+### 📚 Overview: Week 07 • Logic & Multiple Conditions
+Key Concepts:
+- combine, optimize, and structure
+
+Summary: # Week 07: Logic & Multiple Conditions ⚡ Advanced Logic Integration Last week you installed the decision engine — if , else , and basic boolean logic. This week, we go deeper. You'll learn to build nested decision labyrinths , harness short-circuit evaluation for efficiency and safety, master truth ...
+
 ### 🔬 Lab: Week 07 • Week 7 Lab: Array Stats (sum/avg/min/max)
 
 Summary: # Week 7 Lab: Array Stats (sum/avg/min/max) ## Overview Store numbers in an array and compute basic statistics. ## Requirements checklist (acceptance criteria) - [ ] Creates an int array with at least 5 numbers (hard-coded is fine) - [ ] Computes sum - [ ] Computes average (can be int or double—labe...
+
+### 🔬 Lab: Lab 07 • The Adaptive Firewall
+Key Concepts:
+- Time: 45 minutes
+- Points: 100
+- Adaptive Firewall
+- Threat Level
+- Internal
+
+Summary: # Lab 07: The Adaptive Firewall **Time: 45 minutes** **Points: 100** ## Mission Objective You are building an **Adaptive Firewall** for a corporate network. The firewall evaluates three inputs — a **Threat Level** (integer), whether the source is **Internal** (boolean), and the **Protocol Type** (st...
 
 ### 📖 Lesson: Week 07 • Lesson 1
 Key Concepts:
@@ -753,6 +801,42 @@ for (int i = 0; i < nums.Length; i++)
 
 Console.WriteLine($"Sum: {sum}");
 ```
+
+### 📋 Quiz: Week 07 • Technical Assessment
+
+Summary: # 🏁 Week 07 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
+
+Quiz Questions (10 questions):
+1. Q: What is the 'Arrow Anti-Pattern' in nested if statements?
+   A: Nesting so deep the code forms an arrow shape pointing right
+   Why: The Arrow Anti-Pattern happens when code is nested so deeply that the indentation creates an arrow shape (pointing right). This makes code very hard to read and maintain.
+2. Q: What do guard clauses do to improve nested code?
+   A: Check conditions and return/exit early to keep the main logic flat
+   Why: Guard clauses invert conditions and exit early (return, break, continue) when something is wrong. This keeps the main 'happy path' flat at the bottom instead of deeply nested.
+3. Q: In the expression: false && SomeMethod() — does SomeMethod() get called?
+   A: No — && short-circuits when the left side is false
+   Why: With && (AND), if the left side is false, the entire expression is already false. C# skips the right side entirely — SomeMethod() is never called. This is short-circuit evaluation.
+4. Q: Why should null checks be placed on the LEFT side of a && expression?
+   A: So the null check runs first — if it fails, the right side (which could crash) is skipped
+   Why: With &&, the left side evaluates first. If name is null, then name != null is false and && short-circuits — name.Length is never checked, preventing a NullReferenceException crash.
+5. Q: In an AND (&&) truth table with two inputs, how many rows produce 'true'?
+   A: One — only when BOTH inputs are true
+   Why: The AND truth table has 4 rows (FF, FT, TF, TT). Only the TT row produces true — both inputs must be true for AND to be true.
+6. Q: What is the correct operator precedence for !, &&, and || (highest to lowest)?
+   A: ! then && then ||
+   Why: NOT (!) evaluates first (highest precedence), then AND (&&), then OR (||). So !A || B && C means (!A) || (B && C). Use parentheses to make your intent clear.
+7. Q: What happens if you forget the 'break' statement in a C# switch case?
+   A: The compiler gives an error — break is required in C#
+   Why: Unlike C or JavaScript, C# does NOT allow fall-through. If you forget break (or return), the compiler will give you an error. This prevents a common bug found in other languages.
+8. Q: When is a switch statement the BEST choice over else-if?
+   A: When comparing one variable against several specific discrete values
+   Why: Switch excels when you have one variable being compared to specific values (1, 2, 3 or 'Monday', 'Friday'). Use else-if for ranges, multiple variables, or complex boolean logic.
+9. Q: What does the 'default' case in a switch statement do?
+   A: It catches any value that doesn't match a case label
+   Why: The default case is the 'catch-all' — it runs when no other case matches. While optional, you should always include it to handle unexpected values and prevent silent failures.
+10. Q: What does this expression evaluate to?\n\ntrue || false && false
+   A: true — because && evaluates first: false && false = false, then true || false = true
+   Why: && has higher precedence than ||, so it evaluates first: false && false = false. Then: true || false = true. The result is true. Using parentheses: true || (false && false) makes this clearer.
 
 ---
 

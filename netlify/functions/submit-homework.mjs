@@ -26,7 +26,7 @@ export async function handler(event, context) {
 
   try {
     const body = JSON.parse(event.body || '{}');
-    const { starterId, code, stdin, stdout, stderr, diagnostics, reflection } = body;
+    const { starterId, code, stdin, stdout, stderr, diagnostics, reflection, telemetry } = body;
 
     if (!starterId) {
       return {
@@ -80,11 +80,25 @@ ${reflection}
 RUBRIC:
 ${rubricText}
 
+${telemetry ? `EDITOR TELEMETRY (behavioral data from the reflection textarea - DO NOT share this with the student):
+- Keystrokes: ${telemetry.keystrokeCount || 0}
+- Paste events: ${telemetry.pasteCount || 0} (total chars pasted: ${telemetry.pasteCharTotal || 0}, largest single paste: ${telemetry.largestPaste || 0} chars)
+- Edit duration: ${telemetry.editDurationSec || 0} seconds
+- Reflection length: ${telemetry.reflectionLength || 0} chars
+` : ''}
 Grade the reflection and provide:
 1. "score": total points (0-100)
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with praise. Frame any suggestions positively.
 3. "rubric": object with each rubric category, points awarded out of max, and brief rationale
 4. "detailedReport": 3-5 sentence instructor-facing summary explaining what the student understood, what they missed, and improvement areas
+5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this reflection may have been AI-generated or copied. Consider:
+   - Writing style: Is this suspiciously polished prose for a college freshman? Overly formal, or uses jargon not taught?
+   - Content: Does it reference concepts or vocabulary far beyond what was taught this week?
+   - Telemetry: Was the text pasted in one block? Very few keystrokes relative to text length? Suspiciously short edit time?
+   - Generic vs specific: Does it feel like a generic AI response vs genuine personal reflection?
+   Provide: "riskLevel" (low/medium/high), "flags" (array of specific concerns), "reasoning" (1-2 sentence explanation)
+
+IMPORTANT: DO NOT mention the integrity analysis or telemetry in the student-facing "feedback" field.
 
 Return JSON:
 {
@@ -93,7 +107,12 @@ Return JSON:
   "rubric": {
     "category-name": {"points": number, "maxPoints": number, "rationale": "why"}
   },
-  "detailedReport": "instructor-facing analysis"
+  "detailedReport": "instructor-facing analysis",
+  "integrityAnalysis": {
+    "riskLevel": "low|medium|high",
+    "flags": ["specific concern 1", "specific concern 2"],
+    "reasoning": "1-2 sentence summary"
+  }
 }`;
 
         const result = await model.generateContent(prompt);
@@ -109,6 +128,7 @@ Return JSON:
         aiFeedback = gradeData.feedback;
         aiRubric = gradeData.rubric || {};
         aiDetailedReport = gradeData.detailedReport || '';
+        var aiIntegrityAnalysis = gradeData.integrityAnalysis || {};
 
       } catch (gradeError) {
         console.error('[submit-homework] AI grading failed:', gradeError.message);
@@ -163,7 +183,9 @@ Return JSON:
         [`${assignmentId}:savedCode`]: reflection || code || '',
         [`${assignmentId}:rubric`]: JSON.stringify(aiRubric),
         [`${assignmentId}:detailedReport`]: aiDetailedReport,
-        [`${assignmentId}:gradedAt`]: submittedAt
+        [`${assignmentId}:gradedAt`]: submittedAt,
+        [`${assignmentId}:integrityAnalysis`]: JSON.stringify(aiIntegrityAnalysis || {}),
+        [`${assignmentId}:telemetry`]: JSON.stringify(telemetry || {})
       };
       if (penaltyPreWaived) {
         progressData[`${assignmentId}:penaltyWaived`] = 'true';

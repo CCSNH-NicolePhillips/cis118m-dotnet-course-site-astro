@@ -170,14 +170,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log('[Submit] Looking for iframe:', iframe ? 'found' : 'not found');
       if (!iframe || !iframe.contentWindow) {
         console.log('[Submit] No iframe or contentWindow');
-        resolve(null);
+        resolve({ code: null, telemetry: null });
         return;
       }
       
       const timeout = setTimeout(() => {
         console.log('[Submit] iframe timeout - no response after 2s');
         window.removeEventListener('message', handler);
-        resolve(null);
+        resolve({ code: null, telemetry: null });
       }, 2000);
       
       const handler = (event) => {
@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           console.log('[Submit] Got code response from iframe');
           clearTimeout(timeout);
           window.removeEventListener('message', handler);
-          resolve(event.data.code);
+          resolve({ code: event.data.code, telemetry: event.data.telemetry || null });
         }
       };
       
@@ -194,6 +194,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.log('[Submit] Sending getCode to iframe for starterId:', starterId);
       iframe.contentWindow.postMessage({ type: 'getCode', starterId }, '*');
     });
+  };
+
+  // Collect editor telemetry from the page-level tracker
+  const collectTelemetry = (starterId, code) => {
+    const t = window.__editorTelemetry?.[starterId];
+    if (!t) return null;
+    return {
+      keystrokeCount: t.keystrokeCount || 0,
+      pasteCount: t.pasteCount || 0,
+      pasteCharTotal: t.pasteCharTotal || 0,
+      largestPaste: t.largestPaste || 0,
+      editDurationSec: t.editStartTime && t.lastEditTime ? Math.round((t.lastEditTime - t.editStartTime) / 1000) : 0,
+      totalEdits: t.totalEdits || 0,
+      codeLength: code?.length || 0
+    };
   };
   
   submitBtn.addEventListener("click", async () => {
@@ -209,12 +224,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       let code = null;
+      let telemetryData = null;
       
       // First, try to get code from embedded Monaco editor on this page
       if (window.monacoEditorInstances) {
         const editor = window.monacoEditorInstances[starterId];
         if (editor) {
           code = editor.getValue();
+          telemetryData = collectTelemetry(starterId, code);
           console.log('[Submit] Got code from monacoEditorInstances');
         }
       }
@@ -222,7 +239,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Try to get from embedded iframe via postMessage
       if (!code) {
         console.log('[Submit] Trying to get code from iframe...');
-        code = await getCodeFromIframe(starterId);
+        const iframeResult = await getCodeFromIframe(starterId);
+        code = iframeResult.code;
+        telemetryData = iframeResult.telemetry;
         if (code) console.log('[Submit] Got code from iframe');
       }
       
@@ -268,7 +287,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           stdin: "",
           stdout: "",
           stderr: "",
-          diagnostics: []
+          diagnostics: [],
+          telemetry: telemetryData
         })
       });
       

@@ -220,6 +220,9 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       });
 
       window.addEventListener('resize', () => fitAddon?.fit());
+
+      // Click on terminal container to ensure keyboard focus
+      terminalContainer.addEventListener('click', () => term.focus());
     };
 
     const clearTerminal = () => {
@@ -570,6 +573,49 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       // Register editor instance globally for submit-lab.js to access
       window.monacoEditorInstances = window.monacoEditorInstances || {};
       window.monacoEditorInstances[starterId] = editor;
+
+      // ===== Editor Telemetry (integrity tracking) =====
+      window.__editorTelemetry = window.__editorTelemetry || {};
+      const telemetry = {
+        keystrokeCount: 0,
+        pasteCount: 0,
+        pasteCharTotal: 0,
+        largestPaste: 0,
+        editStartTime: null,
+        lastEditTime: null,
+        totalEdits: 0,
+      };
+      window.__editorTelemetry[starterId] = telemetry;
+
+      // Track keystrokes and edits
+      editor.onDidChangeModelContent((e) => {
+        if (!telemetry.editStartTime) telemetry.editStartTime = Date.now();
+        telemetry.lastEditTime = Date.now();
+        telemetry.totalEdits++;
+        for (const change of e.changes) {
+          // A paste is typically a single change with many characters
+          if (change.text.length > 1) {
+            // Heuristic: >20 chars in one change = likely paste
+            if (change.text.length > 20) {
+              telemetry.pasteCount++;
+              telemetry.pasteCharTotal += change.text.length;
+              if (change.text.length > telemetry.largestPaste) {
+                telemetry.largestPaste = change.text.length;
+              }
+            }
+          } else if (change.text.length === 1) {
+            telemetry.keystrokeCount++;
+          }
+        }
+      });
+
+      // Also track actual clipboard paste events for accuracy
+      const editorDom = container.querySelector('.monaco-editor-container');
+      if (editorDom) {
+        editorDom.addEventListener('paste', () => {
+          // Mark that a real paste happened (the content change handler above captures the size)
+        });
+      }
       
       // Listen for theme changes
       const themeObserver = new MutationObserver((mutations) => {
@@ -860,10 +906,10 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
             case 'started':
               if (statusSpan) statusSpan.textContent = 'Running...';
               writeToTerminal('\x1b[32m─── Program Started ───\x1b[0m\r\n');
-              writeToTerminal('\x1b[90m(Type your input and press Enter)\x1b[0m\r\n\r\n');
+              writeToTerminal('\x1b[90m(Type input below and press Enter)\x1b[0m\r\n\r\n');
               runBtn.disabled = false;
               runBtn.innerHTML = '<span class="icon">▶</span> Run';
-              term.focus();
+              setTimeout(() => term.focus(), 50);
               break;
               
             case 'stdout':

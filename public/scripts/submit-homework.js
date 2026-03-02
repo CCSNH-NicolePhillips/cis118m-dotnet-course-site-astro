@@ -5,6 +5,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const lastSubmittedDiv = document.getElementById("last-submitted");
   const reflectionInput = document.getElementById("reflection-input");
   
+  // === Homework telemetry tracking ===
+  let hwTelemetry = { keystrokeCount: 0, pasteCount: 0, pasteCharTotal: 0, largestPaste: 0, editStartTime: null, lastEditTime: null };
+  if (reflectionInput) {
+    reflectionInput.addEventListener('input', () => {
+      if (!hwTelemetry.editStartTime) hwTelemetry.editStartTime = Date.now();
+      hwTelemetry.lastEditTime = Date.now();
+      hwTelemetry.keystrokeCount++;
+    });
+    reflectionInput.addEventListener('paste', (e) => {
+      const pasted = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+      hwTelemetry.pasteCount++;
+      hwTelemetry.pasteCharTotal += pasted.length;
+      if (pasted.length > hwTelemetry.largestPaste) hwTelemetry.largestPaste = pasted.length;
+    });
+  }
+  
   // Due dates per week (matches server-side due-dates.mjs)
   const WEEK_DUE_DATES = {
     1: '2026-01-25T23:59:59-05:00',
@@ -113,6 +129,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       const code = editor.getValue();
       
+      // Build homework telemetry
+      const telemetryData = {
+        keystrokeCount: hwTelemetry.keystrokeCount,
+        pasteCount: hwTelemetry.pasteCount,
+        pasteCharTotal: hwTelemetry.pasteCharTotal,
+        largestPaste: hwTelemetry.largestPaste,
+        editDurationSec: hwTelemetry.editStartTime && hwTelemetry.lastEditTime ? Math.round((hwTelemetry.lastEditTime - hwTelemetry.editStartTime) / 1000) : 0,
+        reflectionLength: reflection?.length || 0,
+        codeLength: code?.length || 0
+      };
+      
       // Submit to API
       const response = await fetch("/api/submit-homework", {
         method: "POST",
@@ -126,7 +153,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           stdin: "",
           stdout: "",
           stderr: "",
-          diagnostics: []
+          diagnostics: [],
+          telemetry: telemetryData
         })
       });
       

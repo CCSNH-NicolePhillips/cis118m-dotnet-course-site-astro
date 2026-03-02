@@ -410,9 +410,6 @@ class Program
         term.open(terminalContainer);
         fitAddon.fit();
 
-        // Track current input line for editing
-        let inputBuffer = '';
-
         // Handle user input
         term.onData((data) => {
           if (currentWs && currentWs.readyState === WebSocket.OPEN) {
@@ -439,6 +436,9 @@ class Program
 
         // Resize on window resize
         window.addEventListener('resize', () => fitAddon?.fit());
+
+        // Click on terminal container to ensure keyboard focus
+        terminalContainer.addEventListener('click', () => term.focus());
       };
 
       const clearTerminal = () => {
@@ -446,6 +446,7 @@ class Program
           term.clear();
           term.reset();
         }
+        inputBuffer = '';
       };
 
       const writeToTerminal = (text, color = null) => {
@@ -765,15 +766,55 @@ class Program
         window.monacoEditorInstances = window.monacoEditorInstances || {};
         window.monacoEditorInstances[starterId] = editorInstance;
 
+        // ===== Editor Telemetry (integrity tracking) =====
+        window.__editorTelemetry = window.__editorTelemetry || {};
+        const telemetry = {
+          keystrokeCount: 0,
+          pasteCount: 0,
+          pasteCharTotal: 0,
+          largestPaste: 0,
+          editStartTime: null,
+          lastEditTime: null,
+          totalEdits: 0,
+        };
+        window.__editorTelemetry[starterId] = telemetry;
+
+        editorInstance.onDidChangeModelContent((e) => {
+          if (!telemetry.editStartTime) telemetry.editStartTime = Date.now();
+          telemetry.lastEditTime = Date.now();
+          telemetry.totalEdits++;
+          for (const change of e.changes) {
+            if (change.text.length > 20) {
+              telemetry.pasteCount++;
+              telemetry.pasteCharTotal += change.text.length;
+              if (change.text.length > telemetry.largestPaste) {
+                telemetry.largestPaste = change.text.length;
+              }
+            } else if (change.text.length === 1) {
+              telemetry.keystrokeCount++;
+            }
+          }
+        });
+
         // Listen for parent page requests (for submit button)
         window.addEventListener('message', (event) => {
           console.log('[Embedded] Received message:', event.data);
           if (event.data?.type === 'getCode' && event.data?.starterId === starterId) {
             const code = editorInstance ? editorInstance.getValue() : null;
+            // Include telemetry in the response
+            const t = window.__editorTelemetry?.[starterId];
+            const telemetryData = t ? {
+              keystrokeCount: t.keystrokeCount,
+              pasteCount: t.pasteCount,
+              pasteCharTotal: t.pasteCharTotal,
+              largestPaste: t.largestPaste,
+              editDurationSec: t.editStartTime && t.lastEditTime ? Math.round((t.lastEditTime - t.editStartTime) / 1000) : 0,
+              totalEdits: t.totalEdits,
+              codeLength: code?.length || 0
+            } : null;
             console.log('[Embedded] Sending code response, length:', code?.length);
-            // Use '*' for same-origin iframe communication
             if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'codeResponse', starterId, code }, '*');
+              window.parent.postMessage({ type: 'codeResponse', starterId, code, telemetry: telemetryData }, '*');
             }
           }
         });
@@ -1291,10 +1332,10 @@ class Program
                 case 'started':
                   outputStatus.textContent = "Running (type input below)";
                   writeToTerminal('\x1b[32m─── Program Started ───\x1b[0m\r\n');
-                  writeToTerminal('\x1b[90m(Type your input and press Enter)\x1b[0m\r\n\r\n');
+                  writeToTerminal('\x1b[90m(Type input below and press Enter)\x1b[0m\r\n\r\n');
                   setStatus("Running");
                   setBusy(false); // Allow typing
-                  term.focus();
+                  setTimeout(() => term.focus(), 50);
                   break;
                   
                 case 'stdout':
