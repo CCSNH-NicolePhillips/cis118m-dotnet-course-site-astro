@@ -53,7 +53,7 @@ export async function handler(event, context) {
           model: "gemini-2.0-flash",
           generationConfig: {
             responseMimeType: "application/json",
-            maxOutputTokens: 800,
+            maxOutputTokens: 2048,
           }
         });
 
