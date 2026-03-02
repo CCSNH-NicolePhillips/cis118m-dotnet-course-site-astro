@@ -3,6 +3,7 @@ import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
+import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -91,11 +92,18 @@ Grade the reflection and provide:
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with praise. Frame any suggestions positively.
 3. "rubric": object with each rubric category, points awarded out of max, and brief rationale
 4. "detailedReport": 3-5 sentence instructor-facing summary explaining what the student understood, what they missed, and improvement areas
-5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this reflection may have been AI-generated or copied. Consider:
+5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this reflection may have been AI-generated or copied. Be STRICT and SKEPTICAL — do NOT rationalize away red flags.
+   Consider:
    - Writing style: Is this suspiciously polished prose for a college freshman? Overly formal, or uses jargon not taught?
    - Content: Does it reference concepts or vocabulary far beyond what was taught this week?
-   - Telemetry: Was the text pasted in one block? Very few keystrokes relative to text length? Suspiciously short edit time?
+   - Telemetry: CRITICAL — if keystrokes are 0 or very low relative to text length, the text was NOT typed manually. If a single paste accounts for most of the text, it was copied from an external source. Do NOT excuse this as "drafting elsewhere" — students are expected to write reflections IN the provided text area.
    - Generic vs specific: Does it feel like a generic AI response vs genuine personal reflection?
+   
+   STRICT RULES for riskLevel:
+   - HIGH: If keystroke count is 0 or paste chars are >75% of text length, this MUST be "high" — no exceptions.
+   - HIGH: If edit duration is 0 seconds for any non-trivial text (>50 chars), this MUST be "high".
+   - MEDIUM: If keystroke-to-text ratio is below 30%, flag as suspicious.
+   - LOW: Only if telemetry shows genuine manual typing (reasonable keystrokes, edits over time, minimal pasting).
    Provide: "riskLevel" (low/medium/high), "flags" (array of specific concerns), "reasoning" (1-2 sentence explanation)
 
 IMPORTANT: DO NOT mention the integrity analysis or telemetry in the student-facing "feedback" field.
@@ -198,7 +206,10 @@ Return JSON:
         [`${assignmentId}:rubric`]: JSON.stringify(aiRubric),
         [`${assignmentId}:detailedReport`]: aiDetailedReport,
         [`${assignmentId}:gradedAt`]: submittedAt,
-        [`${assignmentId}:integrityAnalysis`]: JSON.stringify(aiIntegrityAnalysis || {}),
+          [`${assignmentId}:integrityAnalysis`]: JSON.stringify((() => {
+            const telRules = computeTelemetryIntegrity(telemetry, 'homework');
+            return mergeIntegrityAnalysis(aiIntegrityAnalysis, telRules);
+          })()),
         [`${assignmentId}:telemetry`]: JSON.stringify(telemetry || {})
       };
       if (penaltyPreWaived) {

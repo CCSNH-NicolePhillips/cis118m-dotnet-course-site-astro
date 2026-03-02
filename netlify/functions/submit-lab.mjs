@@ -3,6 +3,7 @@ import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
+import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -83,11 +84,18 @@ Grade the code and provide:
 2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with genuine praise for what they did well. If there are issues, frame them as "Next time you might try..." or "One small thing to polish..." Never say "wrong" or "incorrect" - use "almost there" or "close!"
 3. "rubric": object with each rubric category from the RUBRIC section above, points awarded out of max, and brief rationale explaining WHY
 4. "detailedReport": 3-5 sentence instructor-facing summary explaining the overall grade, what the student did well, what they missed, and specific improvement areas
-5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this submission may have been AI-generated or copied. Consider:
-   - Code style: Is it unusually polished/verbose for a beginner? Are there advanced patterns not taught in the lesson?  
+5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this submission may have been AI-generated or copied. Be STRICT and SKEPTICAL — do NOT rationalize away red flags.
+   Consider:
+   - Code style: Is it unusually polished/verbose for a beginner? Are there advanced patterns not taught in the lesson?
    - Comments: Are there suspiciously thorough inline comments unusual for a freshman?
-   - Telemetry: Was the code mostly pasted in one large block? Is keystroke count very low relative to code length? Was edit duration suspiciously short?
+   - Telemetry: CRITICAL — if keystrokes are 0 or very low relative to code length, the code was NOT typed manually. If a single paste accounts for most of the code, it was copied from an external source. Do NOT excuse this as "using an external editor" — students are expected to write code IN the provided editor.
    - Structure: Does the code use concepts, libraries, or patterns beyond what was taught?
+   
+   STRICT RULES for riskLevel:
+   - HIGH: If keystroke count is 0 or paste chars are >75% of code length, this MUST be "high" — no exceptions.
+   - HIGH: If edit duration is 0 seconds for any non-trivial code (>50 chars), this MUST be "high".
+   - MEDIUM: If keystroke-to-code ratio is below 30%, flag as suspicious.
+   - LOW: Only if telemetry shows genuine manual editing (reasonable keystrokes, edits over time, minimal pasting).
    Provide: "riskLevel" (low/medium/high), "flags" (array of specific concerns), "reasoning" (1-2 sentence explanation)
 
 IMPORTANT TONE GUIDELINES:
@@ -206,7 +214,10 @@ Return JSON:
           [`${assignmentId}:rubric`]: JSON.stringify(gradeData.rubric || {}),
           [`${assignmentId}:detailedReport`]: gradeData.detailedReport || '',
           [`${assignmentId}:gradedAt`]: submittedAt,
-          [`${assignmentId}:integrityAnalysis`]: JSON.stringify(gradeData.integrityAnalysis || {}),
+          [`${assignmentId}:integrityAnalysis`]: JSON.stringify((() => {
+            const telRules = computeTelemetryIntegrity(telemetry, 'lab');
+            return mergeIntegrityAnalysis(gradeData.integrityAnalysis, telRules);
+          })()),
           [`${assignmentId}:telemetry`]: JSON.stringify(telemetry || {})
         };
         if (penaltyPreWaived) {
