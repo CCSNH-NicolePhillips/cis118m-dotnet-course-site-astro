@@ -132,6 +132,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   
   // Check for existing submission
+  let existingGrade = null; // Track existing grade for resubmission confirmation
   try {
     const token = await getAccessToken();
     if (token) {
@@ -146,6 +147,11 @@ document.addEventListener("DOMContentLoaded", async () => {
           const date = new Date(data.submission.submittedAt);
           if (lastSubmittedDiv) {
             lastSubmittedDiv.textContent = "Last submitted: " + date.toLocaleString();
+          }
+          
+          // Store existing grade for resubmission confirmation
+          if (data.submission.aiGrade !== null && data.submission.aiGrade !== undefined) {
+            existingGrade = data.submission.aiGrade;
           }
           
           // Show previous AI feedback if available
@@ -212,6 +218,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
   
   submitBtn.addEventListener("click", async () => {
+    // Resubmission confirmation — warn if student already has a grade
+    if (existingGrade !== null) {
+      let confirmMsg = `You already have a grade of ${existingGrade}/100 for this lab.\n\nResubmitting will re-grade your work and replace your current score.`;
+      if (penaltyInfo.daysLate > 0) {
+        if (penaltyInfo.isZero) {
+          confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points.`;
+        } else {
+          confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% late penalty will be applied to your new score.`;
+        }
+      }
+      confirmMsg += '\n\nAre you sure you want to resubmit?';
+      if (!confirm(confirmMsg)) {
+        return; // Student cancelled
+      }
+    }
+    
     submitBtn.disabled = true;
     submitBtn.textContent = "Submitting & Grading...";
     statusDiv.textContent = "";

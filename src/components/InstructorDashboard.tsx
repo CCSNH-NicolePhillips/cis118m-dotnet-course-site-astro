@@ -1766,9 +1766,23 @@ const InstructorDashboard: React.FC = () => {
                 const isPreWaived = progress?.penaltyPreWaived === true;
                 const alreadySubmitted = progress?.status === 'completed';
                 const alreadyWaived = progress?.penaltyWaived === true;
+                const isLate = progress?.isLate === true || (progress?.daysLate !== undefined && progress.daysLate > 0);
                 
-                // If already submitted AND waived via the post-submission toggle, don't show this
-                if (alreadySubmitted && alreadyWaived && !isPreWaived) return null;
+                // For submitted assignments: show if late (so instructor can waive/reapply)
+                // For not-yet-submitted: show so instructor can pre-waive
+                const isCurrentlyWaived = alreadySubmitted ? alreadyWaived : isPreWaived;
+                
+                // Determine display text
+                let description: React.ReactNode;
+                if (alreadySubmitted && alreadyWaived) {
+                  description = <>Waived{progress?.waivedBy ? ` by ${progress.waivedBy}` : progress?.preWaivedBy ? ` by ${progress.preWaivedBy}` : ''} — student won't be penalized for late submission</>;
+                } else if (alreadySubmitted && isLate) {
+                  description = <>Late penalty applied ({progress?.daysLate} day{(progress?.daysLate || 0) > 1 ? 's' : ''} late, −{progress?.penaltyPercent}%)</>;
+                } else if (isPreWaived) {
+                  description = <>Waived{progress?.preWaivedBy && ` by ${progress.preWaivedBy}`} — student won't be penalized for late submission</>;
+                } else {
+                  description = 'Student will lose points if submitted late';
+                }
                 
                 return (
                   <div style={{
@@ -1784,19 +1798,17 @@ const InstructorDashboard: React.FC = () => {
                     gap: '10px'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '1.1rem' }}>{isPreWaived ? '🛡️' : '⏰'}</span>
+                      <span style={{ fontSize: '1.1rem' }}>{isCurrentlyWaived ? '🛡️' : '⏰'}</span>
                       <div>
                         <div style={{ color: '#ddd', fontWeight: 'bold', fontSize: '0.9rem' }}>Late Penalty</div>
                         <div style={{ color: '#888', fontSize: '0.8rem' }}>
-                          {isPreWaived 
-                            ? <>Waived{progress?.preWaivedBy && ` by ${progress.preWaivedBy}`} — student won't be penalized for late submission</>
-                            : 'Student will lose points if submitted late'}
+                          {description}
                         </div>
                       </div>
                     </div>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                      <span style={{ color: isPreWaived ? '#4ec9b0' : '#888', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                        {isPreWaived ? 'Waived' : 'Active'}
+                      <span style={{ color: isCurrentlyWaived ? '#4ec9b0' : '#888', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                        {isCurrentlyWaived ? 'Waived' : 'Active'}
                       </span>
                       <div
                         onClick={async () => {
@@ -1804,7 +1816,17 @@ const InstructorDashboard: React.FC = () => {
                           try {
                             const token = await getAccessToken();
                             if (!token) return;
-                            const action = isPreWaived ? 'REMOVE_PRE_WAIVE' : 'PRE_WAIVE_PENALTY';
+                            
+                            // Use the correct action based on whether assignment is already submitted
+                            let action: string;
+                            if (alreadySubmitted && isLate) {
+                              // Already submitted with late penalty — waive or reapply the actual score
+                              action = isCurrentlyWaived ? 'REAPPLY_PENALTY' : 'WAIVE_PENALTY';
+                            } else {
+                              // Not yet submitted (or not late) — pre-waive for future submissions
+                              action = isCurrentlyWaived ? 'REMOVE_PRE_WAIVE' : 'PRE_WAIVE_PENALTY';
+                            }
+                            
                             const res = await fetch('/.netlify/functions/manual-override', {
                               method: 'POST',
                               headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -1812,19 +1834,49 @@ const InstructorDashboard: React.FC = () => {
                                 userId: modalData.student.sub,
                                 pageId: modalData.assignmentId,
                                 action,
-                                reason: isPreWaived ? 'Instructor restored late penalty' : 'Instructor waived late penalty'
+                                reason: isCurrentlyWaived ? 'Instructor restored late penalty' : 'Instructor waived late penalty'
                               })
                             });
                             if (res.ok) {
                               const result = await res.json();
-                              setActionFeedback({ type: 'success', message: result.message || (isPreWaived ? 'Late penalty restored' : 'Late penalty waived') });
-                              // Optimistically update modal
+                              setActionFeedback({ type: 'success', message: result.message || (isCurrentlyWaived ? 'Late penalty restored' : 'Late penalty waived') });
+                              // Optimistically update modal state
                               const updatedStudent = { ...modalData.student };
                               if (!updatedStudent.parsedProgress) updatedStudent.parsedProgress = {};
                               const pp = { ...(updatedStudent.parsedProgress[modalData.assignmentId] || {}) };
-                              pp.penaltyPreWaived = !isPreWaived;
+                              
+                              if (alreadySubmitted && isLate) {
+                                // Update actual score and penaltyWaived flag
+                                if (isCurrentlyWaived) {
+                                  // Reapplying penalty — restore penalized score
+                                  pp.penaltyWaived = false;
+                                  if (result.penalizedScore !== undefined) {
+                                    pp.score = result.penalizedScore;
+                                  }
+                                } else {
+                                  // Waiving penalty — restore original score
+                                  pp.penaltyWaived = true;
+                                  if (pp.originalScore !== undefined) {
+                                    pp.score = pp.originalScore;
+                                  } else if (result.originalScore !== undefined) {
+                                    pp.score = result.originalScore;
+                                  }
+                                }
+                              } else {
+                                pp.penaltyPreWaived = !isCurrentlyWaived;
+                              }
+                              
                               updatedStudent.parsedProgress[modalData.assignmentId] = pp;
                               setModalData({ ...modalData, student: updatedStudent });
+                              
+                              // Also update the main students array so the gradebook table reflects the change
+                              setStudents(prev => prev.map(s => {
+                                if (s.sub !== modalData.student.sub) return s;
+                                const updated = { ...s };
+                                if (!updated.parsedProgress) updated.parsedProgress = {};
+                                updated.parsedProgress[modalData.assignmentId] = { ...pp };
+                                return updated;
+                              }));
                             }
                           } catch (err) {
                             setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
@@ -1834,7 +1886,7 @@ const InstructorDashboard: React.FC = () => {
                           width: '44px',
                           height: '24px',
                           borderRadius: '12px',
-                          background: isPreWaived ? '#4ec9b0' : '#555',
+                          background: isCurrentlyWaived ? '#4ec9b0' : '#555',
                           position: 'relative',
                           cursor: 'pointer',
                           transition: 'background 0.2s'
@@ -1847,7 +1899,7 @@ const InstructorDashboard: React.FC = () => {
                           background: '#fff',
                           position: 'absolute',
                           top: '2px',
-                          left: isPreWaived ? '22px' : '2px',
+                          left: isCurrentlyWaived ? '22px' : '2px',
                           transition: 'left 0.2s',
                           boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
                         }} />
