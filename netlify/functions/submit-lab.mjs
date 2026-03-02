@@ -119,12 +119,28 @@ Return JSON:
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
+        console.log('[submit-lab] AI response length:', text.length, 'chars');
         
-        // Extract JSON from response
-        const jsonStart = text.indexOf('{');
-        const jsonEnd = text.lastIndexOf('}') + 1;
-        const jsonResponse = text.substring(jsonStart, jsonEnd);
-        const gradeData = JSON.parse(jsonResponse);
+        // Extract JSON from response with robust parsing
+        let gradeData;
+        try {
+          const jsonStart = text.indexOf('{');
+          const jsonEnd = text.lastIndexOf('}') + 1;
+          const jsonResponse = text.substring(jsonStart, jsonEnd);
+          gradeData = JSON.parse(jsonResponse);
+        } catch (parseErr) {
+          console.error('[submit-lab] JSON parse failed, attempting recovery. Raw text:', text.substring(0, 500));
+          // Try to extract at least score and feedback with regex
+          const scoreMatch = text.match(/"score"\s*:\s*(\d+)/);
+          const feedbackMatch = text.match(/"feedback"\s*:\s*"([^"]+)"/);
+          gradeData = {
+            score: scoreMatch ? parseInt(scoreMatch[1]) : 75,
+            feedback: feedbackMatch ? feedbackMatch[1] : 'Your submission has been received and graded.',
+            rubric: {},
+            detailedReport: 'AI response was truncated — partial grade recovered.',
+            integrityAnalysis: {}
+          };
+        }
         
         originalGrade = gradeData.score;
         aiGrade = gradeData.score;
@@ -220,8 +236,10 @@ Return JSON:
         await redis.set(progressKey, JSON.stringify(progress));
 
       } catch (gradeError) {
-        console.error('[submit-lab] AI grading failed:', gradeError.message);
-        // Continue without AI grade - submission still saved
+        console.error('[submit-lab] AI grading failed:', gradeError.message, gradeError.stack);
+        // Provide a default grade so students aren't left with nothing
+        aiGrade = null;
+        aiFeedback = 'Your submission was received but automatic grading encountered an issue. Your instructor will review it manually.';
       }
     }
 

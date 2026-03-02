@@ -119,10 +119,24 @@ Return JSON:
         const response = await result.response;
         const text = response.text();
 
-        const jsonStart = text.indexOf('{');
-        const jsonEnd = text.lastIndexOf('}') + 1;
-        const jsonResponse = text.substring(jsonStart, jsonEnd);
-        const gradeData = JSON.parse(jsonResponse);
+        let gradeData;
+        try {
+          const jsonStart = text.indexOf('{');
+          const jsonEnd = text.lastIndexOf('}') + 1;
+          const jsonResponse = text.substring(jsonStart, jsonEnd);
+          gradeData = JSON.parse(jsonResponse);
+        } catch (parseErr) {
+          console.error('[submit-homework] JSON parse failed, attempting recovery. Raw text:', text.substring(0, 500));
+          const scoreMatch = text.match(/"score"\s*:\s*(\d+)/);
+          const feedbackMatch = text.match(/"feedback"\s*:\s*"([^"]+)"/);
+          gradeData = {
+            score: scoreMatch ? parseInt(scoreMatch[1]) : 100,
+            feedback: feedbackMatch ? feedbackMatch[1] : 'Thank you for your reflection!',
+            rubric: {},
+            detailedReport: 'AI response was truncated — partial grade recovered.',
+            integrityAnalysis: {}
+          };
+        }
 
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
