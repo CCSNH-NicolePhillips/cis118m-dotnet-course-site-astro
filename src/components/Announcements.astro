@@ -1,0 +1,308 @@
+---
+/**
+ * Announcements Popup Component
+ * 
+ * Data-driven popup system for site announcements.
+ * Shows unread announcements as a modal on page load (after auth).
+ * Dismissed announcements are tracked in localStorage.
+ * 
+ * Usage in layout: <Announcements />
+ * Trigger after auth: window.__announcements?.checkAndShow()
+ */
+import { ANNOUNCEMENTS } from '../config/announcements';
+
+const activeAnnouncements = ANNOUNCEMENTS.filter(a => a.active);
+---
+
+{activeAnnouncements.length > 0 && (
+  <div id="announcements-modal" class="announcements-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="announcement-heading">
+    <div class="announcements-backdrop"></div>
+    <div class="announcements-content">
+      <div class="announcements-header">
+        <div>
+          <h2 id="announcement-heading" class="announcements-title"></h2>
+          <div class="announcements-date"></div>
+        </div>
+        <button id="announcements-close" class="announcements-close-btn" aria-label="Close announcement" title="Close">&times;</button>
+      </div>
+      <div class="announcements-body" id="announcements-body"></div>
+      <div class="announcements-footer">
+        <div class="announcements-counter" id="announcements-counter"></div>
+        <div class="announcements-actions">
+          <button id="announcements-dismiss" class="announcements-btn-primary">Got it</button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  .announcements-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .announcements-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+
+  .announcements-content {
+    position: relative;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    max-width: 640px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: announcements-slide-in 0.3s ease-out;
+  }
+
+  @keyframes announcements-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .announcements-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 20px 24px 12px;
+    border-bottom: 1px solid #2a2a3e;
+  }
+
+  .announcements-title {
+    margin: 0;
+    font-size: 18px;
+    color: #e2e8f0;
+    font-weight: 700;
+  }
+
+  .announcements-date {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .announcements-close-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+
+  .announcements-close-btn:hover {
+    color: #fff;
+  }
+
+  .announcements-body {
+    padding: 16px 24px;
+    overflow-y: auto;
+    flex: 1;
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .announcements-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px 16px;
+    border-top: 1px solid #2a2a3e;
+  }
+
+  .announcements-counter {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .announcements-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .announcements-btn-primary {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .announcements-btn-primary:hover {
+    background: #2563eb;
+  }
+
+  @media (max-width: 640px) {
+    .announcements-content {
+      width: 96%;
+      max-height: 90vh;
+      border-radius: 10px;
+    }
+
+    .announcements-header,
+    .announcements-body,
+    .announcements-footer {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }
+</style>
+
+<script is:inline define:vars={{ activeAnnouncements }}>
+  (function() {
+    const STORAGE_PREFIX = 'cis118m:announcement:dismissed:';
+    const announcements = activeAnnouncements;
+
+    function getDismissed() {
+      const dismissed = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(STORAGE_PREFIX)) {
+          dismissed.push(key.replace(STORAGE_PREFIX, ''));
+        }
+      }
+      return dismissed;
+    }
+
+    function dismiss(id) {
+      localStorage.setItem(STORAGE_PREFIX + id, Date.now().toString());
+    }
+
+    function getUnread() {
+      const dismissed = getDismissed();
+      return announcements.filter(a => !dismissed.includes(a.id));
+    }
+
+    function showAnnouncement(announcement) {
+      const modal = document.getElementById('announcements-modal');
+      const title = document.querySelector('.announcements-title');
+      const date = document.querySelector('.announcements-date');
+      const body = document.getElementById('announcements-body');
+      const counter = document.getElementById('announcements-counter');
+
+      if (!modal || !title || !body) return;
+
+      title.textContent = announcement.icon + ' ' + announcement.title;
+      date.textContent = announcement.date;
+      body.innerHTML = announcement.body;
+
+      const unread = getUnread();
+      const currentIdx = unread.findIndex(a => a.id === announcement.id);
+      if (unread.length > 1) {
+        counter.textContent = (currentIdx + 1) + ' of ' + unread.length + ' announcements';
+      } else {
+        counter.textContent = '';
+      }
+
+      modal.style.display = 'flex';
+      modal.setAttribute('data-current-id', announcement.id);
+
+      // Trap focus inside modal
+      const dismissBtn = document.getElementById('announcements-dismiss');
+      if (dismissBtn) dismissBtn.focus();
+    }
+
+    function hideModal() {
+      const modal = document.getElementById('announcements-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleDismiss() {
+      const modal = document.getElementById('announcements-modal');
+      const currentId = modal?.getAttribute('data-current-id');
+      if (currentId) {
+        dismiss(currentId);
+      }
+
+      // Check if there are more unread
+      const remaining = getUnread();
+      if (remaining.length > 0) {
+        showAnnouncement(remaining[0]);
+      } else {
+        hideModal();
+      }
+    }
+
+    function checkAndShow() {
+      const unread = getUnread();
+      if (unread.length > 0) {
+        // Small delay so it doesn't compete with onboarding
+        setTimeout(function() {
+          // Don't show if onboarding welcome modal is visible
+          const welcomeModal = document.getElementById('welcome-modal');
+          if (welcomeModal && welcomeModal.style.display !== 'none') {
+            // Wait for onboarding to finish, then re-check
+            const observer = new MutationObserver(function() {
+              if (welcomeModal.style.display === 'none') {
+                observer.disconnect();
+                setTimeout(function() {
+                  const stillUnread = getUnread();
+                  if (stillUnread.length > 0) {
+                    showAnnouncement(stillUnread[0]);
+                  }
+                }, 500);
+              }
+            });
+            observer.observe(welcomeModal, { attributes: true, attributeFilter: ['style'] });
+            return;
+          }
+          showAnnouncement(unread[0]);
+        }, 600);
+      }
+    }
+
+    // Bind events
+    var closeBtn = document.getElementById('announcements-close');
+    var dismissBtn = document.getElementById('announcements-dismiss');
+    var backdrop = document.querySelector('.announcements-backdrop');
+
+    if (closeBtn) closeBtn.addEventListener('click', handleDismiss);
+    if (dismissBtn) dismissBtn.addEventListener('click', handleDismiss);
+    if (backdrop) backdrop.addEventListener('click', handleDismiss);
+
+    // Escape key closes
+    document.addEventListener('keydown', function(e) {
+      var modal = document.getElementById('announcements-modal');
+      if (e.key === 'Escape' && modal && modal.style.display !== 'none') {
+        handleDismiss();
+      }
+    });
+
+    // Expose globally for layout to trigger after auth
+    window.__announcements = {
+      checkAndShow: checkAndShow,
+      getUnread: getUnread
+    };
+  })();
+</script>

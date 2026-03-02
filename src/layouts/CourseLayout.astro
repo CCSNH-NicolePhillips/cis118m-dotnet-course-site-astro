@@ -4,6 +4,7 @@ import "../styles/editor.css";
 import { COURSE, WEEKS, getWeekById, isWeekLocked, TEST_STUDENTS } from "../config/site";
 import AITutor from "../components/AITutor";
 import Onboarding from "../components/Onboarding.astro";
+import Announcements from "../components/Announcements.astro";
 const { title = "Course Page", description = "" } = Astro.props;
 
 // Check if current page is in a locked week
@@ -240,6 +241,9 @@ const getWeekLockInfo = (weekSlug: string) => {
 
     <!-- Onboarding Component -->
     <Onboarding />
+
+    <!-- Announcements Popup -->
+    <Announcements />
 
     <!-- Theme management -->
     <script is:inline>
@@ -1119,6 +1123,11 @@ const getWeekLockInfo = (weekSlug: string) => {
               setTimeout(() => {
                 window.__onboarding.showWelcome();
               }, 800);
+            }
+            
+            // Check for unread announcements (defers if onboarding is showing)
+            if (window.__announcements?.checkAndShow) {
+              window.__announcements.checkAndShow();
             }
             
             // Chip click toggles dropdown
