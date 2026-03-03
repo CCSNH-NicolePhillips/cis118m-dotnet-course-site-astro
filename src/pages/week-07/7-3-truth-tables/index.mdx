@@ -62,6 +62,18 @@ The simplest gate — it has **one** input and flips it:
 
 <img src="/media/week-7/7.3/notGate.jpeg" alt="NOT (!) Gate Truth Table" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
+<details>
+<summary>Text version of NOT truth table</summary>
+<table>
+<thead><tr><th>Input (A)</th><th>Output (!A)</th></tr></thead>
+<tbody>
+<tr><td>true</td><td>false</td></tr>
+<tr><td>false</td><td>true</td></tr>
+</tbody>
+</table>
+<p>The NOT operator inverts the input value.</p>
+</details>
+
 ```csharp
 bool isLocked = true;
 bool isUnlocked = !isLocked;  // false — the NOT flips it
@@ -73,6 +85,20 @@ The AND gate requires **both** inputs to be true:
 
 <img src="/media/week-7/7.3/andGate.jpg" alt="AND (&&) Gate Truth Table" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
+<details>
+<summary>Text version of AND truth table</summary>
+<table>
+<thead><tr><th>Input A</th><th>Input B</th><th>Output (A &amp;&amp; B)</th></tr></thead>
+<tbody>
+<tr><td>true</td><td>true</td><td>true</td></tr>
+<tr><td>true</td><td>false</td><td>false</td></tr>
+<tr><td>false</td><td>true</td><td>false</td></tr>
+<tr><td>false</td><td>false</td><td>false</td></tr>
+</tbody>
+</table>
+<p>Only when BOTH inputs are true does AND output true.</p>
+</details>
+
 Only **one row** produces `true` — the case where both A and B are true.
 
 ### OR (`||`) — At Least One Must Pass
@@ -80,6 +106,20 @@ Only **one row** produces `true` — the case where both A and B are true.
 The OR gate needs **at least one** input to be true:
 
 <img src="/media/week-7/7.3/orGate.jpeg" alt="OR (||) Gate Truth Table" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+<details>
+<summary>Text version of OR truth table</summary>
+<table>
+<thead><tr><th>Input A</th><th>Input B</th><th>Output (A || B)</th></tr></thead>
+<tbody>
+<tr><td>true</td><td>true</td><td>true</td></tr>
+<tr><td>true</td><td>false</td><td>true</td></tr>
+<tr><td>false</td><td>true</td><td>true</td></tr>
+<tr><td>false</td><td>false</td><td>false</td></tr>
+</tbody>
+</table>
+<p>Only when BOTH inputs are false does OR output false.</p>
+</details>
 
 Only **one row** is `false` — the case where both A and B are false.
 

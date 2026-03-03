@@ -67,6 +67,18 @@ if (isLoggedIn && hasPermission) {
 
 <img src="/media/week-7/7.2/andShortCircuit.jpeg" alt="AND (&&) Short-Circuit Evaluation" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
+<details>
+<summary>Text version of AND short-circuit evaluation</summary>
+<p>AND (&amp;&amp;) evaluation flow:</p>
+<ol>
+<li>Evaluate the LEFT operand</li>
+<li>If LEFT is <strong>false</strong> → Result is <strong>false</strong> (RIGHT operand is NEVER evaluated)</li>
+<li>If LEFT is <strong>true</strong> → Evaluate the RIGHT operand</li>
+<li>Result equals the RIGHT operand's value</li>
+</ol>
+<p>Short-circuit: Step 2 skips the right side entirely when the left is false.</p>
+</details>
+
 ### The `||` (OR) Short-Circuit
 
 With `||`, **at least one side must be true**. So if the left side is `true`, C# already knows the answer — it skips the right side:
@@ -79,6 +91,18 @@ if (isAdmin || hasSpecialOverride) {
 ```
 
 <img src="/media/week-7/7.2/orShortCircuit.jpeg" alt="OR (||) Short-Circuit Evaluation" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+<details>
+<summary>Text version of OR short-circuit evaluation</summary>
+<p>OR (||) evaluation flow:</p>
+<ol>
+<li>Evaluate the LEFT operand</li>
+<li>If LEFT is <strong>true</strong> → Result is <strong>true</strong> (RIGHT operand is NEVER evaluated)</li>
+<li>If LEFT is <strong>false</strong> → Evaluate the RIGHT operand</li>
+<li>Result equals the RIGHT operand's value</li>
+</ol>
+<p>Short-circuit: Step 2 skips the right side entirely when the left is true.</p>
+</details>
 
 ---
 

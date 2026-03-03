@@ -441,7 +441,7 @@ const AITutor: React.FC = () => {
         title="Pair Programming Tutor"
         aria-label={isOpen ? 'Close tutor' : 'Open pair programming tutor'}
       >
-        {isOpen ? '✕' : '🤖'}
+        {isOpen ? '✕' : <span aria-hidden="true">🤖</span>}
       </button>
 
       {/* Chat Panel */}
@@ -478,10 +478,10 @@ const AITutor: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '20px' }}>👨‍💻</span>
+              <span style={{ fontSize: '20px' }} aria-hidden="true">👨‍💻</span>
               <div style={{ flex: 1 }}>
                 <div style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '14px' }}>
-                  👥 PAIR PROGRAMMING
+                  <span aria-hidden="true">👥 </span>PAIR PROGRAMMING
                 </div>
                 <div style={{ color: '#888', fontSize: '11px' }}>
                   {isLabPage ? 'Lab Mode • Hints & Guidance' : 'Collaborative Mode • Examples Enabled'}
@@ -849,7 +849,7 @@ const AITutor: React.FC = () => {
                         e.currentTarget.style.transform = 'scale(1)';
                       }}
                     >
-                      <span>{prompt.emoji}</span>
+                      <span aria-hidden="true">{prompt.emoji}</span>
                       <span>{prompt.text}</span>
                     </button>
                   ))}

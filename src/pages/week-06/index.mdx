@@ -26,7 +26,7 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
 
 <div class="section-cards">
   <a href="/week-06/6-1-boolean-gate/" class="section-card boolean">
-    <div class="card-icon">🔘</div>
+    <div class="card-icon" aria-hidden="true">🔘</div>
     <div class="card-content">
       <h3>6.1 The Boolean Gate</h3>
       <p class="metaphor">The Binary Switch</p>
@@ -35,7 +35,7 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
   </a>
   
   <a href="/week-06/6-2-binary-branch/" class="section-card branch">
-    <div class="card-icon">🔀</div>
+    <div class="card-icon" aria-hidden="true">🔀</div>
     <div class="card-content">
       <h3>6.2 The Binary Branch</h3>
       <p class="metaphor">The Logic Diverter</p>
@@ -44,7 +44,7 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
   </a>
   
   <a href="/week-06/6-3-logical-operators/" class="section-card logic">
-    <div class="card-icon">⚡</div>
+    <div class="card-icon" aria-hidden="true">⚡</div>
     <div class="card-content">
       <h3>6.3 Logical Combinators</h3>
       <p class="metaphor">The Circuit Filter</p>
@@ -53,7 +53,7 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
   </a>
   
   <a href="/week-06/6-4-multi-branch/" class="section-card multi">
-    <div class="card-icon">🗼</div>
+    <div class="card-icon" aria-hidden="true">🗼</div>
     <div class="card-content">
       <h3>6.4 The Multi-Branch</h3>
       <p class="metaphor">The Control Tower</p>
@@ -130,6 +130,18 @@ import DueDateBanner from '../../components/DueDateBanner.astro';
 Every `if` statement is a **gate** — it evaluates a condition and opens or closes the path:
 
 <img src="/media/week%206/6.0/decisionEngine.png" alt="Decision Engine diagram showing how if/else if conditions are evaluated top to bottom" style="width: 100%; max-width: 700px; display: block; margin: 24px auto; border-radius: 12px; border: 2px solid rgba(107, 159, 255, 0.3);" />
+
+<details>
+<summary>Text version of Decision Engine flowchart</summary>
+<p>The decision engine evaluates conditions top to bottom:</p>
+<ol>
+<li>Check first <code>if</code> condition → If TRUE → execute that block, skip all remaining</li>
+<li>Check next <code>else if</code> condition → If TRUE → execute that block, skip remaining</li>
+<li>Continue checking <code>else if</code> conditions in order</li>
+<li>If NO condition is true → execute the <code>else</code> block (if present)</li>
+</ol>
+<p>Key rule: Only ONE block ever executes. Once a true condition is found, all remaining conditions are skipped.</p>
+</details>
 
 The computer evaluates each condition **top to bottom** and takes the **first path that evaluates to true**.
 

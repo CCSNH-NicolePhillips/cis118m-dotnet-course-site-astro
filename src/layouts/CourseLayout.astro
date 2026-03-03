@@ -84,7 +84,7 @@ const getWeekLockInfo = (weekSlug: string) => {
       <div class="shell">
         <aside class="card sidebar" id="sidebar" aria-label="Course navigation">
           <button class="sidebar-collapse-btn" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -95,7 +95,7 @@ const getWeekLockInfo = (weekSlug: string) => {
               <span class="badge">{COURSE.title}</span>
             </div>
             <button class="sidebar-pin-btn" id="sidebar-pin" type="button" aria-label="Pin sidebar" title="Pin sidebar">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                 <path d="M9.5 2.5L8 1L4 5L5.5 6.5L3 9L5 11L7.5 8.5L9 10L13 6L11.5 4.5L9.5 2.5Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                 <path d="M5 11L2 14" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
               </svg>
@@ -125,10 +125,10 @@ const getWeekLockInfo = (weekSlug: string) => {
                     title={lockInfo.isLocked ? `Unlocks ${lockInfo.unlockDate}` : undefined}
                   >
                     <span class="week-title">
-                      <span class="week-lock-icon" style={lockInfo.isLocked ? '' : 'display:none'}>🔒 </span>
+                      <span class="week-lock-icon" aria-hidden="true" style={lockInfo.isLocked ? '' : 'display:none'}>🔒 </span>
                       {w.title}
                     </span>
-                    <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" style={lockInfo.isLocked ? 'display:none' : ''}>
+                    <svg class="week-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style={lockInfo.isLocked ? 'display:none' : ''}>
                       <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </button>
@@ -172,7 +172,7 @@ const getWeekLockInfo = (weekSlug: string) => {
           </div>
           </div>
           <button class="sidebar-expand-btn" id="sidebar-expand" type="button" aria-label="Expand sidebar" title="Expand sidebar">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
               <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
@@ -221,7 +221,7 @@ const getWeekLockInfo = (weekSlug: string) => {
             </div>
             <div id="module-lock" style="display:none;" data-server-locked={isLocked ? "true" : "false"} data-unlock-time={unlockTime} data-unlock-date={weekData?.unlockDate || ''}>
               <div class="mission-locked">
-                <div class="lock-icon">🔒</div>
+                <div class="lock-icon" aria-hidden="true">🔒</div>
                 <h2>Module Scheduled</h2>
                 <p class="lock-message">Technical access for this module begins on the scheduled date.</p>
                 <div class="unlock-time">

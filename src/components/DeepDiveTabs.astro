@@ -5,6 +5,7 @@ interface Tab {
   content: string;
   keyPoints?: string[];
   media?: string;
+  mediaAlt?: string;
 }
 
 interface Props {
@@ -66,7 +67,7 @@ const componentId = `tabs-${Math.random().toString(36).slice(2, 11)}`;
 
         {tab.media && (
           <div class="media-slot">
-            <img src={tab.media} alt={`Diagram for ${tab.label}`} />
+            <img src={tab.media} alt={tab.mediaAlt || `Diagram for ${tab.label}`} />
           </div>
         )}
       </div>

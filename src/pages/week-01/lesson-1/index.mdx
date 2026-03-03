@@ -111,7 +111,19 @@ IL_0006: call Console::WriteLine</code></pre>
               <p>The Common Language Runtime (CLR) is the <strong>virtual machine engine</strong> that runs your C# code. It provides a 'managed' environment, meaning it handles complex tasks like memory management, security, and error handling so you can focus strictly on writing logic.</p>
             </div>
             <div class="detail-image">
-              <img src="/media/week-1/lesson-1/clr.png" alt="CLR Diagram" class="clr-img" />
+              <img src="/media/week-1/lesson-1/clr.png" alt="Diagram: CLR architecture showing JIT compiler, garbage collector, type system, and security components" class="clr-img" />
+<details>
+<summary>Text version of CLR diagram</summary>
+<p>The CLR (Common Language Runtime) architecture includes these core components:</p>
+<ul>
+<li><strong>JIT Compiler</strong> — Converts IL code to native machine code at runtime</li>
+<li><strong>Garbage Collector (GC)</strong> — Automatically manages memory allocation and deallocation</li>
+<li><strong>Type System</strong> — Enforces type safety across all .NET languages</li>
+<li><strong>Security Manager</strong> — Handles code access security and permissions</li>
+<li><strong>Exception Handler</strong> — Provides structured error handling</li>
+</ul>
+<p>These components work together within the managed execution environment to run compiled C# code.</p>
+</details>
             </div>
           </div>
         </div>
@@ -123,7 +135,19 @@ IL_0006: call Console::WriteLine</code></pre>
               <p>The Base Class Library (BCL) provides <strong>thousands of pre-built classes</strong> for common tasks like File I/O, Networking, Data structures, and Collections. Instead of building everything from scratch, you leverage these tools.</p>
             </div>
             <div class="detail-image">
-              <img src="/media/week-1/lesson-1/bcl.png" alt="BCL Diagram" class="bcl-img" />
+              <img src="/media/week-1/lesson-1/bcl.png" alt="Diagram: Base Class Library organized by namespace categories including System.IO, System.Net, System.Collections" class="bcl-img" />
+<details>
+<summary>Text version of BCL diagram</summary>
+<p>The Base Class Library (BCL) is organized into major namespace categories:</p>
+<ul>
+<li><strong>System.IO</strong> — File and stream operations</li>
+<li><strong>System.Net</strong> — Networking (HTTP requests, sockets)</li>
+<li><strong>System.Collections</strong> — Data structures (Lists, Dictionaries, Queues)</li>
+<li><strong>System.Text</strong> — String manipulation and encoding</li>
+<li><strong>System.Threading</strong> — Multithreading and async operations</li>
+<li><strong>System.Linq</strong> — Language-integrated queries for data filtering</li>
+</ul>
+</details>
             </div>
           </div>
         </div>
