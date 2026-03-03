@@ -65,6 +65,8 @@ const AITutor: React.FC = () => {
   const [availableEditors, setAvailableEditors] = useState<{id: string, label: string}[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [runOutput, setRunOutput] = useState<{stdout: string, stderr: string, diagnostics: any[], success: boolean} | null>(null);
+  const [liveMessage, setLiveMessage] = useState('');
+  const [errorLiveMessage, setErrorLiveMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pairEditorRef = useRef<HTMLTextAreaElement>(null);
   const floatingBtnRef = useRef<HTMLButtonElement>(null);
@@ -321,7 +323,9 @@ const AITutor: React.FC = () => {
       });
 
       if (!response.ok) {
-        setMessages(prev => [...prev, { role: 'assistant', content: `⚠️ Server error (${response.status}). Please try again in a moment.` }]);
+        const errMsg = `⚠️ Server error (${response.status}). Please try again in a moment.`;
+        setMessages(prev => [...prev, { role: 'assistant', content: errMsg }]);
+        setErrorLiveMessage('Message failed to send. Please try again.');
         return;
       }
 
@@ -329,11 +333,17 @@ const AITutor: React.FC = () => {
       
       if (data.error) {
         setMessages(prev => [...prev, { role: 'assistant', content: `⚠️ ${data.error}` }]);
+        setErrorLiveMessage('Tutor returned an error.');
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response received. Please try again.' }]);
+        const reply = data.reply || 'No response received. Please try again.';
+        setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
+        // Announce to screen readers (short summary)
+        const preview = reply.replace(/[#*`_~\[\]()]/g, '').slice(0, 120);
+        setLiveMessage(`Tutor replied: ${preview}${reply.length > 120 ? '…' : ''}`);
       }
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection failed. Please check your network and try again.' }]);
+      setErrorLiveMessage('Connection failed. Please check your network and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -347,6 +357,8 @@ const AITutor: React.FC = () => {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
+    setLiveMessage('Tutor is thinking\u2026');
+    setErrorLiveMessage('');
     await sendMessageWithContent(userMessage);
   };
 
@@ -734,6 +746,7 @@ const AITutor: React.FC = () => {
 
           {/* Messages */}
           <div
+            aria-busy={isLoading}
             style={{
               flex: 1,
               overflowY: 'auto',
@@ -900,6 +913,10 @@ const AITutor: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ARIA live regions for screen reader announcements */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">{liveMessage}</div>
+      <div className="sr-only" aria-live="assertive" aria-atomic="true">{errorLiveMessage}</div>
 
       <style>{`
         @keyframes pulse {
