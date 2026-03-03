@@ -61,7 +61,9 @@ const AITutor: React.FC = () => {
   const [studentName, setStudentName] = useState<string | null>(null);
   const [showExamples, setShowExamples] = useState(true);
   const [pairMode, setPairMode] = useState(false);
+  const [pairCode, setPairCode] = useState('// Write or paste your code here\n// Then ask the tutor for help!\n');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pairEditorRef = useRef<HTMLTextAreaElement>(null);
 
   // Example prompts organized by category
   const examplePrompts = [
@@ -240,7 +242,7 @@ const AITutor: React.FC = () => {
           pageId,
           lessonContext: getTutorContext(pageId),
           studentName,
-          studentCode: studentCode || null,
+          studentCode: studentCode || (pairMode && !isLabPage ? pairCode : null) || null,
           homeworkText: homeworkText || null,
           pageContent: pageContent || null,
           pairMode: pairMode && !isLabPage,
@@ -329,13 +331,15 @@ const AITutor: React.FC = () => {
             bottom: isExpanded ? '90px' : '90px',
             right: '20px',
             width: isExpanded ? 'calc(100vw - 40px)' : '380px',
-            maxWidth: isExpanded ? '900px' : 'calc(100vw - 40px)',
+            maxWidth: isExpanded ? (pairMode && !isLabPage ? '1200px' : '900px') : 'calc(100vw - 40px)',
             height: isExpanded ? 'calc(100vh - 110px)' : '500px',
             maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
             background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
-            border: '1px solid #4ec9b0',
+            border: `1px solid ${pairMode && !isLabPage ? '#fbbf24' : '#4ec9b0'}`,
             borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(78, 201, 176, 0.2)',
+            boxShadow: pairMode && !isLabPage
+              ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2)'
+              : '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(78, 201, 176, 0.2)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -367,11 +371,11 @@ const AITutor: React.FC = () => {
                   if (isLabPage) return;
                   const newMode = !pairMode;
                   setPairMode(newMode);
-                  const modeLabel = newMode ? 'Pair Programming' : 'Guided';
+                  if (newMode) setIsExpanded(true);
                   setMessages(prev => [...prev, { 
                     role: 'assistant', 
                     content: newMode 
-                      ? `**👥 Pair Programming mode activated!** I can now write example code, show solutions to practice problems, and work through concepts with you step-by-step. Ask me to build something or show you how a concept works!\n\n*Note: I still can't write your lab or homework solutions for you — those are yours to create!*`
+                      ? `**👥 Pair Programming mode activated!** I can now write example code, show solutions to practice problems, and work through concepts with you step-by-step. Use the code editor on the left to write or paste code — I can see it when you ask questions!\n\n*Note: I still can't write your lab or homework solutions for you — those are yours to create!*`
                       : `**💡 Guided mode restored.** I'll use the Socratic method — guiding you with hints and questions so you discover the answers yourself.`
                   }]);
                 }}
@@ -435,6 +439,93 @@ const AITutor: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Body: side-by-side in pair mode, chat-only otherwise */}
+          <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+          {/* Code Editor Panel (pair mode only) */}
+          {pairMode && !isLabPage && isExpanded && (
+            <div style={{
+              width: '45%',
+              minWidth: '280px',
+              display: 'flex',
+              flexDirection: 'column',
+              borderRight: '1px solid rgba(251, 191, 36, 0.3)',
+              background: 'rgba(0, 0, 0, 0.3)',
+            }}>
+              <div style={{
+                padding: '8px 12px',
+                background: 'rgba(251, 191, 36, 0.08)',
+                borderBottom: '1px solid rgba(251, 191, 36, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+                <span style={{ color: '#fbbf24', fontSize: '12px', fontWeight: 'bold' }}>📝 CODE EDITOR</span>
+                <button
+                  onClick={() => {
+                    if (!pairCode.trim() || pairCode.trim() === '// Write or paste your code here\n// Then ask the tutor for help!') {
+                      return;
+                    }
+                    const msg = `Can you look at my code and help me with it?`;
+                    setInput('');
+                    setMessages(prev => [...prev, { role: 'user', content: msg }]);
+                    setIsLoading(true);
+                    sendMessageWithContent(msg);
+                  }}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(251, 191, 36, 0.5)',
+                    background: 'rgba(251, 191, 36, 0.15)',
+                    color: '#fbbf24',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251, 191, 36, 0.3)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(251, 191, 36, 0.15)'; }}
+                >
+                  Share with Tutor →
+                </button>
+              </div>
+              <textarea
+                ref={pairEditorRef}
+                value={pairCode}
+                onChange={(e) => setPairCode(e.target.value)}
+                spellCheck={false}
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  padding: '12px',
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#d4d4d4',
+                  fontFamily: "'Cascadia Code', 'Fira Code', 'Consolas', monospace",
+                  fontSize: '13px',
+                  lineHeight: '1.6',
+                  resize: 'none',
+                  outline: 'none',
+                  tabSize: 4,
+                }}
+                onKeyDown={(e) => {
+                  // Handle Tab key for indentation
+                  if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const target = e.target as HTMLTextAreaElement;
+                    const start = target.selectionStart;
+                    const end = target.selectionEnd;
+                    const newVal = pairCode.substring(0, start) + '    ' + pairCode.substring(end);
+                    setPairCode(newVal);
+                    setTimeout(() => {
+                      target.selectionStart = target.selectionEnd = start + 4;
+                    }, 0);
+                  }
+                }}
+              />
+            </div>
+          )}
 
           {/* Messages */}
           <div
@@ -550,6 +641,8 @@ const AITutor: React.FC = () => {
             
             <div ref={messagesEndRef} />
           </div>
+
+          </div>{/* end body flex container */}
 
           {/* Input */}
           <div
