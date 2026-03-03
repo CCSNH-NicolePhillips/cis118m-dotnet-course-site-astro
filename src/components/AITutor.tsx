@@ -155,18 +155,21 @@ const AITutor: React.FC = () => {
     if (!isOpen) return;
     const scanEditors = () => {
       const found: {id: string, label: string}[] = [];
-      // Page-level TryItNowRunner editors
+      // Scan DOM for TryItNowRunner containers and find their labels from preceding h2
+      const runners = document.querySelectorAll('.try-it-now-runner');
       const pageEditors = (window as any).monacoEditorInstances;
-      if (pageEditors) {
-        const keys = Object.keys(pageEditors);
-        keys.forEach((key, i) => {
-          // Make a friendly label from the starterId
-          const label = keys.length === 1 
-            ? 'Try It Now' 
-            : `Try It Now ${i + 1}`;
-          found.push({ id: key, label });
-        });
-      }
+      runners.forEach((runner) => {
+        const runnerId = (runner as HTMLElement).dataset.runnerId;
+        if (!runnerId || !pageEditors?.[runnerId]) return;
+        // Walk backwards from the runner to find the nearest preceding h2
+        let heading = runner.previousElementSibling;
+        while (heading && heading.tagName !== 'H2') {
+          heading = heading.previousElementSibling;
+        }
+        const rawText = heading?.textContent?.replace(/^🔬\s*/, '').trim() || '';
+        const label = rawText || `Try It Now ${found.length + 1}`;
+        found.push({ id: runnerId, label });
+      });
       // Iframe-based lab editor
       try {
         const iframe = document.querySelector('iframe[src*="embedded"]') as HTMLIFrameElement;
@@ -360,7 +363,7 @@ const AITutor: React.FC = () => {
         }}
         title="Pair Programming Tutor"
       >
-        {isOpen ? '✕' : '👥'}
+        {isOpen ? '✕' : '🤖'}
       </button>
 
       {/* Chat Panel */}

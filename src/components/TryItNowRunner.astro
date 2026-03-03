@@ -573,6 +573,8 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       // Register editor instance globally for submit-lab.js to access
       window.monacoEditorInstances = window.monacoEditorInstances || {};
       window.monacoEditorInstances[starterId] = editor;
+      // Also register by runnerId so AI tutor can access each individual editor
+      window.monacoEditorInstances[runnerId] = editor;
 
       // ===== Editor Telemetry (integrity tracking) =====
       window.__editorTelemetry = window.__editorTelemetry || {};
