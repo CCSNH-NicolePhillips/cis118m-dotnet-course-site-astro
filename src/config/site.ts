@@ -98,11 +98,12 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '08', title: 'Week 08: While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-15T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-08/' },
-      { title: '8.1 Lesson 1', href: '/week-08/lesson-1/' },
-      { title: '8.2 Lesson 2', href: '/week-08/lesson-2/' },
+      { title: '8.1 The Persistent Watcher', href: '/week-08/8-1-while-loop/' },
+      { title: '8.2 The Input Validator', href: '/week-08/8-2-do-while/' },
+      { title: '8.3 Sentinel Control', href: '/week-08/8-3-break-continue/' },
       { title: 'Lab (Graded)', href: '/week-08/lab/' },
       { title: 'Technical Reflection (Graded)', href: '/week-08/homework/' },
-      { title: 'Extra Practice', href: '/week-08/extra-practice/' }
+      { title: 'Weekly Assessment (Graded)', href: '/week-08/weekly-assessment/' }
     ] }, // DST starts Mar 8
   // SPRING BREAK: March 16-22, 2026 (No classes)
   { slug: '09', title: 'Week 09: For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00', pages: [

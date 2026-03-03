@@ -1,0 +1,99 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 08 • While Loop Reflection"
+description: "Reflect on while loops, do-while, break, continue, and sentinel values"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 08: Reflection - (GRADED)
+
+<DueDateBanner week={8} type="Homework" />
+
+## 📝 Homework 08: The Iteration Analysis
+
+<p>Now that you've worked with <code>while</code> loops, <code>do-while</code> loops, <code>break</code>, <code>continue</code>, and sentinel values, it's time to demonstrate your understanding of <strong>iteration structures</strong>.</p>
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🧠 While Loop Reflection</h5>
+    <p>In 3-5 sentences, answer <strong>Iteration in C#</strong>:</p>
+    <ol>
+      <li>What are the <strong>three essential parts</strong> of every while loop, and what happens if you forget the <strong>progress statement</strong>? Use the "Sensor Loop" metaphor to explain.</li>
+      <li>Explain the difference between <code>while</code> and <code>do-while</code>. Why is <code>do-while</code> the correct choice for <strong>input validation</strong>? Give a specific scenario.</li>
+      <li>What is a <strong>sentinel value</strong>? Explain how <code>break</code> and <code>continue</code> act as manual overrides in a loop, and give an example of when you'd use each.</li>
+    </ol>
+    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; font-size: 0.9rem;">
+      <strong>Tip:</strong> Think about the "Sensor Loop" metaphor from Section 8.1, the "Retry Protocol" from Section 8.2, and the "Manual Overrides" from Section 8.3.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-08-homework" />
+
+---
+
+## 📚 Reference Material
+
+If you need to review, revisit these sections:
+- [Section 8.1: The Persistent Watcher](/week-08/8-1-while-loop/) — While loops, pre-check, progress statements
+- [Section 8.2: The Input Validator](/week-08/8-2-do-while/) — Do-while loops, post-check, input validation
+- [Section 8.3: Sentinel Control](/week-08/8-3-break-continue/) — Break, continue, sentinel values
+
+---
+
+<div class="next-section">
+  <p>After submitting your homework, complete the <strong>Weekly Assessment</strong> to finish Week 8!</p>
+  <a href="/week-08/weekly-assessment/" class="vscode-button">Take Weekly Assessment →</a>
+</div>
+
+<style>{`
+  .component-cards {
+    margin: 1.5rem 0;
+  }
+  
+  .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  
+  .component-card h5 {
+    color: #a78bfa;
+    margin-top: 0;
+    font-size: 1.1rem;
+  }
+  
+  .component-card ol {
+    margin-bottom: 0;
+  }
+  
+  .component-card li {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%) !important;
+    border-color: rgba(139, 92, 246, 0.2) !important;
+  }
+  body[data-theme="light"] .component-card h5 { color: #6d28d9 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

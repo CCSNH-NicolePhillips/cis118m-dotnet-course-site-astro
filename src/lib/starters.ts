@@ -181,50 +181,42 @@ switch (cmd) {
         break;
 }
 `,
+  "08": `// Week 8: While Loops
+// Practice while, do-while, break, and continue
+using System;
+
+// while loop — pre-check iteration
+int count = 1;
+while (count <= 5) {
+    Console.WriteLine($"Count: {count}");
+    count++;  // Progress statement — prevents infinite loop!
+}
+
+Console.WriteLine();
+
+// do-while — guaranteed to run at least once
+string input;
+do {
+    Console.Write("Enter 'quit' to exit: ");
+    input = Console.ReadLine();
+    Console.WriteLine($"You typed: {input}");
+} while (input != "quit");
+
+Console.WriteLine();
+
+// break and continue
+int num = 0;
+while (true) {
+    num++;
+    if (num % 2 == 0) continue;  // Skip even numbers
+    if (num > 10) break;          // Exit after 10
+    Console.WriteLine($"Odd: {num}");
+}
+`,
 };
 
 // Multi-file starters for weeks introducing classes
 const multiFileStarters: Record<string, StarterFile[]> = {
-  "08": [
-    { name: "Program.cs", content: `// Week 8: Introduction to Classes
-using System;
-
-class Program
-{
-    static void Main()
-    {
-        // Create a Pet object and use it
-        Pet myPet = new Pet();
-        myPet.Name = "Max";
-        myPet.Species = "Dog";
-        myPet.Age = 3;
-        
-        myPet.Introduce();
-        myPet.Speak();
-    }
-}
-` },
-    { name: "Pet.cs", content: `// Pet class definition
-public class Pet
-{
-    // Properties
-    public string Name { get; set; } = "";
-    public string Species { get; set; } = "";
-    public int Age { get; set; }
-    
-    // Methods
-    public void Introduce()
-    {
-        Console.WriteLine($"This is {Name}, a {Age}-year-old {Species}.");
-    }
-    
-    public void Speak()
-    {
-        Console.WriteLine($"{Name} says hello!");
-    }
-}
-` }
-  ],
   "09": [
     { name: "Program.cs", content: `// Week 9: Constructors and Methods
 using System;

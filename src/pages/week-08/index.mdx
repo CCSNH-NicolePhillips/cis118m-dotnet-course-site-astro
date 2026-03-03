@@ -1,0 +1,355 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 08 • While Loops"
+description: "Iteration structures — while, do-while, break, continue, and sentinel values"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 08: While Loops
+
+<DueDateBanner week={8} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>🔁 Iteration Unlocked</h2>
+  <p>
+    Up until now, your programs have been <strong>linear</strong> — every line runs once and the program marches forward. Decisions let you <em>choose</em> a path, but never revisit one. This week, that changes. You're installing the <strong>iteration engine</strong> — the ability to <strong>repeat</strong> blocks of code until a condition is met.
+  </p>
+  <p>
+    Think of this as upgrading from a <strong>one-shot camera</strong> to a <strong>continuous sensor</strong>. A sensor doesn't read once and quit — it reads, checks, reads again, checks again. The <code>while</code> loop is your sensor. The <code>do-while</code> is your retry mechanism. And <code>break</code>/<code>continue</code> are your manual overrides.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 08 Learning Path
+
+<div class="section-cards">
+  <a href="/week-08/8-1-while-loop/" class="section-card sensor">
+    <div class="card-icon">🔁</div>
+    <div class="card-content">
+      <h3>8.1 The Persistent Watcher</h3>
+      <p class="metaphor">The Sensor Loop</p>
+      <p>Pre-check iteration — the loop only runs if the gate is already open</p>
+    </div>
+  </a>
+  
+  <a href="/week-08/8-2-do-while/" class="section-card retry">
+    <div class="card-icon">🔄</div>
+    <div class="card-content">
+      <h3>8.2 The Input Validator</h3>
+      <p class="metaphor">The Retry Protocol</p>
+      <p>Post-check iteration — guaranteed to run at least once</p>
+    </div>
+  </a>
+  
+  <a href="/week-08/8-3-break-continue/" class="section-card override">
+    <div class="card-icon">🛑</div>
+    <div class="card-content">
+      <h3>8.3 Sentinel Control</h3>
+      <p class="metaphor">Manual Overrides</p>
+      <p>break exits the loop, continue skips to the next iteration</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Metaphor</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>8.1</strong></td>
+        <td><a href="/week-08/8-1-while-loop/">The Persistent Watcher</a></td>
+        <td>🔁 The Sensor Loop</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>8.2</strong></td>
+        <td><a href="/week-08/8-2-do-while/">The Input Validator</a></td>
+        <td>🔄 The Retry Protocol</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>8.3</strong></td>
+        <td><a href="/week-08/8-3-break-continue/">Sentinel Control</a></td>
+        <td>🛑 Manual Overrides</td>
+        <td>25 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-08/lab/">The Robust Data Entry System</a></td>
+        <td>Revenue Tracker</td>
+        <td>45 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-08/homework/">While Loop Reflection</a></td>
+        <td>Written Analysis</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td><strong>Quiz</strong></td>
+        <td><a href="/week-08/weekly-assessment/">Weekly Assessment</a></td>
+        <td>Checkpoint</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🧠 The Iteration Shift
+
+Weeks 6-7 gave you decisions — `if`, `else`, `switch`. This week you add **repetition** — the ability to execute the same code multiple times:
+
+<div class="ascii-art-box">
+<pre>{`
+   BEFORE (Linear)         AFTER (Iteration)
+   ┌───────────┐           ┌───────────┐
+   │ Statement │           │ Statement │
+   └─────┬─────┘           └─────┬─────┘
+   ┌─────▼─────┐           ┌─────▼─────┐
+   │ Statement │           │ while (?) │◄──┐
+   └─────┬─────┘           └─────┬─────┘   │
+   ┌─────▼─────┐           ┌─────▼─────┐   │
+   │ Statement │           │ loop body │───┘
+   └─────┬─────┘           └─────┬─────┘
+   ┌─────▼─────┐           ┌─────▼─────┐
+   │   Done    │           │   Done    │
+   └───────────┘           └───────────┘
+`}</pre>
+</div>
+
+---
+
+## 🔧 The Iteration Toolkit
+
+<div class="component-cards">
+  <div class="component-card">
+    <h5>🔁 while</h5>
+    <p>Pre-check loop — checks condition <strong>before</strong> executing. Body may run 0 times.</p>
+    <code>while (count &lt; 10) &#123; count++; &#125;</code>
+  </div>
+  <div class="component-card">
+    <h5>🔄 do-while</h5>
+    <p>Post-check loop — checks condition <strong>after</strong> executing. Always runs at least once.</p>
+    <code>do &#123; input = ReadLine(); &#125; while (input != "quit");</code>
+  </div>
+  <div class="component-card">
+    <h5>🛑 break</h5>
+    <p>Emergency exit — immediately leaves the loop, no more iterations.</p>
+    <code>if (value == 0) break;</code>
+  </div>
+  <div class="component-card">
+    <h5>⏭️ continue</h5>
+    <p>Skip this one — jumps to the next iteration, bypassing remaining body code.</p>
+    <code>if (value &lt; 0) continue;</code>
+  </div>
+</div>
+
+---
+
+## 📋 Week 08 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>🔬 Lab 08:</strong> The Robust Data Entry System</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Homework 08:</strong> While Loop Reflection</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 08:</strong> While Loops</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks:</strong> Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>💬 Participation:</strong> Class engagement</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-08/8-1-while-loop/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 8.1 →
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  
+  .section-card.sensor {
+    background: linear-gradient(135deg, #164e63 0%, #0e7490 100%);
+    border-color: #06b6d4;
+  }
+  
+  .section-card.retry {
+    background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+    border-color: #8b5cf6;
+  }
+  
+  .section-card.override {
+    background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+    border-color: #f59e0b;
+  }
+  
+  .card-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+  
+  .card-content h3 {
+    color: white;
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .card-content .metaphor {
+    color: #fcd34d;
+    font-style: italic;
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .card-content p:last-child {
+    color: #d1d5db;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .mission-brief {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid #3b82f6;
+    margin: 2rem 0;
+  }
+  
+  .mission-brief h2 {
+    color: #93c5fd;
+    margin-top: 0;
+  }
+  
+  .mission-brief p {
+    color: #e2e8f0;
+    line-height: 1.7;
+  }
+
+  .ascii-art-box {
+    background: #1a1a2e;
+    border: 1px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    color: #4ec9b0;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    margin: 1.5rem 0;
+  }
+
+  body[data-theme="light"] .section-card.sensor {
+    background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%) !important;
+    border-color: #06b6d4 !important;
+  }
+  
+  body[data-theme="light"] .section-card.retry {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  
+  body[data-theme="light"] .section-card.override {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+    border-color: #f59e0b !important;
+  }
+  
+  body[data-theme="light"] .card-content h3 {
+    color: #1e293b !important;
+  }
+  
+  body[data-theme="light"] .card-content .metaphor {
+    color: #92400e !important;
+  }
+  
+  body[data-theme="light"] .card-content p:last-child {
+    color: #475569 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
+    border-left-color: #3b82f6 !important;
+  }
+  
+  body[data-theme="light"] .mission-brief h2 {
+    color: #1e40af !important;
+  }
+  
+  body[data-theme="light"] .mission-brief p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  body[data-theme="light"] .component-card h5 {
+    color: #1e40af !important;
+  }
+
+  body[data-theme="light"] .component-card p {
+    color: #334155 !important;
+  }
+
+  body[data-theme="light"] .component-card code {
+    color: #0a7c62 !important;
+    background: rgba(78, 201, 176, 0.15) !important;
+  }
+
+  body[data-theme="light"] .ascii-art-box {
+    background: #f8fafc !important;
+    color: #0a7c62 !important;
+    border-color: #0a7c62 !important;
+  }
+`}</style>

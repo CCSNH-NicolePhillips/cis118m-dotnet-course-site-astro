@@ -1,0 +1,466 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 8.3 • Sentinel Control"
+description: "Master break and continue — manual overrides for loop execution flow"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 8.3: Sentinel Control
+
+<div class="section-header">
+  <div class="section-badge">🛑 Manual Overrides</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Override the Loop</h2>
+      <p>
+        So far, loops end naturally when their condition becomes false. But sometimes you need to <strong>exit early</strong> when a special event occurs, or <strong>skip one iteration</strong> without stopping the whole loop. These are the <strong>manual overrides</strong>: <code>break</code> exits the loop entirely, and <code>continue</code> skips to the next iteration.
+      </p>
+    </div>
+    <div class="header-image">
+      <div class="ascii-art-box">
+<pre>{`
+  ┌─────────────────┐
+  │   loop body     │
+  │                 │
+  │  break; ──────────► EXIT loop
+  │                 │
+  │  continue; ───┐ │
+  │               │ │
+  └───────────────┼─┘
+                  │
+          ┌───────▼───────┐
+          │ next iteration│
+          └───────────────┘
+`}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🛑 The `break` Statement
+
+`break` immediately **exits the loop**, regardless of the loop condition:
+
+```csharp
+int i = 1;
+
+while (true) {  // "infinite" loop — controlled by break
+    Console.Write("Enter a number (0 to quit): ");
+    int num = int.Parse(Console.ReadLine());
+    
+    if (num == 0) {
+        break;  // Exit the loop immediately
+    }
+    
+    Console.WriteLine($"  You entered: {num}");
+    i++;
+}
+
+Console.WriteLine($"Processed {i - 1} numbers.");
+```
+
+The **sentinel value** (0 in this case) acts as a signal to stop processing. The `break` statement is the emergency exit.
+
+<AnnotatedCode
+  title="🔬 Anatomy of a Sentinel-Controlled Loop"
+  tokens={[
+    { text: "while", type: "keyword", tooltip: "The loop runs 'forever' — but break provides the real exit" },
+    { text: " (", type: "punctuation" },
+    { text: "true", type: "parameter", tooltip: "Condition is always true — the loop depends on break to exit" },
+    { text: ") {", type: "punctuation" },
+    { text: " " },
+    { text: "if", type: "keyword", tooltip: "Check for the sentinel value inside the loop" },
+    { text: " (num == 0) ", type: "parameter", tooltip: "0 is the 'sentinel' — a special value meaning 'stop'" },
+    { text: "break", type: "keyword", tooltip: "Immediately exits the while loop — jumps to code after the closing brace" },
+    { text: ";", type: "punctuation" },
+    { text: " }", type: "punctuation" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🛑 Break & Continue in Real Systems"
+  tabs={[
+    {
+      id: "search",
+      label: "🔍 Search Engine",
+      content: "A search scans through results one by one. When it finds the FIRST match, it breaks — no need to keep searching! Without break, it would waste time scanning every remaining item even after finding the answer.",
+      keyPoints: ["Scan items until match found", "break exits immediately on first match", "Saves processing time on large datasets"]
+    },
+    {
+      id: "filter",
+      label: "🗂️ Data Filter",
+      content: "Processing records from a database, some records are invalid (missing data, corrupted). Use continue to skip invalid records and move to the next one — the loop keeps running, just skipping the bad data.",
+      keyPoints: ["Process records one by one", "continue skips invalid records", "Loop continues with remaining data"]
+    },
+    {
+      id: "game",
+      label: "🎮 Game Input",
+      content: "In a game, the input loop reads player commands. If the player types 'quit', break ends the loop. If they type gibberish, continue skips it and asks again — the game doesn't crash on bad input.",
+      keyPoints: ["'quit' → break (exit loop)", "Invalid input → continue (skip and retry)", "Valid input → process normally"]
+    }
+  ]}
+/>
+
+---
+
+## ⏭️ The `continue` Statement
+
+`continue` **skips the rest of the current iteration** and jumps back to the condition check:
+
+```csharp
+int i = 0;
+
+while (i < 10) {
+    i++;
+    
+    if (i % 3 == 0) {
+        continue;  // Skip multiples of 3
+    }
+    
+    Console.WriteLine($"Processing: {i}");
+}
+```
+
+**Output:**
+```
+Processing: 1
+Processing: 2
+Processing: 4
+Processing: 5
+Processing: 7
+Processing: 8
+Processing: 10
+```
+
+Numbers 3, 6, and 9 are skipped — `continue` jumps back to the `while` condition without executing `Console.WriteLine`.
+
+<div class="pro-tip">
+  <h4>💡 Break vs. Continue</h4>
+  <p><code>break</code> = <strong>Exit the building</strong> — the loop is completely done.<br/>
+  <code>continue</code> = <strong>Skip this floor</strong> — go to the next iteration immediately.</p>
+</div>
+
+---
+
+## 🎯 Sentinel Values
+
+A **sentinel value** is a special input that signals "stop processing." It's a value that <em>could never be valid data</em>:
+
+```csharp
+Console.WriteLine("Enter test scores (-1 to finish):");
+int total = 0;
+int count = 0;
+
+while (true) {
+    Console.Write("  Score: ");
+    int score = int.Parse(Console.ReadLine());
+    
+    if (score == -1) {
+        break;  // -1 is the sentinel — not a valid score
+    }
+    
+    total += score;
+    count++;
+}
+
+if (count > 0) {
+    double average = (double)total / count;
+    Console.WriteLine($"\nAverage of {count} scores: {average:F1}");
+} else {
+    Console.WriteLine("\nNo scores entered.");
+}
+```
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Sentinel Values Must Be Invalid Data
+
+Choose a sentinel that <strong>cannot</strong> be confused with real data:
+- Scores? Use **-1** (scores can't be negative)
+- Prices? Use **0** (nothing costs $0)
+- Names? Use **empty string** or **"quit"**
+
+If your sentinel could be valid data, your program has a bug!
+
+</div>
+
+---
+
+## Try It: Data Processing with Break & Continue
+
+<TryItNowRunner 
+  starterId="week-08-lesson-1" 
+  height={540}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== DATA STREAM PROCESSOR ===");
+        Console.WriteLine("  Processing sensor readings...\\n");
+        
+        // Simulated sensor data (normally from Console.ReadLine)
+        int[] readings = { 42, 87, -5, 93, 0, 65, -12, 78, 55, 0 };
+        
+        int index = 0;
+        int validCount = 0;
+        int total = 0;
+        int skipped = 0;
+        
+        while (index < readings.Length) {
+            int reading = readings[index];
+            index++;
+            
+            // Sentinel: 0 means "end of data stream"
+            if (reading == 0) {
+                Console.WriteLine($"  [{index}] ■ SENTINEL (0) — stopping stream");
+                break;
+            }
+            
+            // Skip negative readings (sensor errors)
+            if (reading < 0) {
+                Console.WriteLine($"  [{index}] ⚠ Negative reading ({reading}) — skipping");
+                skipped++;
+                continue;
+            }
+            
+            // Process valid reading
+            Console.WriteLine($"  [{index}] ✓ Valid reading: {reading}");
+            total += reading;
+            validCount++;
+        }
+        
+        Console.WriteLine($"\\n  Summary:");
+        Console.WriteLine($"  ─────────────────────");
+        Console.WriteLine($"  Valid readings: {validCount}");
+        Console.WriteLine($"  Skipped errors: {skipped}");
+        if (validCount > 0) {
+            Console.WriteLine($"  Average: {(double)total / validCount:F1}");
+        }
+        Console.WriteLine($"  Total processed: {total}");
+    }
+}`}
+  instructions="Run the code to see break (stops at sentinel 0) and continue (skips negative values) working together. Try changing the readings array — move the 0 earlier, remove negatives, or add more values!" 
+/>
+
+<div class="experiment-box">
+
+#### Experiment: Break vs. Continue
+
+1. **Remove the `break`** — What happens when the sentinel (0) is processed? Does it get added to the total?
+2. **Remove the `continue`** — What happens to negative readings? Are they included in the average?
+3. **Change sentinel from 0 to -999** — Update the break condition. Is -999 a good sentinel for sensor data?
+4. **What if the array has no 0?** — The loop processes everything and exits naturally via `index < readings.Length`.
+
+</div>
+
+---
+
+## ⚖️ When to Use Each Override
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Scenario</th>
+        <th>Use</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>User types "quit"</td>
+        <td><code>break</code></td>
+        <td>Exit the command loop</td>
+      </tr>
+      <tr>
+        <td>Found target in search</td>
+        <td><code>break</code></td>
+        <td>Stop scanning after first match</td>
+      </tr>
+      <tr>
+        <td>Invalid data in stream</td>
+        <td><code>continue</code></td>
+        <td>Skip bad records, process the rest</td>
+      </tr>
+      <tr>
+        <td>Skip even/odd numbers</td>
+        <td><code>continue</code></td>
+        <td>Process only desired values</td>
+      </tr>
+      <tr>
+        <td>Sentinel value (0, -1)</td>
+        <td><code>break</code></td>
+        <td>End-of-data signal in input loop</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output
+
+What does this code print?
+
+```csharp
+int i = 0;
+int sum = 0;
+
+while (i < 8) {
+    i++;
+    
+    if (i == 3) continue;
+    if (i == 6) break;
+    
+    sum += i;
+}
+
+Console.WriteLine($"i = {i}, sum = {sum}");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `i = 6, sum = 12`
+
+**Trace**:
+- i=1: not 3, not 6 → sum = 0+1 = 1
+- i=2: not 3, not 6 → sum = 1+2 = 3
+- i=3: **continue** → skip sum, back to condition
+- i=4: not 3, not 6 → sum = 3+4 = 7
+- i=5: not 3, not 6 → sum = 7+5 = 12
+- i=6: **break** → exit loop immediately
+
+Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
+
+🔑 **Key takeaway**: `continue` skips ONE iteration. `break` stops ALL remaining iterations. Both are applied when they're encountered — order matters!
+</div>
+</details>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-08-8-3-checkpoint"
+  title="🔍 Section 8.3 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What does the 'break' statement do inside a while loop?",
+      options: ["Pauses the loop temporarily", "Exits the loop entirely, immediately", "Restarts the loop from the beginning", "Skips the current iteration"],
+      correctAnswer: "Exits the loop entirely, immediately",
+      explanation: "break immediately exits the innermost loop — no more iterations, no more condition checks. Execution continues with the code AFTER the loop's closing brace."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What is a 'sentinel value' in loop programming?",
+      options: ["A variable that counts iterations", "A special value that signals the loop to stop", "The loop's condition variable", "A debugging tool"],
+      correctAnswer: "A special value that signals the loop to stop",
+      explanation: "A sentinel value is a special input (like -1, 0, or 'quit') that tells the program to stop processing. It must be a value that could NEVER be valid data — otherwise the program can't tell the difference between real data and the stop signal."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Ready to apply everything? Build the <strong>Robust Data Entry System</strong> in Lab 08!</p>
+  <a href="/week-08/lab/" class="vscode-button">Continue to Lab 08 →</a>
+</div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  .ascii-art-box {
+    background: #1a1a2e;
+    border: 1px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    color: #4ec9b0;
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+  body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }
+`}</style>

@@ -139,6 +139,36 @@ export const lessonContexts: Record<string, LessonContext> = {
       Clarity (10pts): Clear, understandable writing using terms like "guard clause", "short-circuit", "switch"
     `
   },
+
+  "week-08-homework": {
+    title: "Week 8: While Loop Reflection",
+    taughtConcepts: `
+      - while loop: pre-check iteration — condition checked BEFORE body runs, may execute 0 times
+      - Three parts of a while loop: (1) initialize before, (2) condition in while(), (3) progress statement in body
+      - Progress statement: the line inside the loop that moves toward termination (e.g., count++, input = ReadLine())
+      - Forgetting the progress statement causes an infinite loop
+      - do-while: post-check iteration — body runs FIRST, then condition checked. Always runs at least once
+      - do-while requires semicolon after while(condition);
+      - break: immediately exits the loop — no more iterations
+      - continue: skips remaining body code, jumps to next iteration
+      - Sentinel value: special input that signals "stop processing" (e.g., 0 or "quit")
+      - Accumulator pattern: running total += newValue inside a loop
+      - decimal.Parse() required for financial/money input
+      - K&R brace style: opening brace on same line
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, answer While Loops in C#:
+      1. What are the three parts of every while loop, and why does the "Progress Statement" prevent infinite loops? Give an example of what happens if you forget it.
+      2. When should you use a do-while loop instead of a regular while loop for input validation? Explain using the "at least once" guarantee.
+      3. How do sentinel values work with break and continue? Give a scenario where you'd use each to control loop flow.
+    `,
+    rubric: `
+      Three parts & Progress Statement (35pts): Student identifies (1) initialize before loop, (2) condition in while(), (3) progress statement in body. Explains that without progress statement, condition never becomes false → infinite loop. Gives example like forgetting count++ or forgetting to read new input.
+      While vs do-while for validation (35pts): Student explains do-while runs body FIRST then checks condition. For input validation, you need at least one prompt before checking if input is valid. While loop would need duplicate prompt code or pre-initialization. Mentions semicolon after while().
+      Sentinel values with break/continue (20pts): Student explains sentinel (special stop value like 0 or "quit"). break immediately exits loop when sentinel detected. continue skips invalid data (e.g., negative numbers) and re-prompts. Gives appropriate scenario for each.
+      Clarity (10pts): Clear, understandable writing using terms like "progress statement", "sentinel value", "pre-check", "post-check"
+    `
+  },
 };
 
 export function getLessonContext(assignmentId: string): LessonContext | null {
@@ -214,11 +244,14 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-07-homework': "Week 7 Homework: Logic Reflection. Students explain: (1) Arrow Anti-Pattern and how guard clauses fix it, (2) short-circuit evaluation with && and why null checks go on the left, (3) when to use switch vs else-if. Written reflection referencing sections 7.1-7.4.",
   
   // Week 8
-  'week-08': "Topic: While Loops. Focus: Repeating code based on conditions.",
-  'week-08-lesson-1': "Topic: While Loops. Focus: Repeating code while a condition is true.",
-  'week-08-lesson-2': "Topic: Do-While Loops. Focus: Loops that execute at least once.",
-  'week-08-lab': "Topic: Repetition. Mission: Programs that repeat operations.",
-  'week-08-homework': "Topic: Reflection. Focus: Understanding loop conditions and infinite loops.",
+  'week-08': "Week 8: While Loops. You are the Senior Architect. Focus on preventing Infinite Loop crashes. Teach students to always ensure their loop has a Progress Statement — a line inside the loop body that moves the loop closer to terminating. Topics: while (pre-check iteration, may run 0 times), do-while (post-check, always runs at least once, semicolon after while), break (exit loop immediately), continue (skip to next iteration), sentinel values (special input that signals 'stop'). Three parts of every while loop: (1) initialize before, (2) check condition, (3) progress statement inside body. decimal.Parse() for money input. K&R brace style.",
+  'week-08-8-1-while-loop': "Week 8 Section 8.1: The Persistent Watcher. Focus: while loop as a pre-check sensor — condition is checked BEFORE the body runs, so the body may execute 0 times. Three parts: (1) initialize counter/variable before loop, (2) condition in while(), (3) progress statement inside body (e.g., count++). The accumulator pattern: running total += newValue. CRITICAL: forgetting the progress statement causes an infinite loop that crashes the program. Metaphors: thermostat (check→act→check), download bar, game health.",
+  'week-08-8-2-do-while': "Week 8 Section 8.2: The Input Validator. Focus: do-while as post-check — body executes FIRST, then condition is checked. Guaranteed to run at least once. Syntax requires semicolon after while(condition);. Perfect for input validation and menu systems where you need at least one prompt. Comparison: while = bouncer checking ID before entry, do-while = taste test before deciding. ATM withdrawal, restaurant menu, password retry examples.",
+  'week-08-8-3-break-continue': "Week 8 Section 8.3: Sentinel Control. Focus: break exits the loop immediately (emergency stop). continue skips remaining body code and jumps to next iteration (skip button). Sentinel values are special inputs that signal 'stop processing' (like 0 for 'done entering numbers'). Use break for early exit on sentinel. Use continue to skip invalid data (e.g., negative numbers). Data stream processor example.",
+  'week-08-lesson-1': "Week 8: While Loops — covers while (pre-check), do-while (post-check), break, continue, and sentinel values. Students practice counter loops, input validation, and data processing with manual overrides. Always emphasize the Progress Statement to prevent infinite loops.",
+  'week-08-lesson-2': "Week 8: Do-While and Loop Control — covers do-while for guaranteed-once execution, break for early exit, continue for skipping iterations, and sentinel values for stop signals.",
+  'week-08-lab': "Week 8 Lab: The Robust Data Entry System (Daily Revenue Tracker). Students build a revenue tracker using while(true) loop with break on sentinel value 0. Requirements: prompt for daily revenue using decimal.Parse(), use continue to skip negative values with warning, accumulate total revenue and day count, break when user enters 0, display summary with total, count, and average. Must use while loop, break, continue, and decimal for money. K&R braces. 100 points.",
+  'week-08-homework': "Week 8 Homework: While Loop Reflection. Students explain: (1) Three parts of a while loop and why the Progress Statement prevents infinite loops, (2) When to use while vs do-while for input validation, (3) How sentinel values work with break and continue. Written reflection referencing sections 8.1-8.3.",
   
   // Week 9
   'week-09': "Topic: For Loops. Focus: Counter-controlled iteration.",

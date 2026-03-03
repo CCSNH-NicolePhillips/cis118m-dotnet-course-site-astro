@@ -447,6 +447,7 @@ internal static class CheckRunner
             "week-05-boss-fight" => Week05BossFightChecks(programCs),
             "week-06-lab" => Week06LabChecks(programCs),
             "week-07-lab" => Week07LabChecks(programCs),
+            "week-08-lab" => Week08LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -463,6 +464,7 @@ internal static class CheckRunner
             "week-05-boss-fight" => Week05BossFightHint(checks),
             "week-06-lab" => Week06LabHint(checks),
             "week-07-lab" => Week07LabHint(checks),
+            "week-08-lab" => Week08LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -1255,6 +1257,88 @@ internal static class CheckRunner
             "HasElse" => "Add a final } else { block that prints BLOCKED — Default deny policy.",
             "HasLogicalAnd" => "Combine conditions for internal SSH: if (protocol == \"SSH\" && isInternal)",
             "HasSwitch" => "After the firewall decision, add: switch (protocol) { case \"HTTP\": ... }",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ===== WEEK 08 =====
+    private static List<CheckResult> Week08LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Has a header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var notPlaceholder = !programCs.Contains("Your Name Here");
+        checks.Add(new CheckResult("HasHeaderComment", hasNameComment && notPlaceholder,
+            hasNameComment && notPlaceholder ? "✅ Header comment with name found" : "❌ Add a comment with your name (replace 'Your Name Here')"));
+
+        // Check 2: Uses a while loop
+        var hasWhile = Regex.IsMatch(programCs, @"\bwhile\s*\(", RegexOptions.None);
+        checks.Add(new CheckResult("HasWhileLoop", hasWhile,
+            hasWhile ? "✅ while loop found" : "❌ You need a while loop for the data entry"));
+
+        // Check 3: Uses decimal.Parse for money
+        var hasDecimalParse = Regex.IsMatch(programCs, @"decimal\.Parse", RegexOptions.None);
+        checks.Add(new CheckResult("HasDecimalParse", hasDecimalParse,
+            hasDecimalParse ? "✅ decimal.Parse() used for money input" : "❌ Use decimal.Parse() to convert input — revenue is money!"));
+
+        // Check 4: Uses break
+        var hasBreak = Regex.IsMatch(programCs, @"\bbreak\s*;", RegexOptions.None);
+        checks.Add(new CheckResult("HasBreak", hasBreak,
+            hasBreak ? "✅ break statement found" : "❌ Use break to exit the loop when the sentinel value (0) is entered"));
+
+        // Check 5: Uses continue
+        var hasContinue = Regex.IsMatch(programCs, @"\bcontinue\s*;", RegexOptions.None);
+        checks.Add(new CheckResult("HasContinue", hasContinue,
+            hasContinue ? "✅ continue statement found" : "❌ Use continue to skip negative values"));
+
+        // Check 6: Has negative value check (< 0)
+        var hasNegativeCheck = Regex.IsMatch(programCs, @"<\s*0|<=\s*0", RegexOptions.None);
+        checks.Add(new CheckResult("HasNegativeCheck", hasNegativeCheck,
+            hasNegativeCheck ? "✅ Negative value validation found" : "❌ Check if the entered value is negative (< 0) before processing"));
+
+        // Check 7: Has accumulator pattern (+=)
+        var hasAccumulator = Regex.IsMatch(programCs, @"\+=\s*", RegexOptions.None);
+        checks.Add(new CheckResult("HasAccumulator", hasAccumulator,
+            hasAccumulator ? "✅ Accumulator pattern (+=) found" : "❌ Use += to add each revenue amount to the running total"));
+
+        // Check 8: Has ReadLine for input
+        var hasReadLine = programCs.Contains("Console.ReadLine()");
+        checks.Add(new CheckResult("HasReadLine", hasReadLine,
+            hasReadLine ? "✅ Console.ReadLine() found" : "❌ Use Console.ReadLine() to get user input"));
+
+        // Check 9: Has summary output (average calculation)
+        var hasDivision = Regex.IsMatch(programCs, @"/", RegexOptions.None);
+        var hasSummary = Regex.IsMatch(programCs, @"(average|Average|AVERAGE|total\s*/\s*count|Total|SUMMARY)", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult("HasSummary", hasDivision && hasSummary,
+            hasDivision && hasSummary ? "✅ Summary with average calculation found" : "❌ After the loop, display a summary with total, count, and average (total / count)"));
+
+        // Check 10: Has real content (TODOs removed)
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO", RegexOptions.IgnoreCase).Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult("HasRealContent", hasRealContent,
+            hasRealContent ? "✅ TODO comments completed" : $"❌ Complete the TODO steps — {todoCount} TODOs remaining"));
+
+        return checks;
+    }
+
+    private static string Week08LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasWhileLoop" => "Add a while loop: while (true) { ... } — use break to exit when done.",
+            "HasDecimalParse" => "Parse revenue as money: decimal amount = decimal.Parse(Console.ReadLine());",
+            "HasBreak" => "When the user enters 0, exit the loop: if (amount == 0) break;",
+            "HasContinue" => "Skip negative values: if (amount < 0) { Console.WriteLine(\"Warning...\"); continue; }",
+            "HasNegativeCheck" => "Check for negatives: if (amount < 0) — then print a warning and continue.",
+            "HasAccumulator" => "Add each valid amount to total: totalRevenue += amount;",
+            "HasReadLine" => "Read user input: string input = Console.ReadLine();",
+            "HasSummary" => "After the loop, calculate: decimal average = totalRevenue / dayCount;",
             "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };

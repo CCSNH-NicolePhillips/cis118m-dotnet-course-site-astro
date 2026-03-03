@@ -1,0 +1,298 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 08 • The Robust Data Entry System"
+description: "Build a revenue tracker using while loops, input validation, and sentinel values"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 08: The Robust Data Entry System
+
+<DueDateBanner week={8} type="Lab" />
+
+**Time: 45 minutes**  
+**Points: 100**
+
+## Mission Objective
+
+You are building a **Daily Revenue Tracker** for a small business. The owner needs to enter revenue amounts for each day. Your program must **validate** each entry (reject negative numbers) and allow the owner to **signal they're done** by entering `0` (sentinel value). After processing, display a summary with total revenue, number of entries, and average.
+
+---
+
+## The Problem
+
+The program accepts daily revenue entries in a loop. It must handle two critical scenarios:
+
+<div class="ascii-art-box">
+<pre>{`
+   ┌───────────────────┐
+   │  Prompt for input  │◄────────────────┐
+   └────────┬──────────┘                  │
+            │                              │
+   ┌────────▼──────────┐     ┌──────────┐ │
+   │  Input == 0 ?     │─YES─► BREAK    │ │
+   └────────┬──────────┘     │ (exit)   │ │
+            │ NO              └──────────┘ │
+   ┌────────▼──────────┐                  │
+   │  Input < 0 ?      │─YES─► Invalid!  ─┘
+   └────────┬──────────┘      (continue)
+            │ NO
+   ┌────────▼──────────┐
+   │  Add to total     │──────────────────┘
+   │  Count entry      │
+   └───────────────────┘
+`}</pre>
+</div>
+
+1. **Validation**: If the user enters a **negative number**, print an error message and ask again (the entry is NOT counted)
+2. **Sentinel**: When the user enters **0**, the loop terminates and the summary is displayed
+
+---
+
+## Requirements
+
+Your program must:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Header</strong></td>
+        <td>Print <code>=== DAILY REVENUE TRACKER ===</code></td>
+      </tr>
+      <tr>
+        <td><strong>Prompt in a loop</strong></td>
+        <td>Use a <code>while</code> loop to repeatedly prompt: <code>Enter daily revenue (0 to finish):</code></td>
+      </tr>
+      <tr>
+        <td><strong>Parse input</strong></td>
+        <td>Use <code>decimal.Parse(Console.ReadLine())</code> — revenue is money, use <code>decimal</code></td>
+      </tr>
+      <tr>
+        <td><strong>Sentinel check</strong></td>
+        <td>If input is <code>0</code>, use <code>break</code> to exit the loop</td>
+      </tr>
+      <tr>
+        <td><strong>Validation</strong></td>
+        <td>If input is <strong>negative</strong>, print <code>Invalid: Revenue cannot be negative. Try again.</code> and use <code>continue</code></td>
+      </tr>
+      <tr>
+        <td><strong>Accumulate</strong></td>
+        <td>Add valid entries to a running total and increment a counter</td>
+      </tr>
+      <tr>
+        <td><strong>Summary</strong></td>
+        <td>After the loop, print: total entries, total revenue (currency format), and average revenue per day</td>
+      </tr>
+      <tr>
+        <td><strong>Edge case</strong></td>
+        <td>If user enters 0 immediately (no entries), print <code>No revenue entries recorded.</code></td>
+      </tr>
+      <tr>
+        <td><strong>K&R brace style</strong></td>
+        <td>Opening brace on same line as <code>while</code>, <code>if</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Example Output
+
+**Normal Entry (Multiple Days):**
+```
+=== DAILY REVENUE TRACKER ===
+
+Enter daily revenue (0 to finish): 1250.50
+  ✓ Day 1: $1,250.50
+
+Enter daily revenue (0 to finish): 980.75
+  ✓ Day 2: $980.75
+
+Enter daily revenue (0 to finish): -50
+  ✗ Invalid: Revenue cannot be negative. Try again.
+
+Enter daily revenue (0 to finish): 2100.00
+  ✓ Day 3: $2,100.00
+
+Enter daily revenue (0 to finish): 0
+
+=== REVENUE SUMMARY ===
+  Total Entries: 3
+  Total Revenue: $4,331.25
+  Average/Day:   $1,443.75
+========================
+```
+
+**Immediate Exit (No Entries):**
+```
+=== DAILY REVENUE TRACKER ===
+
+Enter daily revenue (0 to finish): 0
+
+No revenue entries recorded.
+```
+
+**Multiple Validation Failures:**
+```
+=== DAILY REVENUE TRACKER ===
+
+Enter daily revenue (0 to finish): -100
+  ✗ Invalid: Revenue cannot be negative. Try again.
+
+Enter daily revenue (0 to finish): -25.50
+  ✗ Invalid: Revenue cannot be negative. Try again.
+
+Enter daily revenue (0 to finish): 500
+  ✓ Day 1: $500.00
+
+Enter daily revenue (0 to finish): 0
+
+=== REVENUE SUMMARY ===
+  Total Entries: 1
+  Total Revenue: $500.00
+  Average/Day:   $500.00
+========================
+```
+
+---
+
+## Code Editor
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe 
+    src="/editor/embedded?starter=week-08-lab" 
+    style="width: 100%; height: 600px; border: none;"
+    title="Lab 8 Code Editor"
+  ></iframe>
+</div>
+
+---
+
+## Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Uses a <code>while</code> loop to repeatedly prompt for input</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Uses <code>decimal.Parse()</code> for revenue (money type)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Sentinel: <code>break</code> when input is 0</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Validation: rejects negatives with <code>continue</code> and error message</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Accumulates total and counts valid entries correctly</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Displays correct summary (total entries, total revenue, average)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Handles edge case: 0 entered immediately (no entries message)</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Code compiles, runs, K&R braces, uses currency formatting</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>100</strong></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Submission
+
+When your program runs correctly and handles all scenarios:
+
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    Submit Lab
+  </button>
+  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+<div class="next-section">
+  <p>Next up: <strong>While Loop Reflection</strong></p>
+  <p>Explain how loops and iteration improve program design.</p>
+  <a href="/week-08/homework/" class="vscode-button">Continue to Homework →</a>
+</div>
+
+<style>{`
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  .ascii-art-box {
+    background: #1a1a2e;
+    border: 1px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    color: #4ec9b0;
+    font-size: 0.8rem;
+    line-height: 1.3;
+    margin: 1rem 0;
+  }
+
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }
+`}</style>

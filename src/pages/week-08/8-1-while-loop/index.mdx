@@ -1,0 +1,571 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 8.1 • The Persistent Watcher"
+description: "Master the while loop — C#'s pre-check iteration structure"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 8.1: The Persistent Watcher
+
+<div class="section-header">
+  <div class="section-badge">🔁 The Sensor Loop</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ From Decisions to Repetition</h2>
+      <p>
+        In Weeks 6 and 7, your programs could <strong>choose</strong> — they evaluated conditions and branched. But they always moved forward. Real systems need to <strong>repeat</strong>. A temperature sensor doesn't check the reading once and shut down — it checks <em>continuously</em> until told to stop. The <code>while</code> loop is your first <strong>iteration structure</strong> — it repeats a block of code as long as a condition remains true.
+      </p>
+    </div>
+    <div class="header-image">
+      <!-- PLACEHOLDER: An illustration of a sensor monitoring loop — a circular arrow around a thermometer or gauge -->
+      <div class="ascii-art-box">
+<pre>{`
+    ┌──────────────┐
+    │  condition?  │◄──┐
+    └──────┬───────┘   │
+      true │           │
+    ┌──────▼───────┐   │
+    │  loop body   │───┘
+    └──────────────┘
+      false │
+    ┌──────▼───────┐
+    │   continue   │
+    │   program    │
+    └──────────────┘
+`}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 What Is a While Loop?
+
+A **while loop** checks a condition **before** each iteration. If the condition is `true`, the body executes. If it's `false`, the loop is skipped entirely:
+
+```csharp
+int count = 1;
+
+while (count <= 5) {
+    Console.WriteLine($"Iteration {count}");
+    count++;  // Progress statement — CRITICAL!
+}
+
+Console.WriteLine("Loop complete.");
+```
+
+**Output:**
+```
+Iteration 1
+Iteration 2
+Iteration 3
+Iteration 4
+Iteration 5
+Loop complete.
+```
+
+The `while` loop is a **pre-check** loop — it checks the gate <strong>before</strong> entering. If the condition is already false when the loop starts, the body <strong>never executes</strong>.
+
+<AnnotatedCode
+  title="🔬 Anatomy of a While Loop"
+  tokens={[
+    { text: "while", type: "keyword", tooltip: "The loop keyword — repeats the body as long as the condition is true" },
+    { text: " (", type: "punctuation" },
+    { text: "count <= 5", type: "parameter", tooltip: "The loop condition — checked BEFORE each iteration" },
+    { text: ") {", type: "punctuation" },
+    { text: " " },
+    { text: "Console.WriteLine(...);", type: "string", tooltip: "The loop body — the code that repeats" },
+    { text: " " },
+    { text: "count++", type: "parameter", tooltip: "The progress statement — ensures the condition will eventually become false" },
+    { text: ";", type: "punctuation" },
+    { text: " }", type: "punctuation", tooltip: "End of loop body — control returns to the condition check" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🔁 The Sensor Loop in Real Systems"
+  tabs={[
+    {
+      id: "thermostat",
+      label: "🌡️ Thermostat",
+      content: "A thermostat reads the temperature, and while the room is too cold, it keeps the heater running. Each cycle it re-checks: Is the room still cold? If yes, keep heating. If no, stop. The 'progress' is the room warming up — without it, the heater runs forever.",
+      keyPoints: ["Check temperature → heat if cold → re-check", "Progress: room temperature rises each cycle", "Loop ends when target temperature is reached"]
+    },
+    {
+      id: "download",
+      label: "📥 File Download",
+      content: "A download manager checks: while bytes remaining > 0, keep downloading chunks. Each chunk reduces the remaining bytes. The progress statement is the bytes downloaded — without it, you'd download forever.",
+      keyPoints: ["Check remaining bytes → download chunk → re-check", "Progress: remaining bytes decrease each cycle", "Loop ends when all bytes are downloaded"]
+    },
+    {
+      id: "game",
+      label: "🎮 Game Loop",
+      content: "Every video game runs a 'game loop': while the player is alive AND hasn't quit, process input, update the world, render the frame. This runs 60+ times per second. Progress comes from player actions changing the game state.",
+      keyPoints: ["Check game state → process → render → re-check", "Progress: player actions change the state", "Loop ends when player dies or quits"]
+    }
+  ]}
+/>
+
+---
+
+## ⚠️ The Infinite Loop Trap
+
+The most dangerous mistake in loop programming is forgetting the **progress statement** — the line that moves the condition toward `false`:
+
+```csharp
+// ❌ INFINITE LOOP — count never changes!
+int count = 1;
+while (count <= 5) {
+    Console.WriteLine($"Stuck at {count}");
+    // Missing: count++;  ← Without this, count stays 1 FOREVER
+}
+```
+
+This program will print "Stuck at 1" forever, consuming CPU and potentially freezing your system.
+
+<div class="architect-rule">
+
+#### ⚠️ Architect's Rule: Every Loop Must Have a Progress Statement
+
+Before writing ANY while loop, ask: **"What changes inside this loop to make the condition eventually false?"** If you can't answer that question, your loop is broken.
+
+The three essential parts of every while loop:
+1. **Initialization** — set up the loop variable (`int count = 1`)
+2. **Condition** — the gate that controls entry (`count <= 5`)
+3. **Progress** — the change that moves toward exit (`count++`)
+
+</div>
+
+---
+
+## 🔍 Pre-Check Behavior: The Closed Gate
+
+Because `while` checks the condition **first**, it's possible for the loop body to never execute:
+
+```csharp
+int temperature = 72;  // Already at target
+
+while (temperature < 68) {
+    Console.WriteLine("Heating...");
+    temperature++;
+}
+
+Console.WriteLine($"Temperature is {temperature}°F — comfortable!");
+// Output: Temperature is 72°F — comfortable!
+// The loop body NEVER ran because 72 is not < 68
+```
+
+This is the **pre-check** nature of `while` — the gate must be open for the body to run.
+
+<div class="pro-tip">
+  <h4>💡 Pre-Check = Conditional Entry</h4>
+  <p>Think of a <code>while</code> loop like a security gate that checks your badge <strong>before</strong> you enter. If your badge is invalid (condition is false), you never get inside. This is different from <code>do-while</code> (Section 8.2), which lets you in first and checks your badge when you try to leave.</p>
+</div>
+
+---
+
+## Try It: The Countdown Counter
+
+Build a counter that increments from 1 to a threshold:
+
+<TryItNowRunner 
+  starterId="week-08-lesson-1" 
+  height={480}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== SENSOR LOOP: COUNTER ===");
+        
+        // 1. Initialization
+        int count = 1;
+        int threshold = 10;
+        
+        // 2. Condition (pre-check)
+        while (count <= threshold) {
+            // Loop body
+            Console.WriteLine($"  Reading #{count}: Sensor active");
+            
+            // 3. Progress statement
+            count++;
+        }
+        
+        Console.WriteLine($"\\n✓ Monitoring complete. {threshold} readings taken.");
+        Console.WriteLine($"  Counter stopped at: {count}");
+        
+        // Demonstrating pre-check: loop that never runs
+        Console.WriteLine("\\n=== PRE-CHECK DEMO ===");
+        int x = 100;
+        while (x < 10) {
+            Console.WriteLine("This will NEVER print!");
+            x++;
+        }
+        Console.WriteLine($"  x = {x} — loop body was skipped entirely.");
+    }
+}`}
+  instructions="Run the code, then try changing threshold to 5. Then set count's initial value to 15 — watch the loop get skipped entirely because the pre-check fails!" 
+/>
+
+<div class="experiment-box">
+
+#### Experiment: Trace the Loop
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Set `threshold = 3`** — How many lines print? What is `count` after the loop?
+2. **Set `count = 10` and `threshold = 10`** — How many iterations? (Hint: carefully check the `<=`)
+3. **Set `count = 11` and `threshold = 10`** — Does the loop run at all?
+4. **Change `count++` to `count += 2`** — Which readings print?
+
+**Discovery**: After the loop, `count` is one MORE than the threshold! The loop runs while `count <= threshold`, so when `count` becomes `threshold + 1`, the condition fails and the loop exits.
+
+</div>
+
+---
+
+## 🧮 Loop Patterns: Accumulation
+
+Loops aren't just for counting — they're the engine for **accumulating** values:
+
+```csharp
+// Sum of numbers from 1 to N
+int n = 100;
+int sum = 0;
+int i = 1;
+
+while (i <= n) {
+    sum += i;   // Accumulate each number
+    i++;
+}
+
+Console.WriteLine($"Sum of 1 to {n} = {sum}");
+// Output: Sum of 1 to 100 = 5050
+```
+
+<div class="concept-highlight">
+  <h3>🧮 The Accumulator Pattern</h3>
+  <div class="metaphor-grid">
+    <div class="metaphor-item">
+      <div class="metaphor-icon">🔢</div>
+      <div class="metaphor-text">
+        <strong>Counter: count++</strong>
+        <p>Tracks how many iterations occurred</p>
+      </div>
+    </div>
+    <div class="metaphor-item">
+      <div class="metaphor-icon">➕</div>
+      <div class="metaphor-text">
+        <strong>Accumulator: sum += value</strong>
+        <p>Builds up a running total across iterations</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## Try It: Running Total Calculator
+
+<TryItNowRunner 
+  starterId="week-08-lesson-1" 
+  height={500}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== RUNNING TOTAL CALCULATOR ===");
+        
+        int number = 1;
+        int sum = 0;
+        int target = 20;
+        
+        while (number <= target) {
+            sum += number;
+            Console.WriteLine($"  Added {number,2} → Running total: {sum}");
+            number++;
+        }
+        
+        Console.WriteLine($"\\n✓ Sum of 1 to {target} = {sum}");
+        
+        // Average calculation
+        double average = (double)sum / target;
+        Console.WriteLine($"  Average: {average:F1}");
+        
+        // Verify with the formula: n(n+1)/2
+        int formula = target * (target + 1) / 2;
+        Console.WriteLine($"  Formula check: {target}×{target + 1}/2 = {formula}");
+        Console.WriteLine($"  Match: {sum == formula}");
+    }
+}`}
+  instructions="Run the code to see the accumulator pattern in action. Try changing target to 50 or 100. The loop calculates the same result as the mathematical formula n(n+1)/2!" 
+/>
+
+---
+
+## 📐 Common While Loop Mistakes
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Mistake</th>
+        <th>Problem</th>
+        <th>Fix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Missing progress</strong></td>
+        <td>Loop runs forever (infinite loop)</td>
+        <td>Always include <code>count++</code> or equivalent change</td>
+      </tr>
+      <tr>
+        <td><strong>Off-by-one</strong></td>
+        <td>Loop runs one too many or one too few times</td>
+        <td>Trace the first and last iteration carefully</td>
+      </tr>
+      <tr>
+        <td><strong>Wrong direction</strong></td>
+        <td><code>count--</code> when counting up → infinite loop</td>
+        <td>Progress must move <em>toward</em> the exit condition</td>
+      </tr>
+      <tr>
+        <td><strong>Uninitialized variable</strong></td>
+        <td>Loop variable has no starting value</td>
+        <td>Always initialize before the loop: <code>int i = 0;</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output
+
+What does this code print? Trace through it step by step:
+
+```csharp
+int x = 1;
+int total = 0;
+
+while (x <= 4) {
+    total += x * x;
+    x++;
+}
+
+Console.WriteLine($"Total: {total}");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `Total: 30`
+
+**Trace**:
+- x=1: total = 0 + (1×1) = 1, x→2
+- x=2: total = 1 + (2×2) = 5, x→3
+- x=3: total = 5 + (3×3) = 14, x→4
+- x=4: total = 14 + (4×4) = 30, x→5
+- x=5: condition `5 <= 4` is false → loop exits
+
+🔑 **Key takeaway**: The loop computes the sum of squares: 1² + 2² + 3² + 4² = 30. The accumulator pattern works with any calculation, not just simple addition!
+</div>
+</details>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-08-8-1-checkpoint"
+  title="🔍 Section 8.1 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What happens if the condition of a while loop is false when it first runs?",
+      options: ["The loop runs once then stops", "The loop body is skipped entirely", "The program crashes", "The condition is ignored"],
+      correctAnswer: "The loop body is skipped entirely",
+      explanation: "A while loop is a pre-check loop — it evaluates the condition BEFORE entering the body. If the condition is false from the start, the body never executes. This is the 'closed gate' behavior."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "What are the three essential parts of every while loop?",
+      options: ["Input, output, return", "Initialization, condition, progress statement", "Start, middle, end", "Variable, operator, value"],
+      correctAnswer: "Initialization, condition, progress statement",
+      explanation: "Every while loop needs: (1) Initialization — set up the loop variable, (2) Condition — the gate that controls entry, (3) Progress statement — ensures the condition eventually becomes false to prevent infinite loops."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next: discover the loop that <strong>always runs at least once</strong> — the <code>do-while</code>!</p>
+  <a href="/week-08/8-2-do-while/" class="vscode-button">Continue to 8.2: The Input Validator →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .concept-highlight h3 {
+    color: #c4b5fd;
+    margin-top: 0;
+  }
+  
+  .metaphor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .metaphor-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .metaphor-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .metaphor-text strong {
+    color: #e2e8f0;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  
+  .metaphor-text p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .ascii-art-box {
+    background: #1a1a2e;
+    border: 1px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    color: #4ec9b0;
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  body[data-theme="light"] .concept-highlight {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important;
+    border-color: #8b5cf6 !important;
+  }
+  body[data-theme="light"] .concept-highlight h3 { color: #5b21b6 !important; }
+  body[data-theme="light"] .metaphor-text strong { color: #1e293b !important; }
+  body[data-theme="light"] .metaphor-text p { color: #475569 !important; }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+  body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }
+`}</style>

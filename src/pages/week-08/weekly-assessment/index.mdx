@@ -1,0 +1,204 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 08 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 08 Technical Assessment
+
+<DueDateBanner week={8} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-08-quiz"
+  title="Week 08: While Loops (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What are the three essential parts of every while loop?",
+      options: [
+        "Input, process, output",
+        "Initialization, condition, progress statement",
+        "Start, body, end",
+        "Variable, loop, return"
+      ],
+      correctAnswer: "Initialization, condition, progress statement",
+      explanation: "Every while loop needs: (1) Initialization — set up the loop variable before the loop, (2) Condition — the boolean expression checked before each iteration, (3) Progress statement — the change inside the loop that moves the condition toward false."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What happens if a while loop's condition is false when the loop first starts?",
+      options: [
+        "The loop runs once anyway",
+        "The program crashes",
+        "The loop body is skipped entirely — zero iterations",
+        "The condition is automatically set to true"
+      ],
+      correctAnswer: "The loop body is skipped entirely — zero iterations",
+      explanation: "A while loop is a PRE-CHECK loop — it checks the condition BEFORE entering the body. If the condition is false from the start, the body never executes. This is the 'closed gate' behavior."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What causes an infinite loop?",
+      options: [
+        "Using too many variables",
+        "The loop body is too long",
+        "The progress statement is missing — the condition never becomes false",
+        "Using break inside the loop"
+      ],
+      correctAnswer: "The progress statement is missing — the condition never becomes false",
+      explanation: "An infinite loop occurs when nothing inside the loop changes the condition toward false. Without a progress statement (like count++), the condition stays true forever and the loop never ends."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What is the KEY difference between while and do-while?",
+      options: [
+        "do-while is faster",
+        "while can use break but do-while cannot",
+        "do-while checks condition AFTER the body, guaranteeing at least one execution",
+        "while uses curly braces but do-while does not"
+      ],
+      correctAnswer: "do-while checks condition AFTER the body, guaranteeing at least one execution",
+      explanation: "while is a PRE-CHECK loop (checks before, might run 0 times). do-while is a POST-CHECK loop (checks after, always runs at least once). This makes do-while perfect for input validation where you must get input before checking it."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "Why is do-while the best choice for input validation prompts?",
+      options: [
+        "It runs faster than while",
+        "You need to get the user's input BEFORE you can validate it",
+        "It automatically validates the input",
+        "It prevents the user from entering invalid data"
+      ],
+      correctAnswer: "You need to get the user's input BEFORE you can validate it",
+      explanation: "Input validation has a chicken-and-egg problem: you can't check the input before asking for it. do-while runs the prompt first (body), THEN checks if the answer is valid (condition). With while, the input variable wouldn't exist yet for the first check."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What does the 'break' statement do inside a loop?",
+      options: [
+        "Pauses the loop temporarily",
+        "Skips to the next iteration",
+        "Exits the loop entirely and immediately",
+        "Resets the loop counter to zero"
+      ],
+      correctAnswer: "Exits the loop entirely and immediately",
+      explanation: "break immediately exits the innermost loop — no more iterations, no more condition checks. Execution jumps to the code after the loop's closing brace. It's the emergency exit."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What does the 'continue' statement do inside a loop?",
+      options: [
+        "Exits the loop entirely",
+        "Skips the rest of the current iteration and jumps to the next condition check",
+        "Continues to the next line normally",
+        "Restarts the loop from the beginning"
+      ],
+      correctAnswer: "Skips the rest of the current iteration and jumps to the next condition check",
+      explanation: "continue skips the remaining code in the current iteration and jumps back to the condition check. The loop keeps running — it just skips this one pass. Think of it as 'skip this floor' vs break's 'exit the building'."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What is a 'sentinel value' in loop programming?",
+      options: [
+        "A variable that counts how many times the loop runs",
+        "A special value that signals the loop to stop processing",
+        "The first value entered by the user",
+        "A constant used in the loop condition"
+      ],
+      correctAnswer: "A special value that signals the loop to stop processing",
+      explanation: "A sentinel value is a special input (like 0, -1, or 'quit') that tells the program to stop. It must be a value that could NEVER be valid data — otherwise the program can't distinguish between real data and the stop signal."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "What is the output of this code?\n\nint x = 5;\ndo {\n    Console.Write(x + \" \");\n    x--;\n} while (x > 5);",
+      options: [
+        "5 4 3 2 1",
+        "5",
+        "Nothing — the loop doesn't run",
+        "Infinite loop"
+      ],
+      correctAnswer: "5",
+      explanation: "The do-while body runs ONCE (printing '5'), then x becomes 4. The condition 4 > 5 is false, so the loop exits. Even though x was never actually > 5 during the check, the body still ran once — that's the do-while guarantee."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What is wrong with this do-while syntax?\n\ndo {\n    // body\n} while (x > 0)",
+      options: [
+        "Nothing — it's correct",
+        "Missing semicolon after while (x > 0)",
+        "The condition should be in the do part",
+        "do-while doesn't use curly braces"
+      ],
+      correctAnswer: "Missing semicolon after while (x > 0)",
+      explanation: "do-while requires a semicolon after the closing parenthesis: } while (x > 0); — this is a common syntax mistake because regular while loops don't need one there. The compiler will give an error if it's missing."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 08 Complete!</strong></p>
+  <p>You've mastered while loops! Enjoy Spring Break, then get ready for <strong>For Loops</strong> in Week 09!</p>
+  <a href="/week-09/" class="vscode-button">Preview Week 09 →</a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 { margin-top: 0; color: #818cf8; }
+  .mission-brief ul { margin-bottom: 0; }
+  .mission-brief li { margin: 8px 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: #6366f1 !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #4f46e5 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

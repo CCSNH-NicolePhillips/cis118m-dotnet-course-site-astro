@@ -351,6 +351,53 @@ class Program
     }
 }
 `,
+        "week-08-lab": `// Name: Your Name Here
+// Assignment: Lab 8 - The Robust Data Entry System
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== DAILY REVENUE TRACKER ===");
+        Console.WriteLine();
+        
+        // TODO: Step 1 - Declare variables
+        // You need: total revenue (decimal), day count (int)
+        // Remember: Use decimal for money!
+        
+        
+        // TODO: Step 2 - Create a while(true) loop for data entry
+        // Inside the loop:
+        //   a) Prompt: "Enter revenue for day X (or 0 to finish): "
+        //      (where X is the current day number)
+        //   b) Read input and parse to decimal using decimal.Parse()
+        //
+        //   c) If the value is 0, use break to exit the loop
+        //
+        //   d) If the value is negative, print a warning:
+        //      "⚠️ Negative value skipped. Enter a valid amount."
+        //      Then use continue to skip to the next iteration
+        //
+        //   e) Add the value to the running total
+        //   f) Increment the day count
+        //   g) Print: "  ✅ Day X: $amount recorded. Running total: $total"
+        
+        
+        // TODO: Step 3 - After the loop, display the summary
+        // If no days were entered (count is 0):
+        //   Print: "No revenue data entered."
+        // Otherwise print:
+        //   "=== REVENUE SUMMARY ==="
+        //   "Total Revenue: $total"  (use :C format)
+        //   "Days Recorded: count"
+        //   "Average Daily Revenue: $average"  (use :C format)
+        //   "========================"
+        
+    }
+}
+`,
 
       };
 

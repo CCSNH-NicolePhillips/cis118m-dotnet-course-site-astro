@@ -1,0 +1,454 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 8.2 • The Input Validator"
+description: "Master the do-while loop — the only structure guaranteed to run at least once"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 8.2: The Input Validator
+
+<div class="section-header">
+  <div class="section-badge">🔄 The Retry Protocol</div>
+  <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>✦ Run First, Check After</h2>
+      <p>
+        The <code>while</code> loop checks its condition <strong>before</strong> the body runs — meaning the body might never execute. But some tasks <em>must</em> happen at least once. Think of a login prompt: you must <strong>show the prompt first</strong>, <em>then</em> check if the password is correct. You can't check the password before the user has even typed it. This is the <code>do-while</code> loop — the <strong>Retry Protocol</strong>.
+      </p>
+    </div>
+    <div class="header-image">
+      <div class="ascii-art-box">
+<pre>{`
+    ┌──────────────┐
+    │  loop body   │◄──┐
+    │  (runs first)│   │
+    └──────┬───────┘   │
+    ┌──────▼───────┐   │
+    │  condition?  │───┘
+    └──────┬───────┘ true
+      false│
+    ┌──────▼───────┐
+    │   continue   │
+    │   program    │
+    └──────────────┘
+`}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+---
+
+## 🧠 What Is a Do-While Loop?
+
+A **do-while loop** executes the body **first**, then checks the condition. This guarantees at least one execution:
+
+```csharp
+string password;
+
+do {
+    Console.Write("Enter password: ");
+    password = Console.ReadLine();
+    
+    if (password != "secret123") {
+        Console.WriteLine("❌ Incorrect. Try again.");
+    }
+} while (password != "secret123");
+
+Console.WriteLine("✅ Access granted!");
+```
+
+Notice the **semicolon after the closing parenthesis** — `while (condition);` — this is required and a common syntax mistake.
+
+<AnnotatedCode
+  title="🔬 Anatomy of a Do-While Loop"
+  tokens={[
+    { text: "do", type: "keyword", tooltip: "Start of the do-while — body runs BEFORE any condition check" },
+    { text: " {", type: "punctuation" },
+    { text: " " },
+    { text: "// body runs at least once", type: "comment", tooltip: "Unlike while, this code is guaranteed to execute" },
+    { text: " " },
+    { text: "} ", type: "punctuation" },
+    { text: "while", type: "keyword", tooltip: "Post-check — evaluated AFTER the body has already run" },
+    { text: " (", type: "punctuation" },
+    { text: "condition", type: "parameter", tooltip: "If true, loop back to 'do' and run body again. If false, exit." },
+    { text: ")", type: "punctuation" },
+    { text: ";", type: "punctuation", tooltip: "CRITICAL: do-while requires a semicolon after the closing parenthesis!" }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🔄 The Retry Protocol in Real Systems"
+  tabs={[
+    {
+      id: "atm",
+      label: "🏧 ATM PIN",
+      content: "An ATM must display the PIN prompt at least once — you can't check the PIN before the user enters it. If the PIN is wrong, retry. After 3 failed attempts, lock the card. The do-while guarantees the prompt always appears.",
+      keyPoints: ["Show prompt first, check PIN after", "Retry on failure (up to 3 attempts)", "Can't evaluate input that doesn't exist yet"]
+    },
+    {
+      id: "menu",
+      label: "📋 Menu System",
+      content: "A menu must be displayed at least once so the user can make a choice. After each choice is processed, ask again. The loop continues until the user selects 'Exit.' You must show the menu before you can check their choice.",
+      keyPoints: ["Display menu → process choice → repeat", "Must show menu at least once", "Loop until user selects 'Exit'"]
+    },
+    {
+      id: "validation",
+      label: "✅ Input Validation",
+      content: "When asking for a number between 1-10, you must ask first, then validate. If invalid, ask again. The do-while is perfect because you need the input before you can validate it — the chicken-and-egg problem solved.",
+      keyPoints: ["Ask → validate → retry if invalid", "Can't validate before input exists", "Guarantees the prompt appears"]
+    }
+  ]}
+/>
+
+---
+
+## 🔑 While vs. Do-While: When to Use Which
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>while</th>
+        <th>do-while</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Check location</strong></td>
+        <td>Before body (pre-check)</td>
+        <td>After body (post-check)</td>
+      </tr>
+      <tr>
+        <td><strong>Minimum executions</strong></td>
+        <td>Zero — body may never run</td>
+        <td>One — body always runs once</td>
+      </tr>
+      <tr>
+        <td><strong>Best for</strong></td>
+        <td>Conditions that might be false initially</td>
+        <td>Input prompts, menus, "retry until valid"</td>
+      </tr>
+      <tr>
+        <td><strong>Trailing semicolon</strong></td>
+        <td>No semicolon after <code>)</code></td>
+        <td>Semicolon required: <code>while (cond);</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pro-tip">
+  <h4>💡 The Simple Rule</h4>
+  <p>If you need to <strong>get user input</strong> before you can check it, use <code>do-while</code>. If the condition can be evaluated <strong>before the first iteration</strong>, use <code>while</code>.</p>
+</div>
+
+---
+
+## Try It: Password Retry System
+
+Implement a password validation loop — the user is prompted until the input matches:
+
+<TryItNowRunner 
+  starterId="week-08-lesson-1" 
+  height={520}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== SECURE ACCESS TERMINAL ===");
+        Console.WriteLine("  System requires authentication.\\n");
+        
+        // The correct password
+        const string CORRECT_PASSWORD = "alpha42";
+        
+        string input;
+        int attempts = 0;
+        const int MAX_ATTEMPTS = 3;
+
+        do {
+            attempts++;
+            Console.Write($"  Attempt {attempts}/{MAX_ATTEMPTS} — Enter password: ");
+            input = Console.ReadLine();
+            
+            if (input != CORRECT_PASSWORD) {
+                int remaining = MAX_ATTEMPTS - attempts;
+                if (remaining > 0) {
+                    Console.WriteLine($"  ❌ Incorrect. {remaining} attempt(s) remaining.\\n");
+                } else {
+                    Console.WriteLine("  ❌ Incorrect.");
+                }
+            }
+        } while (input != CORRECT_PASSWORD && attempts < MAX_ATTEMPTS);
+        
+        Console.WriteLine();
+        if (input == CORRECT_PASSWORD) {
+            Console.WriteLine("  ✅ ACCESS GRANTED");
+            Console.WriteLine($"  Authenticated on attempt {attempts}.");
+        } else {
+            Console.WriteLine("  🔒 ACCOUNT LOCKED");
+            Console.WriteLine($"  {MAX_ATTEMPTS} failed attempts. Contact admin.");
+        }
+        
+        Console.WriteLine("\\n==============================");
+    }
+}`}
+  instructions="Run the code. Since we can't type input in this runner, modify the CORRECT_PASSWORD constant or change the input variable to test different paths. To simulate success: change the first line inside the do block to input = 'alpha42'; — to simulate failure: set MAX_ATTEMPTS to 1." 
+/>
+
+<div class="experiment-box">
+
+#### Experiment: Explore Do-While Behavior
+
+1. **Change `CORRECT_PASSWORD` to `"test"`** and set `input = "test"` inside the do block — Does the loop run once even though the password is correct? (Yes! That's the do-while guarantee)
+2. **Set `MAX_ATTEMPTS = 1`** — What happens after one failed attempt?
+3. **Remove the `&& attempts < MAX_ATTEMPTS`** from the while condition — What changes? (Infinite retries, no lockout)
+4. **What if you used a regular `while` loop instead?** `input` wouldn't exist yet when the condition is first checked!
+
+</div>
+
+---
+
+## 🔁 Do-While for Menu Systems
+
+The do-while is the natural choice for interactive menus:
+
+```csharp
+int choice;
+
+do {
+    Console.WriteLine("\n=== MAIN MENU ===");
+    Console.WriteLine("1. Start Game");
+    Console.WriteLine("2. Load Save");
+    Console.WriteLine("3. Settings");
+    Console.WriteLine("0. Exit");
+    Console.Write("Choice: ");
+    
+    choice = int.Parse(Console.ReadLine());
+    
+    switch (choice) {
+        case 1: Console.WriteLine("Starting new game..."); break;
+        case 2: Console.WriteLine("Loading save file..."); break;
+        case 3: Console.WriteLine("Opening settings..."); break;
+        case 0: Console.WriteLine("Goodbye!"); break;
+        default: Console.WriteLine("Invalid choice!"); break;
+    }
+} while (choice != 0);
+```
+
+The menu **must appear at least once** — you can't ask the user to choose before showing them the options!
+
+---
+
+## ⚠️ Common Do-While Mistakes
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Mistake</th>
+        <th>Problem</th>
+        <th>Fix</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Missing semicolon</strong></td>
+        <td><code>} while (cond)</code> → compile error</td>
+        <td>Always end with <code>while (cond);</code></td>
+      </tr>
+      <tr>
+        <td><strong>Using while instead</strong></td>
+        <td>Variable not initialized before first check</td>
+        <td>Use do-while when you need input first</td>
+      </tr>
+      <tr>
+        <td><strong>No exit path</strong></td>
+        <td>Condition never becomes false → infinite loop</td>
+        <td>Ensure user can always reach the exit condition</td>
+      </tr>
+      <tr>
+        <td><strong>Checking in wrong place</strong></td>
+        <td>Duplicate validation inside body AND in condition</td>
+        <td>Put the primary check in the <code>while</code> condition</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### 🎯 Predict the Output
+
+What does this code print?
+
+```csharp
+int x = 10;
+
+do {
+    Console.WriteLine($"x = {x}");
+    x += 5;
+} while (x < 10);
+
+Console.WriteLine($"Final: {x}");
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output:**
+```
+x = 10
+Final: 15
+```
+
+The body runs **once** (printing `x = 10`), then `x` becomes 15. The condition `15 < 10` is false, so the loop exits. Even though `x` was already 10 (not less than 10) when the loop started, the body still ran because `do-while` checks **after** the body!
+
+🔑 **Key takeaway**: With a `while` loop, this body would never run (10 is not < 10). The `do-while` guarantees one execution regardless of the initial condition.
+</div>
+</details>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-08-8-2-checkpoint"
+  title="🔍 Section 8.2 Knowledge Check"
+  questions={[
+    {
+      id: "cp1",
+      type: "multiple-choice",
+      question: "What makes do-while different from while?",
+      options: ["do-while is faster", "do-while checks the condition AFTER the body, guaranteeing at least one execution", "do-while doesn't need a condition", "do-while only works with numbers"],
+      correctAnswer: "do-while checks the condition AFTER the body, guaranteeing at least one execution",
+      explanation: "The key difference is WHERE the condition is checked. 'while' checks before (pre-check, might skip entirely). 'do-while' checks after (post-check, always runs at least once). This makes do-while perfect for input validation."
+    },
+    {
+      id: "cp2",
+      type: "multiple-choice",
+      question: "Why is do-while the best choice for input validation?",
+      options: ["It runs faster than while", "You need to get the user's input BEFORE you can validate it", "It automatically validates input", "It prevents crashes"],
+      correctAnswer: "You need to get the user's input BEFORE you can validate it",
+      explanation: "Input validation has a chicken-and-egg problem: you can't check the input before you've asked for it. do-while solves this by running the prompt (body) first, then checking the answer (condition). With while, the variable wouldn't exist yet!"
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Next: learn the manual override controls — <code>break</code> and <code>continue</code>!</p>
+  <a href="/week-08/8-3-break-continue/" class="vscode-button">Continue to 8.3: Sentinel Control →</a>
+</div>
+
+<style>{`
+  .concept-highlight {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    border: 2px solid #8b5cf6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .concept-highlight h3 { color: #c4b5fd; margin-top: 0; }
+  .metaphor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+  .metaphor-item { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .metaphor-icon { font-size: 2rem; flex-shrink: 0; }
+  .metaphor-text strong { color: #e2e8f0; display: block; margin-bottom: 0.25rem; }
+  .metaphor-text p { color: #94a3b8; margin: 0; font-size: 0.9rem; }
+  
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  .ascii-art-box {
+    background: #1a1a2e;
+    border: 1px solid #4ec9b0;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    color: #4ec9b0;
+    font-size: 0.85rem;
+    line-height: 1.3;
+  }
+
+  body[data-theme="light"] .concept-highlight { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%) !important; border-color: #8b5cf6 !important; }
+  body[data-theme="light"] .concept-highlight h3 { color: #5b21b6 !important; }
+  body[data-theme="light"] .metaphor-text strong { color: #1e293b !important; }
+  body[data-theme="light"] .metaphor-text p { color: #475569 !important; }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+  body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }
+`}</style>
