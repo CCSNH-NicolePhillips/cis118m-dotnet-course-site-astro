@@ -179,7 +179,7 @@ const getWeekLockInfo = (weekSlug: string) => {
         </aside>
 
         <div class="main-wrapper">
-          <header class="top-header">
+          <header class="top-header" aria-label="Site header">
             <div class="header-spacer"></div>
             <button id="theme-toggle-btn" class="theme-toggle-btn" type="button" title="Toggle theme" aria-label="Toggle theme">
               <span id="theme-icon" aria-hidden="true">🌙</span>
@@ -207,7 +207,7 @@ const getWeekLockInfo = (weekSlug: string) => {
             </div>
           </header>
           
-          <main class="card main" id="main-content">
+          <main class="card main" id="main-content" tabindex="-1">
             <div id="content-loading" style="display:block; text-align:center; padding:60px 20px; color: var(--text-muted);">
               <p>Loading...</p>
             </div>
@@ -222,7 +222,7 @@ const getWeekLockInfo = (weekSlug: string) => {
             <div id="module-lock" style="display:none;" data-server-locked={isLocked ? "true" : "false"} data-unlock-time={unlockTime} data-unlock-date={weekData?.unlockDate || ''}>
               <div class="mission-locked">
                 <div class="lock-icon">🔒</div>
-                <h1>Module Scheduled</h1>
+                <h2>Module Scheduled</h2>
                 <p class="lock-message">Technical access for this module begins on the scheduled date.</p>
                 <div class="unlock-time">
                   <span class="unlock-label">Scheduled Opening:</span>
@@ -235,6 +235,9 @@ const getWeekLockInfo = (weekSlug: string) => {
               <slot />
             </div>
           </main>
+          <footer class="site-footer" role="contentinfo">
+            <p>&copy; {new Date().getFullYear()} {COURSE.code} &mdash; {COURSE.title}</p>
+          </footer>
         </div>
       </div>
     </div>
