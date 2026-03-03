@@ -6,22 +6,22 @@ body {
   --text: #2d2a26;
   --muted: #5a5550;
   --link: #7a4d22;
-  --accent: #a0714f;
+  --accent: #8a5d3a;
   --border: #d4cfc6;
   --shadow: 0 4px 16px rgba(0,0,0,.12);
   --radius: 16px;
   --navitem-bg: #f0ebe3;
   --navitem-hover: #e8e2d8;
-  --navitem-border: rgba(160, 113, 79, 0.4);
-  --badge-bg: rgba(160, 113, 79, 0.1);
-  --badge-border: rgba(160, 113, 79, 0.3);
+  --navitem-border: rgba(138, 93, 58, 0.4);
+  --badge-bg: rgba(138, 93, 58, 0.1);
+  --badge-border: rgba(138, 93, 58, 0.3);
   --badge-text: #6b4423;
   --scrollbar-track: #e8e2d8;
   --scrollbar-thumb: #b8b0a4;
   --scrollbar-thumb-hover: #9a9286;
   --input-bg: #fff;
   --input-text: #2d2a26;
-  --input-border: #d4cfc6;
+  --input-border: #8e8e8e;
   --text-muted: #5a5550;
 }
 
@@ -47,7 +47,7 @@ body[data-theme="dark"] {
   --scrollbar-thumb-hover: #64748b;
   --input-bg: #2d2d2d;
   --input-text: #e5e7eb;
-  --input-border: #444;
+  --input-border: #777;
   --text-muted: #999;
 }
 
@@ -145,6 +145,22 @@ body[data-theme="dark"] {
 
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* Content links must be distinguishable by more than color alone */
+.main a:not(.btn):not(.vscode-button):not([class*="nav"]):not([class*="tab"]):not([class*="dropdown"]) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.main a:not(.btn):not(.vscode-button):not([class*="nav"]):not([class*="tab"]):not([class*="dropdown"]):hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Global form element borders — uses --input-border for non-text contrast */
+input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  border: 1px solid var(--input-border);
+}
 
 .container {
   max-width: 1920px;

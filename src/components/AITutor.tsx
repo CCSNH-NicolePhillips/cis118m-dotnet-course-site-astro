@@ -757,7 +757,7 @@ const AITutor: React.FC = () => {
             }}
           >
             {messages.length === 0 && (
-              <div style={{ color: '#666', textAlign: 'center', marginTop: '40px', fontSize: '14px' }}>
+              <div style={{ color: '#999', textAlign: 'center', marginTop: '40px', fontSize: '14px' }}>
                 <p style={{ marginBottom: '8px' }}>Need technical guidance?</p>
                 <p style={{ fontSize: '12px', opacity: 0.8 }}>
                   I won't give you the answer directly, but I'll help you understand the concept.
@@ -901,7 +901,7 @@ const AITutor: React.FC = () => {
                   background: input.trim() 
                     ? 'linear-gradient(135deg, #fbbf24, #d4a017)'
                     : 'rgba(251, 191, 36, 0.2)',
-                  color: input.trim() ? '#000' : '#666',
+                  color: input.trim() ? '#000' : '#999',
                   fontWeight: 'bold',
                   cursor: input.trim() ? 'pointer' : 'not-allowed',
                   transition: 'all 0.2s',
