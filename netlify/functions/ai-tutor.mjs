@@ -732,6 +732,10 @@ export async function handler(event, context) {
     throw lastError;
   }
 
+  // Detect if student is on a lab/graded page (double-check server-side)
+  const isGradedPage = pageId && (pageId.includes('-lab') || pageId.includes('boss-fight'));
+  const effectivePairMode = pairMode && !isGradedPage;
+
   // Initialize both AI providers
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const geminiModel = genAI.getGenerativeModel({ 
@@ -886,10 +890,6 @@ export async function handler(event, context) {
   const gradeSummaryTruncated = studentGradesData.summary 
     ? studentGradesData.summary.slice(0, 6000) 
     : '';
-
-  // Detect if student is on a lab/graded page (double-check server-side)
-  const isGradedPage = pageId && (pageId.includes('-lab') || pageId.includes('boss-fight'));
-  const effectivePairMode = pairMode && !isGradedPage;
 
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
 ${effectivePairMode ? '\n⚡ PAIR PROGRAMMING MODE IS ACTIVE — you are their coding partner. Show examples, write code, collaborate freely. But NEVER write their lab/homework/quiz solutions.\n' : ''}

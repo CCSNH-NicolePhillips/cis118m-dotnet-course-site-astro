@@ -3,6 +3,7 @@ import { getTutorContext } from '../config/lesson-contexts';
 
 /** Render a simple subset of Markdown to HTML for chat messages */
 function renderMarkdown(text: string): string {
+  if (!text) return '';
   let html = text
     // Escape HTML
     .replace(/&/g, '&amp;')
@@ -246,12 +247,17 @@ const AITutor: React.FC = () => {
         }),
       });
 
+      if (!response.ok) {
+        setMessages(prev => [...prev, { role: 'assistant', content: `⚠️ Server error (${response.status}). Please try again in a moment.` }]);
+        return;
+      }
+
       const data = await response.json();
       
       if (data.error) {
         setMessages(prev => [...prev, { role: 'assistant', content: `⚠️ ${data.error}` }]);
       } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: data.reply || 'No response received. Please try again.' }]);
       }
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection failed. Please check your network and try again.' }]);
