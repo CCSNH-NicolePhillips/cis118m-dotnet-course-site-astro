@@ -441,6 +441,16 @@
     if (settingsSaveBtn) {
       settingsSaveBtn.addEventListener('click', saveSettings);
     }
+
+    // Escape key closes settings modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal && settingsModal.style.display !== 'none') {
+          closeSettings();
+        }
+      }
+    });
   }
 
   function saveDisplayName(name) {
@@ -713,6 +723,7 @@
       modal.style.display = 'flex';
       if (nameInput) {
         nameInput.value = localStorage.getItem(STORAGE_KEYS.displayName) || '';
+        nameInput.focus();
       }
     }
   }

@@ -67,6 +67,8 @@ const AITutor: React.FC = () => {
   const [runOutput, setRunOutput] = useState<{stdout: string, stderr: string, diagnostics: any[], success: boolean} | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pairEditorRef = useRef<HTMLTextAreaElement>(null);
+  const floatingBtnRef = useRef<HTMLButtonElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Example prompts organized by category
   const examplePrompts = [
@@ -192,6 +194,30 @@ const AITutor: React.FC = () => {
     const interval = setInterval(scanEditors, 5000);
     return () => { clearTimeout(timer); clearInterval(interval); };
   }, [isOpen, pageId]);
+
+  // Focus message input when panel opens; restore focus to opener on close
+  useEffect(() => {
+    if (isOpen) {
+      // Small delay to let the panel render
+      const t = setTimeout(() => inputRef.current?.focus(), 50);
+      return () => clearTimeout(t);
+    } else {
+      floatingBtnRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  // Global Escape key closes the panel
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -369,8 +395,11 @@ const AITutor: React.FC = () => {
     <>
       {/* Floating Button */}
       <button
+        ref={floatingBtnRef}
         className="ai-tutor-button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-controls="ai-tutor-panel"
         style={{
           position: 'fixed',
           bottom: '20px',
@@ -406,6 +435,9 @@ const AITutor: React.FC = () => {
       {/* Chat Panel */}
       {isOpen && (
         <div
+          id="ai-tutor-panel"
+          role="region"
+          aria-label="Pair programming tutor"
           style={{
             position: 'fixed',
             bottom: isExpanded ? '90px' : '90px',
@@ -827,6 +859,7 @@ const AITutor: React.FC = () => {
           >
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
