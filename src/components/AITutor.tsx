@@ -63,6 +63,8 @@ const AITutor: React.FC = () => {
   const [pairMode, setPairMode] = useState(true);
   const [pairCode, setPairCode] = useState('// Write or paste your code here\n// Then ask the tutor for help!\n');
   const [availableEditors, setAvailableEditors] = useState<{id: string, label: string}[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [runOutput, setRunOutput] = useState<{stdout: string, stderr: string, diagnostics: any[], success: boolean} | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pairEditorRef = useRef<HTMLTextAreaElement>(null);
 
@@ -329,6 +331,40 @@ const AITutor: React.FC = () => {
     }
   };
 
+  // Run code in the pair editor via the compile-and-run API
+  const runPairCode = async () => {
+    if (isRunning || !pairCode.trim()) return;
+    setIsRunning(true);
+    setRunOutput(null);
+    try {
+      const response = await fetch('/api/compile-and-run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: pairCode,
+          starterId: 'ai-tutor-pair',
+          stdin: '',
+        }),
+      });
+      const result = await response.json();
+      setRunOutput({
+        stdout: result.stdout || '',
+        stderr: result.stderr || '',
+        diagnostics: result.diagnostics || [],
+        success: result.success ?? false,
+      });
+    } catch (err) {
+      setRunOutput({
+        stdout: '',
+        stderr: 'Failed to connect to the code runner. Please try again.',
+        diagnostics: [],
+        success: false,
+      });
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   return (
     <>
       {/* Floating Button */}
@@ -518,6 +554,27 @@ const AITutor: React.FC = () => {
                   </select>
                 )}
                 <button
+                  onClick={runPairCode}
+                  disabled={isRunning || !pairCode.trim()}
+                  title="Run code (Ctrl+Enter)"
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(34, 197, 94, 0.6)',
+                    background: isRunning ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.2)',
+                    color: '#22c55e',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    cursor: isRunning ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: isRunning ? 0.6 : 1,
+                  }}
+                  onMouseEnter={(e) => { if (!isRunning) e.currentTarget.style.background = 'rgba(34, 197, 94, 0.35)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = isRunning ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.2)'; }}
+                >
+                  {isRunning ? '⏳ Running...' : '▶ Run'}
+                </button>
+                <button
                   onClick={() => {
                     if (!pairCode.trim() || pairCode.trim() === '// Write or paste your code here\n// Then ask the tutor for help!') {
                       return;
@@ -577,8 +634,64 @@ const AITutor: React.FC = () => {
                       target.selectionStart = target.selectionEnd = start + 4;
                     }, 0);
                   }
+                  // Ctrl+Enter to run code
+                  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    runPairCode();
+                  }
                 }}
               />
+              {/* Output Panel */}
+              {runOutput && (
+                <div style={{
+                  borderTop: '1px solid rgba(251, 191, 36, 0.2)',
+                  maxHeight: '150px',
+                  overflowY: 'auto',
+                }}>
+                  <div style={{
+                    padding: '6px 12px',
+                    background: runOutput.success ? 'rgba(34, 197, 94, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      color: runOutput.success ? '#22c55e' : '#ef4444',
+                    }}>
+                      {runOutput.success ? '✓ OUTPUT' : '✗ ERROR'}
+                    </span>
+                    <button
+                      onClick={() => setRunOutput(null)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#888',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        padding: '0 4px',
+                      }}
+                    >✕</button>
+                  </div>
+                  <pre style={{
+                    padding: '8px 12px',
+                    margin: 0,
+                    fontFamily: "'Cascadia Code', 'Fira Code', 'Consolas', monospace",
+                    fontSize: '12px',
+                    lineHeight: '1.5',
+                    color: runOutput.success ? '#d4d4d4' : '#ef4444',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}>
+                    {runOutput.success
+                      ? (runOutput.stdout || '(no output)')
+                      : (runOutput.stderr || runOutput.diagnostics?.map(
+                          (d: any) => `Line ${d.line}: ${d.message}`
+                        ).join('\n') || 'Unknown error')}
+                  </pre>
+                </div>
+              )}
             </div>
           )}
 
