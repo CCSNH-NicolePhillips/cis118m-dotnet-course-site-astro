@@ -652,7 +652,7 @@ export async function handler(event, context) {
     };
   }
 
-  const { message, pageId, lessonContext, studentName, studentCode, homeworkText, pageContent } = body;
+  const { message, pageId, lessonContext, studentName, studentCode, homeworkText, pageContent, pairMode } = body;
 
   if (!message) {
     return {
@@ -737,7 +737,7 @@ export async function handler(event, context) {
   const geminiModel = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: 1200,
+      maxOutputTokens: effectivePairMode ? 2400 : 1200,
     }
   });
   
@@ -887,9 +887,13 @@ export async function handler(event, context) {
     ? studentGradesData.summary.slice(0, 6000) 
     : '';
 
-  const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
+  // Detect if student is on a lab/graded page (double-check server-side)
+  const isGradedPage = pageId && (pageId.includes('-lab') || pageId.includes('boss-fight'));
+  const effectivePairMode = pairMode && !isGradedPage;
 
-${getTutorPromptRules()}
+  const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
+${effectivePairMode ? '\n⚡ PAIR PROGRAMMING MODE IS ACTIVE — you are their coding partner. Show examples, write code, collaborate freely. But NEVER write their lab/homework/quiz solutions.\n' : ''}
+${getTutorPromptRules(effectivePairMode)}
 
 ${SYLLABUS_CONTEXT}
 ${weekInfo}

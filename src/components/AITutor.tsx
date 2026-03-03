@@ -59,6 +59,7 @@ const AITutor: React.FC = () => {
   const [pageId, setPageId] = useState('');
   const [studentName, setStudentName] = useState<string | null>(null);
   const [showExamples, setShowExamples] = useState(true);
+  const [pairMode, setPairMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Example prompts organized by category
@@ -72,6 +73,9 @@ const AITutor: React.FC = () => {
     { emoji: '🔧', text: "Help me debug my code", category: 'code' },
     { emoji: '🏆', text: "What am I good at?", category: 'strengths' },
   ];
+
+  // Pair programming is disabled on lab pages (academic integrity)
+  const isLabPage = pageId.includes('-lab') || pageId.includes('boss-fight');
 
   // Handle clicking an example prompt
   const handleExampleClick = (promptText: string) => {
@@ -238,6 +242,7 @@ const AITutor: React.FC = () => {
           studentCode: studentCode || null,
           homeworkText: homeworkText || null,
           pageContent: pageContent || null,
+          pairMode: pairMode && !isLabPage,
         }),
       });
 
@@ -343,13 +348,47 @@ const AITutor: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '20px' }}>👨‍💻</span>
               <div style={{ flex: 1 }}>
-                <div style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
-                  TECHNICAL SUPPORT
+                <div style={{ color: pairMode && !isLabPage ? '#fbbf24' : '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
+                  {pairMode && !isLabPage ? '👥 PAIR PROGRAMMING' : 'TECHNICAL SUPPORT'}
                 </div>
                 <div style={{ color: '#888', fontSize: '11px' }}>
-                  Lead Architect Online • {pageId || 'Ready'}
+                  {pairMode && !isLabPage ? 'Collaborative Mode • Examples Enabled' : `Lead Architect Online • ${pageId || 'Ready'}`}
                 </div>
               </div>
+              {/* Pair Programming Toggle */}
+              <button
+                onClick={() => {
+                  if (isLabPage) return;
+                  const newMode = !pairMode;
+                  setPairMode(newMode);
+                  const modeLabel = newMode ? 'Pair Programming' : 'Guided';
+                  setMessages(prev => [...prev, { 
+                    role: 'assistant', 
+                    content: newMode 
+                      ? `**👥 Pair Programming mode activated!** I can now write example code, show solutions to practice problems, and work through concepts with you step-by-step. Ask me to build something or show you how a concept works!\n\n*Note: I still can't write your lab or homework solutions for you — those are yours to create!*`
+                      : `**💡 Guided mode restored.** I'll use the Socratic method — guiding you with hints and questions so you discover the answers yourself.`
+                  }]);
+                }}
+                title={isLabPage ? 'Pair programming unavailable on lab pages' : (pairMode ? 'Switch to Guided Mode' : 'Switch to Pair Programming')}
+                style={{
+                  background: pairMode && !isLabPage 
+                    ? 'rgba(251, 191, 36, 0.2)' 
+                    : 'none',
+                  border: `1px solid ${isLabPage ? 'rgba(255,255,255,0.1)' : pairMode ? 'rgba(251, 191, 36, 0.5)' : 'rgba(78, 201, 176, 0.3)'}`,
+                  borderRadius: '6px',
+                  color: isLabPage ? '#555' : pairMode ? '#fbbf24' : '#4ec9b0',
+                  cursor: isLabPage ? 'not-allowed' : 'pointer',
+                  padding: '4px 8px',
+                  fontSize: '14px',
+                  lineHeight: 1,
+                  transition: 'all 0.2s',
+                  opacity: isLabPage ? 0.4 : 1,
+                }}
+                onMouseEnter={(e) => { if (!isLabPage) e.currentTarget.style.background = pairMode ? 'rgba(251, 191, 36, 0.3)' : 'rgba(78, 201, 176, 0.15)'; }}
+                onMouseLeave={(e) => { if (!isLabPage) e.currentTarget.style.background = pairMode && !isLabPage ? 'rgba(251, 191, 36, 0.2)' : 'none'; }}
+              >
+                👥
+              </button>
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? 'Collapse' : 'Expand'}
