@@ -60,8 +60,9 @@ const AITutor: React.FC = () => {
   const [pageId, setPageId] = useState('');
   const [studentName, setStudentName] = useState<string | null>(null);
   const [showExamples, setShowExamples] = useState(true);
-  const [pairMode, setPairMode] = useState(false);
+  const [pairMode, setPairMode] = useState(true);
   const [pairCode, setPairCode] = useState('// Write or paste your code here\n// Then ask the tutor for help!\n');
+  const [availableEditors, setAvailableEditors] = useState<{id: string, label: string}[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pairEditorRef = useRef<HTMLTextAreaElement>(null);
 
@@ -77,7 +78,7 @@ const AITutor: React.FC = () => {
     { emoji: '🏆', text: "What am I good at?", category: 'strengths' },
   ];
 
-  // Pair programming is disabled on lab pages (academic integrity)
+  // Detect if on a lab/graded page (used for context in rules, not blocking)
   const isLabPage = pageId.includes('-lab') || pageId.includes('boss-fight');
 
   // Handle clicking an example prompt
@@ -148,6 +149,44 @@ const AITutor: React.FC = () => {
     // Wait a bit for auth to be ready
     setTimeout(getStudentName, 500);
   }, []);
+
+  // Scan for available Try It Now editors when panel opens or page changes
+  useEffect(() => {
+    if (!isOpen) return;
+    const scanEditors = () => {
+      const found: {id: string, label: string}[] = [];
+      // Page-level TryItNowRunner editors
+      const pageEditors = (window as any).monacoEditorInstances;
+      if (pageEditors) {
+        const keys = Object.keys(pageEditors);
+        keys.forEach((key, i) => {
+          // Make a friendly label from the starterId
+          const label = keys.length === 1 
+            ? 'Try It Now' 
+            : `Try It Now ${i + 1}`;
+          found.push({ id: key, label });
+        });
+      }
+      // Iframe-based lab editor
+      try {
+        const iframe = document.querySelector('iframe[src*="embedded"]') as HTMLIFrameElement;
+        if (iframe?.contentWindow) {
+          const iframeEditors = (iframe.contentWindow as any).monacoEditorInstances;
+          if (iframeEditors) {
+            Object.keys(iframeEditors).forEach((key) => {
+              found.push({ id: key, label: 'Lab Editor' });
+            });
+          }
+        }
+      } catch (err) {}
+      setAvailableEditors(found);
+    };
+    // Delay to let editors initialize
+    const timer = setTimeout(scanEditors, 1500);
+    // Re-scan periodically in case editors load late
+    const interval = setInterval(scanEditors, 5000);
+    return () => { clearTimeout(timer); clearInterval(interval); };
+  }, [isOpen, pageId]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -242,10 +281,11 @@ const AITutor: React.FC = () => {
           pageId,
           lessonContext: getTutorContext(pageId),
           studentName,
-          studentCode: studentCode || (pairMode && !isLabPage ? pairCode : null) || null,
+          studentCode: studentCode || pairCode || null,
           homeworkText: homeworkText || null,
           pageContent: pageContent || null,
-          pairMode: pairMode && !isLabPage,
+          pairMode: true,
+          isLabPage,
         }),
       });
 
@@ -299,9 +339,9 @@ const AITutor: React.FC = () => {
           width: '60px',
           height: '60px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #4ec9b0, #2d8a7a)',
+          background: 'linear-gradient(135deg, #fbbf24, #d4a017)',
           border: 'none',
-          boxShadow: '0 4px 20px rgba(78, 201, 176, 0.4)',
+          boxShadow: '0 4px 20px rgba(251, 191, 36, 0.4)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
@@ -312,15 +352,15 @@ const AITutor: React.FC = () => {
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'scale(1.1)';
-          e.currentTarget.style.boxShadow = '0 6px 25px rgba(78, 201, 176, 0.6)';
+          e.currentTarget.style.boxShadow = '0 6px 25px rgba(251, 191, 36, 0.6)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow = '0 4px 20px rgba(78, 201, 176, 0.4)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(251, 191, 36, 0.4)';
         }}
-        title="Technical Support"
+        title="Pair Programming Tutor"
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? '✕' : '👥'}
       </button>
 
       {/* Chat Panel */}
@@ -331,15 +371,13 @@ const AITutor: React.FC = () => {
             bottom: isExpanded ? '90px' : '90px',
             right: '20px',
             width: isExpanded ? 'calc(100vw - 40px)' : '380px',
-            maxWidth: isExpanded ? (pairMode && !isLabPage ? '1200px' : '900px') : 'calc(100vw - 40px)',
+            maxWidth: isExpanded ? '1200px' : 'calc(100vw - 40px)',
             height: isExpanded ? 'calc(100vh - 110px)' : '500px',
             maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
             background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
-            border: `1px solid ${pairMode && !isLabPage ? '#fbbf24' : '#4ec9b0'}`,
+            border: '1px solid #fbbf24',
             borderRadius: '16px',
-            boxShadow: pairMode && !isLabPage
-              ? '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2)'
-              : '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(78, 201, 176, 0.2)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -351,69 +389,35 @@ const AITutor: React.FC = () => {
           <div
             style={{
               padding: '16px',
-              background: 'rgba(78, 201, 176, 0.1)',
-              borderBottom: '1px solid rgba(78, 201, 176, 0.3)',
+              background: 'rgba(251, 191, 36, 0.08)',
+              borderBottom: '1px solid rgba(251, 191, 36, 0.3)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ fontSize: '20px' }}>👨‍💻</span>
               <div style={{ flex: 1 }}>
-                <div style={{ color: pairMode && !isLabPage ? '#fbbf24' : '#4ec9b0', fontWeight: 'bold', fontSize: '14px' }}>
-                  {pairMode && !isLabPage ? '👥 PAIR PROGRAMMING' : 'TECHNICAL SUPPORT'}
+                <div style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '14px' }}>
+                  👥 PAIR PROGRAMMING
                 </div>
                 <div style={{ color: '#888', fontSize: '11px' }}>
-                  {pairMode && !isLabPage ? 'Collaborative Mode • Examples Enabled' : `Lead Architect Online • ${pageId || 'Ready'}`}
+                  {isLabPage ? 'Lab Mode • Hints & Guidance' : 'Collaborative Mode • Examples Enabled'}
                 </div>
               </div>
-              {/* Pair Programming Toggle */}
-              <button
-                onClick={() => {
-                  if (isLabPage) return;
-                  const newMode = !pairMode;
-                  setPairMode(newMode);
-                  if (newMode) setIsExpanded(true);
-                  setMessages(prev => [...prev, { 
-                    role: 'assistant', 
-                    content: newMode 
-                      ? `**👥 Pair Programming mode activated!** I can now write example code, show solutions to practice problems, and work through concepts with you step-by-step. Use the code editor on the left to write or paste code — I can see it when you ask questions!\n\n*Note: I still can't write your lab or homework solutions for you — those are yours to create!*`
-                      : `**💡 Guided mode restored.** I'll use the Socratic method — guiding you with hints and questions so you discover the answers yourself.`
-                  }]);
-                }}
-                title={isLabPage ? 'Pair programming unavailable on lab pages' : (pairMode ? 'Switch to Guided Mode' : 'Switch to Pair Programming')}
-                style={{
-                  background: pairMode && !isLabPage 
-                    ? 'rgba(251, 191, 36, 0.2)' 
-                    : 'none',
-                  border: `1px solid ${isLabPage ? 'rgba(255,255,255,0.1)' : pairMode ? 'rgba(251, 191, 36, 0.5)' : 'rgba(78, 201, 176, 0.3)'}`,
-                  borderRadius: '6px',
-                  color: isLabPage ? '#555' : pairMode ? '#fbbf24' : '#4ec9b0',
-                  cursor: isLabPage ? 'not-allowed' : 'pointer',
-                  padding: '4px 8px',
-                  fontSize: '14px',
-                  lineHeight: 1,
-                  transition: 'all 0.2s',
-                  opacity: isLabPage ? 0.4 : 1,
-                }}
-                onMouseEnter={(e) => { if (!isLabPage) e.currentTarget.style.background = pairMode ? 'rgba(251, 191, 36, 0.3)' : 'rgba(78, 201, 176, 0.15)'; }}
-                onMouseLeave={(e) => { if (!isLabPage) e.currentTarget.style.background = pairMode && !isLabPage ? 'rgba(251, 191, 36, 0.2)' : 'none'; }}
-              >
-                👥
-              </button>
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? 'Collapse' : 'Expand'}
                 style={{
                   background: 'none',
-                  border: '1px solid rgba(78, 201, 176, 0.3)',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
                   borderRadius: '6px',
-                  color: '#4ec9b0',
+                  color: '#fbbf24',
                   cursor: 'pointer',
                   padding: '4px 8px',
                   fontSize: '16px',
                   lineHeight: 1,
                   transition: 'background 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(78, 201, 176, 0.15)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251, 191, 36, 0.15)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 {isExpanded ? '⊖' : '⊕'}
@@ -423,16 +427,16 @@ const AITutor: React.FC = () => {
                 title="Close"
                 style={{
                   background: 'none',
-                  border: '1px solid rgba(78, 201, 176, 0.3)',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
                   borderRadius: '6px',
-                  color: '#4ec9b0',
+                  color: '#fbbf24',
                   cursor: 'pointer',
                   padding: '4px 8px',
                   fontSize: '16px',
                   lineHeight: 1,
                   transition: 'background 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(78, 201, 176, 0.15)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251, 191, 36, 0.15)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
               >
                 ✕
@@ -443,8 +447,8 @@ const AITutor: React.FC = () => {
           {/* Body: side-by-side in pair mode, chat-only otherwise */}
           <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-          {/* Code Editor Panel (pair mode only) */}
-          {pairMode && !isLabPage && isExpanded && (
+          {/* Code Editor Panel (shown when expanded) */}
+          {isExpanded && (
             <div style={{
               width: '45%',
               minWidth: '280px',
@@ -459,9 +463,57 @@ const AITutor: React.FC = () => {
                 borderBottom: '1px solid rgba(251, 191, 36, 0.2)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                gap: '8px',
               }}>
                 <span style={{ color: '#fbbf24', fontSize: '12px', fontWeight: 'bold' }}>📝 CODE EDITOR</span>
+                <div style={{ flex: 1 }} />
+                {/* Load from Try It Now editors on the page */}
+                {availableEditors.length > 0 && (
+                  <select
+                    onChange={(e) => {
+                      const editorId = e.target.value;
+                      if (!editorId) return;
+                      try {
+                        // Try page-level editors first (TryItNowRunner)
+                        const editors = (window as any).monacoEditorInstances;
+                        if (editors?.[editorId]) {
+                          setPairCode(editors[editorId].getValue() || '');
+                          e.target.value = '';
+                          return;
+                        }
+                        // Try iframe editors (embedded lab editor)
+                        const iframe = document.querySelector('iframe[src*="embedded"]') as HTMLIFrameElement;
+                        if (iframe?.contentWindow) {
+                          const iframeEditors = (iframe.contentWindow as any).monacoEditorInstances;
+                          if (iframeEditors?.[editorId]) {
+                            setPairCode(iframeEditors[editorId].getValue() || '');
+                          }
+                        }
+                      } catch (err) {
+                        console.log('[AITutor] Could not load editor code:', err);
+                      }
+                      e.target.value = '';
+                    }}
+                    style={{
+                      padding: '3px 6px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(251, 191, 36, 0.4)',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      color: '#fbbf24',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      outline: 'none',
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="" disabled>Load from page...</option>
+                    {availableEditors.map((ed) => (
+                      <option key={ed.id} value={ed.id} style={{ background: '#1a1a2e', color: '#e0e0e0' }}>
+                        {ed.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 <button
                   onClick={() => {
                     if (!pairCode.trim() || pairCode.trim() === '// Write or paste your code here\n// Then ask the tutor for help!') {
@@ -556,13 +608,13 @@ const AITutor: React.FC = () => {
                   padding: '10px 14px',
                   borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
                   background: msg.role === 'user' 
-                    ? 'linear-gradient(135deg, #4ec9b0, #3da890)'
+                    ? 'linear-gradient(135deg, #fbbf24, #d4a017)'
                     : 'rgba(255, 255, 255, 0.08)',
                   color: msg.role === 'user' ? '#000' : '#e0e0e0',
                   fontSize: '14px',
                   lineHeight: '1.5',
                   boxShadow: msg.role === 'user' 
-                    ? '0 2px 8px rgba(78, 201, 176, 0.3)'
+                    ? '0 2px 8px rgba(251, 191, 36, 0.3)'
                     : '0 2px 8px rgba(0, 0, 0, 0.2)',
                 }}
               >
@@ -577,7 +629,7 @@ const AITutor: React.FC = () => {
                   padding: '10px 14px',
                   borderRadius: '16px 16px 16px 4px',
                   background: 'rgba(255, 255, 255, 0.08)',
-                  color: '#4ec9b0',
+                  color: '#fbbf24',
                   fontSize: '14px',
                 }}
               >
@@ -622,7 +674,7 @@ const AITutor: React.FC = () => {
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = 'rgba(78, 201, 176, 0.25)';
-                        e.currentTarget.style.borderColor = '#4ec9b0';
+                        e.currentTarget.style.borderColor = '#fbbf24';
                         e.currentTarget.style.transform = 'scale(1.02)';
                       }}
                       onMouseLeave={(e) => {
@@ -648,7 +700,7 @@ const AITutor: React.FC = () => {
           <div
             style={{
               padding: '12px 16px',
-              borderTop: '1px solid rgba(78, 201, 176, 0.2)',
+              borderTop: '1px solid rgba(251, 191, 36, 0.2)',
               background: 'rgba(0, 0, 0, 0.2)',
             }}
           >
@@ -663,7 +715,7 @@ const AITutor: React.FC = () => {
                 style={{
                   flex: 1,
                   padding: '12px 16px',
-                  border: '1px solid rgba(78, 201, 176, 0.3)',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
                   borderRadius: '24px',
                   background: 'rgba(255, 255, 255, 0.05)',
                   color: '#fff',
@@ -679,8 +731,8 @@ const AITutor: React.FC = () => {
                   borderRadius: '24px',
                   border: 'none',
                   background: input.trim() 
-                    ? 'linear-gradient(135deg, #4ec9b0, #3da890)'
-                    : 'rgba(78, 201, 176, 0.2)',
+                    ? 'linear-gradient(135deg, #fbbf24, #d4a017)'
+                    : 'rgba(251, 191, 36, 0.2)',
                   color: input.trim() ? '#000' : '#666',
                   fontWeight: 'bold',
                   cursor: input.trim() ? 'pointer' : 'not-allowed',

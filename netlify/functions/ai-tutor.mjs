@@ -652,7 +652,7 @@ export async function handler(event, context) {
     };
   }
 
-  const { message, pageId, lessonContext, studentName, studentCode, homeworkText, pageContent, pairMode } = body;
+  const { message, pageId, lessonContext, studentName, studentCode, homeworkText, pageContent, pairMode, isLabPage: clientIsLabPage } = body;
 
   if (!message) {
     return {
@@ -732,16 +732,15 @@ export async function handler(event, context) {
     throw lastError;
   }
 
-  // Detect if student is on a lab/graded page (double-check server-side)
-  const isGradedPage = pageId && (pageId.includes('-lab') || pageId.includes('boss-fight'));
-  const effectivePairMode = pairMode && !isGradedPage;
+  // Detect if student is on a lab/graded page (adjusts pair behavior, doesn't block)
+  const isLabPage = pageId && (pageId.includes('-lab') || pageId.includes('boss-fight'));
 
   // Initialize both AI providers
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const geminiModel = genAI.getGenerativeModel({ 
     model: "gemini-2.0-flash",
     generationConfig: {
-      maxOutputTokens: effectivePairMode ? 2400 : 1200,
+      maxOutputTokens: 2400,
     }
   });
   
@@ -892,8 +891,8 @@ export async function handler(event, context) {
     : '';
 
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
-${effectivePairMode ? '\n⚡ PAIR PROGRAMMING MODE IS ACTIVE — you are their coding partner. Show examples, write code, collaborate freely. But NEVER write their lab/homework/quiz solutions.\n' : ''}
-${getTutorPromptRules(effectivePairMode)}
+${isLabPage ? '\n🔬 STUDENT IS ON A LAB/GRADED PAGE — You are their supportive partner. Help them understand, confirm their thinking, nudge them in the right direction. But do NOT write the solution for them.\n' : '\n⚡ PAIR PROGRAMMING MODE — you are their coding partner. Show examples, write code, collaborate freely. Use DIFFERENT scenarios than the assignment when showing examples.\n'}
+${getTutorPromptRules(true, isLabPage)}
 
 ${SYLLABUS_CONTEXT}
 ${weekInfo}
