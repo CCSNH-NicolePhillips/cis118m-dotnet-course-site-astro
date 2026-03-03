@@ -49,9 +49,9 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
   </table>
 </div>
 
-<div id="override-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
+<div id="override-modal" role="dialog" aria-modal="true" aria-labelledby="override-heading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000;">
   <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e1e1e; border: 2px solid #4ec9b0; border-radius: 8px; padding: 24px; min-width: 400px;">
-    <h3 style="margin-top: 0; color: #4ec9b0;">Manual Grade Override</h3>
+    <h3 id="override-heading" style="margin-top: 0; color: #4ec9b0;">Manual Grade Override</h3>
     <p style="color: #888;"><span id="override-student"></span> - <span id="override-assignment"></span></p>
     
     <div style="margin: 16px 0;">
@@ -59,9 +59,11 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
     </div>
     
     <div style="margin: 16px 0;">
-      <label for="override-new-score" style="color: #ddd;">New Score:</label>
-      <input type="number" id="override-new-score" min="0" max="100" style="width: 80px; background: #2d2d2d; color: #fff; border: 1px solid #4ec9b0; padding: 8px; border-radius: 4px; margin-left: 10px;">
+      <label for="override-new-score" style="color: #ddd;">New Score (required):</label>
+      <input type="number" id="override-new-score" min="0" max="100" aria-required="true" aria-describedby="override-error" style="width: 80px; background: #2d2d2d; color: #fff; border: 1px solid #4ec9b0; padding: 8px; border-radius: 4px; margin-left: 10px;">
     </div>
+    
+    <p id="override-error" role="alert" style="display: none; color: #fca5a5; font-weight: bold; margin: 0 0 12px 0;">Error: Score must be a number between 0 and 100.</p>
     
     <div style="margin: 16px 0;">
       <label for="override-reason" style="color: #ddd;">Reason:</label>
@@ -276,6 +278,12 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
     (document.getElementById('override-reason') as HTMLInputElement).value = '';
     
     document.getElementById('override-modal')!.style.display = 'block';
+    // Focus the score input for keyboard accessibility
+    const scoreInput = document.getElementById('override-new-score') as HTMLInputElement;
+    // Clear previous error state
+    scoreInput.removeAttribute('aria-invalid');
+    document.getElementById('override-error')!.style.display = 'none';
+    setTimeout(() => scoreInput.focus(), 100);
   }
 
   function closeOverrideModal() {
@@ -290,9 +298,19 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
     const reason = (document.getElementById('override-reason') as HTMLInputElement).value || 'Manual adjustment';
     
     if (isNaN(newScore) || newScore < 0 || newScore > 100) {
-      alert('Score must be between 0 and 100');
+      const scoreInput = document.getElementById('override-new-score') as HTMLInputElement;
+      const errorEl = document.getElementById('override-error')!;
+      scoreInput.setAttribute('aria-invalid', 'true');
+      errorEl.style.display = 'block';
+      scoreInput.focus();
       return;
     }
+    
+    // Clear error state
+    const scoreInput = document.getElementById('override-new-score') as HTMLInputElement;
+    const errorEl = document.getElementById('override-error')!;
+    scoreInput.removeAttribute('aria-invalid');
+    errorEl.style.display = 'none';
     
     const saveBtn = document.getElementById('override-save') as HTMLButtonElement;
     saveBtn.disabled = true;
@@ -333,7 +351,9 @@ const ASSIGNMENT_TYPES = ['checkpoint', 'lab', 'homework', 'quiz'];
       closeOverrideModal();
       
     } catch (err: any) {
-      alert(`Error: ${err.message}`);
+      const errorEl = document.getElementById('override-error')!;
+      errorEl.textContent = `Error: ${err.message}`;
+      errorEl.style.display = 'block';
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = '✓ Apply Override';

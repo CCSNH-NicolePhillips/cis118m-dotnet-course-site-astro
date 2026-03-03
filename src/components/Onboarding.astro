@@ -21,8 +21,11 @@
         class="name-input"
         placeholder="Enter your preferred name..."
         maxlength="50"
+        aria-required="true"
+        aria-describedby="name-hint name-error"
       />
-      <p class="name-hint">This is how you'll appear in the course. You can change it anytime.</p>
+      <p id="name-hint" class="name-hint">This is how you'll appear in the course. You can change it anytime.</p>
+      <p id="name-error" class="error-text" style="display: none;" role="alert">Error: Please enter your name to continue.</p>
     </div>
     
     <div class="modal-actions">
@@ -68,8 +71,11 @@
           class="name-input"
           placeholder="Enter your preferred name..."
           maxlength="50"
+          aria-required="true"
+          aria-describedby="settings-name-hint settings-name-error"
         />
-        <p class="name-hint">This is how you appear in the course.</p>
+        <p id="settings-name-hint" class="name-hint">This is how you appear in the course.</p>
+        <p id="settings-name-error" class="error-text" style="display: none;" role="alert">Error: Name cannot be empty.</p>
       </div>
       
       <div class="settings-section">
@@ -205,6 +211,18 @@
     margin: 8px 0 0 0;
     font-size: 0.85rem;
     color: var(--text-muted);
+  }
+
+  .error-text {
+    margin: 6px 0 0 0;
+    font-size: 0.85rem;
+    color: #e53e3e;
+    font-weight: bold;
+  }
+
+  .name-input[aria-invalid="true"] {
+    border-color: #e53e3e;
+    outline: 2px solid #e53e3e;
   }
 
   .settings-section {
@@ -412,6 +430,12 @@
       nameInput.addEventListener('input', () => {
         const hasName = nameInput.value.trim().length > 0;
         if (continueBtn) continueBtn.disabled = !hasName;
+        // Clear error state when typing
+        if (hasName) {
+          nameInput.removeAttribute('aria-invalid');
+          const err = document.getElementById('name-error');
+          if (err) err.style.display = 'none';
+        }
       });
     }
 
@@ -420,10 +444,21 @@
       continueBtn.addEventListener('click', () => {
         const name = nameInput?.value.trim();
         if (name) {
+          nameInput.removeAttribute('aria-invalid');
+          const err = document.getElementById('name-error');
+          if (err) err.style.display = 'none';
           saveDisplayName(name);
           closeWelcomeModal();
           // Start tour after a short delay
           setTimeout(() => startTour(), 500);
+        } else {
+          // Show error and focus input
+          if (nameInput) {
+            nameInput.setAttribute('aria-invalid', 'true');
+            const err = document.getElementById('name-error');
+            if (err) err.style.display = 'block';
+            nameInput.focus();
+          }
         }
       });
     }
@@ -734,14 +769,24 @@
   }
 
   function saveSettings() {
-    const nameInput = document.getElementById('settings-name-input');
+    const nameInput = document.getElementById('settings-name-input') as HTMLInputElement | null;
     const name = nameInput?.value.trim();
     
     if (name) {
+      nameInput.removeAttribute('aria-invalid');
+      const err = document.getElementById('settings-name-error');
+      if (err) err.style.display = 'none';
       saveDisplayName(name);
+      closeSettings();
+    } else {
+      // Show error and focus input
+      if (nameInput) {
+        nameInput.setAttribute('aria-invalid', 'true');
+        const err = document.getElementById('settings-name-error');
+        if (err) err.style.display = 'block';
+        nameInput.focus();
+      }
     }
-    
-    closeSettings();
   }
 
   // Check if user needs onboarding

@@ -34,7 +34,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         <p class="question-text">{q.question}</p>
         
         {q.type === 'multiple-choice' && q.options && (
-          <div class="options" role="radiogroup" aria-label={q.question}>
+          <div class="options" role="radiogroup" aria-label={q.question} aria-required="true">
             {q.options.map((option, optIndex) => (
               <label class="option-label">
                 <input 
@@ -50,7 +50,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         )}
         
         {q.type === 'true-false' && (
-          <div class="options" role="radiogroup" aria-label={q.question}>
+          <div class="options" role="radiogroup" aria-label={q.question} aria-required="true">
             <label class="option-label">
               <input type="radio" name={`q-${q.id}`} value="True" required />
               <span>True</span>
@@ -63,7 +63,7 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
         )}
         
         {q.type === 'checkbox' && q.options && (
-          <div class="options">
+          <div class="options" role="group" aria-label={q.question}>
             {q.options.map((option) => (
               <label class="option-label">
                 <input type="checkbox" name={`q-${q.id}`} value={option} />
@@ -72,6 +72,8 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
             ))}
           </div>
         )}
+
+        <p class="quiz-field-error" id={`error-${q.id}`} style="display: none;" role="alert">Error: Please select an answer for this question.</p>
       </div>
     ))}
     
@@ -89,7 +91,9 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     </div>
   </div>
   
-  <div class="quiz-results" id={`results-${quizId}`} style="display: none;" aria-live="polite">
+  <div class="quiz-error-summary" id={`error-summary-${quizId}`} style="display: none;" role="alert" tabindex="-1"></div>
+  
+  <div class="quiz-results" id={`results-${quizId}`} style="display: none;" aria-live="polite" tabindex="-1">
     <div class="results-header">
       <h3>Results</h3>
       <div class="score-display" id={`score-${quizId}`}></div>
@@ -561,17 +565,60 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const errorSummary = document.getElementById(`error-summary-${quizId}`);
+      
       // Check if past due (unless instructor unlocked)
       if (checkPastDue() && !isQuizUnlocked) {
-        alert('This quiz is past its due date. Please contact your instructor if you need an extension.');
+        if (errorSummary) {
+          errorSummary.textContent = 'Error: This quiz is past its due date. Please contact your instructor if you need an extension.';
+          errorSummary.style.display = 'block';
+          errorSummary.focus();
+        }
         return;
       }
       
       // Check if attempts exhausted (skip if unlimited)
       if (!unlimitedAttempts && currentAttempts >= maxAttempts) {
-        alert('Maximum attempts reached. You cannot retake this quiz.');
+        if (errorSummary) {
+          errorSummary.textContent = 'Error: Maximum attempts reached. You cannot retake this quiz.';
+          errorSummary.style.display = 'block';
+          errorSummary.focus();
+        }
         return;
       }
+      
+      // Validate all questions are answered
+      let firstUnanswered = null;
+      questions.forEach((q) => {
+        const errorEl = document.getElementById(`error-${q.id}`);
+        const questionDiv = form.querySelector(`[data-question-id="${q.id}"]`);
+        const hasAnswer = q.type === 'checkbox' 
+          ? form.querySelectorAll(`input[name="q-${q.id}"]:checked`).length > 0
+          : form.querySelector(`input[name="q-${q.id}"]:checked`) !== null;
+        
+        if (!hasAnswer) {
+          if (errorEl) errorEl.style.display = 'block';
+          if (questionDiv) questionDiv.classList.add('unanswered');
+          if (!firstUnanswered) firstUnanswered = questionDiv;
+        } else {
+          if (errorEl) errorEl.style.display = 'none';
+          if (questionDiv) questionDiv.classList.remove('unanswered');
+        }
+      });
+      
+      if (firstUnanswered) {
+        if (errorSummary) {
+          errorSummary.textContent = 'Error: Please answer all questions before submitting.';
+          errorSummary.style.display = 'block';
+        }
+        firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const firstInput = firstUnanswered.querySelector('input');
+        if (firstInput) firstInput.focus();
+        return;
+      }
+      
+      // Clear error summary
+      if (errorSummary) errorSummary.style.display = 'none';
       
       const formData = new FormData(form);
       const answers = {};
@@ -627,6 +674,9 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       // Display results
       form.style.display = 'none';
       resultsDiv.style.display = 'block';
+      
+      // Focus results for screen reader announcement
+      resultsDiv.focus();
       
       scoreDiv.innerHTML = `
         <div class="score ${passed ? 'passed' : 'failed'}">
@@ -886,6 +936,32 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     border-radius: 8px;
     padding: 24px;
     margin: 24px 0;
+  }
+
+  .quiz-error-summary {
+    background: #fef2f2;
+    border: 2px solid #e53e3e;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: #991b1b;
+    font-weight: bold;
+  }
+
+  :global(.dark) .quiz-error-summary {
+    background: rgba(229, 62, 62, 0.15);
+    color: #fca5a5;
+  }
+
+  .quiz-field-error {
+    margin: 8px 0 0 0;
+    color: #e53e3e;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .quiz-question.unanswered {
+    border: 2px solid #e53e3e;
   }
   
   .quiz-header h2 {

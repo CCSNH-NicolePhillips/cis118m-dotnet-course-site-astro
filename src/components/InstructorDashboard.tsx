@@ -376,6 +376,7 @@ const InstructorDashboard: React.FC = () => {
   // Modal state
   const [modalData, setModalData] = useState<SubmissionModalData | null>(null);
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [gradeInvalid, setGradeInvalid] = useState(false);
   const [manualGrade, setManualGrade] = useState('');
   const [overrideReason, setOverrideReason] = useState('');
   const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
@@ -722,6 +723,7 @@ const InstructorDashboard: React.FC = () => {
   const closeModal = () => {
     setModalData(null);
     setActionFeedback(null);
+    setGradeInvalid(false);
     setSubmissionHistory([]);
   };
 
@@ -729,9 +731,11 @@ const InstructorDashboard: React.FC = () => {
     if (!modalData) return;
     const score = parseInt(manualGrade);
     if (isNaN(score) || score < 0 || score > 100) {
+      setGradeInvalid(true);
       setActionFeedback({ type: 'error', message: 'Please enter a valid score (0-100)' });
       return;
     }
+    setGradeInvalid(false);
     
     try {
       const token = await getAccessToken();
@@ -1134,12 +1138,13 @@ const InstructorDashboard: React.FC = () => {
         </label>
         
         <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ddd' }}>
-          <span>🔍</span>
+          <span aria-hidden="true">🔍</span>
           <input
             type="text"
             placeholder="Filter by student..."
             value={studentFilter}
             onChange={(e) => setStudentFilter(e.target.value)}
+            aria-label="Filter by student name"
             style={{
               padding: '6px 10px',
               borderRadius: '4px',
@@ -1248,6 +1253,7 @@ const InstructorDashboard: React.FC = () => {
                       <td style={{ padding: '3px 8px', whiteSpace: 'nowrap' }}>
                         {isEditing ? (
                           <input type="datetime-local" value={editUnlockDate} onChange={(e) => setEditUnlockDate(e.target.value)}
+                            aria-label={`Unlock date for week ${weekNum}`}
                             style={{ padding: '2px 4px', background: '#1e1e1e', border: '1px solid #4ec9b0', borderRadius: '3px', color: '#fff', fontSize: '0.75rem', width: '165px' }} />
                         ) : (
                           <span style={{ color: isUnlocked ? '#4ec9b0' : '#888' }}>
@@ -1258,6 +1264,7 @@ const InstructorDashboard: React.FC = () => {
                       <td style={{ padding: '3px 8px', whiteSpace: 'nowrap' }}>
                         {isEditing ? (
                           <input type="datetime-local" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)}
+                            aria-label={`Due date for week ${weekNum}`}
                             style={{ padding: '2px 4px', background: '#1e1e1e', border: '1px solid #fbbf24', borderRadius: '3px', color: '#fff', fontSize: '0.75rem', width: '165px' }} />
                         ) : (
                           <span style={{ color: isPastDue ? '#ce9178' : '#ddd' }}>
@@ -2293,8 +2300,10 @@ const InstructorDashboard: React.FC = () => {
                         min="0"
                         max="100"
                         value={manualGrade}
-                        onChange={(e) => setManualGrade(e.target.value)}
+                        onChange={(e) => { setManualGrade(e.target.value); setGradeInvalid(false); }}
                         placeholder="0-100"
+                        aria-invalid={gradeInvalid}
+                        aria-describedby="grade-override-error"
                         style={{
                           display: 'block',
                           width: '100%',
@@ -2408,7 +2417,7 @@ const InstructorDashboard: React.FC = () => {
 
                 {/* Action Feedback */}
                 {actionFeedback && (
-                  <div style={{
+                  <div role="alert" id="grade-override-error" style={{
                     marginTop: '15px',
                     padding: '10px 15px',
                     borderRadius: '4px',
@@ -2416,7 +2425,7 @@ const InstructorDashboard: React.FC = () => {
                     color: '#000',
                     fontWeight: 'bold'
                   }}>
-                    {actionFeedback.message}
+                    {actionFeedback.type === 'error' ? 'Error: ' : ''}{actionFeedback.message}
                   </div>
                 )}
               </div>

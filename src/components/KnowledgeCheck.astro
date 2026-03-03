@@ -31,13 +31,19 @@ const { checkId, question, correctAnswer, explanation } = Astro.props;
         placeholder="Type your answer here..."
         rows="3"
         aria-label="Your answer"
+        aria-required="true"
+        aria-describedby="kc-feedback-{checkId}"
       ></textarea>
       <button type="button" class="knowledge-check-submit vscode-button">
         Check Answer
       </button>
     </div>
     
-    <div class="knowledge-check-feedback" style="display: none;" aria-live="polite">
+    <div class="knowledge-check-feedback" id={`kc-feedback-${checkId}`} style="display: none;" aria-live="polite">
+      <div class="feedback-empty" style="display: none;">
+        <span class="feedback-icon">⚠️</span>
+        <span class="feedback-text">Required: Please type your answer before checking.</span>
+      </div>
       <div class="feedback-correct" style="display: none;">
         <span class="feedback-icon">✅</span>
         <span class="feedback-text">Correct! +1 Participation Point</span>
@@ -88,6 +94,24 @@ const { checkId, question, correctAnswer, explanation } = Astro.props;
 
     submitBtn?.addEventListener('click', async () => {
       const userAnswer = textarea.value.trim().toLowerCase();
+      const emptyFeedback = container.querySelector('.feedback-empty') as HTMLElement;
+      
+      // Check for empty answer
+      if (!userAnswer) {
+        feedbackDiv.style.display = 'block';
+        if (emptyFeedback) emptyFeedback.style.display = 'flex';
+        correctFeedback.style.display = 'none';
+        incorrectFeedback.style.display = 'none';
+        if (explanationDiv) explanationDiv.style.display = 'none';
+        textarea.setAttribute('aria-invalid', 'true');
+        textarea.focus();
+        return;
+      }
+      
+      // Clear empty error
+      textarea.removeAttribute('aria-invalid');
+      if (emptyFeedback) emptyFeedback.style.display = 'none';
+      
       const correct = correctAnswer.toLowerCase();
       
       // Simple fuzzy matching - check if key phrases are present
