@@ -398,6 +398,7 @@ const AITutor: React.FC = () => {
           e.currentTarget.style.boxShadow = '0 4px 20px rgba(251, 191, 36, 0.4)';
         }}
         title="Pair Programming Tutor"
+        aria-label={isOpen ? 'Close tutor' : 'Open pair programming tutor'}
       >
         {isOpen ? '✕' : '🤖'}
       </button>
@@ -445,6 +446,7 @@ const AITutor: React.FC = () => {
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 title={isExpanded ? 'Collapse' : 'Expand'}
+                aria-label={isExpanded ? 'Collapse panel' : 'Expand panel'}
                 style={{
                   background: 'none',
                   border: '1px solid rgba(251, 191, 36, 0.3)',
@@ -464,6 +466,7 @@ const AITutor: React.FC = () => {
               <button
                 onClick={() => { setIsOpen(false); setIsExpanded(false); }}
                 title="Close"
+                aria-label="Close tutor panel"
                 style={{
                   background: 'none',
                   border: '1px solid rgba(251, 191, 36, 0.3)',
@@ -509,6 +512,7 @@ const AITutor: React.FC = () => {
                 {/* Load from Try It Now editors on the page */}
                 {availableEditors.length > 0 && (
                   <select
+                    aria-label="Load code from page editor"
                     onChange={(e) => {
                       const editorId = e.target.value;
                       if (!editorId) return;
@@ -607,6 +611,7 @@ const AITutor: React.FC = () => {
                 value={pairCode}
                 onChange={(e) => setPairCode(e.target.value)}
                 spellCheck={false}
+                aria-label="Code editor"
                 style={{
                   flex: 1,
                   width: '100%',
@@ -828,6 +833,7 @@ const AITutor: React.FC = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="Ask for guidance..."
                 disabled={isLoading}
+                aria-label="Message to tutor"
                 style={{
                   flex: 1,
                   padding: '12px 16px',

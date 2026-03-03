@@ -974,6 +974,7 @@ const InstructorDashboard: React.FC = () => {
             ref={fileInputRef}
             onChange={handleCanvasImport}
             style={{ display: 'none' }}
+            aria-label="Import Canvas roster CSV"
           />
           <button
             onClick={() => fileInputRef.current?.click()}
@@ -1161,6 +1162,7 @@ const InstructorDashboard: React.FC = () => {
                 padding: '2px 6px'
               }}
               title="Clear filter"
+              aria-label="Clear student filter"
             >
               ✕
             </button>
