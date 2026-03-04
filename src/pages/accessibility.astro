@@ -1,0 +1,121 @@
+---
+import CourseLayout from "../layouts/CourseLayout.astro";
+---
+
+<CourseLayout title="Accessibility Statement">
+  <div class="accessibility-page">
+    <h1>Accessibility Statement</h1>
+
+    <p>We are committed to making this C# learning platform accessible to all students and users, including those with disabilities.</p>
+
+    <h2>Accessibility Standards</h2>
+
+    <p>This site is designed to conform to:</p>
+    <ul>
+      <li><strong>WCAG 2.1 Level AA</strong></li>
+      <li><strong>Section 508 accessibility guidelines</strong></li>
+    </ul>
+
+    <p>Accessibility features implemented include:</p>
+    <ul>
+      <li>Full <strong>keyboard navigation support</strong></li>
+      <li><strong>Skip-to-content navigation</strong></li>
+      <li>Logical <strong>heading structure and landmarks</strong></li>
+      <li><strong>ARIA labeling</strong> for interactive controls</li>
+      <li><strong>Accessible form validation and error messaging</strong></li>
+      <li><strong>Screen reader announcements for dynamic content</strong></li>
+      <li><strong>Color contrast compliant with WCAG AA</strong></li>
+      <li><strong>Alternative text for images and diagrams</strong></li>
+      <li><strong>Text descriptions for complex instructional diagrams</strong></li>
+      <li><strong>Reduced motion support</strong></li>
+      <li><strong>Responsive layout that works at 200% zoom</strong></li>
+    </ul>
+
+    <h2>Screen Reader Support</h2>
+
+    <p>This platform has been tested with:</p>
+    <ul>
+      <li>NVDA (Windows)</li>
+      <li>VoiceOver (macOS)</li>
+    </ul>
+
+    <p>Major learning components tested include:</p>
+    <ul>
+      <li>AI Tutor panel</li>
+      <li>Interactive quizzes</li>
+      <li>Knowledge checks</li>
+      <li>Instructor dashboards</li>
+      <li>Code editors and lab runners</li>
+    </ul>
+
+    <h2>Keyboard Navigation</h2>
+
+    <p>All functionality on this site can be used with a keyboard.</p>
+    <p>Key interactions include:</p>
+    <ul>
+      <li><strong>Tab / Shift+Tab</strong> to move between controls</li>
+      <li><strong>Enter / Space</strong> to activate buttons</li>
+      <li><strong>Escape</strong> to close dialogs or panels</li>
+      <li><strong>Arrow keys</strong> to navigate menus where appropriate</li>
+    </ul>
+
+    <h2>Known Exceptions</h2>
+
+    <p>Some code blocks may allow <strong>horizontal scrolling</strong> due to the nature of programming examples. This behavior is intentional to preserve code formatting.</p>
+
+    <h2>Reporting Accessibility Issues</h2>
+
+    <p>If you encounter an accessibility barrier while using this site, please report it.</p>
+    <p>Include:</p>
+    <ul>
+      <li>The page URL</li>
+      <li>The issue encountered</li>
+      <li>Your assistive technology (if applicable)</li>
+    </ul>
+    <p>Accessibility issues will be reviewed and addressed as quickly as possible.</p>
+
+    <h2>Continuous Improvement</h2>
+
+    <p>Accessibility is an ongoing effort. This site is periodically tested using:</p>
+    <ul>
+      <li>Automated accessibility tools</li>
+      <li>Keyboard navigation testing</li>
+      <li>Screen reader testing</li>
+    </ul>
+    <p>We are committed to improving accessibility for all learners.</p>
+  </div>
+</CourseLayout>
+
+<style>
+  .accessibility-page {
+    max-width: 720px;
+  }
+
+  .accessibility-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .accessibility-page h2 {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .accessibility-page p {
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .accessibility-page ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .accessibility-page li {
+    line-height: 1.7;
+    margin-bottom: 0.35rem;
+  }
+</style>
