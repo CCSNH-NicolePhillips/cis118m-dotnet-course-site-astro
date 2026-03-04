@@ -38,7 +38,7 @@
   border: 1px solid var(--border);
   background: rgba(15, 23, 42, 0.8);
   color: var(--text);
-  min-width: 180px;
+  min-width: min(180px, 100%);
 }
 
 .editor-actions {

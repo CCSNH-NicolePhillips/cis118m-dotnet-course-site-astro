@@ -214,6 +214,7 @@ select {
   border-right: 2px solid var(--border);
   z-index: 100;
   width: 340px;
+  max-width: 85vw;
   overflow: hidden;
 }
 
@@ -362,6 +363,7 @@ body > .layout .main:not(.monaco-editor *) {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-wrap: anywhere;
   flex: 1;
 }
 
@@ -372,6 +374,7 @@ body > .layout .main:not(.monaco-editor *) {
   max-width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-wrap: anywhere;
   flex: 1;
 }
 
@@ -633,10 +636,17 @@ code, pre {
 pre {
   padding: 14px 16px;
   border-radius: 14px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
   background: var(--panel2);
   border: 1px solid var(--border);
   color: var(--text);
+}
+
+pre code {
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* =============================================
@@ -791,6 +801,8 @@ body[data-theme="dark"] .system-patch .patch-text {
 
 code {
   color: var(--text);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Auth Header Styles */
@@ -997,6 +1009,7 @@ body:not([data-theme="dark"]) .concept-header .header-text p {
 .concept-header .header-image {
   flex-shrink: 0;
   width: 280px;
+  max-width: 100%;
 }
 
 .concept-header .header-image img {
@@ -1162,7 +1175,7 @@ body[data-theme="dark"] .mark-complete-button.completed {
   color: var(--accent);
 }
 
-/* Table styles for markdown content */
+/* Table styles for markdown content — scrollable wrapper for zoom */
 .main table {
   width: 100%;
   border-collapse: collapse;
@@ -1172,6 +1185,8 @@ body[data-theme="dark"] .mark-complete-button.completed {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border);
+  display: block;
+  overflow-x: auto;
 }
 
 .main table th,
@@ -1201,7 +1216,6 @@ body[data-theme="dark"] .mark-complete-button.completed {
 }
 
 .main table td:first-child {
-  white-space: nowrap;
   font-weight: 500;
 }
 
@@ -1446,4 +1460,14 @@ body:not([data-theme="dark"]) .section-badge {
   color: #888;
   margin: 0;
   font-size: 0.95rem;
+}
+
+/* ── Prefers reduced motion — WCAG 2.1 SC 2.3.3 ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
