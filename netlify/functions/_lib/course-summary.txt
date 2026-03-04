@@ -842,66 +842,97 @@ Quiz Questions (10 questions):
 
 ## Week 8: While Loops
 
-### 📚 Overview: Week 08 • Extra Practice
+### 📚 Overview: Section 8.1 • The Persistent Watcher
+Key Concepts:
+- while loop
+- before
+- Output:
+- pre-check
+- progress statement
 
-Summary: # Week 8 Extra Practice: Collection thinking Pick **1–2** items (optional). - Make a list of 5 items and print them with foreach. - Make a list of prices and compute the total. - Challenge: Ask the user for 3 items and add them to a list (use ReadLine). ## Open in Editor - Use: /editor/?week=08&star...
+Summary: # Section 8.1: The Persistent Watcher 🔁 The Sensor Loop ⏱️ Estimated Time: 25 minutes --- ✦ From Decisions to Repetition In Weeks 6 and 7, your programs could choose — they evaluated conditions and branched. But they always moved forward. Real systems need to repeat . A temperature sensor doesn't c...
+
+### 📚 Overview: Section 8.2 • The Input Validator
+Key Concepts:
+- do-while loop
+- semicolon after the closing parenthesis
+- Change CORRECT_PASSWORD to "test"
+- Set MAX_ATTEMPTS = 1
+
+Summary: # Section 8.2: The Input Validator 🔄 The Retry Protocol ⏱️ Estimated Time: 25 minutes --- ✦ Run First, Check After The while loop checks its condition before the body runs — meaning the body might never execute. But some tasks must happen at least once. Think of a login prompt: you must show the pr...
+
+### 📚 Overview: Section 8.3 • Sentinel Control
+Key Concepts:
+- exits the loop
+- sentinel value
+- skips the rest of the current iteration
+- Output:
+
+Summary: # Section 8.3: Sentinel Control 🛑 Manual Overrides ⏱️ Estimated Time: 25 minutes --- ✦ Override the Loop So far, loops end naturally when their condition becomes false. But sometimes you need to exit early when a special event occurs, or skip one iteration without stopping the whole loop. These are...
 
 ### 📝 Homework: Week 08 • Week 8 Homework: Shopping List (totals + edits)
 
 Summary: # Week 8 Homework: Shopping List (totals + edits) ## Overview Create a small shopping list tool using Lists. Track items and at least one total (like total cost or item count). ## Requirements checklist (acceptance criteria) - [ ] Uses at least one List (items) - [ ] Shows the list after changes - [...
 
-### 📚 Overview: Week 08
-Key Concepts:
-- Focus:
+### 📝 Homework: Homework 08 • While Loop Reflection
 
-Summary: # Week 8 **Focus:** Lists + collections: arrays but flexible (add/remove items). ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./hom...
+Summary: # Homework 08: Reflection - (GRADED) ## 📝 Homework 08: The Iteration Analysis Now that you've worked with while loops, do-while loops, break , continue , and sentinel values, it's time to demonstrate your understanding of iteration structures . 🧠 While Loop Reflection In 3-5 sentences, answer Iter...
+
+### 📚 Overview: Week 08 • While Loops
+Key Concepts:
+- repetition
+
+Summary: # Week 08: While Loops 🔁 Iteration Unlocked Up until now, your programs have been linear — every line runs once and the program marches forward. Decisions let you choose a path, but never revisit one. This week, that changes. You're installing the iteration engine — the ability to repeat blocks of ...
 
 ### 🔬 Lab: Week 08 • Week 8 Lab: Simple To-Do List App
 
 Summary: # Week 8 Lab: Simple To-Do List App ## Overview Create a tiny to-do list program. You can keep it simple: add a few tasks, remove one, print the list. ## Requirements checklist (acceptance criteria) - [ ] Uses a List - [ ] Adds at least 3 items - [ ] Removes at least 1 item (by value or index) - [ ]...
 
-### 📖 Lesson: Week 08 • Lesson 1
+### 🔬 Lab: Lab 08 • The Robust Data Entry System
 Key Concepts:
-- Add / Remove
-- 1) What’s one reason to use a List instead of an array?
+- Time: 45 minutes
+- Points: 100
+- Daily Revenue Tracker
+- validate
+- signal they're done
 
-Summary: # Week 8 Lesson 1: List basics (arrays that can grow) ## Goal - Create a List - Add and remove items - Understand when to use a list vs an array ## What to know - **List**: A collection that can grow or shrink. - **List **: A list of integers. - **Add / Remove**: Ways to change the list size. - **Co...
+Summary: # Lab 08: The Robust Data Entry System **Time: 45 minutes** **Points: 100** ## Mission Objective You are building a **Daily Revenue Tracker** for a small business. The owner needs to enter revenue amounts for each day. Your program must **validate** each entry (reject negative numbers) and allow the...
 
-Code Example:
-```csharp
-using System.Collections.Generic;
+### 📋 Quiz: Week 08 • Technical Assessment
 
-List<string> todos = new List<string>();
-todos.Add("Study");
-todos.Add("Workout");
+Summary: # 🏁 Week 08 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
 
-Console.WriteLine($"Count: {todos.Count}");
-Console.WriteLine(todos[0]);
-
-todos.Remove("Workout");
-Console.WriteLine($"Count now: {todos.Count}");
-```
-
-### 📖 Lesson: Week 08 • Lesson 2
-Key Concepts:
-- foreach
-- Item variable
-- 1) Can you remove items from a list while using foreach?
-
-Summary: # Week 8 Lesson 2: foreach loops (the easiest way to read a list) ## Goal - Use foreach to visit each item - Compute totals and counts from a list - Build simple collection features (like a mini to-do list) ## What to know - **foreach**: A loop that goes through each item in a collection. - **Item v...
-
-Code Example:
-```csharp
-List<int> nums = new List<int>() { 5, 10, 15 };
-int sum = 0;
-
-foreach (int n in nums)
-{
-    sum += n;
-}
-
-Console.WriteLine($"Sum: {sum}");
-```
+Quiz Questions (10 questions):
+1. Q: What are the three essential parts of every while loop?
+   A: Initialization, condition, progress statement
+   Why: Every while loop needs: (1) Initialization — set up the loop variable before the loop, (2) Condition — the boolean expression checked before each iteration, (3) Progress statement — the change inside the loop that moves the condition toward false.
+2. Q: What happens if a while loop's condition is false when the loop first starts?
+   A: The loop body is skipped entirely — zero iterations
+   Why: A while loop is a PRE-CHECK loop — it checks the condition BEFORE entering the body. If the condition is false from the start, the body never executes. This is the 'closed gate' behavior.
+3. Q: What causes an infinite loop?
+   A: The progress statement is missing — the condition never becomes false
+   Why: An infinite loop occurs when nothing inside the loop changes the condition toward false. Without a progress statement (like count++), the condition stays true forever and the loop never ends.
+4. Q: What is the KEY difference between while and do-while?
+   A: do-while checks condition AFTER the body, guaranteeing at least one execution
+   Why: while is a PRE-CHECK loop (checks before, might run 0 times). do-while is a POST-CHECK loop (checks after, always runs at least once). This makes do-while perfect for input validation where you must get input before checking it.
+5. Q: Why is do-while the best choice for input validation prompts?
+   A: You need to get the user's input BEFORE you can validate it
+   Why: Input validation has a chicken-and-egg problem: you can't check the input before asking for it. do-while runs the prompt first (body), THEN checks if the answer is valid (condition). With while, the input variable wouldn't exist yet for the first check.
+6. Q: What does the 'break' statement do inside a loop?
+   A: Exits the loop entirely and immediately
+   Why: break immediately exits the innermost loop — no more iterations, no more condition checks. Execution jumps to the code after the loop's closing brace. It's the emergency exit.
+7. Q: What does the 'continue' statement do inside a loop?
+   A: Skips the rest of the current iteration and jumps to the next condition check
+   Why: continue skips the remaining code in the current iteration and jumps back to the condition check. The loop keeps running — it just skips this one pass. Think of it as 'skip this floor' vs break's 'exit the building'.
+8. Q: What is a 'sentinel value' in loop programming?
+   A: A special value that signals the loop to stop processing
+   Why: A sentinel value is a special input (like 0, -1, or 'quit') that tells the program to stop. It must be a value that could NEVER be valid data — otherwise the program can't distinguish between real data and the stop signal.
+9. Q: What is the output of this code?\n\nint x = 5;\ndo {\n    Console.Write(x + \
+   A: 5
+   Why: The do-while body runs ONCE (printing '5'), then x becomes 4. The condition 4 > 5 is false, so the loop exits. Even though x was never actually > 5 during the check, the body still ran once — that's the do-while guarantee.
+10. Q: What is wrong with this do-while syntax?\n\ndo {\n    // body\n} while (x > 0)
+   A: Missing semicolon after while (x > 0)
+   Why: do-while requires a semicolon after the closing parenthesis: } while (x > 0); — this is a common syntax mistake because regular while loops don't need one there. The compiler will give an error if it's missing.
 
 ---
 
