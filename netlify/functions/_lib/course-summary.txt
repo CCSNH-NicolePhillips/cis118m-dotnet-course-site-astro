@@ -71,7 +71,7 @@ Key Concepts:
 - Line 2
 - exactly 4 lines
 
-Summary: # Lab 1: Welcome Program **Time: 45 minutes** **Points: 100** ## Objective Create a console program that prints a welcome message with information about yourself and this course. --- ## Requirements Your program must: 1. ✅ **Line 1**: A header comment with your name (e.g., // Name: Jane Doe) 2. ✅ **...
+Summary: # Lab 1: Welcome Program **Time: 45 minutes** **Points: 100** ## Objective Create a console program that prints a welcome message with information about yourself and this course. --- ## Requirements Your program must: 1. **Line 1**: A header comment with your name (e.g., // Name: Jane Doe) 2. **Line...
 
 ### 📖 Lesson: Week 01 • Lesson 1
 Key Concepts:
