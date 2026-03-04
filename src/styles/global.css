@@ -1462,6 +1462,18 @@ body:not([data-theme="dark"]) .section-badge {
   font-size: 0.95rem;
 }
 
+/* ── Text version details blocks — fit content, not full-width ── */
+.main details {
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px 0;
+}
+
+.main details table {
+  width: auto;
+  display: table;
+}
+
 /* ── Prefers reduced motion — WCAG 2.1 SC 2.3.3 ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
