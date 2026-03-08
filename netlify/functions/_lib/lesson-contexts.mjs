@@ -569,14 +569,16 @@ export const lessonContexts = {
       Build a Daily Revenue Tracker using while loops:
       1. Declare decimal totalRevenue = 0m and int dayCount = 0
       2. Create a while(true) loop that:
-         a) Prompts "Enter revenue for day X (or 0 to finish): " where X is next day number
+         a) Prompts user for daily revenue (any clear prompt wording is acceptable)
          b) Reads input and parses to decimal using decimal.Parse(Console.ReadLine())
          c) If value is 0, use break to exit the loop (sentinel value)
-         d) If value is negative, print warning "⚠️ Negative value skipped. Enter a valid amount." and use continue
+         d) If value is negative, print a rejection/warning message and use continue (exact wording does not matter)
          e) Add value to totalRevenue and increment dayCount
-         f) Print "  ✅ Day X: $amount recorded. Running total: $total" with :C format
-      3. After the loop, if dayCount is 0 print "No revenue data entered."
-         Otherwise print summary with Total Revenue, Days Recorded, and Average Daily Revenue using :C format
+         f) Print confirmation of the entry with :C currency format (exact format does not matter)
+      3. After the loop, if dayCount is 0 print a message indicating no entries were made.
+         Otherwise print a summary showing Total Revenue, number of days/entries, and Average Daily Revenue using :C format.
+      NOTE: Do NOT penalize for different prompt wording, different emoji usage, or minor output label differences.
+      Grade on whether the CODE LOGIC is correct, not whether strings match exactly.
     `,
     rubric: `
       While loop with break on sentinel (20pts): Uses while(true) or while loop. Breaks when user enters 0 (sentinel value). Loop correctly repeats for multiple entries.
@@ -584,7 +586,7 @@ export const lessonContexts = {
       Decimal parsing for money (15pts): Uses decimal.Parse() or decimal.TryParse() to parse input. Uses decimal type for revenue (not double or int). Currency formatting with :C.
       Accumulator pattern (15pts): Correctly accumulates running total (totalRevenue += amount). Increments day counter. Shows running total after each valid entry.
       Summary calculation (15pts): Calculates average (total / count). Handles edge case of 0 entries (no division by zero). Displays total, count, and average with proper formatting.
-      Prompts and output format (10pts): Clear prompts with day number. Output matches expected format with ✅ and ⚠️ indicators. Summary section is well-formatted.
+      Prompts and output format (10pts): Prompts user for revenue in a loop with clear instructions. Prints a confirmation message after each valid entry. Displays a clearly labeled summary section at the end. Do NOT deduct points for minor wording differences, missing emojis, or different label text — focus on whether the information is present and readable.
       Code compiles, runs, K&R braces (10pts): Opening braces on same line, no syntax errors, clean code structure.
     `,
     requiredKeywords: ["while", "break", "continue", "decimal"],
