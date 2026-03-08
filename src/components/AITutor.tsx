@@ -54,6 +54,7 @@ interface Message {
 const AITutor: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -213,8 +214,12 @@ const AITutor: React.FC = () => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsOpen(false);
-        setIsExpanded(false);
+        if (isFullscreen) {
+          setIsFullscreen(false);
+        } else {
+          setIsOpen(false);
+          setIsExpanded(false);
+        }
       }
     };
     document.addEventListener('keydown', onKey);
@@ -452,16 +457,21 @@ const AITutor: React.FC = () => {
           aria-label="Pair programming tutor"
           style={{
             position: 'fixed',
-            bottom: isExpanded ? '90px' : '90px',
-            right: '20px',
-            width: isExpanded ? 'calc(100vw - 40px)' : 'min(380px, calc(100vw - 40px))',
-            maxWidth: isExpanded ? '1200px' : 'calc(100vw - 40px)',
-            height: isExpanded ? 'calc(100vh - 110px)' : 'min(500px, calc(100vh - 120px))',
-            maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
+            ...(isFullscreen
+              ? { top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', maxWidth: 'none', maxHeight: 'none', borderRadius: 0 }
+              : {
+                  bottom: '90px',
+                  right: '20px',
+                  width: isExpanded ? 'calc(100vw - 40px)' : 'min(380px, calc(100vw - 40px))',
+                  maxWidth: isExpanded ? '1200px' : 'calc(100vw - 40px)',
+                  height: isExpanded ? 'calc(100vh - 110px)' : 'min(500px, calc(100vh - 120px))',
+                  maxHeight: isExpanded ? 'none' : 'calc(100vh - 120px)',
+                  borderRadius: '16px',
+                }
+            ),
             background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
             border: '1px solid #fbbf24',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2)',
+            boxShadow: isFullscreen ? 'none' : '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(251, 191, 36, 0.2)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -508,6 +518,30 @@ const AITutor: React.FC = () => {
                 {isExpanded ? '⊖' : '⊕'}
               </button>
               <button
+                onClick={() => {
+                  const entering = !isFullscreen;
+                  setIsFullscreen(entering);
+                  if (entering) setIsExpanded(true);
+                }}
+                title={isFullscreen ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
+                aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+                style={{
+                  background: 'none',
+                  border: '1px solid rgba(251, 191, 36, 0.3)',
+                  borderRadius: '6px',
+                  color: '#fbbf24',
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                  fontSize: '14px',
+                  lineHeight: 1,
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251, 191, 36, 0.15)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+              >
+                {isFullscreen ? '⛶' : '⛶'}
+              </button>
+              <button
                 onClick={() => { setIsOpen(false); setIsExpanded(false); }}
                 title="Close"
                 aria-label="Close tutor panel"
@@ -533,10 +567,10 @@ const AITutor: React.FC = () => {
           {/* Body: side-by-side in pair mode, chat-only otherwise */}
           <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
 
-          {/* Code Editor Panel (shown when expanded) */}
-          {isExpanded && (
+          {/* Code Editor Panel (shown when expanded or fullscreen) */}
+          {(isExpanded || isFullscreen) && (
             <div style={{
-              width: '45%',
+              width: isFullscreen ? '50%' : '45%',
               minWidth: '280px',
               display: 'flex',
               flexDirection: 'column',

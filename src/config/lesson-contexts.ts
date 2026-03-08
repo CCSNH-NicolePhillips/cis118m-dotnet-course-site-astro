@@ -302,12 +302,6 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-15-lab': "Topic: Robust Code. Mission: Programs that handle errors gracefully.",
   'week-15-homework': "Topic: Reflection. Focus: Understanding defensive programming.",
   
-  // Week 16
-  'week-16': "Topic: File I/O and Review. Focus: Persistence and course wrap-up.",
-  'week-16-lesson-1': "Topic: File I/O. Focus: Reading and writing files.",
-  'week-16-lesson-2': "Topic: Final Review. Focus: Course concepts and next steps.",
-  'week-16-lab': "Topic: Persistence. Mission: Programs that save and load data.",
-  'week-16-homework': "Topic: Final Reflection. Focus: Your journey as a .NET developer.",
 };
 
 /**

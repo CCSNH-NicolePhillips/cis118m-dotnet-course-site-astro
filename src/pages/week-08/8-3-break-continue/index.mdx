@@ -12,6 +12,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 8.3: Sentinel Control
 
 <div class="section-header">
+  <img src="/media/week%208/8.3/The%20Sentinel%20Guard.png" alt="The Sentinel Guard" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;" />
   <div class="section-badge">🛑 Manual Overrides</div>
   <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
 </div>
@@ -27,23 +28,26 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      <div class="ascii-art-box">
-<pre>{`
-  ┌─────────────────┐
-  │   loop body     │
-  │                 │
-  │  break; ──────────► EXIT loop
-  │                 │
-  │  continue; ───┐ │
-  │               │ │
-  └───────────────┼─┘
-                  │
-          ┌───────▼───────┐
-          │ next iteration│
-          └───────────────┘
-`}</pre>
-      </div>
+      <img src="/media/week%208/8.3/Loop%20Control.png" alt="Loop Control — break and continue flow" style="max-width: 100%; border-radius: 8px;" />
     </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: The Sentinel Guard
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on manual overrides — using <code>break</code> and <code>continue</code> to manage loop termination and skip logic based on specific data events.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/y3wuY44cb9g"
+      title="8.3: The Sentinel Guard — Break and Continue in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
   </div>
 </div>
 

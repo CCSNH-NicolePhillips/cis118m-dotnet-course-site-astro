@@ -12,6 +12,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 8.1: The Persistent Watcher
 
 <div class="section-header">
+  <img src="/media/week%208/8.1/The%20Persistent%20Watcher.png" alt="The Persistent Watcher" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;" />
   <div class="section-badge">🔁 The Sensor Loop</div>
   <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
 </div>
@@ -27,24 +28,26 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      {/* Illustration: sensor monitoring loop — circular arrow around a thermometer */}
-      <div class="ascii-art-box">
-<pre>{`
-    ┌──────────────┐
-    │  condition?  │◄──┐
-    └──────┬───────┘   │
-      true │           │
-    ┌──────▼───────┐   │
-    │  loop body   │───┘
-    └──────────────┘
-      false │
-    ┌──────▼───────┐
-    │   continue   │
-    │   program    │
-    └──────────────┘
-`}</pre>
-      </div>
+      <img src="/media/week%208/8.1/From%20Decisions%20to%20Repetition.jpg" alt="From Decisions to Repetition — while loop flow diagram" style="max-width: 100%; border-radius: 8px;" />
     </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: The Persistent Watcher
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on how pre-check iteration works — the CPU only enters the loop if the sensor condition is already met.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/uycFpq90hOU"
+      title="8.1: The Persistent Watcher — While Loops in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
   </div>
 </div>
 

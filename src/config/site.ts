@@ -154,21 +154,13 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection (Graded)', href: '/week-14/homework/' },
       { title: 'Extra Practice', href: '/week-14/extra-practice/' }
     ] },
-  { slug: '15', title: 'Week 15: Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
+  { slug: '15', title: 'Week 15: ⚔️ FINAL BOSS FIGHT — Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-15/' },
       { title: '15.1 Lesson 1', href: '/week-15/lesson-1/' },
       { title: '15.2 Lesson 2', href: '/week-15/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-15/lab/' },
       { title: 'Technical Reflection (Graded)', href: '/week-15/homework/' },
       { title: 'Extra Practice', href: '/week-15/extra-practice/' }
-    ] },
-  { slug: '16', title: 'Week 16: Review & Reflection', unlockDate: '2026-05-11T00:00:00-04:00', dueDate: '2026-05-17T23:59:59-04:00', pages: [
-      { title: '00. Week Overview', href: '/week-16/' },
-      { title: '16.1 Lesson 1', href: '/week-16/lesson-1/' },
-      { title: '16.2 Lesson 2', href: '/week-16/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-16/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-16/homework/' },
-      { title: 'Extra Practice', href: '/week-16/extra-practice/' }
     ] },
 ];
 

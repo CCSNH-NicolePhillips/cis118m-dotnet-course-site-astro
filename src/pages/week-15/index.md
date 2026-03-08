@@ -4,9 +4,11 @@ title: "Week 15"
 description: "Week 15 overview"
 ---
 
-# Week 15
+# ⚔️ Week 15: FINAL BOSS FIGHT
 
-**Focus:** Review + final project plan: put the pieces together.
+> **This is it.** No Week 16. No extra chances. Build your capstone project and submit by **May 10th**. This is the final boss — defeat it.
+
+**Focus:** Build and submit your final project. Apply everything you've learned.
 
 ## This week’s pages
 - Lesson 1: [./lesson-1/](./lesson-1/) — <span data-progress-slug="lesson-1"></span>

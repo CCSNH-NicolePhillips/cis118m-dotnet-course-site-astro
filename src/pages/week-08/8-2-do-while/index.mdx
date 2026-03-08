@@ -12,6 +12,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 8.2: The Input Validator
 
 <div class="section-header">
+  <img src="/media/week%208/8.2/The%20retry%20protocol.png" alt="The Retry Protocol" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;" />
   <div class="section-badge">🔄 The Retry Protocol</div>
   <p class="section-time">⏱️ Estimated Time: 25 minutes</p>
 </div>
@@ -27,23 +28,26 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      <div class="ascii-art-box">
-<pre>{`
-    ┌──────────────┐
-    │  loop body   │◄──┐
-    │  (runs first)│   │
-    └──────┬───────┘   │
-    ┌──────▼───────┐   │
-    │  condition?  │───┘
-    └──────┬───────┘ true
-      false│
-    ┌──────▼───────┐
-    │   continue   │
-    │   program    │
-    └──────────────┘
-`}</pre>
-      </div>
+      <img src="/media/week%208/8.2/Run%20First%2C%20Check%20After.jpg" alt="Run First, Check After — do-while loop flow diagram" style="max-width: 100%; border-radius: 8px;" />
     </div>
+  </div>
+</div>
+
+---
+
+## 🎬 Technical Briefing: The Retry Protocol
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on post-check iteration — ensuring your code executes at least once before validating the exit condition.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/iZKuYScWdCw"
+      title="8.2: The Retry Protocol — Do-While Loops in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen>
+    </iframe>
   </div>
 </div>
 
