@@ -3,6 +3,7 @@ interface QuizQuestion {
   id: string;
   type: 'multiple-choice' | 'true-false' | 'checkbox';
   question: string;
+  codeBlock?: string;
   options?: string[];
   correctAnswer: string | string[];
   explanation?: string;
@@ -32,6 +33,9 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       <div class="quiz-question" data-question-id={q.id}>
         <div class="question-number">Question {index + 1}</div>
         <p class="question-text">{q.question}</p>
+        {q.codeBlock && (
+          <pre class="question-code-block"><code>{q.codeBlock}</code></pre>
+        )}
         
         {q.type === 'multiple-choice' && q.options && (
           <div class="options" role="radiogroup" aria-label={q.question} aria-required="true">
@@ -998,6 +1002,26 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     margin: 0 0 16px 0;
     font-size: 16px;
     line-height: 1.5;
+  }
+
+  .question-code-block {
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 0 0 16px 0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #d4d4d4;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  body[data-theme="light"] .question-code-block {
+    background: #f5f5f5;
+    border-color: #d0d0d0;
+    color: #1e1e1e;
   }
   
   .options {

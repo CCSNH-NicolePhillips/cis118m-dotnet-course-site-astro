@@ -136,7 +136,12 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     {
       id: "q9",
       type: "multiple-choice",
-      question: "What is the output of this code?\n\nint x = 5;\ndo {\n    Console.Write(x + \" \");\n    x--;\n} while (x > 5);",
+      question: "What is the output of this code?",
+      codeBlock: `int x = 5;
+do {
+    Console.Write(x + " ");
+    x--;
+} while (x > 5);`,
       options: [
         "5 4 3 2 1",
         "5",
@@ -149,7 +154,10 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     {
       id: "q10",
       type: "multiple-choice",
-      question: "What is wrong with this do-while syntax?\n\ndo {\n    // body\n} while (x > 0)",
+      question: "What is wrong with this do-while syntax?",
+      codeBlock: `do {
+    // body
+} while (x > 0)`,
       options: [
         "Nothing — it's correct",
         "Missing semicolon after while (x > 0)",
