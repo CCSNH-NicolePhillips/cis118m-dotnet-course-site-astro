@@ -138,7 +138,7 @@ This program will print "Stuck at 1" forever, consuming CPU and potentially free
 
 <div class="architect-rule">
 
-#### ⚠️ Architect's Rule: Every Loop Must Have a Progress Statement
+### ⚠️ Architect's Rule: Every Loop Must Have a Progress Statement
 
 Before writing ANY while loop, ask: **"What changes inside this loop to make the condition eventually false?"** If you can't answer that question, your loop is broken.
 
@@ -171,7 +171,7 @@ Console.WriteLine($"Temperature is {temperature}°F — comfortable!");
 This is the **pre-check** nature of `while` — the gate must be open for the body to run.
 
 <div class="pro-tip">
-  <h4>💡 Pre-Check = Conditional Entry</h4>
+  <h3>💡 Pre-Check = Conditional Entry</h3>
   <p>Think of a <code>while</code> loop like a security gate that checks your badge <strong>before</strong> you enter. If your badge is invalid (condition is false), you never get inside. This is different from <code>do-while</code> (Section 8.2), which lets you in first and checks your badge when you try to leave.</p>
 </div>
 
@@ -223,7 +223,7 @@ class Program
 
 <div class="experiment-box">
 
-#### Experiment: Trace the Loop
+### Experiment: Trace the Loop
 
 Modify the code above and predict the result BEFORE running:
 
@@ -359,7 +359,7 @@ class Program
 
 <div class="predict-challenge">
 
-#### 🎯 Predict the Output
+### 🎯 Predict the Output
 
 What does this code print? Trace through it step by step:
 
@@ -476,7 +476,7 @@ Console.WriteLine($"Total: {total}");
     margin: 1.5rem 0;
   }
   
-  .architect-rule h4 {
+  .architect-rule h3 {
     color: #fca5a5;
     margin-top: 0;
   }
@@ -489,7 +489,7 @@ Console.WriteLine($"Total: {total}");
     margin: 1.5rem 0;
   }
   
-  .pro-tip h4 {
+  .pro-tip h3 {
     color: #4ec9b0;
     margin-top: 0;
   }
@@ -519,7 +519,7 @@ Console.WriteLine($"Total: {total}");
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .experiment-box h3 { color: #34d399; margin-top: 0; }
 
   .predict-challenge {
     background: rgba(245, 158, 11, 0.1);
@@ -528,7 +528,7 @@ Console.WriteLine($"Total: {total}");
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-challenge h3 { color: #fbbf24; margin-top: 0; }
   .predict-reveal { margin-top: 1rem; cursor: pointer; }
   .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
   .predict-answer {
@@ -557,16 +557,16 @@ Console.WriteLine($"Total: {total}");
   body[data-theme="light"] .metaphor-text strong { color: #1e293b !important; }
   body[data-theme="light"] .metaphor-text p { color: #475569 !important; }
   body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
-  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #dc2626 !important; }
   body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
-  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #0a7c62 !important; }
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
-  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .experiment-box h3 { color: #059669 !important; }
   body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
-  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-challenge h3 { color: #d97706 !important; }
   body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
   body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
   body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }

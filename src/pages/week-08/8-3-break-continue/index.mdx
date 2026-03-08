@@ -150,7 +150,7 @@ Processing: 10
 Numbers 3, 6, and 9 are skipped — `continue` jumps back to the `while` condition without executing `Console.WriteLine`.
 
 <div class="pro-tip">
-  <h4>💡 Break vs. Continue</h4>
+  <h3>💡 Break vs. Continue</h3>
   <p><code>break</code> = <strong>Exit the building</strong> — the loop is completely done.<br/>
   <code>continue</code> = <strong>Skip this floor</strong> — go to the next iteration immediately.</p>
 </div>
@@ -188,7 +188,7 @@ if (count > 0) {
 
 <div class="architect-rule">
 
-#### ⚠️ Architect's Rule: Sentinel Values Must Be Invalid Data
+### ⚠️ Architect's Rule: Sentinel Values Must Be Invalid Data
 
 Choose a sentinel that <strong>cannot</strong> be confused with real data:
 - Scores? Use **-1** (scores can't be negative)
@@ -261,7 +261,7 @@ class Program
 
 <div class="experiment-box">
 
-#### Experiment: Break vs. Continue
+### Experiment: Break vs. Continue
 
 1. **Remove the `break`** — What happens when the sentinel (0) is processed? Does it get added to the total?
 2. **Remove the `continue`** — What happens to negative readings? Are they included in the average?
@@ -317,7 +317,7 @@ class Program
 
 <div class="predict-challenge">
 
-#### 🎯 Predict the Output
+### 🎯 Predict the Output
 
 What does this code print?
 
@@ -398,7 +398,7 @@ Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  .architect-rule h3 { color: #fca5a5; margin-top: 0; }
 
   .pro-tip {
     background: rgba(78, 201, 176, 0.1);
@@ -407,7 +407,7 @@ Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip h3 { color: #4ec9b0; margin-top: 0; }
   .pro-tip p { color: #e2e8f0; }
 
   .next-section {
@@ -427,7 +427,7 @@ Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .experiment-box h3 { color: #34d399; margin-top: 0; }
 
   .predict-challenge {
     background: rgba(245, 158, 11, 0.1);
@@ -436,7 +436,7 @@ Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-challenge h3 { color: #fbbf24; margin-top: 0; }
   .predict-reveal { margin-top: 1rem; cursor: pointer; }
   .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
   .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
@@ -453,16 +453,16 @@ Sum = 1+2+4+5 = 12 (3 was skipped by continue, 6+ were stopped by break)
   }
 
   body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
-  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #dc2626 !important; }
   body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; }
-  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #0a7c62 !important; }
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; }
-  body[data-theme="light"] .experiment-box h4 { color: #059669 !important; }
+  body[data-theme="light"] .experiment-box h3 { color: #059669 !important; }
   body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; }
-  body[data-theme="light"] .predict-challenge h4 { color: #d97706 !important; }
+  body[data-theme="light"] .predict-challenge h3 { color: #d97706 !important; }
   body[data-theme="light"] .predict-reveal summary { color: #d97706 !important; }
   body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
   body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }

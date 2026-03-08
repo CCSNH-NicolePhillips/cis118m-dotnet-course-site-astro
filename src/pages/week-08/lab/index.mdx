@@ -235,8 +235,8 @@ When your program runs correctly and handles all scenarios:
   ">
     Submit Lab
   </button>
-  <div id="submit-status" style="margin-top: 1rem; font-weight: bold;"></div>
-  <div id="ai-feedback" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="submit-status" aria-live="polite" aria-atomic="true" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" aria-live="polite" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
   <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
 </div>
 
@@ -276,4 +276,9 @@ When your program runs correctly and handles all scenarios:
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .ascii-art-box { background: #f8fafc !important; color: #0a7c62 !important; border-color: #0a7c62 !important; }
+
+  #submit-lab-btn:focus-visible {
+    outline: 3px solid #22c55e;
+    outline-offset: 3px;
+  }
 `}</style>
