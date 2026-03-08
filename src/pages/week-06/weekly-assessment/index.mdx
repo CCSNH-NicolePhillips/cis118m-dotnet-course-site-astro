@@ -58,7 +58,13 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     {
       id: "q3",
       type: "multiple-choice",
-      question: "What does this code print?\n\nint x = 5;\nif (x > 10) {\n    Console.WriteLine(\"A\");\n} else {\n    Console.WriteLine(\"B\");\n}",
+      question: "What does this code print?",
+      codeBlock: `int x = 5;
+if (x > 10) {
+    Console.WriteLine("A");
+} else {
+    Console.WriteLine("B");
+}`,
       options: [
         "A",
         "B",

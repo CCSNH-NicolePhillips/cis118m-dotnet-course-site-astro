@@ -149,7 +149,8 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     {
       id: "q10",
       type: "multiple-choice",
-      question: "What does this expression evaluate to?\n\ntrue || false && false",
+      question: "What does this expression evaluate to?",
+      codeBlock: `true || false && false`,
       options: [
         "true — because || evaluates first",
         "true — because && evaluates first: false && false = false, then true || false = true",
