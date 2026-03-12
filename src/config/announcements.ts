@@ -42,7 +42,7 @@ export const ANNOUNCEMENTS: Announcement[] = [
     body: `
       <p style="margin-bottom:16px; font-size:15px;">Architects,</p>
 
-      <p style="margin-bottom:16px;">Enjoy your spring break! There is <strong>no class and no assignments due</strong> this week. Take the time to rest and recharge.</p>
+      <p style="margin-bottom:16px;">There is <strong>no class and no assignments due during spring break (March 15–22)</strong>. Take the time to rest and recharge.</p>
 
       <div style="background:#0f2a1a; border:1px solid #22c55e; border-radius:8px; padding:16px 20px; margin:18px 0; text-align:center;">
         <div style="font-size:28px; margin-bottom:8px;">🌴</div>
