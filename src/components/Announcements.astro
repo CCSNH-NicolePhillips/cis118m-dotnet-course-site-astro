@@ -199,9 +199,16 @@ const activeAnnouncements = ANNOUNCEMENTS.filter(a => a.active);
       localStorage.setItem(STORAGE_PREFIX + id, Date.now().toString());
     }
 
+    function isDateActive(announcement) {
+      const now = Date.now();
+      if (announcement.startsAt && now < new Date(announcement.startsAt).getTime()) return false;
+      if (announcement.expiresAt && now > new Date(announcement.expiresAt).getTime()) return false;
+      return true;
+    }
+
     function getUnread() {
       const dismissed = getDismissed();
-      return announcements.filter(a => !dismissed.includes(a.id));
+      return announcements.filter(a => !dismissed.includes(a.id) && isDateActive(a));
     }
 
     function showAnnouncement(announcement) {
