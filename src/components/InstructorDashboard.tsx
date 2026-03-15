@@ -382,6 +382,14 @@ const InstructorDashboard: React.FC = () => {
   const [submissionHistory, setSubmissionHistory] = useState<any[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   
+  // Regrade state
+  const [regradeLoading, setRegradeLoading] = useState(false);
+  const [regradePreview, setRegradePreview] = useState<{
+    current: { score: number; feedback: string; rubric: any; detailedReport: string };
+    newGrade: { score: number; feedback: string; rubric: any; detailedReport: string };
+  } | null>(null);
+  const [regradeApplying, setRegradeApplying] = useState(false);
+  
   // Canvas import/export state
   const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error' | 'loading'; message: string } | null>(null);
   const [exportStatus, setExportStatus] = useState<{ type: 'success' | 'error' | 'loading'; message: string } | null>(null);
@@ -699,6 +707,9 @@ const InstructorDashboard: React.FC = () => {
     setManualGrade('');
     setOverrideReason('');
     setSubmissionHistory([]);
+    setRegradePreview(null);
+    setRegradeLoading(false);
+    setRegradeApplying(false);
     
     // Fetch submission history for this student/assignment
     setHistoryLoading(true);
@@ -725,6 +736,9 @@ const InstructorDashboard: React.FC = () => {
     setActionFeedback(null);
     setGradeInvalid(false);
     setSubmissionHistory([]);
+    setRegradePreview(null);
+    setRegradeLoading(false);
+    setRegradeApplying(false);
   };
 
   const handleUpdateGrade = async () => {
@@ -912,6 +926,82 @@ const InstructorDashboard: React.FC = () => {
       setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
     } catch (err) {
       setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    }
+  };
+
+  const handleRegradePreview = async () => {
+    if (!modalData) return;
+    setRegradeLoading(true);
+    setRegradePreview(null);
+    setActionFeedback(null);
+
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh.' });
+        setRegradeLoading(false);
+        return;
+      }
+
+      const res = await fetch('/.netlify/functions/instructor-regrade', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          assignmentId: modalData.assignmentId,
+          apply: false
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Regrade failed');
+      }
+
+      const data = await res.json();
+      setRegradePreview({ current: data.current, newGrade: data.newGrade });
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Regrade error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    } finally {
+      setRegradeLoading(false);
+    }
+  };
+
+  const handleRegradeApply = async () => {
+    if (!modalData) return;
+    setRegradeApplying(true);
+
+    try {
+      const token = await getAccessToken();
+      if (!token) {
+        setActionFeedback({ type: 'error', message: 'Auth token expired. Please refresh.' });
+        setRegradeApplying(false);
+        return;
+      }
+
+      const res = await fetch('/.netlify/functions/instructor-regrade', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: modalData.student.sub,
+          assignmentId: modalData.assignmentId,
+          apply: true
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Regrade apply failed');
+      }
+
+      const data = await res.json();
+      setActionFeedback({ type: 'success', message: `Regrade applied! New score: ${data.newGrade.score}%` });
+      setRegradePreview(null);
+      setTimeout(() => { closeModal(); loadGradebook(); }, 1500);
+    } catch (err) {
+      setActionFeedback({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+    } finally {
+      setRegradeApplying(false);
     }
   };
 
@@ -2412,6 +2502,163 @@ const InstructorDashboard: React.FC = () => {
                     <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
                       Create/set grade from scratch.
                     </p>
+                  </div>
+
+                  {/* Rerun AI Grader */}
+                  <div style={{ flex: 1, minWidth: '250px', background: '#2d2d2d', padding: '15px', borderRadius: '8px' }}>
+                    <p style={{ color: '#ddd', marginTop: 0 }}>
+                      Re-run AI grader on the student's existing submission with the latest rubric:
+                    </p>
+                    <button
+                      onClick={handleRegradePreview}
+                      disabled={regradeLoading}
+                      style={{
+                        background: regradeLoading ? '#555' : '#a78bfa',
+                        color: '#000',
+                        border: 'none',
+                        padding: '10px 20px',
+                        borderRadius: '4px',
+                        cursor: regradeLoading ? 'wait' : 'pointer',
+                        fontWeight: 'bold',
+                        width: '100%'
+                      }}
+                    >
+                      {regradeLoading ? 'Running AI Grader...' : 'Rerun AI Grader'}
+                    </button>
+                    <p style={{ color: '#888', fontSize: '0.8rem', marginTop: '10px', marginBottom: 0 }}>
+                      Preview new grade first, then choose to apply or keep original.
+                    </p>
+
+                    {/* Regrade Preview */}
+                    {regradePreview && (
+                      <div style={{
+                        marginTop: '15px',
+                        border: '1px solid #a78bfa',
+                        borderRadius: '8px',
+                        padding: '15px',
+                        background: '#1a1a2e'
+                      }}>
+                        <h4 style={{ color: '#a78bfa', marginTop: 0, marginBottom: '12px' }}>Regrade Preview</h4>
+                        
+                        {/* Score comparison */}
+                        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px', alignItems: 'center' }}>
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ color: '#888', fontSize: '0.75rem' }}>Current</div>
+                            <div style={{
+                              fontSize: '1.5rem',
+                              fontWeight: 'bold',
+                              color: regradePreview.current.score >= 70 ? '#4ec9b0' : '#ce9178'
+                            }}>
+                              {regradePreview.current.score}%
+                            </div>
+                          </div>
+                          <div style={{ color: '#888', fontSize: '1.5rem' }}>→</div>
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ color: '#888', fontSize: '0.75rem' }}>New</div>
+                            <div style={{
+                              fontSize: '1.5rem',
+                              fontWeight: 'bold',
+                              color: regradePreview.newGrade.score >= 70 ? '#4ec9b0' : '#ce9178'
+                            }}>
+                              {regradePreview.newGrade.score}%
+                            </div>
+                          </div>
+                          <div style={{
+                            marginLeft: 'auto',
+                            padding: '4px 10px',
+                            borderRadius: '12px',
+                            fontSize: '0.8rem',
+                            fontWeight: 'bold',
+                            background: regradePreview.newGrade.score > regradePreview.current.score
+                              ? 'rgba(78, 201, 176, 0.2)' : regradePreview.newGrade.score < regradePreview.current.score
+                              ? 'rgba(206, 145, 120, 0.2)' : 'rgba(136, 136, 136, 0.2)',
+                            color: regradePreview.newGrade.score > regradePreview.current.score
+                              ? '#4ec9b0' : regradePreview.newGrade.score < regradePreview.current.score
+                              ? '#ce9178' : '#888'
+                          }}>
+                            {regradePreview.newGrade.score > regradePreview.current.score
+                              ? `+${regradePreview.newGrade.score - regradePreview.current.score}`
+                              : regradePreview.newGrade.score < regradePreview.current.score
+                              ? `${regradePreview.newGrade.score - regradePreview.current.score}`
+                              : 'No change'}
+                          </div>
+                        </div>
+
+                        {/* New feedback */}
+                        <div style={{ marginBottom: '10px' }}>
+                          <div style={{ color: '#4ec9b0', fontWeight: 'bold', fontSize: '0.85rem', marginBottom: '4px' }}>New Feedback:</div>
+                          <div style={{ color: '#ddd', fontSize: '0.85rem', background: '#0d0d0d', padding: '8px', borderRadius: '4px' }}>
+                            {regradePreview.newGrade.feedback}
+                          </div>
+                        </div>
+
+                        {/* New rubric breakdown */}
+                        {regradePreview.newGrade.rubric && Object.keys(regradePreview.newGrade.rubric).length > 0 && (
+                          <details style={{ marginBottom: '10px' }}>
+                            <summary style={{ cursor: 'pointer', color: '#a78bfa', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                              New Rubric Breakdown
+                            </summary>
+                            <div style={{ background: '#0d0d0d', padding: '10px', borderRadius: '4px', marginTop: '5px' }}>
+                              {Object.entries(regradePreview.newGrade.rubric).map(([cat, data]: [string, any]) => (
+                                <div key={cat} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid #222' }}>
+                                  <span style={{ color: '#ddd', fontSize: '0.8rem', textTransform: 'capitalize' }}>{cat.replace(/-/g, ' ')}</span>
+                                  <span style={{ color: data?.points >= (data?.maxPoints || 10) * 0.7 ? '#4ec9b0' : '#ce9178', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                                    {data?.points || 0}{data?.maxPoints ? `/${data.maxPoints}` : ' pts'}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </details>
+                        )}
+
+                        {/* New detailed report */}
+                        {regradePreview.newGrade.detailedReport && (
+                          <details style={{ marginBottom: '15px' }}>
+                            <summary style={{ cursor: 'pointer', color: '#60a5fa', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                              New AI Report
+                            </summary>
+                            <div style={{ color: '#aaa', fontSize: '0.8rem', background: '#0d0d0d', padding: '8px', borderRadius: '4px', marginTop: '5px', whiteSpace: 'pre-wrap' }}>
+                              {regradePreview.newGrade.detailedReport}
+                            </div>
+                          </details>
+                        )}
+
+                        {/* Apply / Dismiss buttons */}
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                          <button
+                            onClick={handleRegradeApply}
+                            disabled={regradeApplying}
+                            style={{
+                              flex: 1,
+                              background: regradeApplying ? '#555' : '#4ec9b0',
+                              color: '#000',
+                              border: 'none',
+                              padding: '10px',
+                              borderRadius: '4px',
+                              cursor: regradeApplying ? 'wait' : 'pointer',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {regradeApplying ? 'Applying...' : 'Apply New Grade'}
+                          </button>
+                          <button
+                            onClick={() => setRegradePreview(null)}
+                            style={{
+                              flex: 1,
+                              background: '#444',
+                              color: '#ddd',
+                              border: 'none',
+                              padding: '10px',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            Keep Original
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

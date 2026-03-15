@@ -492,11 +492,12 @@ export const lessonContexts = {
       2. Prompt for Internal Source (boolean) using bool.Parse(Console.ReadLine())
       3. Prompt for Protocol (string) using Console.ReadLine().ToUpper()
       4. Apply firewall rules using if/else if/else with &&:
-         - Threat > 8 → Print "🔴 BLOCKED — Critical threat level" (overrides all)
-         - Protocol SSH AND internal → Print "🟢 ALLOWED — Trusted internal SSH"
-         - Threat > 4 → Print "🟡 2FA REQUIRED — Elevated threat detected"
-         - Default → Print "🔴 BLOCKED — Default deny policy"
+         - Threat > 8 → Print "BLOCKED — Critical threat level" (overrides all)
+         - Protocol SSH AND internal → Print "ALLOWED — Trusted internal SSH"
+         - Threat > 4 → Print "2FA REQUIRED — Elevated threat detected"
+         - Default → Print "BLOCKED — Default deny policy"
       5. Use switch on protocol to display protocol-specific details (port, encryption info)
+      NOTE: Do NOT require or penalize for emoji usage. The output messages should NOT include emojis.
     `,
     rubric: `
       Prompts for all 3 inputs correctly (10pts): Threat Level (int), Internal Source (bool), Protocol (string) all captured with proper parsing
