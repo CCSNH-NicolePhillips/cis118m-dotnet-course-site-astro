@@ -140,6 +140,36 @@ export const lessonContexts: Record<string, LessonContext> = {
     `
   },
 
+  "week-09-homework": {
+    title: "Week 9: For Loop Reflection — while vs for",
+    taughtConcepts: `
+      - The for loop is a counter-controlled iteration structure with three clauses in a single line
+      - Anatomy of a for loop: for (initializer; condition; iterator) { body }
+      - Initializer: sets up the counter variable, executed exactly once before the loop starts
+      - Condition: checked before each iteration — like a while loop's condition (pre-check)
+      - Iterator: runs after each iteration, advancing the counter (e.g., i++)
+      - The index variable (i) drives logic: accessing array positions, controlling calculations
+      - Off-by-one errors: starting at 1 instead of 0, using < vs <= incorrectly
+      - Accumulator pattern: total += i or sum += arr[i] inside the loop body
+      - Average calculation: divide accumulated total by loop count after the loop
+      - while vs for: use for when the number of iterations is known, while when condition-driven
+      - Nested for loops: outer controls rows, inner controls columns (multiplication tables)
+      - K&R brace style: opening brace on same line as for
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences, answer For Loops vs While Loops in C#:
+      1. Describe the three clauses of a for loop (initializer, condition, iterator) and explain how they relate to the three essential parts of a while loop.
+      2. What is an "off-by-one error"? Give a specific example with a for loop, and explain how to identify and correct it.
+      3. When would you choose a for loop over a while loop? Give a concrete scenario for each.
+    `,
+    rubric: `
+      For loop anatomy vs while loop (35pts): Student maps initializer→pre-loop init, condition→while condition, iterator→progress statement. Both are pre-check loops.
+      Off-by-one error example (35pts): Student gives specific example like starting i at 1 instead of 0, or using <= vs < with array bounds. Explains how to fix it.
+      For vs while use case (20pts): Student explains for = known count (iterate N times, process N items), while = unknown count (keep going until condition). Gives concrete scenarios.
+      Clarity (10pts): Clear, understandable writing using technical terms like "initializer", "iterator", "off-by-one", "counter-controlled".
+    `
+  },
+
   "week-08-homework": {
     title: "Week 8: While Loop Reflection",
     taughtConcepts: `
@@ -254,11 +284,11 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-08-homework': "Week 8 Homework: While Loop Reflection. Students explain: (1) Three parts of a while loop and why the Progress Statement prevents infinite loops, (2) When to use while vs do-while for input validation, (3) How sentinel values work with break and continue. Written reflection referencing sections 8.1-8.3.",
   
   // Week 9
-  'week-09': "Topic: For Loops. Focus: Counter-controlled iteration.",
-  'week-09-lesson-1': "Topic: For Loops. Focus: Counter-controlled iteration.",
-  'week-09-lesson-2': "Topic: Loop Control. Focus: break and continue statements.",
-  'week-09-lab': "Topic: Iteration Patterns. Mission: Programs with controlled repetition.",
-  'week-09-homework': "Topic: Reflection. Focus: Choosing the right loop type.",
+  'week-09': "We are post-Spring Break. The instructor is back to full connectivity. Week 9 covers For Loops — counter-controlled iteration using the for statement. The for loop has three clauses: (initializer; condition; iterator). Students are learning to use the index variable (i) to drive logic, access data, and build accumulation patterns. The most common failure point this week is the off-by-one error — starting at 1 instead of 0, or using <= instead of <. If a student's loop runs one too many or one too few times, always check the initializer and Condition boundary first. Connect the for loop back to while: for (init; condition; iter) is equivalent to initializing before, while(condition), with iter at the end of the body. The for loop simply packages all three control parts together.",
+  'week-09-lesson-1': "We are post-Spring Break. The instructor is back to full connectivity. Section 9.1: The Counted Loop. Focus: Anatomy of the for statement — initializer sets the counter, condition is checked before each iteration (pre-check, just like while), iterator runs after each body execution. The index variable i is the counter that drives how many times the loop runs. Off-by-one errors are the #1 failure point: if a student is iterating N times, the canonical pattern is for (int i = 0; i < N; i++). Starting at 1 or using <= N runs one extra iteration. Show students how to trace through the loop mentally: what is i at the start, when does the condition fail, how many iterations run?",
+  'week-09-lesson-2': "We are post-Spring Break. The instructor is back to full connectivity. Section 9.2: Accumulation Patterns. Focus: Using the index variable (i) to calculate sums and averages. The accumulator pattern: declare total = 0 before the loop, add each value inside. After the loop, divide by the count for average. Students work with both fixed sequences (sum 1 through N) and runtime-driven loops. Common mistakes: (1) forgetting to initialize the accumulator to 0 before the loop, (2) dividing inside the loop instead of after, (3) integer division truncation when averaging. If a student's average is wrong, check whether they're using int division vs double. Cast to (double) before dividing.",
+  'week-09-lab': "We are post-Spring Break. The instructor is back to full connectivity. Lab 09: Boss Fight II — The Arena. Students use counter-controlled for loops to complete multi-stage challenges. This is a Boss Fight week — no partial credit. They must use for loops (not while loops) and demonstrate mastery of the index pattern. Common errors: off-by-one in loop bounds, wrong accumulator initialization, incorrect loop direction (counting up vs down). Remind students that telemetry is active — keystrokes, edit time, and paste events are being recorded. Assistance is Socratic only: guide toward the insight, do not write code for them.",
+  'week-09-homework': "We are post-Spring Break. The instructor is back to full connectivity. Homework 09: Technical Reflection — while vs for loop use cases. Students write a comparative analysis explaining when to use each loop type, giving a concrete example for each. Also requires an explanation of the off-by-one error with a specific example and correction. Assist with understanding the concepts, not with writing the reflection. Ask guiding questions: 'What do you know about the number of iterations before the loop starts?' and 'Where would the loop run one too many or too few times?'",
   
   // Week 10
   'week-10': "Topic: Arrays. Focus: Collections of values.",

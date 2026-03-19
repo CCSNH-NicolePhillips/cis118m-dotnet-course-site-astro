@@ -1,0 +1,430 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 9.2 • Accumulation Patterns"
+description: "Using the for loop index to drive calculations — sums, averages, and index-driven logic"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 9.2: Accumulation Patterns
+
+<div class="section-header">
+  <div class="section-badge">📊 The Running Total Engine</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>The Index Variable as a Data Driver</h2>
+      <p>
+        In Section 9.1, the index counter <code>i</code> simply tracked how many times the loop had run. In real engineering work, <code>i</code> does more than count — it <strong>drives calculations, positions data access, and controls logic branching</strong>. The canonical pattern is the <strong>accumulator</strong>: a variable declared before the loop that gathers results as the loop iterates. After the loop completes, the accumulator holds the aggregate result — a total, an average, a minimum, or a data summary. This is the foundation of every analytics engine, every reporting system, and every data pipeline.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%209/9.2/accumulation-pattern.jpg"
+        alt="Accumulation pattern diagram — variable declared before loop receives additions from each iteration, producing a final result after the loop"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: Accumulation Patterns
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on using the index variable to drive calculations — building sums, averages, and index-driven data access patterns.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/0_f_P8Wv0_Q"
+      title="9.2: Accumulation Patterns — Advanced For Loop Patterns in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 9.2 Accumulation Patterns — Advanced For Loop Patterns in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## The Accumulator Pattern
+
+The **accumulator pattern** requires three elements: a variable initialized before the loop, a loop that adds to it on each iteration, and a result read after the loop:
+
+```csharp
+// Calculate the sum of 1 through 100
+int total = 0;  // 1. Accumulator — initialized BEFORE the loop
+
+for (int i = 1; i <= 100; i++) {
+    total += i;  // 2. Accumulate — i drives the value being added
+}
+
+// 3. Result — read AFTER the loop
+Console.WriteLine($"Sum of 1 to 100: {total}");
+// Output: Sum of 1 to 100: 5050
+```
+
+<AnnotatedCode
+  title="Anatomy of an Accumulation Loop"
+  tokens={[
+    { text: "int total = 0;", type: "parameter", tooltip: "ACCUMULATOR: must be declared and initialized to 0 BEFORE the loop — not inside it" },
+    { text: " " },
+    { text: "for", type: "keyword", tooltip: "For loop — counter-controlled, runs exactly N times" },
+    { text: " (int i = 1; i <= 100; i++) {", type: "punctuation" },
+    { text: " " },
+    { text: "    total += i;", type: "string", tooltip: "ACCUMULATION: adds the current value of i to the running total on each iteration" },
+    { text: " }", type: "punctuation" },
+    { text: " " },
+    { text: "Console.WriteLine(total);", type: "string", tooltip: "RESULT: read the accumulator AFTER the loop — this contains the final aggregate" }
+  ]}
+/>
+
+<div class="architect-rule">
+
+### Architect's Rule: Accumulator Initialization
+
+The accumulator **must** be initialized **before** the loop and read **after** the loop. Declaring it inside the loop body resets it to zero on every iteration — a critical logic error that produces the wrong result silently:
+
+```csharp
+// WRONG: accumulator reset on every iteration
+for (int i = 1; i <= 5; i++) {
+    int total = 0;   // ← This destroys the previous total every iteration!
+    total += i;
+    Console.WriteLine(total);  // prints 1, 2, 3, 4, 5 — never accumulates
+}
+
+// CORRECT: accumulator lives outside the loop
+int total = 0;
+for (int i = 1; i <= 5; i++) {
+    total += i;
+}
+Console.WriteLine(total);  // prints 15 — the actual sum
+```
+
+</div>
+
+---
+
+## Calculating Averages
+
+An average requires two accumulators — or using the loop count itself as the divisor:
+
+```csharp
+int sum = 0;
+int count = 10;
+
+for (int i = 1; i <= count; i++) {
+    sum += i;
+}
+
+// Integer division truncates! Cast to double for a precise average.
+double average = (double)sum / count;
+Console.WriteLine($"Sum: {sum}");
+Console.WriteLine($"Average: {average:F2}");
+// Output:
+// Sum: 55
+// Average: 5.50
+```
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>Integer division is a silent bug.</strong> In C#, dividing two <code>int</code> values produces an integer result — the decimal is truncated without rounding. <code>7 / 2</code> is <code>3</code>, not <code>3.5</code>. When calculating averages, always cast to <code>double</code> before dividing: <code>(double)sum / count</code>. This is one of the most common precision errors in student code — and in production systems written by engineers who should know better. Validate your averages with known inputs before shipping any calculation.</p>
+  </div>
+</div>
+
+---
+
+## The Index Pattern: Driving Logic with i
+
+The counter variable `i` does not have to represent a generic count — it can represent **position**, **value**, or **logical state**. This is the **index pattern**:
+
+```csharp
+// Pattern 1: i represents a sequence value (sum of squares)
+int sumOfSquares = 0;
+for (int i = 1; i <= 5; i++) {
+    sumOfSquares += i * i;  // i drives the calculation
+}
+Console.WriteLine($"Sum of squares: {sumOfSquares}");  // 55
+
+// Pattern 2: i categorizes iterations (even vs odd)
+for (int i = 1; i <= 10; i++) {
+    if (i % 2 == 0) {
+        Console.WriteLine($"{i} is even");
+    } else {
+        Console.WriteLine($"{i} is odd");
+    }
+}
+
+// Pattern 3: i counts down (decrement)
+Console.WriteLine("Countdown:");
+for (int i = 5; i >= 1; i--) {
+    Console.WriteLine($"T-minus {i}");
+}
+Console.WriteLine("Launch.");
+```
+
+---
+
+<DeepDiveTabs
+  title="Accumulation Patterns in Real Systems"
+  tabs={[
+    {
+      id: "analytics",
+      label: "Analytics Engine",
+      content: "A web analytics system counts daily page views for a month. The for loop iterates over 30 days, and the accumulator stores the running total. After the loop, divide by 30 for the monthly average. A second pass could find the peak day by tracking a 'max' variable that updates whenever the current day exceeds the current maximum.",
+      keyPoints: ["Accumulator initialized to 0 before loop", "Loop adds each daily value to the total", "After loop: total / 30 for average (cast to double)"]
+    },
+    {
+      id: "grading",
+      label: "Grade Calculator",
+      content: "A grade calculator iterates over a student's assignment scores, accumulates the total, and divides by the count. The student's letter grade is determined from the average. Two accumulators: one for the total score, one for the count of assignments. Both initialized to 0 before the loop.",
+      keyPoints: ["Two accumulators: sum and count", "Both initialized before the loop", "Average = (double)sum / count — cast required for precision"]
+    },
+    {
+      id: "financial",
+      label: "Compound Interest",
+      content: "Compound interest calculation iterates over a number of years, multiplying the principal by (1 + rate) each year. The 'principal' variable is the accumulator — but instead of += (additive), it uses *= (multiplicative). The loop runs exactly as many times as there are years in the investment horizon. This is the canonical multiplicative accumulator pattern.",
+      keyPoints: ["Multiplicative accumulator: principal *= (1 + rate)", "Loop count = investment years (known count = for loop)", "Final value is the fully compounded principal"]
+    },
+    {
+      id: "validation",
+      label: "Input Scoring",
+      content: "A password strength scorer iterates over each character in a password string using a for loop with i as the character position index. It accumulates a score based on character categories (digit, uppercase, symbol). The final score determines password strength. This illustrates using i to access a specific position in a data sequence — connecting for loops directly to string and array access in Week 10.",
+      keyPoints: ["i as a position index into a data sequence", "Accumulator: score += pointsForCharacter", "Connecting for loops to arrays/strings (preview of Week 10)"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Sum and Average Calculator
+
+Build a loop that calculates the sum and average of the numbers 1 through N:
+
+<TryItNowRunner
+  starterId="week-09-lesson-2"
+  height={580}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== SUM AND AVERAGE CALCULATOR ===");
+
+        int n = 10;
+        int sum = 0;  // accumulator
+
+        for (int i = 1; i <= n; i++) {
+            sum += i;
+            Console.WriteLine($"  After i={i}: running total = {sum}");
+        }
+
+        double average = (double)sum / n;  // cast to avoid integer truncation
+
+        Console.WriteLine($"\\nFinal Sum: {sum}");
+        Console.WriteLine($"Average:   {average:F2}");
+    }
+}`}
+  instructions="Challenge: Modify the loop to also track the SUM OF SQUARES (sum of i*i for each iteration). Print both the sum and the sum of squares at the end."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-09-lesson-2-check"
+  title="Section 9.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Where must the accumulator variable be declared for the pattern to work correctly?",
+      options: [
+        "Inside the for loop body",
+        "In the for loop initializer clause",
+        "Before the for loop, outside the loop body",
+        "After the for loop"
+      ],
+      correctAnswer: "Before the for loop, outside the loop body",
+      explanation: "The accumulator must be declared and initialized BEFORE the loop. If declared inside the body, it resets to 0 on every iteration and never accumulates."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the result of `int sum = 0; for (int i = 1; i <= 5; i++) { sum += i; }` after the loop?",
+      options: ["5", "10", "15", "25"],
+      correctAnswer: "15",
+      explanation: "1 + 2 + 3 + 4 + 5 = 15. The accumulator adds each value of i: 0+1=1, 1+2=3, 3+3=6, 6+4=10, 10+5=15."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What is the output of `int s = 10; int c = 4; Console.WriteLine(s / c);` in C#?",
+      options: ["2", "2.5", "3", "2.0"],
+      correctAnswer: "2",
+      explanation: "C# performs integer division when both operands are ints. 10 / 4 = 2 (the decimal .5 is truncated). To get 2.5, use (double)s / c."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "The expression `total += i * i` inside a for loop accumulates the sum of squares of all values of i.",
+      correctAnswer: "True",
+      explanation: "Correct. On each iteration, i*i computes the square of the current counter, and += adds it to the running total. After the loop, total holds the sum of all squared values."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Ready to prove mastery of the <code>for</code> loop under pressure? Proceed to <strong>Boss Fight II: The Arena</strong>.</p>
+  <a href="/week-09/lab/" class="vscode-button">Proceed to Boss Fight II →</a>
+</div>
+
+<style>{`
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.2), rgba(107, 159, 255, 0.1));
+    border: 1px solid rgba(107, 159, 255, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    color: #6b9fff;
+    font-weight: 600;
+  }
+
+  .section-time {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .concept-header { margin: 1.5rem 0; }
+
+  .header-content {
+    display: grid;
+    grid-template-columns: 70% 28%;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .header-content { grid-template-columns: 1fr; }
+  }
+
+  .header-text h2 { margin-top: 0; }
+
+  .video-section { margin: 1.5rem 0; }
+
+  .video-intro {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+    font-size: 0.95rem;
+  }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon { font-size: 1.25rem; }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(255, 99, 99, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%);
+    border: 2px solid #ff6363;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+
+  .next-section p {
+    margin: 0 0 16px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .section-badge { background: rgba(107, 159, 255, 0.1) !important; color: #1a4db5 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(255, 99, 99, 0.08) 0%, rgba(255, 152, 0, 0.08) 100%) !important; }
+`}</style>

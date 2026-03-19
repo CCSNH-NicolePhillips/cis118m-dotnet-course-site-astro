@@ -351,53 +351,6 @@ class Program
     }
 }
 `,
-        "week-08-lab": `// Name: Your Name Here
-// Assignment: Lab 8 - The Robust Data Entry System
-
-using System;
-
-class Program
-{
-    static void Main()
-    {
-        Console.WriteLine("=== DAILY REVENUE TRACKER ===");
-        Console.WriteLine();
-        
-        // TODO: Step 1 - Declare variables
-        // You need: total revenue (decimal), day count (int)
-        // Remember: Use decimal for money!
-        
-        
-        // TODO: Step 2 - Create a while(true) loop for data entry
-        // Inside the loop:
-        //   a) Prompt: "Enter revenue for day X (or 0 to finish): "
-        //      (where X is the current day number)
-        //   b) Read input and parse to decimal using decimal.Parse()
-        //
-        //   c) If the value is 0, use break to exit the loop
-        //
-        //   d) If the value is negative, print a warning:
-        //      "⚠️ Negative value skipped. Enter a valid amount."
-        //      Then use continue to skip to the next iteration
-        //
-        //   e) Add the value to the running total
-        //   f) Increment the day count
-        //   g) Print: "  ✅ Day X: $amount recorded. Running total: $total"
-        
-        
-        // TODO: Step 3 - After the loop, display the summary
-        // If no days were entered (count is 0):
-        //   Print: "No revenue data entered."
-        // Otherwise print:
-        //   "=== REVENUE SUMMARY ==="
-        //   "Total Revenue: $total"  (use :C format)
-        //   "Days Recorded: count"
-        //   "Average Daily Revenue: $average"  (use :C format)
-        //   "========================"
-        
-    }
-}
-`,
 
       };
 
@@ -813,55 +766,15 @@ class Program
         window.monacoEditorInstances = window.monacoEditorInstances || {};
         window.monacoEditorInstances[starterId] = editorInstance;
 
-        // ===== Editor Telemetry (integrity tracking) =====
-        window.__editorTelemetry = window.__editorTelemetry || {};
-        const telemetry = {
-          keystrokeCount: 0,
-          pasteCount: 0,
-          pasteCharTotal: 0,
-          largestPaste: 0,
-          editStartTime: null,
-          lastEditTime: null,
-          totalEdits: 0,
-        };
-        window.__editorTelemetry[starterId] = telemetry;
-
-        editorInstance.onDidChangeModelContent((e) => {
-          if (!telemetry.editStartTime) telemetry.editStartTime = Date.now();
-          telemetry.lastEditTime = Date.now();
-          telemetry.totalEdits++;
-          for (const change of e.changes) {
-            if (change.text.length > 20) {
-              telemetry.pasteCount++;
-              telemetry.pasteCharTotal += change.text.length;
-              if (change.text.length > telemetry.largestPaste) {
-                telemetry.largestPaste = change.text.length;
-              }
-            } else if (change.text.length === 1) {
-              telemetry.keystrokeCount++;
-            }
-          }
-        });
-
         // Listen for parent page requests (for submit button)
         window.addEventListener('message', (event) => {
           console.log('[Embedded] Received message:', event.data);
           if (event.data?.type === 'getCode' && event.data?.starterId === starterId) {
             const code = editorInstance ? editorInstance.getValue() : null;
-            // Include telemetry in the response
-            const t = window.__editorTelemetry?.[starterId];
-            const telemetryData = t ? {
-              keystrokeCount: t.keystrokeCount,
-              pasteCount: t.pasteCount,
-              pasteCharTotal: t.pasteCharTotal,
-              largestPaste: t.largestPaste,
-              editDurationSec: t.editStartTime && t.lastEditTime ? Math.round((t.lastEditTime - t.editStartTime) / 1000) : 0,
-              totalEdits: t.totalEdits,
-              codeLength: code?.length || 0
-            } : null;
             console.log('[Embedded] Sending code response, length:', code?.length);
+            // Use '*' for same-origin iframe communication
             if (window.parent && window.parent !== window) {
-              window.parent.postMessage({ type: 'codeResponse', starterId, code, telemetry: telemetryData }, '*');
+              window.parent.postMessage({ type: 'codeResponse', starterId, code }, '*');
             }
           }
         });

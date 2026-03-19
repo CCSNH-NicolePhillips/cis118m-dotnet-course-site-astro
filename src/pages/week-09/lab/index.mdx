@@ -1,0 +1,511 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 09 • Boss Fight II: The Arena"
+description: "Multi-stage counter challenge — demonstrate mastery of for loops and accumulation patterns"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 09: Boss Fight II — The Arena
+
+<DueDateBanner week={9} type="Lab" />
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>9.3: The Integration Contract</h2>
+      <p>
+        You have completed Sections 9.1 and 9.2. You understand the three-clause for loop, the off-by-one boundary, and the accumulator pattern. Now those skills are tested under pressure. This Boss Fight requires you to demonstrate counter-controlled iteration across three progressive stages. Each stage builds on the last. There is no partial scaffolding — you engineer the solution from the specification.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%209/lab/boss-fight-arena.jpg"
+        alt="Engineering arena — three stages of increasing complexity, each requiring a working for loop implementation"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+<div class="boss-header">
+  <div class="boss-banner">
+    <div class="boss-icon" aria-hidden="true">⚔️</div>
+    <div class="boss-title">
+      <h2>BOSS FIGHT II: INITIALIZE</h2>
+      <p class="boss-subtitle">Phase II Final Challenge — For Loops</p>
+    </div>
+    <div class="boss-status">
+      <span class="status-indicator" aria-label="Live assignment — actively graded">LIVE</span>
+    </div>
+  </div>
+</div>
+
+<div class="mission-brief">
+  <div class="brief-header">
+    <div class="brief-icon" aria-label="Mission briefing">📋</div>
+    <h3>Mission Briefing</h3>
+  </div>
+  <div class="brief-content">
+    <p>
+      Architect: Phase II training is complete. You have mastered decision structures, while loops, and now counter-controlled iteration. This Boss Fight is a <strong>three-stage engineering challenge</strong>. Each stage requires a working <code>for</code> loop implementation. The grading system validates output format — spacing and labels must match exactly.
+    </p>
+    <p>
+      This is not a drill. All activity is telemetry-logged. Complete all three stages in a single program.
+    </p>
+  </div>
+</div>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <span class="telemetry-icon" aria-hidden="true">🛡️</span>
+    <h3>Academic Integrity Protocol — Lab 09</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a Boss Fight assignment. It must represent your own individual engineering work. The following active monitoring is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged with timestamps and byte counts.</li>
+      <li><strong>Active edit time:</strong> The total duration of active coding sessions is measured and reported.</li>
+      <li><strong>AI pattern scanning:</strong> Submitted code is scanned for AI-specific syntax patterns. Flagged submissions are archived in the course integrity database for Instructor Dashboard review.</li>
+    </ul>
+    <p>
+      Suspiciously low edit time combined with correct output is a flag. Submissions that show paste-only activity with no edit history will be held for review. Use the AI Tutor for guidance — not for solutions.
+    </p>
+  </div>
+</div>
+
+---
+
+## Mission Requirements
+
+### Stage Architecture Overview
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Stage</th>
+        <th>Challenge</th>
+        <th>Key Requirement</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Stage I</strong></td>
+        <td>Multiplication Table Generator</td>
+        <td>For loop with index-driven arithmetic output</td>
+        <td>30</td>
+      </tr>
+      <tr>
+        <td><strong>Stage II</strong></td>
+        <td>Sum and Average Calculator</td>
+        <td>Accumulator pattern with integer division guard</td>
+        <td>35</td>
+      </tr>
+      <tr>
+        <td><strong>Stage III</strong></td>
+        <td>Triangle Pattern Generator</td>
+        <td>Nested for loops — outer controls rows, inner controls columns</td>
+        <td>35</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Stage I: Multiplication Table Generator
+
+**Specification:** Accept a target number from the user. Print its multiplication table from 1 through 10 using a `for` loop. Each line must follow the exact format shown.
+
+### Stage I Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Header</td>
+        <td>Print <code>=== MULTIPLICATION TABLE ===</code></td>
+      </tr>
+      <tr>
+        <td>Prompt</td>
+        <td>Print <code>Enter a number:</code> and read user input with <code>int.Parse(Console.ReadLine())</code></td>
+      </tr>
+      <tr>
+        <td>Loop structure</td>
+        <td>Use a <code>for</code> loop. Counter runs from 1 through 10 inclusive.</td>
+      </tr>
+      <tr>
+        <td>Output format</td>
+        <td>Each line: <code>[number] x [i] = [result]</code></td>
+      </tr>
+      <tr>
+        <td>Brace style</td>
+        <td>K&amp;R — opening brace on same line as <code>for</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Stage I Example Output
+
+```
+=== MULTIPLICATION TABLE ===
+Enter a number: 7
+
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+7 x 4 = 28
+7 x 5 = 35
+7 x 6 = 42
+7 x 7 = 49
+7 x 8 = 56
+7 x 9 = 63
+7 x 10 = 70
+```
+
+---
+
+## Stage II: Sum and Average Calculator
+
+**Specification:** Accept a positive integer N from the user. Calculate the sum of all integers from 1 through N using an accumulator pattern. Calculate and display the average. Guard against integer division truncation.
+
+### Stage II Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Header</td>
+        <td>Print <code>=== SUM AND AVERAGE ===</code></td>
+      </tr>
+      <tr>
+        <td>Prompt</td>
+        <td>Print <code>Enter N:</code> and read input</td>
+      </tr>
+      <tr>
+        <td>Accumulator</td>
+        <td>Declare <code>int sum = 0</code> before the loop</td>
+      </tr>
+      <tr>
+        <td>Loop</td>
+        <td>For loop from 1 to N inclusive, adding each i to sum</td>
+      </tr>
+      <tr>
+        <td>Average</td>
+        <td>Calculate as <code>(double)sum / n</code> — cast required</td>
+      </tr>
+      <tr>
+        <td>Output</td>
+        <td>Print sum as integer; average with two decimal places using <code>:F2</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Stage II Example Output
+
+```
+=== SUM AND AVERAGE ===
+Enter N: 10
+
+Sum of 1 to 10: 55
+Average: 5.50
+```
+
+---
+
+## Stage III: Triangle Pattern Generator
+
+**Specification:** Accept a positive integer N from the user. Print a right-triangle pattern of asterisks with N rows. Row 1 has 1 asterisk, row 2 has 2, up to row N. Each row occupies a distinct line. This requires nested for loops.
+
+### Stage III Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Requirement</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Header</td>
+        <td>Print <code>=== TRIANGLE PATTERN ===</code></td>
+      </tr>
+      <tr>
+        <td>Prompt</td>
+        <td>Print <code>Enter height:</code> and read input</td>
+      </tr>
+      <tr>
+        <td>Outer loop</td>
+        <td>Controls the row number (1 through N). Variable: <code>row</code></td>
+      </tr>
+      <tr>
+        <td>Inner loop</td>
+        <td>Controls stars per row (1 through row). Variable: <code>col</code></td>
+      </tr>
+      <tr>
+        <td>Star output</td>
+        <td>Print each star with <code>Console.Write("* ")</code> — no newline inside inner loop</td>
+      </tr>
+      <tr>
+        <td>Row end</td>
+        <td>After inner loop completes, call <code>Console.WriteLine()</code> to advance to next line</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Stage III Example Output
+
+```
+=== TRIANGLE PATTERN ===
+Enter height: 5
+
+* 
+* * 
+* * * 
+* * * * 
+* * * * * 
+```
+
+---
+
+## Complete Program Requirements
+
+Your submission must:
+
+1. Run all three stages in a single `Program.cs` file under a single `Main` method.
+2. Separate each stage with a blank line between the final output line of one stage and the header of the next.
+3. Use `for` loops — not `while` loops — for all iteration.
+4. Follow K&R brace style throughout.
+5. Use `int.Parse(Console.ReadLine())` for all numeric input.
+6. Cast to `double` before division in Stage II.
+
+---
+
+## Code Editor
+
+<div id="lab-editor" style="border: 1px solid var(--border, #444); border-radius: 8px; overflow: hidden; margin: 1rem 0;">
+  <iframe
+    src="/editor/embedded?starter=week-09-lab"
+    style="width: 100%; height: 640px; border: none;"
+    title="Lab 09 Code Editor — Boss Fight II: The Arena"
+    aria-label="Embedded code editor for Lab 09 Boss Fight II"
+  ></iframe>
+</div>
+
+---
+
+## Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Stage I: For loop produces correct multiplication table format</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Stage I: Counter runs 1 through 10 inclusive</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Stage II: Accumulator initialized before the loop</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Stage II: Correct sum output as integer</td>
+        <td>10</td>
+      </tr>
+      <tr>
+        <td>Stage II: Average cast to double, displayed with :F2 precision</td>
+        <td>15</td>
+      </tr>
+      <tr>
+        <td>Stage III: Nested for loops — outer for rows, inner for columns</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Stage III: Console.Write inside inner loop, Console.WriteLine after inner loop</td>
+        <td>15</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div style="margin-top: 48px; padding: 20px 24px; background: rgba(100, 100, 120, 0.1); border: 1px solid rgba(140, 140, 160, 0.3); border-radius: 8px;">
+  <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+    This engineering environment utilizes active telemetry. Your keystrokes, edit duration, and paste events are recorded and analyzed for architectural authenticity. AI-generated patterns are flagged and archived in the course integrity database.
+  </p>
+</div>
+
+<style>{`
+  .concept-header { margin: 1.5rem 0; }
+
+  .header-content {
+    display: grid;
+    grid-template-columns: 70% 28%;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .header-content { grid-template-columns: 1fr; }
+  }
+
+  .header-text h2 { margin-top: 0; }
+
+  .boss-header {
+    margin: 2rem 0;
+  }
+
+  .boss-banner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: linear-gradient(135deg, rgba(220, 20, 20, 0.15), rgba(180, 0, 0, 0.08));
+    border: 2px solid rgba(220, 60, 60, 0.5);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+  }
+
+  .boss-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .boss-title {
+    flex: 1;
+  }
+
+  .boss-title h2 {
+    margin: 0 0 4px;
+    font-size: 1.4rem;
+    color: #ff6363;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .boss-subtitle {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .status-indicator {
+    background: #cc0000;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(30, 30, 50, 0.6), rgba(20, 20, 40, 0.4));
+    border: 1px solid rgba(100, 100, 180, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .brief-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .brief-icon { font-size: 1.25rem; }
+
+  .brief-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a0a0c0;
+  }
+
+  .brief-content p { margin: 0 0 0.75rem; line-height: 1.6; }
+  .brief-content p:last-child { margin-bottom: 0; }
+
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .telemetry-icon { font-size: 1.25rem; }
+
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .telemetry-content li { margin: 0.25rem 0; }
+
+  body[data-theme="light"] .boss-title h2 { color: #b00000 !important; }
+  body[data-theme="light"] .mission-brief { background: rgba(200, 200, 220, 0.2) !important; border-color: rgba(100, 100, 180, 0.2) !important; }
+  body[data-theme="light"] .brief-header h3 { color: #444 !important; }
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+`}</style>

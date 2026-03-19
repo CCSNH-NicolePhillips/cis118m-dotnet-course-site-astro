@@ -1,0 +1,468 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 9.1 • The Counted Loop"
+description: "Master the for loop — C#'s counter-controlled iteration structure"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 9.1: The Counted Loop
+
+<div class="section-header">
+  <div class="section-badge">🔢 The Precision Instrument</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>From Condition-Driven to Counter-Driven Iteration</h2>
+      <p>
+        The <code>while</code> loop you built in Week 8 is a <strong>condition-driven sensor</strong> — it keeps running until the external world changes. But many engineering tasks are not open-ended. A payroll system processes exactly 40 employees. A game spawns exactly 5 enemies. A report prints exactly 12 monthly rows. These tasks have a <strong>known count</strong> before execution begins. For these scenarios, the <code>for</code> loop is the correct instrument — it packages initialization, condition, and iteration into a single, readable declaration.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%209/9.1/for-loop-anatomy.jpg"
+        alt="For loop anatomy diagram showing initializer, condition, and iterator clauses in the for statement header"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: The Counted Loop
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on counter-controlled iteration — how the for loop packages all three loop control elements into a single declaration line.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/9S_E_mI678A"
+      title="9.1: The Counted Loop — For Loops in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 9.1 The Counted Loop — For Loops in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## What Is a For Loop?
+
+A **for loop** executes a block of code a **known number of times**, using a counter variable to track progress:
+
+```csharp
+for (int i = 0; i < 5; i++) {
+    Console.WriteLine($"Iteration {i}");
+}
+
+Console.WriteLine("Loop complete.");
+```
+
+**Output:**
+```
+Iteration 0
+Iteration 1
+Iteration 2
+Iteration 3
+Iteration 4
+Loop complete.
+```
+
+The counter starts at `0`, runs while `i < 5`, and increments by one each time. Five iterations — predictable, bounded, and precise.
+
+<AnnotatedCode
+  title="Anatomy of a For Loop"
+  tokens={[
+    { text: "for", type: "keyword", tooltip: "The for keyword — declares a counter-controlled loop" },
+    { text: " (", type: "punctuation" },
+    { text: "int i = 0", type: "parameter", tooltip: "INITIALIZER: declares and sets the counter — runs exactly once before the loop starts" },
+    { text: "; ", type: "punctuation" },
+    { text: "i < 5", type: "parameter", tooltip: "CONDITION: checked before each iteration — if false, loop exits (pre-check, just like while)" },
+    { text: "; ", type: "punctuation" },
+    { text: "i++", type: "parameter", tooltip: "ITERATOR: runs after each iteration — advances the counter toward termination" },
+    { text: ") {", type: "punctuation" },
+    { text: " " },
+    { text: "Console.WriteLine($\"Iteration {i}\");", type: "string", tooltip: "BODY: the code that repeats. The counter i is available inside the body." },
+    { text: " }", type: "punctuation", tooltip: "End of loop body — control returns to the iterator, then the condition" }
+  ]}
+/>
+
+---
+
+## The Three Clauses Explained
+
+Every `for` loop header contains exactly three semicolon-separated clauses:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Clause</th>
+        <th>Syntax Example</th>
+        <th>When It Runs</th>
+        <th>Purpose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Initializer</strong></td>
+        <td><code>int i = 0</code></td>
+        <td>Once, before loop starts</td>
+        <td>Declares and initializes the counter variable</td>
+      </tr>
+      <tr>
+        <td><strong>Condition</strong></td>
+        <td><code>i &lt; 10</code></td>
+        <td>Before each iteration</td>
+        <td>Pre-check gate — loop only runs if true</td>
+      </tr>
+      <tr>
+        <td><strong>Iterator</strong></td>
+        <td><code>i++</code></td>
+        <td>After each iteration</td>
+        <td>Advances the counter toward termination</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+The `for` loop is **equivalent** to the following `while` loop — it simply consolidates all three control elements onto one line for clarity:
+
+```csharp
+// These two loops are identical in behavior:
+
+// for loop version
+for (int i = 0; i < 5; i++) {
+    Console.WriteLine($"Iteration {i}");
+}
+
+// Equivalent while loop
+int i = 0;            // initializer
+while (i < 5) {       // condition
+    Console.WriteLine($"Iteration {i}");
+    i++;              // iterator
+}
+```
+
+<div class="architect-rule">
+
+### Architect's Rule: Counter Scope
+
+The counter variable `i` declared in the `for` loop initializer **only exists inside the loop**. Once the loop ends, `i` is out of scope. If you need the final counter value after the loop, declare it **before** the `for` statement:
+
+```csharp
+int i;
+for (i = 0; i < 10; i++) { ... }
+Console.WriteLine($"Final i: {i}"); // i is accessible here
+```
+
+</div>
+
+---
+
+## The Off-By-One Error
+
+The most common `for` loop failure is the **off-by-one error** — running one too many or one too few iterations. This always comes down to the **initializer** and the **condition boundary**:
+
+```csharp
+// INTENT: Print the numbers 1 through 5
+// COMMON MISTAKE: starts at 1 but uses < 5 — misses the last value!
+for (int i = 1; i < 5; i++) {
+    Console.WriteLine(i);
+}
+// Prints: 1, 2, 3, 4 (MISSING 5)
+
+// CORRECT version 1: start at 1, use <= 5
+for (int i = 1; i <= 5; i++) {
+    Console.WriteLine(i);
+}
+
+// CORRECT version 2: start at 0, use < 5 (zero-based, the canonical pattern)
+for (int i = 0; i < 5; i++) {
+    Console.WriteLine(i + 1);
+}
+```
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>Zero-based indexing is the standard.</strong> In C# (and most modern languages), arrays and collections are indexed starting at 0 — not 1. The canonical for loop pattern <code>for (int i = 0; i &lt; N; i++)</code> aligns perfectly with this. When you start at 0 and use <code>&lt; N</code>, you process exactly N items: i=0, 1, 2, ..., N-1. When you start at 1 and use <code>&lt;= N</code>, you process the same N items but with inconsistent semantics. Senior engineers almost always use zero-based loops. Internalize this pattern now and the off-by-one error becomes rare.</p>
+  </div>
+</div>
+
+---
+
+<DeepDiveTabs
+  title="The For Loop in Real Systems"
+  tabs={[
+    {
+      id: "payroll",
+      label: "Payroll System",
+      content: "A payroll engine knows at the start of each run exactly how many employees to process — say, 312. A for loop is the correct choice: for (int i = 0; i < employeeCount; i++). The count is known, the iteration is predictable, and the boundary is explicit in the code for any engineer to read. A while loop here would be a design smell — it implies uncertainty about when to stop.",
+      keyPoints: ["Known count before loop starts", "for loop makes the count explicit in the header", "Zero-based index aligns with array access: employees[i]"]
+    },
+    {
+      id: "rendering",
+      label: "Frame Rendering",
+      content: "A game engine rendering a grid of tiles iterates over exactly WIDTH x HEIGHT positions. Nested for loops: outer loop for rows (y), inner loop for columns (x). The iteration counts are fixed by the grid dimensions, known before rendering starts. This is the canonical use case for the for loop — bounded, countable, index-driven.",
+      keyPoints: ["Nested for loops for two-dimensional grids", "Outer: for (int y = 0; y < height; y++)", "Inner: for (int x = 0; x < width; x++)"]
+    },
+    {
+      id: "reporting",
+      label: "Monthly Reports",
+      content: "A reporting system generates a table with exactly 12 rows — one per month. The for loop number maps directly to the output structure: for (int month = 1; month <= 12; month++). The reader immediately understands the loop will run 12 times. No guessing. No looking for the exit condition elsewhere in the code.",
+      keyPoints: ["Iteration count is a business constraint (12 months)", "for loop makes the constraint self-documenting", "Starting at 1 and using <= 12 is natural for month numbering"]
+    },
+    {
+      id: "countdown",
+      label: "Countdown Timer",
+      content: "A countdown timer can use a decrementing for loop: for (int t = 10; t > 0; t--). The iterator is t-- instead of t++. This uses the same three-clause structure but counts downward. The initializer sets t=10, the condition t>0 is the exit, and t-- is the iterator. This clarity is impossible to achieve as cleanly with a while loop.",
+      keyPoints: ["Iterator can decrement: t--", "Condition boundary changes: t > 0 instead of t < 10", "Reads naturally as 'count from 10 down to 1'"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: The Counter Loop
+
+Build a loop that prints a numbered list from 1 to N:
+
+<TryItNowRunner
+  starterId="week-09-lesson-1"
+  height={520}
+  code={`using System;
+
+class Program
+{
+    static void Main()
+    {
+        Console.WriteLine("=== COUNTED LOOP DEMONSTRATION ===");
+
+        int limit = 7;
+
+        // TODO: Write a for loop that prints:
+        // "Item 1 of 7"
+        // "Item 2 of 7"
+        // ...
+        // "Item 7 of 7"
+
+        for (int i = 1; i <= limit; i++) {
+            Console.WriteLine($"Item {i} of {limit}");
+        }
+
+        Console.WriteLine("\\nLoop complete. Final i is out of scope.");
+    }
+}`}
+  instructions="Modify the for loop to count DOWN from 7 to 1. Change the output to read 'T-minus 7...', 'T-minus 6...', etc."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-09-lesson-1-check"
+  title="Section 9.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "In the for loop header `for (int i = 0; i < 10; i++)`, how many times does the loop body execute?",
+      options: ["9", "10", "11", "It depends on runtime conditions"],
+      correctAnswer: "10",
+      explanation: "The counter starts at i=0 and runs while i < 10. That means i = 0, 1, 2, ..., 9 — exactly 10 iterations. The body stops executing when i reaches 10 (condition fails)."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "When does the ITERATOR clause of a for loop run?",
+      options: [
+        "Once, before the loop starts",
+        "Before each iteration, alongside the condition",
+        "After each iteration of the body",
+        "Only when the condition becomes false"
+      ],
+      correctAnswer: "After each iteration of the body",
+      explanation: "The iterator (e.g., i++) runs AFTER the body executes and BEFORE the condition is re-checked. Sequence: initializer → condition → body → iterator → condition → body → ..."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What is the canonical zero-based for loop pattern to process exactly N items?",
+      options: [
+        "for (int i = 1; i <= N; i++)",
+        "for (int i = 0; i < N; i++)",
+        "for (int i = 0; i <= N; i++)",
+        "for (int i = 1; i < N; i++)"
+      ],
+      correctAnswer: "for (int i = 0; i < N; i++)",
+      explanation: "Starting at i=0 and using i < N gives exactly N iterations (i = 0, 1, ..., N-1). This aligns with zero-based array indexing and is the industry standard pattern."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "A for loop with the condition i < 5 and initializer int i = 0 is equivalent to a while loop with condition i < 5 and i=0 declared before the loop.",
+      correctAnswer: "True",
+      explanation: "Correct. The for loop is syntactic sugar for the three-part while loop pattern. Both check the condition before each iteration (pre-check) and produce identical behavior."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Ready to apply the index counter to build running totals and averages? Move to <strong>Section 9.2</strong>.</p>
+  <a href="/week-09/lesson-2/" class="vscode-button">Continue to Section 9.2: Accumulation Patterns →</a>
+</div>
+
+<style>{`
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.2), rgba(78, 201, 176, 0.1));
+    border: 1px solid rgba(78, 201, 176, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    color: #4ec9b0;
+    font-weight: 600;
+  }
+
+  .section-time {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+  }
+
+  .concept-header {
+    margin: 1.5rem 0;
+  }
+
+  .header-content {
+    display: grid;
+    grid-template-columns: 70% 28%;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .header-content { grid-template-columns: 1fr; }
+  }
+
+  .header-text h2 { margin-top: 0; }
+
+  .video-section {
+    margin: 1.5rem 0;
+  }
+
+  .video-intro {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+    font-size: 0.95rem;
+  }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon {
+    font-size: 1.25rem;
+  }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+
+  .next-section p {
+    margin: 0 0 16px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .section-badge { background: rgba(78, 201, 176, 0.1) !important; color: #1a7a64 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

@@ -108,10 +108,10 @@ export const WEEKS: WeekConfig[] = [
   // SPRING BREAK: March 16-22, 2026 (No classes)
   { slug: '09', title: 'Week 09: For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-09/' },
-      { title: '9.1 Lesson 1', href: '/week-09/lesson-1/' },
-      { title: '9.2 Lesson 2', href: '/week-09/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-09/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-09/homework/' },
+      { title: '9.1 The Counted Loop', href: '/week-09/lesson-1/' },
+      { title: '9.2 Accumulation Patterns', href: '/week-09/lesson-2/' },
+      { title: 'Boss Fight II: The Arena (Graded)', href: '/week-09/lab/', isGatekeeper: true },
+      { title: 'Technical Reflection 09 (Graded)', href: '/week-09/homework/' },
       { title: 'Extra Practice', href: '/week-09/extra-practice/' }
     ] },
   { slug: '10', title: 'Week 10: Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00', pages: [

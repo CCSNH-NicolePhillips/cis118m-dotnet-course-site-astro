@@ -1,0 +1,177 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 09 • Technical Reflection: while vs for"
+description: "Comparative analysis of while and for loop use cases — when to use each loop type"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 09: Technical Reflection — (GRADED)
+
+<DueDateBanner week={9} type="Homework" />
+
+## Homework 09: The Loop Selection Analysis
+
+<p>You have now worked with both <code>while</code> loops (Week 8) and <code>for</code> loops (Week 9). These are not equivalent tools — each is the correct instrument for a specific class of problems. This reflection requires you to demonstrate <strong>architectural decision-making</strong>: explaining not just how each loop works, but <em>when and why</em> to use each one. Engineering judgment, not just syntax recall.</p>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <span class="telemetry-icon" aria-hidden="true">🛡️</span>
+    <h3>Academic Integrity Protocol — Homework 09</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a graded written reflection. It must represent your own analytical thinking. The following is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged. Responses that are paste-only with no revision history will be flagged for review.</li>
+      <li><strong>Active edit time:</strong> Total active writing time is measured. A correct, substantive reflection with minimal edit time is an integrity flag.</li>
+      <li><strong>AI pattern scanning:</strong> Response text is analyzed for AI-specific structural and syntactic patterns. Flagged submissions are archived in the course integrity database for Instructor Dashboard review.</li>
+    </ul>
+  </div>
+</div>
+
+---
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Loop Selection Analysis</h3>
+    <p>In 3-5 sentences per question, answer the following:</p>
+    <ol>
+      <li>
+        <strong>Anatomy Comparison:</strong> Describe the three clauses of a <code>for</code> loop — initializer, condition, and iterator. Explain how each clause maps to the three essential parts of a <code>while</code> loop from Week 8. What is the architectural advantage of packaging all three into a single declaration line?
+      </li>
+      <li>
+        <strong>The Off-By-One Error:</strong> Define the off-by-one error as it applies to <code>for</code> loops. Provide a specific code example of a loop that makes this mistake, explain exactly why the error occurs, and show the corrected version. Reference the initializer and the condition boundary in your explanation.
+      </li>
+      <li>
+        <strong>Use Case Decision:</strong> When should you choose a <code>for</code> loop over a <code>while</code> loop, and vice versa? Give a concrete real-world scenario where each loop type is the correct architectural choice. Explain what information you would need to know before the loop starts to make that decision.
+      </li>
+    </ol>
+    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; font-size: 0.9rem;">
+      Reference: For loop anatomy is in Section 9.1. Accumulation patterns are in Section 9.2. The while loop comparison is in Section 8.1. Review the "The Counted Loop Is a Precision Contract" note on the Week 09 overview page.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-09-homework" />
+
+---
+
+## Reference Material
+
+If you need to review, revisit these sections:
+
+- [Section 9.1: The Counted Loop](/week-09/lesson-1/) — For loop anatomy, three clauses, off-by-one errors
+- [Section 9.2: Accumulation Patterns](/week-09/lesson-2/) — Index-driven logic, sum and average, integer division
+- [Section 8.1: The Persistent Watcher](/week-08/8-1-while-loop/) — While loop anatomy, the progress statement, pre-check behavior
+
+---
+
+<div class="next-section">
+  <p>Homework submitted? You have completed Week 09. The Boss Fight II submission closes at the end of the week.</p>
+  <a href="/week-09/" class="vscode-button">Return to Week 09 Overview</a>
+</div>
+
+<style>{`
+  .component-cards {
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .component-card h3 {
+    color: #a78bfa;
+    margin-top: 0;
+    font-size: 1.05rem;
+  }
+
+  .component-card ol {
+    margin-bottom: 0;
+  }
+
+  .component-card li {
+    margin: 0.85rem 0;
+    line-height: 1.65;
+  }
+
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .telemetry-icon { font-size: 1.25rem; }
+
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .telemetry-content li { margin: 0.3rem 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+
+  .next-section p {
+    margin: 0 0 16px;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  body[data-theme="light"] .component-card {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%) !important;
+    border-color: rgba(139, 92, 246, 0.2) !important;
+  }
+
+  body[data-theme="light"] .component-card h3 { color: #6d28d9 !important; }
+
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+
+  body[data-theme="light"] .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important;
+  }
+
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

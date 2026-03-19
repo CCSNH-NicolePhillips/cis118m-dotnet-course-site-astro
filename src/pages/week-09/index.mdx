@@ -1,0 +1,261 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 09 • For Loops"
+description: "Boss Fight II — Counter-controlled iteration, accumulation patterns, and the for loop anatomy"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 09: For Loops — Boss Fight II 🏟️
+
+<DueDateBanner week={9} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>⚔️ Welcome Back, Architect</h2>
+  <p>
+    Spring Break is over. The systems are back online. This week, you upgrade your iteration toolkit with the most precise loop structure in C# — the <strong>for loop</strong>. Where the <code>while</code> loop is a continuous sensor that runs until a condition changes, the <code>for loop</code> is a <strong>precision instrument</strong> — it knows exactly how many times it will run before it starts.
+  </p>
+  <p>
+    Think of a <code>while</code> loop as a night watchman checking doors until sunrise. The <code>for</code> loop is a surgical robot — <em>seven incisions, no more, no less</em>. Counter-controlled. Deterministic. Built for precision. This is also a <strong>Boss Fight week</strong> — which means the Lab is a high-stakes, multi-stage challenge demonstrating mastery of everything you've built since Week 1.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 09 Learning Path
+
+<div class="section-cards">
+  <a href="/week-09/lesson-1/" class="section-card for-loop">
+    <div class="card-icon" aria-hidden="true">🔢</div>
+    <div class="card-content">
+      <h3>9.1 The Counted Loop</h3>
+      <p class="metaphor">The Precision Instrument</p>
+      <p>Anatomy of the for statement — initializer, condition, iterator</p>
+    </div>
+  </a>
+
+  <a href="/week-09/lesson-2/" class="section-card accumulator">
+    <div class="card-icon" aria-hidden="true">📊</div>
+    <div class="card-content">
+      <h3>9.2 Accumulation Patterns</h3>
+      <p class="metaphor">The Running Total Engine</p>
+      <p>Using the index counter (i) to drive sums, averages, and data access</p>
+    </div>
+  </a>
+
+  <a href="/week-09/lab/" class="section-card boss-fight">
+    <div class="card-icon" aria-hidden="true">⚔️</div>
+    <div class="card-content">
+      <h3>Boss Fight II: The Arena</h3>
+      <p class="metaphor">Phase II Final Challenge</p>
+      <p>Multi-stage counter challenge — demonstrate full loop mastery</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Concept</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>9.1</strong></td>
+        <td><a href="/week-09/lesson-1/">The Counted Loop</a></td>
+        <td>🔢 For Loop Anatomy</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>9.2</strong></td>
+        <td><a href="/week-09/lesson-2/">Accumulation Patterns</a></td>
+        <td>📊 Index-Driven Logic</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-09/lab/">Boss Fight II: The Arena</a></td>
+        <td>⚔️ Counter Challenge</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-09/homework/">Technical Reflection 09</a></td>
+        <td>while vs for Analysis</td>
+        <td>20 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🧠 The Precision Upgrade: while → for
+
+Week 8 gave you the **while loop** — condition-controlled iteration. This week, you add the **for loop** — counter-controlled iteration. The difference is architectural:
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>🔁 while Loop</h3>
+    <p>Use when you <strong>don't know how many times</strong> the loop will run. The loop continues until a condition changes — driven by external input or unknown state.</p>
+    <code>while (input != "quit") &#123; ... &#125;</code>
+  </div>
+  <div class="component-card">
+    <h3>🔢 for Loop</h3>
+    <p>Use when you <strong>know exactly how many times</strong> the loop will run. The counter is declared, checked, and incremented all in one line.</p>
+    <code>for (int i = 0; i &lt; 10; i++) &#123; ... &#125;</code>
+  </div>
+</div>
+
+---
+
+## 🏗️ Senior Architect Perspective
+
+<div class="architect-rule">
+
+### ⚙️ The Counted Loop Is a Precision Contract
+
+When you write `for (int i = 0; i < N; i++)`, you are making a **contract with the CPU**: execute the body exactly N times, using `i` as the counter from 0 to N-1. This is not just a convenience — it is a design decision. It tells every engineer reading your code: "The number of iterations is known, bounded, and intentional."
+
+🎯 **The most common failure this week will be the off-by-one error.** Starting at `i = 1` instead of `i = 0`, or using `i <= N` instead of `i < N`, causes one extra or one missing iteration. When your loop is producing wrong output, the initializer and the condition boundary are always the first two things to check.
+
+</div>
+
+---
+
+## 🛡️ Instructor Perspective
+
+<div class="pro-tip">
+  <h3>📡 Post-Spring Break System Status</h3>
+  <p>Welcome back. The instructor is back to full connectivity. Office hours, Slack messages, and email are all active. The telemetry system is fully operational — your engineering activity in the Lab is being recorded. Bring your best work to Boss Fight II. 💪</p>
+</div>
+
+---
+
+## 📋 Week 09 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>⚔️ Boss Fight II: The Arena</strong> — Counter-Controlled Challenge</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">60%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Technical Reflection 09</strong> — while vs for Analysis</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">25%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks</strong> — Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">15%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-09/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 9.1 →
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .section-card.for-loop {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .section-card.accumulator {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+
+  .section-card.boss-fight {
+    background: linear-gradient(135deg, rgba(255, 99, 99, 0.1), rgba(255, 99, 99, 0.05));
+    border-color: rgba(255, 99, 99, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .pro-tip {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(107, 159, 255, 0.08));
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .pro-tip h3 { color: #4ec9b0; margin-top: 0; }
+
+  body[data-theme="light"] .section-card.for-loop { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(78, 201, 176, 0.03)) !important; }
+  body[data-theme="light"] .section-card.accumulator { background: linear-gradient(135deg, rgba(107, 159, 255, 0.08), rgba(107, 159, 255, 0.03)) !important; }
+  body[data-theme="light"] .section-card.boss-fight { background: linear-gradient(135deg, rgba(255, 99, 99, 0.08), rgba(255, 99, 99, 0.03)) !important; }
+  body[data-theme="light"] .card-content h3 { color: #1e1e1e !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #1a7a64 !important; }
+`}</style>
