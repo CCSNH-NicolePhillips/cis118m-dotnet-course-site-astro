@@ -665,7 +665,7 @@ Quiz Questions (10 questions):
 2. Q: What is the difference between = and == in C#?
    A: = assigns a value; == compares two values
    Why: The single = is the assignment operator (puts a value INTO a variable). The double == is the equality comparison operator (checks if two values are the SAME). Mixing them up is a common bug!
-3. Q: What does this code print?\n\nint x = 5;\nif (x > 10) {\n    Console.WriteLine(\
+3. Q: What does this code print?
    A: B
    Why: Since x is 5 and 5 > 10 is false, the else block executes, printing \
 4. Q: What happens if you write an if statement WITHOUT braces and put two lines after it?
@@ -834,7 +834,7 @@ Quiz Questions (10 questions):
 9. Q: What does the 'default' case in a switch statement do?
    A: It catches any value that doesn't match a case label
    Why: The default case is the 'catch-all' — it runs when no other case matches. While optional, you should always include it to handle unexpected values and prevent silent failures.
-10. Q: What does this expression evaluate to?\n\ntrue || false && false
+10. Q: What does this expression evaluate to?
    A: true — because && evaluates first: false && false = false, then true || false = true
    Why: && has higher precedence than ||, so it evaluates first: false && false = false. Then: true || false = true. The result is true. Using parentheses: true || (false && false) makes this clearer.
 
@@ -927,10 +927,10 @@ Quiz Questions (10 questions):
 8. Q: What is a 'sentinel value' in loop programming?
    A: A special value that signals the loop to stop processing
    Why: A sentinel value is a special input (like 0, -1, or 'quit') that tells the program to stop. It must be a value that could NEVER be valid data — otherwise the program can't distinguish between real data and the stop signal.
-9. Q: What is the output of this code?\n\nint x = 5;\ndo {\n    Console.Write(x + \
+9. Q: What is the output of this code?
    A: 5
    Why: The do-while body runs ONCE (printing '5'), then x becomes 4. The condition 4 > 5 is false, so the loop exits. Even though x was never actually > 5 during the check, the body still ran once — that's the do-while guarantee.
-10. Q: What is wrong with this do-while syntax?\n\ndo {\n    // body\n} while (x > 0)
+10. Q: What is wrong with this do-while syntax?
    A: Missing semicolon after while (x > 0)
    Why: do-while requires a semicolon after the closing parenthesis: } while (x > 0); — this is a common syntax mistake because regular while loops don't need one there. The compiler will give an error if it's missing.
 
@@ -938,56 +938,41 @@ Quiz Questions (10 questions):
 
 ## Week 9: For Loops
 
-### 📚 Overview: Week 09 • Extra Practice
+### 📝 Homework: Homework 09 • Technical Reflection: while vs for
 
-Summary: # Week 9 Extra Practice: Text analyzer mini-challenges Pick **1–2** items (optional). - Ask for a sentence and count how many characters it has. - Ask for a sentence and count how many times the letter 'a' appears (simple loop). - Challenge: Ask for a word and print it backwards (loop from end to st...
+Summary: # Homework 09: Technical Reflection — (GRADED) ## Homework 09: The Loop Selection Analysis You have now worked with both while loops (Week 8) and for loops (Week 9). These are not equivalent tools — each is the correct instrument for a specific class of problems. This reflection requires you to demo...
 
-### 📝 Homework: Week 09 • Week 9 Homework: Password Strength Checker (simple)
-
-Summary: # Week 9 Homework: Password Strength Checker (simple) ## Overview Create a password checker that scores a password using basic rules (no need for ‘real-world security’ yet). ## Requirements checklist (acceptance criteria) - [ ] Prompts user for a password (string) - [ ] Checks at least 4 rules (exam...
-
-### 📚 Overview: Week 09
+### 📚 Overview: Week 09 • For Loops
 Key Concepts:
-- Focus:
+- while loop
+- for loop
 
-Summary: # Week 9 **Focus:** Strings (text): building, searching, slicing, and cleaning user input. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homewo...
+Summary: # Week 09: For Loops — Boss Fight II 🏟️ ⚔️ Welcome Back, Architect Spring Break is over. The systems are back online. This week, you upgrade your iteration toolkit with the most precise loop structure in C# — the for loop . Where the while loop is a continuous sensor that runs until a condition cha...
 
-### 🔬 Lab: Week 09 • Week 9 Lab: Username Validator
-
-Summary: # Week 9 Lab: Username Validator ## Overview Build a program that checks whether a username follows a few simple rules and prints clear feedback. ## Requirements checklist (acceptance criteria) - [ ] Prompts the user for a username - [ ] Trims leading/trailing spaces - [ ] Checks at least 3 rules (e...
-
-### 📖 Lesson: Week 09 • Lesson 1
+### 🔬 Lab: Lab 09 • Boss Fight II: The Arena
 Key Concepts:
-- string
-- Length
-- Contains
-- ToLower/ToUpper
+- Specification:
+- Submit Boss Fight
 
-Summary: # Week 9 Lesson 1: Strings are tools (not just words) ## Goal - Treat strings like data you can analyze and change - Use .Length, .Contains(), .ToLower() / .ToUpper() - Avoid case-sensitivity surprises ## What to know - **string**: Text, like a name, a sentence, or an ID. - **Length**: How many char...
+Summary: # Lab 09: Boss Fight II — The Arena 9.3: The Integration Contract You have completed Sections 9.1 and 9.2. You understand the three-clause for loop, the off-by-one boundary, and the accumulator pattern. Now those skills are tested under pressure. This Boss Fight requires you to demonstrate counter-c...
 
-Code Example:
-```csharp
-string name = "  Nicole  ";
-name = name.Trim();
-Console.WriteLine(name);
-Console.WriteLine($"Length: {name.Length}");
-```
-
-### 📖 Lesson: Week 09 • Lesson 2
+### 📖 Lesson: Section 9.1 • The Counted Loop
 Key Concepts:
-- Substring(start)
-- Substring(start, length)
-- Out of range
-- 1) If a string length is 5, what is the last index?
+- for loop
+- known number of times
+- Output:
+- equivalent
+- only exists inside the loop
 
-Summary: # Week 9 Lesson 2: Substring + indexing (carefully!) ## Goal - Use Substring to slice text - Understand indexing (0-based) for characters - Avoid out-of-range errors by checking lengths ## What to know - **Index**: Position number (starts at 0). - **Substring(start)**: Returns everything from start ...
+Summary: # Section 9.1: The Counted Loop 🔢 The Precision Instrument ⏱️ Estimated Time: 30 minutes --- From Condition-Driven to Counter-Driven Iteration The while loop you built in Week 8 is a condition-driven sensor — it keeps running until the external world changes. But many engineering tasks are not open...
 
-Code Example:
-```csharp
-string s = "Hello";
-Console.WriteLine(s[0]); // H
-Console.WriteLine(s[4]); // o
-```
+### 📖 Lesson: Section 9.2 • Accumulation Patterns
+Key Concepts:
+- accumulator pattern
+- before
+- position
+
+Summary: # Section 9.2: Accumulation Patterns 📊 The Running Total Engine ⏱️ Estimated Time: 30 minutes --- The Index Variable as a Data Driver In Section 9.1, the index counter i simply tracked how many times the loop had run. In real engineering work, i does more than count — it drives calculations, positi...
 
 ---
 
@@ -1357,9 +1342,11 @@ Summary: # Week 15 Homework: Starter Code + One Feature ## Overview Create the p
 
 ### 📚 Overview: Week 15
 Key Concepts:
+- This is it.
+- May 10th
 - Focus:
 
-Summary: # Week 15 **Focus:** Review + final project plan: put the pieces together. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/...
+Summary: # ⚔️ Week 15: FINAL BOSS FIGHT > **This is it.** No Week 16. No extra chances. Build your capstone project and submit by **May 10th**. This is the final boss — defeat it. **Focus:** Build and submit your final project. Apply everything you've learned. ## This week’s pages - Lesson 1: [./lesson-1/](....
 
 ### 🔬 Lab: Week 15 • Week 15 Lab: Final Project Proposal
 

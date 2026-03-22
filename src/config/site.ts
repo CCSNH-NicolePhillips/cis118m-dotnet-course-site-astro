@@ -111,56 +111,49 @@ export const WEEKS: WeekConfig[] = [
       { title: '9.1 The Counted Loop', href: '/week-09/lesson-1/' },
       { title: '9.2 Accumulation Patterns', href: '/week-09/lesson-2/' },
       { title: 'Boss Fight II: The Arena (Graded)', href: '/week-09/lab/', isGatekeeper: true },
-      { title: 'Technical Reflection 09 (Graded)', href: '/week-09/homework/' },
-      { title: 'Extra Practice', href: '/week-09/extra-practice/' }
+      { title: 'Technical Reflection 09 (Graded)', href: '/week-09/homework/' }
     ] },
   { slug: '10', title: 'Week 10: Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-10/' },
       { title: '10.1 Lesson 1', href: '/week-10/lesson-1/' },
       { title: '10.2 Lesson 2', href: '/week-10/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-10/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-10/homework/' },
-      { title: 'Extra Practice', href: '/week-10/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-10/homework/' }
     ] },
   { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-11/' },
       { title: '11.1 Lesson 1', href: '/week-11/lesson-1/' },
       { title: '11.2 Lesson 2', href: '/week-11/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-11/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-11/homework/' },
-      { title: 'Extra Practice', href: '/week-11/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-11/homework/' }
     ] },
   { slug: '12', title: 'Week 12: Array Architectures', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-12/' },
       { title: '12.1 Lesson 1', href: '/week-12/lesson-1/' },
       { title: '12.2 Lesson 2', href: '/week-12/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-12/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-12/homework/' },
-      { title: 'Extra Practice', href: '/week-12/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-12/homework/' }
     ] },
   { slug: '13', title: 'Week 13: Lists & Collections', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-13/' },
       { title: '13.1 Lesson 1', href: '/week-13/lesson-1/' },
       { title: '13.2 Lesson 2', href: '/week-13/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-13/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' },
-      { title: 'Extra Practice', href: '/week-13/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' }
     ] },
   { slug: '14', title: 'Week 14: Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-14/' },
       { title: '14.1 Lesson 1', href: '/week-14/lesson-1/' },
       { title: '14.2 Lesson 2', href: '/week-14/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-14/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-14/homework/' },
-      { title: 'Extra Practice', href: '/week-14/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-14/homework/' }
     ] },
   { slug: '15', title: 'Week 15: ⚔️ FINAL BOSS FIGHT — Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-15/' },
       { title: '15.1 Lesson 1', href: '/week-15/lesson-1/' },
       { title: '15.2 Lesson 2', href: '/week-15/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-15/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-15/homework/' },
-      { title: 'Extra Practice', href: '/week-15/extra-practice/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-15/homework/' }
     ] },
 ];
 
