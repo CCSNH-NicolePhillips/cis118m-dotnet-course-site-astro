@@ -334,35 +334,71 @@ Your submission must:
     <tbody>
       <tr>
         <td>Stage I: For loop produces correct multiplication table format</td>
-        <td>15</td>
+        <td>30</td>
       </tr>
       <tr>
         <td>Stage I: Counter runs 1 through 10 inclusive</td>
-        <td>15</td>
+        <td>30</td>
       </tr>
       <tr>
         <td>Stage II: Accumulator initialized before the loop</td>
-        <td>10</td>
-      </tr>
-      <tr>
-        <td>Stage II: Correct sum output as integer</td>
-        <td>10</td>
-      </tr>
-      <tr>
-        <td>Stage II: Average cast to double, displayed with :F2 precision</td>
-        <td>15</td>
-      </tr>
-      <tr>
-        <td>Stage III: Nested for loops — outer for rows, inner for columns</td>
         <td>20</td>
       </tr>
       <tr>
+        <td>Stage II: Correct sum output as integer</td>
+        <td>20</td>
+      </tr>
+      <tr>
+        <td>Stage II: Average cast to double, displayed with :F2 precision</td>
+        <td>30</td>
+      </tr>
+      <tr>
+        <td>Stage III: Nested for loops — outer for rows, inner for columns</td>
+        <td>40</td>
+      </tr>
+      <tr>
         <td>Stage III: Console.Write inside inner loop, Console.WriteLine after inner loop</td>
-        <td>15</td>
+        <td>30</td>
       </tr>
     </tbody>
   </table>
 </div>
+
+---
+
+## Submission
+
+When your program runs correctly:
+1. Make sure your name is in the header comment
+2. Click **Save** to save your work
+3. Click **Submit Boss Fight** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" style="
+    background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+    transition: all 0.3s ease;
+  ">
+    ⚔️ Submit Boss Fight
+  </button>
+  <div id="submit-status" aria-live="polite" aria-atomic="true" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" aria-live="polite" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
 
 ---
 

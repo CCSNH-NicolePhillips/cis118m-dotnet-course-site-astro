@@ -448,6 +448,7 @@ internal static class CheckRunner
             "week-06-lab" => Week06LabChecks(programCs),
             "week-07-lab" => Week07LabChecks(programCs),
             "week-08-lab" => Week08LabChecks(programCs),
+            "week-09-lab" => Week09LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -465,6 +466,7 @@ internal static class CheckRunner
             "week-06-lab" => Week06LabHint(checks),
             "week-07-lab" => Week07LabHint(checks),
             "week-08-lab" => Week08LabHint(checks),
+            "week-09-lab" => Week09LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -1339,6 +1341,87 @@ internal static class CheckRunner
             "HasAccumulator" => "Add each valid amount to total: totalRevenue += amount;",
             "HasReadLine" => "Read user input: string input = Console.ReadLine();",
             "HasSummary" => "After the loop, calculate: decimal average = totalRevenue / dayCount;",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    private static List<CheckResult> Week09LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var notPlaceholder = !Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult("HasHeaderComment", hasNameComment && notPlaceholder,
+            hasNameComment && notPlaceholder ? "✅ Header comment with name found" : "❌ Replace 'Your Name Here' with your actual name in the header comment"));
+
+        // Check 2: Uses for loops (at least 3 — one per stage)
+        var forLoopCount = Regex.Matches(programCs, @"\bfor\s*\(").Count;
+        var hasEnoughForLoops = forLoopCount >= 3;
+        checks.Add(new CheckResult("HasForLoops", hasEnoughForLoops,
+            hasEnoughForLoops ? $"✅ {forLoopCount} for loop(s) found" : $"❌ Need at least 3 for loops (one per stage). Found {forLoopCount}. Use for loops — not while loops."));
+
+        // Check 3: Uses int.Parse for numeric input
+        var hasIntParse = Regex.IsMatch(programCs, @"int\.Parse\s*\(");
+        checks.Add(new CheckResult("HasIntParse", hasIntParse,
+            hasIntParse ? "✅ int.Parse() used for numeric input" : "❌ Use int.Parse(Console.ReadLine()) to read numbers from the user"));
+
+        // Check 4: Has multiplication operator (Stage I — multiplication table)
+        var hasMultiplication = programCs.Contains("*");
+        checks.Add(new CheckResult("HasMultiplication", hasMultiplication,
+            hasMultiplication ? "✅ Multiplication operator found for Stage I" : "❌ Stage I needs multiplication: number * i to compute each table entry"));
+
+        // Check 5: Has accumulator pattern (Stage II — sum)
+        var hasAccumulator = Regex.IsMatch(programCs, @"\+=\s*");
+        checks.Add(new CheckResult("HasAccumulator", hasAccumulator,
+            hasAccumulator ? "✅ Accumulator pattern (+=) found for Stage II" : "❌ Stage II needs an accumulator: int sum = 0; then sum += i; inside the loop"));
+
+        // Check 6: Has double cast for average (Stage II)
+        var hasDoubleCast = Regex.IsMatch(programCs, @"\(double\)");
+        checks.Add(new CheckResult("HasDoubleCast", hasDoubleCast,
+            hasDoubleCast ? "✅ (double) cast found for average calculation" : "❌ Stage II needs (double) cast to prevent integer division: (double)sum / n"));
+
+        // Check 7: Has :F2 format for average output
+        var hasF2 = Regex.IsMatch(programCs, @":F2|:f2");
+        checks.Add(new CheckResult("HasF2Format", hasF2,
+            hasF2 ? "✅ :F2 format specifier found for average display" : "❌ Display average with 2 decimal places: $\"Average: {average:F2}\""));
+
+        // Check 8: Has nested for loops (Stage III — at least 2 for loops)
+        var hasNested = forLoopCount >= 2;
+        checks.Add(new CheckResult("HasNestedForLoops", hasNested,
+            hasNested ? "✅ Multiple for loops found (nested structure for Stage III)" : "❌ Stage III needs nested for loops — outer for rows, inner for columns"));
+
+        // Check 9: Has Console.Write (Stage III — star output inside inner loop)
+        var hasConsoleWrite = Regex.IsMatch(programCs, @"Console\.Write\s*\(");
+        checks.Add(new CheckResult("HasConsoleWrite", hasConsoleWrite,
+            hasConsoleWrite ? "✅ Console.Write() found for Stage III star output" : "❌ Stage III: use Console.Write(\"* \") inside the inner loop (no newline), then Console.WriteLine() after the inner loop"));
+
+        // Check 10: TODOs completed
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO", RegexOptions.IgnoreCase).Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult("HasRealContent", hasRealContent,
+            hasRealContent ? "✅ TODO comments completed" : $"❌ Complete all TODO steps — {todoCount} TODOs remaining"));
+
+        return checks;
+    }
+
+    private static string Week09LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasForLoops" => "Each stage needs a for loop. Pattern: for (int i = 1; i <= limit; i++) { ... }",
+            "HasIntParse" => "Read numbers with: int num = int.Parse(Console.ReadLine());",
+            "HasMultiplication" => "Stage I: Console.WriteLine($\"{num} x {i} = {num * i}\");",
+            "HasAccumulator" => "Stage II: Declare int sum = 0 before the loop, then sum += i; inside.",
+            "HasDoubleCast" => "Stage II: double average = (double)sum / n; — the cast prevents truncation.",
+            "HasF2Format" => "Stage II: Console.WriteLine($\"Average: {average:F2}\");",
+            "HasNestedForLoops" => "Stage III needs two for loops — the inner one inside the outer one.",
+            "HasConsoleWrite" => "Stage III: Console.Write(\"* \") inside inner loop, Console.WriteLine() after inner loop closes.",
             "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };

@@ -352,6 +352,41 @@ class Program
 }
 `,
 
+        "week-09-lab": `// Name: Your Name Here
+// Assignment: Lab 9 - Boss Fight II: The Arena
+
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // ===== STAGE I: Multiplication Table Generator =====
+        Console.WriteLine("=== MULTIPLICATION TABLE ===");
+        // TODO: Step 1 - Get a number from the user: int num = int.Parse(Console.ReadLine())
+        // TODO: Step 2 - Use a for loop (counter from 1 to 10 inclusive)
+        //               to print each line: "[number] x [i] = [result]"
+
+        // ===== STAGE II: Sum and Average Calculator =====
+        Console.WriteLine("\\n=== SUM AND AVERAGE ===");
+        // TODO: Step 3 - Get N from the user: int n = int.Parse(Console.ReadLine())
+        // TODO: Step 4 - Declare int sum = 0 BEFORE the loop (accumulator)
+        // TODO: Step 5 - For loop from 1 to N inclusive, add each i to sum
+        // TODO: Step 6 - Calculate average: (double)sum / n  — cast required!
+        // TODO: Step 7 - Print sum as integer, average with :F2 format
+
+        // ===== STAGE III: Triangle Pattern Generator =====
+        Console.WriteLine("\\n=== TRIANGLE PATTERN ===");
+        // TODO: Step 8 - Get height from the user: int height = int.Parse(Console.ReadLine())
+        // TODO: Step 9 - NESTED for loops:
+        //               Outer: row from 1 to height
+        //               Inner: col from 1 to row
+        //               Inside inner loop: Console.Write("* ")
+        //               After inner loop closes: Console.WriteLine()
+    }
+}
+`,
+
       };
 
       const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
