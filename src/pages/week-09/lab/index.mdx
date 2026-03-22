@@ -44,7 +44,7 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
 
 <div class="mission-brief">
   <div class="brief-header">
-    <div class="brief-icon" aria-label="Mission briefing">📋</div>
+    <div class="brief-icon" aria-hidden="true">📋</div>
     <h3>Mission Briefing</h3>
   </div>
   <div class="brief-content">
@@ -374,7 +374,7 @@ When your program runs correctly:
 3. Click **Submit Boss Fight** below
 
 <div id="lab-submit-container" style="margin: 24px 0;">
-  <button id="submit-lab-btn" style="
+  <button id="submit-lab-btn" type="button" style="
     background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
     color: white;
     border: none;
@@ -391,7 +391,7 @@ When your program runs correctly:
     box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
     transition: all 0.3s ease;
   ">
-    ⚔️ Submit Boss Fight
+    <span aria-hidden="true">⚔️</span> Submit Boss Fight
   </button>
   <div id="submit-status" aria-live="polite" aria-atomic="true" style="margin-top: 1rem; font-weight: bold;"></div>
   <div id="ai-feedback" aria-live="polite" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
