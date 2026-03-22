@@ -594,6 +594,43 @@ export const lessonContexts = {
     gradingTone: "college-freshman-friendly"
   },
 
+  "week-09-lab": {
+    title: "Week 9: Boss Fight II — The Arena",
+    type: "lab",
+    week: "09",
+    taughtConcepts: `
+      - for loop: three-clause counter-controlled iteration — (initializer; condition; iterator)
+      - Initializer sets the counter variable before the first iteration
+      - Condition is checked BEFORE each iteration (pre-check — same as while)
+      - Iterator runs AFTER each loop body execution (e.g., i++)
+      - Off-by-one error: starting at wrong value (0 vs 1) or using wrong comparison (< vs <=)
+      - Accumulator pattern: declare sum = 0 BEFORE the loop, add each value inside, use after loop
+      - Integer division: dividing two ints truncates — must cast to (double) before dividing
+      - :F2 format specifier: displays a double with exactly 2 decimal places
+      - Nested for loops: an inner for loop inside an outer for loop — outer controls rows, inner controls columns
+      - Console.Write vs Console.WriteLine: Write does NOT add a newline, WriteLine does
+      - Stage III pattern: Console.Write inside inner loop to build a row, Console.WriteLine after inner loop closes to end the row
+    `,
+    assignmentPrompt: `
+      Boss Fight II: The Arena — three stages of counter-controlled iteration in a single Main method.
+      Stage I: Multiplication Table Generator — prompt for a number, use a for loop (1 through 10 inclusive) to print: "[num] x [i] = [result]" on each line.
+      Stage II: Sum and Average Calculator — prompt for N, use a for loop to sum integers 1 through N, compute average as (double)sum / n, display sum as integer and average with :F2.
+      Stage III: Triangle Pattern Generator — prompt for height, use NESTED for loops (outer for rows 1 to height, inner for columns 1 to row) to print a triangle using Console.Write("* ") inside the inner loop and Console.WriteLine() after the inner loop closes.
+      All three stages must appear in a single Main method. Use for loops only — not while loops.
+    `,
+    rubric: `
+      Stage I — Multiplication table format (15pts): For loop prints each line as "[num] x [i] = [result]". Output format matches specification. Uses for loop (not while).
+      Stage I — Counter 1 through 10 inclusive (15pts): Loop initializer starts at 1, condition uses i <= 10. Common off-by-one: starting at 0 or using i < 10 gives wrong range.
+      Stage II — Accumulator initialized before loop (10pts): int sum = 0 declared BEFORE the loop begins. If accumulator is inside the loop, it resets every iteration — wrong.
+      Stage II — Correct sum output as integer (10pts): Sum printed as a whole number (not a decimal). Label clearly identifies it as the sum.
+      Stage II — Average cast to double with :F2 (15pts): Average calculated as (double)sum / n (not sum / n which truncates). Displayed using :F2 format specifier for 2 decimal places.
+      Stage III — Nested for loops (20pts): Outer loop controls row count (1 to height). Inner loop runs from 1 to current row value, creating the triangle shape. Must be properly nested.
+      Stage III — Console.Write/Console.WriteLine placement (15pts): Console.Write("* ") used INSIDE the inner loop (no newline, builds the row). Console.WriteLine() called AFTER the inner loop closes (ends the row). Using Console.WriteLine inside the inner loop destroys the triangle shape.
+    `,
+    requiredKeywords: ["for", "int.Parse", "(double)", ":F2"],
+    gradingTone: "college-freshman-friendly"
+  },
+
   "week-08-homework": {
     title: "Week 8: While Loop Reflection",
     type: "homework",
@@ -625,6 +662,38 @@ export const lessonContexts = {
       Clarity and terminology (10pts): Clear writing using terms like "progress statement", "sentinel value", "pre-check", "post-check"
     `,
     requiredKeywords: ["while", "progress", "sentinel"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-09-homework": {
+    title: "Week 9: While vs For Loop Reflection",
+    type: "homework",
+    week: "09",
+    taughtConcepts: `
+      - for loop anatomy: three clauses — (initializer; condition; iterator)
+      - Initializer: sets counter before first iteration
+      - Condition: checked BEFORE each iteration (pre-check — same behavior as while)
+      - Iterator: runs AFTER each body execution (typically i++ or i--)
+      - How for loop maps to while: initializer = initialize before loop; condition = while condition; iterator = progress statement
+      - Architectural advantage: all three loop-control elements visible on a single declaration line
+      - Off-by-one error: loop runs one too many or one too few times due to wrong initializer or boundary operator
+      - Example of off-by-one: for (int i = 1; i < 10; i++) runs 9 times instead of 10 — correct is i <= 10
+      - for loop use case: when number of iterations is KNOWN before the loop starts (bounded iteration)
+      - while loop use case: when iterations continue until a runtime condition changes (unbounded iteration)
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer the following about for loops vs while loops:
+      1. Anatomy Comparison: Describe the three clauses of a for loop (initializer, condition, iterator). Explain how each clause maps to the three essential parts of a while loop. What is the architectural advantage of packaging all three into one declaration line?
+      2. The Off-By-One Error: Define the off-by-one error for for loops. Provide a specific code example of a loop that makes this mistake, explain exactly why the error occurs, and show the corrected version.
+      3. Use Case Decision: When should you choose for over while, and vice versa? Give a concrete real-world scenario where each is the correct choice. Explain what information you need before the loop starts to make that decision.
+    `,
+    rubric: `
+      Anatomy comparison and mapping (35pts): Student correctly names all three for loop clauses (initializer, condition, iterator) and maps each to the while loop equivalent (initialize before, condition check, progress statement). Explains the one-line declaration advantage — all control elements visible at a glance, reducing off-by-one and infinite loop risk.
+      Off-by-one error explanation (35pts): Student defines off-by-one as a loop running one iteration too many or too few. Provides a specific WRONG example (e.g., i < 10 instead of i <= 10, or starting at 0 instead of 1) and explains exactly why it's wrong. Shows corrected version with explanation.
+      Use case decision (20pts): Student correctly identifies for = known/bounded iteration (e.g., loop N times, iterate over a list), while = unknown/unbounded iteration (e.g., keep prompting until valid input, read until file ends). Gives concrete real-world scenario for each. Explains that knowing the count before the loop starts is the deciding criterion.
+      Clarity and terminology (10pts): Clear writing using terms like "initializer", "iterator", "bounded", "unbounded", "off-by-one"
+    `,
+    requiredKeywords: ["for", "while", "initializer", "off-by-one"],
     gradingTone: "college-freshman-friendly"
   }
 };
@@ -693,6 +762,13 @@ export const TUTOR_CONTEXTS = {
   'week-08-lesson-2': "Week 8: Do-While and Loop Control — covers do-while for guaranteed-once execution, break for early exit, continue for skipping iterations, and sentinel values for stop signals.",
   'week-08-lab': "Week 8 Lab: The Robust Data Entry System (Daily Revenue Tracker). Students build a revenue tracker using while(true) loop with break on sentinel value 0. Requirements: prompt for daily revenue using decimal.Parse(), use continue to skip negative values with warning, accumulate total revenue and day count, break when user enters 0, display summary with total, count, and average. Must use while loop, break, continue, and decimal for money. K&R braces. 100 points.",
   'week-08-homework': "Week 8 Homework: While Loop Reflection. Students explain: (1) Three parts of a while loop and why the Progress Statement prevents infinite loops, (2) When to use while vs do-while for input validation, (3) How sentinel values work with break and continue. Written reflection referencing sections 8.1-8.3.",
+
+  // Week 9
+  'week-09': "Week 9: For Loops — counter-controlled iteration. The for loop has three clauses: (initializer; condition; iterator). Students learn to use the index variable to drive logic and build accumulation patterns. Key failure point: the off-by-one error (wrong boundary or wrong starting value). Accumulator pattern: declare sum = 0 before the loop. CRITICAL: cast to (double) before dividing for averages. Nested for loops for two-dimensional output (Stage III of Boss Fight II).",
+  'week-09-lesson-1': "Week 9 Section 9.1: The Counted Loop. Focus: Anatomy of the for statement — initializer sets counter, condition is pre-checked before each iteration (same as while), iterator runs after each body execution. Off-by-one error is the #1 failure: wrong starting value or wrong boundary operator (< vs <=). Canonical bounded pattern: for (int i = 1; i <= N; i++). The for loop packages all three loop-control elements (init, check, progress) into one visible declaration line.",
+  'week-09-lesson-2': "Week 9 Section 9.2: Accumulation Patterns. Focus: Using the index variable to calculate sums and averages. Accumulator: declare int sum = 0 BEFORE the loop, add inside with sum += i. After loop: compute average. CRITICAL: must cast to (double) before dividing — integer division truncates. Display average with :F2 specifier for 2 decimal places. Common mistakes: initializing accumulator inside the loop (resets every iteration), forgetting the (double) cast.",
+  'week-09-lab': "Week 9 Lab: Boss Fight II — The Arena. Three stages of counter-controlled for loops in one Main method. Stage I: multiplication table (for loop 1-10). Stage II: sum and average with accumulator and (double) cast. Stage III: nested for loops for triangle pattern — Console.Write() inside inner loop, Console.WriteLine() after inner loop. Must use for loops only (not while). 200 points.",
+  'week-09-homework': "Week 9 Homework: While vs For Loop Reflection. Students compare for and while loop anatomy (all three clauses mapped), explain the off-by-one error with a specific incorrect and corrected example, and argue when to use each loop type with concrete real-world scenarios. Written reflection referencing sections 9.1, 9.2, and 8.1.",
 };
 
 export function getTutorContext(pageId) {
