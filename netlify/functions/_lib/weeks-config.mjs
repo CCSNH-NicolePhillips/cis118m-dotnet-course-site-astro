@@ -12,9 +12,9 @@ export const WEEKS = [
   { id: 'week-04', title: '04. Strings & Text Processing', unlockDate: '2026-02-09T00:00:00-05:00', dueDate: '2026-02-15T23:59:59-05:00' },
   { id: 'week-05', title: '05. User Input', unlockDate: '2026-02-16T00:00:00-05:00', dueDate: '2026-02-22T23:59:59-05:00' },
   { id: 'week-06', title: '06. Decision Structures', unlockDate: '2026-02-23T00:00:00-05:00', dueDate: '2026-03-01T23:59:59-05:00' },
-  { id: 'week-07', title: '07. Logic & Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-05:00' },
-  // DST starts Mar 8, 2026 - switch to EDT (-04:00)
-  { id: 'week-08', title: '08. While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-14T23:59:59-04:00' },
+  { id: 'week-07', title: '07. Logic & Conditions', unlockDate: '2026-03-02T00:00:00-05:00', dueDate: '2026-03-08T23:59:59-04:00' },
+  // DST starts Mar 8, 2026 at 2 AM - clocks spring forward to EDT (-04:00); 11:59 PM Mar 8 is EDT
+  { id: 'week-08', title: '08. While Loops', unlockDate: '2026-03-09T00:00:00-04:00', dueDate: '2026-03-15T23:59:59-04:00' },
   // Week 9 follows Spring Break (March 15-22)
   { id: 'week-09', title: '09. For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00' },
   { id: 'week-10', title: '10. Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00' },
