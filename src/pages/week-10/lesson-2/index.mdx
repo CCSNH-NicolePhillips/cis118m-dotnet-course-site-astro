@@ -1,0 +1,429 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 10.2 • Parameters & Arguments"
+description: "How to pass data into a method — parameterization, the DRY principle, and making methods dynamic"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 10.2: Parameters & Arguments
+
+<div class="section-header">
+  <div class="section-badge">🔌 The Resource Intake</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>Making Methods Dynamic: The Parameter</h2>
+      <p>
+        A method defined in Section 10.1 — <code>static void PrintHeader()</code> — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A truly reusable method must accept <strong>input data</strong> that determines its specific behavior on each call. That input data is specified through <strong>parameters</strong>. A parameter is a typed variable declared in the method signature that receives a value each time the method is called. The value passed in at the call site is called an <strong>argument</strong>.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2010/10.2/Header%20Image.jpeg"
+        alt="Diagram showing data flowing from a method call into a method's parameter variables — the argument at the call site maps to the parameter inside the method body"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: Parameters & Arguments
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on parameterization — how to declare parameters in a method signature and pass arguments at the call site to make methods dynamic and reusable.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/placeholder-10-2"
+      title="10.2: Parameters and Arguments — Passing Data into Methods in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 10.2 Parameters and Arguments — passing data into methods in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## Parameters vs Arguments
+
+These two terms describe the same data at two different points in the program:
+
+| Term | Location | Description |
+|------|----------|-------------|
+| **Parameter** | Method signature (definition) | The typed variable that receives data when called |
+| **Argument** | Method call (call site) | The actual value passed into the method |
+
+```csharp
+// "name" is the PARAMETER — declared in the signature
+static void Greet(string name)
+{
+    Console.WriteLine($"Hello, {name}.");
+}
+
+static void Main()
+{
+    Greet("Alice");   // "Alice" is the ARGUMENT — passed at the call site
+    Greet("Bob");     // "Bob" is the ARGUMENT on this call
+}
+```
+
+**Output:**
+```
+Hello, Alice.
+Hello, Bob.
+```
+
+The same method, two different behaviors — driven entirely by the argument passed on each call.
+
+<AnnotatedCode
+  title="Parameter Declaration and Argument Passing"
+  tokens={[
+    { text: "static void Greet(", type: "keyword", tooltip: "Access modifier + return type — same as Section 10.1" },
+    { text: "string name", type: "parameter", tooltip: "PARAMETER: 'string' is the type, 'name' is the variable name. Inside the method body, 'name' holds the value passed by the caller." },
+    { text: ")", type: "punctuation" },
+    { text: "\n{", type: "punctuation" },
+    { text: "\n    Console.WriteLine($\"Hello, {name}.\");", type: "string", tooltip: "The parameter 'name' is used inside the body just like any local variable." },
+    { text: "\n}", type: "punctuation" },
+    { text: "\n\n// At the call site:\nGreet(", type: "string" },
+    { text: "\"Alice\"", type: "string", tooltip: "ARGUMENT: the literal string 'Alice' is passed to the 'name' parameter. The type must match — a string argument for a string parameter." },
+    { text: ");", type: "punctuation" }
+  ]}
+/>
+
+---
+
+## Multiple Parameters
+
+A method can declare multiple parameters, separated by commas. Each parameter has its own type and name. Arguments at the call site must match the parameters in **count, order, and type**:
+
+```csharp
+static void PrintItemPrice(string item, decimal price)
+{
+    Console.WriteLine($"{item}: {price:C}");
+}
+
+static void Main()
+{
+    PrintItemPrice("Laptop", 1299.99m);
+    PrintItemPrice("Monitor", 399.00m);
+    PrintItemPrice("Keyboard", 89.95m);
+}
+```
+
+**Output:**
+```
+Laptop: $1,299.99
+Monitor: $399.00
+Keyboard: $89.95
+```
+
+<div class="architect-rule">
+
+### Architect's Rule: Argument Order Is Positional
+
+Arguments are matched to parameters by position — not by name. The first argument maps to the first parameter, the second to the second, and so on. Passing them in the wrong order does not cause a compile error if the types happen to match — it produces wrong output silently:
+
+```csharp
+static void PrintItemPrice(string item, decimal price) { ... }
+
+// CORRECT: string first, decimal second
+PrintItemPrice("Laptop", 1299.99m);
+
+// WRONG: decimal first, string second — compiler error (type mismatch in this case)
+PrintItemPrice(1299.99m, "Laptop");
+```
+
+When parameters have the same type (e.g., two `int` parameters), a reversed argument order will compile but produce incorrect results. Always verify order at the call site against the signature.
+
+</div>
+
+---
+
+## The DRY Principle: Don't Repeat Yourself
+
+Before parameters, you might write separate methods for every variation of a task:
+
+```csharp
+// WITHOUT parameters — repetition
+static void PrintAliceGreeting()   { Console.WriteLine("Hello, Alice."); }
+static void PrintBobGreeting()     { Console.WriteLine("Hello, Bob."); }
+static void PrintCarlosGreeting()  { Console.WriteLine("Hello, Carlos."); }
+```
+
+This violates the **DRY Principle** — the same structure appears three times. If the greeting format changes, you must update three methods. The correct architecture has one method, parameterized:
+
+```csharp
+// WITH parameters — DRY
+static void Greet(string name)
+{
+    Console.WriteLine($"Hello, {name}.");
+}
+```
+
+Change the format once; it applies to every call. This is not just a style preference — it is a **maintenance contract**. A codebase that repeats logic accumulates inconsistencies over time as some copies get updated and others are missed.
+
+---
+
+## Passing Variables as Arguments
+
+Arguments do not have to be literals — you can pass any expression of the correct type, including variables:
+
+```csharp
+static void DisplayScore(string playerName, int score)
+{
+    Console.WriteLine($"{playerName}: {score} points");
+}
+
+static void Main()
+{
+    string player = Console.ReadLine();
+    int earned = 450;
+
+    DisplayScore(player, earned);      // Variables as arguments
+    DisplayScore("Computer", 300);     // Literals as arguments
+    DisplayScore(player, earned + 50); // Expression as argument
+}
+```
+
+The argument is evaluated at the call site — whatever value `earned` holds at that moment, that value is passed into the `score` parameter.
+
+---
+
+## Parameters Are Local to the Method
+
+A parameter variable exists only for the duration of the method call. It is created when the method is invoked, receives the argument value, and is destroyed when the method returns. It is not the same variable as anything in the calling code — it is a separate copy:
+
+```csharp
+static void Double(int x)
+{
+    x = x * 2;   // Modifies the local copy only
+    Console.WriteLine($"Inside Double: {x}");
+}
+
+static void Main()
+{
+    int value = 10;
+    Double(value);
+    Console.WriteLine($"After call: {value}");  // Still 10
+}
+```
+
+**Output:**
+```
+Inside Double: 20
+After call: 10
+```
+
+The `value` variable in `Main` is unchanged because the method received a **copy** of the value, not the variable itself. This is called **pass-by-value**, which is the default behavior for all value types (`int`, `double`, `decimal`, `bool`) in C#.
+
+---
+
+## Practical Architecture: A Multi-Parameter Report
+
+The following program demonstrates a complete parameterized design — `Main` collects data and calls methods, each method handles a specific output task:
+
+```csharp
+static void Main()
+{
+    string employeeName = "Jordan Reyes";
+    int hoursWorked = 42;
+    decimal hourlyRate = 28.50m;
+    decimal total = hoursWorked * hourlyRate;
+
+    PrintPaystubHeader(employeeName);
+    PrintPayLine("Hours Worked", hoursWorked.ToString());
+    PrintPayLine("Hourly Rate", hourlyRate.ToString("C"));
+    PrintPayLine("Gross Pay", total.ToString("C"));
+    PrintPaystubFooter();
+}
+
+static void PrintPaystubHeader(string name)
+{
+    Console.WriteLine("=== PAY STATEMENT ===");
+    Console.WriteLine($"Employee: {name}");
+    Console.WriteLine("---------------------");
+}
+
+static void PrintPayLine(string label, string value)
+{
+    Console.WriteLine($"{label,-20} {value,10}");
+}
+
+static void PrintPaystubFooter()
+{
+    Console.WriteLine("---------------------");
+    Console.WriteLine("Payment Processed.");
+}
+```
+
+`Main` is an orchestrator — it holds the data and directs the workflow. Each method handles exactly one display task. If the pay stub format changes, only the affected method needs updating.
+
+---
+
+<TryItNowRunner
+  title="Parameterized Greeting System"
+  instructions="Define a method called PrintNameBadge that takes two parameters: a string for the person's name and a string for their department. The method should print: 'Name: [name]' on one line, and 'Department: [department]' on the next line, followed by a separator of 20 dashes. Call the method three times from Main with different names and departments."
+  starterCode={`// Call your method three times here
+PrintNameBadge("Alice Chen", "Engineering");
+// TODO: add two more calls with different data
+
+static void PrintNameBadge(string name, string department)
+{
+    // TODO: implement the method
+}`}
+/>
+
+---
+
+<Checkpoint
+  question="In the call 'PrintScore(\"Alice\", 95)', what is '95' called?"
+  options={[
+    "A parameter",
+    "A return value",
+    "An argument",
+    "A local variable"
+  ]}
+  correctIndex={2}
+  explanation="'95' is an argument — the actual value passed at the call site. The method signature declares the parameter (e.g., 'int score'), and the call site passes the argument (95). Parameter is the placeholder; argument is the value."
+/>
+
+<Checkpoint
+  question="A method has signature 'static void Report(string title, int count)'. Which call is correct?"
+  options={[
+    "Report(42, \"Monthly\")",
+    "Report(\"Monthly\", 42)",
+    "Report(\"Monthly\")",
+    "Report(title: \"Monthly\")"
+  ]}
+  correctIndex={1}
+  explanation="Arguments must match parameters by position and type. The first parameter is 'string title', so the first argument must be a string. The second parameter is 'int count', so the second argument must be an int. 'Report(\"Monthly\", 42)' is the correct positional match."
+/>
+
+---
+
+## Summary: Parameters and the DRY Principle
+
+| Concept | Definition |
+|---------|-----------|
+| Parameter | Typed variable in the method signature — receives data on each call |
+| Argument | The actual value passed at the call site |
+| Pass-by-value | Method receives a copy of the argument — original is unchanged |
+| DRY Principle | Don't Repeat Yourself — logic exists in one place, called many times |
+
+---
+
+<div class="next-section">
+  <p>You can now define parameterized methods and apply the DRY principle. The Lab applies these skills to a multi-method decomposition challenge.</p>
+  <a href="/week-10/lab/" class="vscode-button">Continue to Lab 10 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.2), rgba(107, 159, 255, 0.1));
+    border: 1px solid rgba(107, 159, 255, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b9fff;
+  }
+
+  .section-time {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .video-section {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .video-intro {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .section-badge { color: #1a4a9a !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

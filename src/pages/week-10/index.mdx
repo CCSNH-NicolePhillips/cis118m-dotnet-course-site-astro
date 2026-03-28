@@ -1,0 +1,268 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 10 • Methods"
+description: "Modular programming — defining methods, the method signature, parameters, and the DRY principle"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 10: Methods — Modular Architecture 🏗️
+
+<DueDateBanner week={10} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>🔧 Welcome to Modular Programming</h2>
+  <p>
+    Every program you have written so far lives inside a single <code>Main</code> method. That works for small programs — but it does not scale. This week you begin <strong>modular programming</strong>: the practice of breaking a program into named, reusable methods, each responsible for exactly one job.
+  </p>
+  <p>
+    Think of a method as a department in a company. The company (your program) has a name. Each department (method) has a job title (<strong>identifier</strong>), a list of resources it needs to do its job (<strong>parameters</strong>), and a defined output it delivers (<strong>return type</strong>). You do not re-hire and re-train the same team every time a task is needed — you <em>call the department</em>. This is the <strong>DRY Principle</strong>: Don't Repeat Yourself.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 10 Learning Path
+
+<div class="section-cards">
+  <a href="/week-10/lesson-1/" class="section-card method-sig">
+    <div class="card-icon" aria-hidden="true">📋</div>
+    <div class="card-content">
+      <h3>10.1 The Method Signature</h3>
+      <p class="metaphor">The Department Contract</p>
+      <p>Access modifier, return type (void), and identifier — the three elements of a method declaration</p>
+    </div>
+  </a>
+
+  <a href="/week-10/lesson-2/" class="section-card parameters">
+    <div class="card-icon" aria-hidden="true">🔌</div>
+    <div class="card-content">
+      <h3>10.2 Parameters & Arguments</h3>
+      <p class="metaphor">The Resource Intake</p>
+      <p>How to pass data into a method — making methods dynamic and reusable through parameterization</p>
+    </div>
+  </a>
+
+  <a href="/week-10/lab/" class="section-card lab">
+    <div class="card-icon" aria-hidden="true">⚙️</div>
+    <div class="card-content">
+      <h3>Lab 10: The Modular System</h3>
+      <p class="metaphor">Architecture in Practice</p>
+      <p>Refactor a monolithic program into discrete methods — demonstrate full modular design</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Concept</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>10.1</strong></td>
+        <td><a href="/week-10/lesson-1/">The Method Signature</a></td>
+        <td>📋 Access Modifier, Return Type, Identifier</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>10.2</strong></td>
+        <td><a href="/week-10/lesson-2/">Parameters &amp; Arguments</a></td>
+        <td>🔌 Parameterization &amp; DRY Principle</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-10/lab/">The Modular System</a></td>
+        <td>⚙️ Method Decomposition</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-10/homework/">Technical Reflection 10</a></td>
+        <td>Methods &amp; DRY Analysis</td>
+        <td>20 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 🏗️ The Architecture Upgrade: One Method → Many
+
+Until now, your programs have executed as a single block of code from top to bottom inside `Main`. This week you learn to extract logic into separate methods — each with a precise contract that defines what it needs and what it provides.
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>🧱 Monolithic (Before)</h3>
+    <p>All logic inside <code>Main</code>. As programs grow, this becomes unreadable, untestable, and impossible to reuse. The same logic appears in multiple places — any change must be made everywhere.</p>
+    <code>static void Main() &#123; // Everything crammed here &#125;</code>
+  </div>
+  <div class="component-card">
+    <h3>🏗️ Modular (After)</h3>
+    <p>Each responsibility lives in its own method with a clear name. <code>Main</code> becomes an orchestrator — it calls departments rather than doing all work itself. Change a department once; it updates everywhere it is called.</p>
+    <code>static void PrintHeader() &#123; ... &#125;</code>
+  </div>
+</div>
+
+---
+
+## 🏗️ Senior Architect Perspective
+
+<div class="architect-rule">
+
+### ⚙️ The DRY Principle Is a Maintenance Contract
+
+When you write the same logic in two places, you create a maintenance liability: every time that logic needs to change, you must find and update every copy. If you miss one, the program behaves inconsistently. The DRY Principle — **Don't Repeat Yourself** — is not about saving keystrokes. It is about creating a single source of truth. When logic lives in exactly one method, a correction made there applies everywhere the method is called.
+
+🎯 **The most common failure this week will be copy-paste programming** — duplicating code blocks instead of extracting them into a named method. If you find yourself writing the same lines twice, that is the signal: make it a method.
+
+</div>
+
+---
+
+## 🛡️ Instructor Perspective
+
+<div class="pro-tip">
+  <h3>📡 Phase III Begins</h3>
+  <p>Welcome to Phase III of the course. You have mastered variables, string processing, decision structures, and loops. This week you acquire the most fundamental tool of software engineering: the ability to <strong>name a piece of logic and invoke it on demand</strong>. Methods are the unit of composition — you will use them for the rest of the course and every programming career beyond it.</p>
+</div>
+
+---
+
+## 📋 Week 10 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td style="padding: 8px 0;"><strong>⚙️ Lab 10: The Modular System</strong> — Method Decomposition Challenge</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">60%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>📝 Technical Reflection 10</strong> — Methods &amp; DRY Analysis</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">25%</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0;"><strong>✅ Knowledge Checks</strong> — Participation in each module</td>
+      <td style="text-align: right; color: var(--vscode-charts-yellow);">15%</td>
+    </tr>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-10/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 10.1 <span aria-hidden="true">→</span>
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .section-card.method-sig {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .section-card.parameters {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+
+  .section-card.lab {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .pro-tip {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(107, 159, 255, 0.08));
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .pro-tip h3 { color: #4ec9b0; margin-top: 0; }
+
+  body[data-theme="light"] .section-card.method-sig { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(78, 201, 176, 0.03)) !important; }
+  body[data-theme="light"] .section-card.parameters { background: linear-gradient(135deg, rgba(107, 159, 255, 0.08), rgba(107, 159, 255, 0.03)) !important; }
+  body[data-theme="light"] .section-card.lab { background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.03)) !important; }
+  body[data-theme="light"] .card-content h3 { color: #1e1e1e !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #1a7a64 !important; }
+
+  body[data-theme="light"] .styled-table-container { background: #f8fafc !important; }
+  body[data-theme="light"] .styled-table-container th { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] .styled-table-container td { background: #ffffff !important; color: #1e293b !important; border-color: #cbd5e1 !important; }
+  body[data-theme="light"] .styled-table-container td strong { color: #0f172a !important; }
+  body[data-theme="light"] .styled-table-container code { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] .mission-brief { background: rgba(200, 220, 200, 0.2) !important; border-color: rgba(60, 160, 100, 0.3) !important; }
+`}</style>

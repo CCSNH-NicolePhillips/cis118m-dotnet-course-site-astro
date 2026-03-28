@@ -115,10 +115,10 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '10', title: 'Week 10: Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-10/' },
-      { title: '10.1 Lesson 1', href: '/week-10/lesson-1/' },
-      { title: '10.2 Lesson 2', href: '/week-10/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-10/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-10/homework/' }
+      { title: '10.1 The Method Signature', href: '/week-10/lesson-1/' },
+      { title: '10.2 Parameters & Arguments', href: '/week-10/lesson-2/' },
+      { title: 'Lab: The Modular System (Graded)', href: '/week-10/lab/' },
+      { title: 'Technical Reflection 10 (Graded)', href: '/week-10/homework/' }
     ] },
   { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-11/' },

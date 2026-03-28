@@ -1,0 +1,447 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 10.1 • The Method Signature"
+description: "Understanding the three elements of a method declaration — access modifier, return type, and identifier"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 10.1: The Method Signature
+
+<div class="section-header">
+  <div class="section-badge">📋 The Department Contract</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>From One Method to Many</h2>
+      <p>
+        Every C# program has at least one method: <code>Main</code>. When you write <code>static void Main()</code>, you are using the complete method signature syntax without knowing it. This section makes that syntax explicit and teaches you to define your own methods. A <strong>method signature</strong> is the declaration line that precedes the method body — it is the contract that specifies who can call the method, what data type it produces, and what name it is called by.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2010/10.1/Header%20Image.jpeg"
+        alt="Diagram of a method signature showing access modifier, return type, and identifier as three labeled components of the declaration line"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: The Method Signature
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on method signatures — the three-part declaration that every method requires, and how to define your first custom methods.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/placeholder-10-1"
+      title="10.1: The Method Signature — Access Modifier, Return Type, and Identifier in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 10.1 The Method Signature — defining custom methods in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## The Three Elements of a Method Signature
+
+A method signature has exactly three required elements. Every method you write — from the simplest printer to a complex calculation engine — must declare all three:
+
+```csharp
+static void PrintHeader()
+{
+    Console.WriteLine("=== SYSTEM REPORT ===");
+}
+```
+
+<AnnotatedCode
+  title="Anatomy of a Method Signature"
+  tokens={[
+    { text: "static", type: "keyword", tooltip: "ACCESS MODIFIER: 'static' means this method belongs to the class itself, not to an instance. Required in a top-level program because Main is static — it can only call other static methods directly." },
+    { text: " ", type: "punctuation" },
+    { text: "void", type: "keyword", tooltip: "RETURN TYPE: 'void' means this method does not produce a value — it performs an action and returns nothing. The caller does not receive data back. This is the correct type for methods that only print or display output." },
+    { text: " ", type: "punctuation" },
+    { text: "PrintHeader", type: "string", tooltip: "IDENTIFIER: the name of the method. Must be PascalCase in C# (capitalize every word). Describes the action the method performs — a verb or verb phrase." },
+    { text: "()", type: "punctuation", tooltip: "PARAMETER LIST: empty parentheses mean this method takes no input. You will add parameters in Section 10.2." },
+    { text: "\n{", type: "punctuation", tooltip: "Method body opens here. Everything between the braces is executed when the method is called." },
+    { text: "\n    Console.WriteLine(\"=== SYSTEM REPORT ===\");", type: "string", tooltip: "The method body — the code that runs when the method is called." },
+    { text: "\n}", type: "punctuation", tooltip: "Method body closes. Control returns to the caller." }
+  ]}
+/>
+
+---
+
+## Element 1: The Access Modifier
+
+The **access modifier** controls which code is allowed to call this method. In top-level C# programs, all custom methods must be declared `static` because `Main` is static — it can only call other static members directly.
+
+```csharp
+// static — accessible from Main and any other static method in the class
+static void DisplayWelcome()
+{
+    Console.WriteLine("System initialized.");
+}
+```
+
+<div class="architect-rule">
+
+### Architect's Rule: static in Top-Level Programs
+
+When you write a top-level C# program (no explicit class declaration), the compiler generates a class behind the scenes and makes `Main` a static method. Every helper method you define must also be `static` to be callable from `Main`. This is not a restriction unique to beginners — static methods are the standard architecture for utility and helper functions throughout the .NET ecosystem.
+
+</div>
+
+---
+
+## Element 2: The Return Type
+
+The **return type** declares what data type the method sends back to the caller when it finishes. There are two categories:
+
+| Return Type | Meaning | Example Use |
+|-------------|---------|-------------|
+| `void` | Method returns nothing — performs an action only | Printing output, displaying a menu |
+| `int`, `string`, `bool`, `double`, etc. | Method computes and returns a value of that type | Calculating totals, formatting text |
+
+This section focuses on `void` methods. Return types that produce values are covered in Week 11.
+
+```csharp
+// void — this method prints, it does not produce a returnable value
+static void PrintSeparator()
+{
+    Console.WriteLine("----------------------------");
+}
+
+// void — display methods perform actions, they do not calculate results
+static void PrintFooter()
+{
+    Console.WriteLine("Report complete.");
+}
+```
+
+### Calling a void Method
+
+A `void` method is called as a standalone statement — it is not assigned to a variable because it returns no value:
+
+```csharp
+static void Main()
+{
+    PrintHeader();      // Calls PrintHeader — executes its body, then returns here
+    PrintSeparator();   // Calls PrintSeparator — same pattern
+    PrintFooter();      // Calls PrintFooter
+}
+
+static void PrintHeader()
+{
+    Console.WriteLine("=== SYSTEM REPORT ===");
+}
+
+static void PrintSeparator()
+{
+    Console.WriteLine("----------------------------");
+}
+
+static void PrintFooter()
+{
+    Console.WriteLine("Report complete.");
+}
+```
+
+**Output:**
+```
+=== SYSTEM REPORT ===
+----------------------------
+Report complete.
+```
+
+`Main` calls three methods in sequence. Each method executes its body and returns control to the next line after the call in `Main`.
+
+---
+
+## Element 3: The Identifier
+
+The **identifier** is the name of the method. C# method names follow **PascalCase** — every word is capitalized, including the first:
+
+```csharp
+static void PrintWelcome()    // Correct: PascalCase
+static void printWelcome()    // Wrong: camelCase (variable naming convention)
+static void print_welcome()   // Wrong: snake_case (not C# convention)
+static void p()               // Wrong: not descriptive
+```
+
+A good identifier is a **verb phrase** that describes what the method does:
+
+| Good Identifier | Why It Works |
+|----------------|-------------|
+| `PrintHeader` | Clear action — prints something called Header |
+| `DisplayMenu` | Clear action — displays a menu |
+| `ShowSummary` | Clear action — shows a summary |
+| `ResetCounter` | Clear action — resets something called Counter |
+
+---
+
+## Execution Flow: The Call Stack
+
+When a method is called, program execution leaves `Main`, enters the method body, executes every statement in the method, and then returns to the line immediately after the call. This is **sequential execution across method boundaries**:
+
+```csharp
+static void Main()
+{
+    Console.WriteLine("Start of Main");   // 1. Executes
+    SayHello();                           // 2. Jumps to SayHello
+    Console.WriteLine("Back in Main");   // 4. Resumes here after SayHello returns
+}
+
+static void SayHello()
+{
+    Console.WriteLine("Inside SayHello"); // 3. Executes inside the method
+}
+```
+
+**Output:**
+```
+Start of Main
+Inside SayHello
+Back in Main
+```
+
+<div class="architect-rule">
+
+### Architect's Rule: Method Placement in Top-Level Programs
+
+In a top-level C# program, custom methods are defined **after** the top-level statements (i.e., after your `Main` logic). The compiler enforces this — you cannot interleave method definitions with top-level statements. Place all custom method definitions at the bottom of the file, below the last top-level statement.
+
+```csharp
+// TOP-LEVEL STATEMENTS (your Main logic)
+PrintHeader();
+Console.WriteLine("Hello");
+PrintFooter();
+
+// CUSTOM METHOD DEFINITIONS — always below top-level statements
+static void PrintHeader()
+{
+    Console.WriteLine("=== REPORT ===");
+}
+
+static void PrintFooter()
+{
+    Console.WriteLine("=== END ===");
+}
+```
+
+</div>
+
+---
+
+## Reusability: Call a Method More Than Once
+
+The defining advantage of a method is that it can be **called multiple times** without repeating its code. The method body is written once; calling it is a single line each time:
+
+```csharp
+static void Main()
+{
+    PrintSeparator();
+    Console.WriteLine("Section 1: Initialization");
+    PrintSeparator();
+    Console.WriteLine("Section 2: Processing");
+    PrintSeparator();
+    Console.WriteLine("Section 3: Summary");
+    PrintSeparator();
+}
+
+static void PrintSeparator()
+{
+    Console.WriteLine("==============================");
+}
+```
+
+**Output:**
+```
+==============================
+Section 1: Initialization
+==============================
+Section 2: Processing
+==============================
+Section 3: Summary
+==============================
+```
+
+`PrintSeparator` is defined once and called four times. If the separator format needs to change, you update it in exactly one place.
+
+---
+
+<TryItNowRunner
+  title="Your First Custom Method"
+  instructions="Define a method called PrintDivider that prints a line of 20 dashes. Call it from Main before and after a Console.WriteLine statement of your choice. Then define a second method called PrintTitle that prints your name. Call PrintTitle first, then PrintDivider, then any message, then PrintDivider again."
+  starterCode={`// Define your methods below the top-level statements
+
+PrintTitle();
+PrintDivider();
+Console.WriteLine("System Online");
+PrintDivider();
+
+static void PrintTitle()
+{
+    // TODO: print your name
+}
+
+static void PrintDivider()
+{
+    // TODO: print 20 dashes
+}`}
+/>
+
+---
+
+<Checkpoint
+  question="A method declared as 'static void DisplayMenu()' — what does 'void' specify?"
+  options={[
+    "The method belongs to the class, not an instance",
+    "The method does not return a value to the caller",
+    "The method can be called from anywhere in the program",
+    "The method takes no parameters"
+  ]}
+  correctIndex={1}
+  explanation="'void' is the return type — it declares that this method performs an action and sends no value back to the caller. 'static' is the access modifier that specifies class membership. The empty parentheses indicate no parameters."
+/>
+
+<Checkpoint
+  question="A method named 'greetUser()' violates which C# naming convention?"
+  options={[
+    "Method identifiers must be a single word",
+    "Method identifiers must follow PascalCase — every word capitalized",
+    "Method identifiers cannot include the word 'user'",
+    "Method identifiers must begin with a verb ending in -ing"
+  ]}
+  correctIndex={1}
+  explanation="C# method names follow PascalCase — every word is capitalized, including the first. 'greetUser' is camelCase (the convention for variables). The correct form is 'GreetUser'."
+/>
+
+---
+
+## Summary: The Method Signature Contract
+
+| Element | Keyword(s) | Purpose |
+|---------|-----------|---------|
+| Access Modifier | `static` | Makes the method callable from `Main` in top-level programs |
+| Return Type | `void` (this week) | Declares the method produces no return value |
+| Identifier | `PascalCase` name | Names the method — a verb phrase describing the action |
+
+---
+
+<div class="next-section">
+  <p>You can now define and call void methods. Section 10.2 adds the ability to pass data into a method — making methods dynamic and generalized rather than hard-coded.</p>
+  <a href="/week-10/lesson-2/" class="vscode-button">Continue to Section 10.2 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.2), rgba(78, 201, 176, 0.1));
+    border: 1px solid rgba(78, 201, 176, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4ec9b0;
+  }
+
+  .section-time {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .video-section {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .video-intro {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; margin-top: 0; }
+
+  body[data-theme="light"] .section-badge { color: #1a7a64 !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), rgba(255, 152, 0, 0.06)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>
