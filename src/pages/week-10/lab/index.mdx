@@ -1,17 +1,17 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Lab 10 • The Modular System"
-description: "Decompose a program into discrete void methods — apply the DRY principle through parameterized method design"
+title: "Lab 10 • The Modular Utility Suite"
+description: "Refactor a linear program into a modular utility suite — demonstrate method encapsulation and parameterized method design"
 ---
 
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import DueDateBanner from '../../../components/DueDateBanner.astro';
 
-# Lab 10: The Modular System
+# Lab 10: The Modular Utility Suite
 
 <DueDateBanner week={10} type="Lab" />
 
-**Time: 60 minutes**  
+**Time: 60 minutes**
 **Points: 100**
 
 <div class="concept-header">
@@ -19,7 +19,7 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
     <div class="header-text">
       <h2>10.3: The Decomposition Challenge</h2>
       <p>
-        You have learned how to define methods with the correct signature and how to make them dynamic through parameters. This lab applies both skills. You are given a program specification — you must architect it as a collection of discrete, well-named methods rather than a single <code>Main</code> block. <code>Main</code> should be an orchestrator: it collects input and calls the appropriate method for each task. No repeated logic is permitted.
+        You have learned how to define methods with the correct signature and how to make them dynamic through parameters. This lab applies both skills. You will refactor a linear program into a <strong>modular utility suite</strong> — a collection of discrete, well-named methods that each handle one specific task. <code>Main</code> is the orchestrator: it calls methods with different arguments to prove reusability. No repeated logic is permitted.
       </p>
     </div>
     <div class="header-image">
@@ -61,7 +61,9 @@ import DueDateBanner from '../../../components/DueDateBanner.astro';
 
 ## Mission Objective
 
-Build a **Student Report Generator**. The program accepts information about three students from the user and prints a formatted report for each. The key requirement is architectural: **all display logic must live inside named, parameterized methods**. `Main` collects input and calls methods — it does not contain any `Console.WriteLine` formatting logic directly.
+Refactor a linear program into a **modular utility suite**. You must demonstrate the ability to encapsulate logic within custom methods and successfully pass dynamic data into those methods via parameters.
+
+Your program will contain **three utility methods**, each handling a specific system task. All three methods must be called from `Main` **at least twice** using different arguments to prove reusability.
 
 ---
 
@@ -77,32 +79,24 @@ Build a **Student Report Generator**. The program accepts information about thre
     </thead>
     <tbody>
       <tr>
-        <td><strong>Program header</strong></td>
-        <td>Define a method <code>static void PrintReportHeader()</code> that prints <code>=== STUDENT REPORT ===</code></td>
+        <td><strong>System Greeting</strong></td>
+        <td>Create a <code>void</code> method that accepts a <code>string</code> parameter (user's name) and prints a formal system initialization message. Example: <code>System initialized for user: [name]</code></td>
       </tr>
       <tr>
-        <td><strong>Input loop</strong></td>
-        <td>In <code>Main</code>, use a <code>for</code> loop (count: 3) to prompt for each student's name and numeric grade (0–100)</td>
+        <td><strong>Measurement Converter</strong></td>
+        <td>Create a <code>void</code> method that accepts a <code>double</code> value (distance in miles) and prints the calculated equivalent in kilometers. Conversion: <code>miles * 1.60934</code>. Format to 2 decimal places.</td>
       </tr>
       <tr>
-        <td><strong>Grade classification</strong></td>
-        <td>Define <code>static void PrintStudentRecord(string name, int grade)</code> — this method prints the student's name, grade, and letter grade (A: 90–100, B: 80–89, C: 70–79, D: 60–69, F: below 60)</td>
+        <td><strong>Status Monitor</strong></td>
+        <td>Create a <code>void</code> method that accepts an <code>int</code> (battery percentage) and a <code>bool</code> (is charging). Use an <code>if/else</code> structure inside the method to print a specific system status report based on the values.</td>
       </tr>
       <tr>
-        <td><strong>Separator method</strong></td>
-        <td>Define <code>static void PrintSeparator()</code> that prints a line of 30 dashes. Call it between each student record.</td>
-      </tr>
-      <tr>
-        <td><strong>Program footer</strong></td>
-        <td>Define <code>static void PrintReportFooter(int studentCount)</code> that prints <code>Report complete. [N] students processed.</code></td>
+        <td><strong>Reusability</strong></td>
+        <td>All three methods must be called from <code>Main</code> <strong>at least twice</strong> using <strong>different arguments</strong> each time</td>
       </tr>
       <tr>
         <td><strong>No repeated code</strong></td>
         <td>The DRY Principle applies throughout. No display logic may be duplicated.</td>
-      </tr>
-      <tr>
-        <td><strong>Parse input</strong></td>
-        <td>Use <code>int.Parse(Console.ReadLine())</code> for grade input</td>
       </tr>
       <tr>
         <td><strong>Brace style</strong></td>
@@ -114,42 +108,70 @@ Build a **Student Report Generator**. The program accepts information about thre
 
 ---
 
-## Example Output
-
-```
-=== STUDENT REPORT ===
-Enter student name: Alice Chen
-Enter grade (0-100): 94
-------------------------------
-Alice Chen — Grade: 94 (A)
-------------------------------
-Enter student name: Marcus Webb
-Enter grade (0-100): 77
-------------------------------
-Marcus Webb — Grade: 77 (C)
-------------------------------
-Enter student name: Priya Nair
-Enter grade (0-100): 85
-------------------------------
-Priya Nair — Grade: 85 (B)
-------------------------------
-Report complete. 3 students processed.
-```
-
----
-
-## Method Architecture
+## Method Signatures
 
 Your required method signatures — do not change these:
 
 ```csharp
-static void PrintReportHeader()
-static void PrintSeparator()
-static void PrintStudentRecord(string name, int grade)
-static void PrintReportFooter(int studentCount)
+static void GreetUser(string name)
+static void ConvertMilesToKm(double miles)
+static void CheckBatteryStatus(int percentage, bool isCharging)
 ```
 
-`Main` must call these methods. It must not contain any string-formatting or display logic beyond the input prompts.
+---
+
+## Status Monitor Logic
+
+The `CheckBatteryStatus` method must follow this decision structure:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Condition</th>
+        <th>Output Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Battery &lt; 20 and NOT charging</td>
+        <td><code>WARNING: Battery critical ([N]%). Connect charger immediately.</code></td>
+      </tr>
+      <tr>
+        <td>Battery &lt; 20 and charging</td>
+        <td><code>Battery low ([N]%). Charging in progress.</code></td>
+      </tr>
+      <tr>
+        <td>Battery &gt;= 20 and charging</td>
+        <td><code>Battery at [N]%. Charging in progress.</code></td>
+      </tr>
+      <tr>
+        <td>Battery &gt;= 20 and NOT charging</td>
+        <td><code>Battery at [N]%. System running on battery power.</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Example Output
+
+```
+=== MODULAR UTILITY SUITE ===
+
+--- System Greeting ---
+System initialized for user: Alice Chen
+System initialized for user: Marcus Webb
+
+--- Measurement Converter ---
+5.00 miles = 8.05 km
+26.20 miles = 42.16 km
+
+--- Status Monitor ---
+WARNING: Battery critical (12%). Connect charger immediately.
+Battery at 85%. Charging in progress.
+```
 
 ---
 
@@ -159,8 +181,8 @@ static void PrintReportFooter(int studentCount)
   <iframe
     src="/editor/embedded?starter=week-10-lab"
     style="width: 100%; height: 620px; border: none;"
-    title="Lab 10 Code Editor — The Modular System"
-    aria-label="Embedded code editor for Lab 10: The Modular System"
+    title="Lab 10 Code Editor — The Modular Utility Suite"
+    aria-label="Embedded code editor for Lab 10: The Modular Utility Suite"
   ></iframe>
 </div>
 
@@ -178,28 +200,28 @@ static void PrintReportFooter(int studentCount)
     </thead>
     <tbody>
       <tr>
-        <td><code>PrintReportHeader()</code> defined and called correctly</td>
-        <td>10</td>
+        <td><code>GreetUser(string name)</code> defined correctly, prints formal initialization message</td>
+        <td>15</td>
       </tr>
       <tr>
-        <td><code>PrintSeparator()</code> defined and called between records</td>
-        <td>10</td>
+        <td><code>ConvertMilesToKm(double miles)</code> defined correctly, accurate conversion to 2 decimal places</td>
+        <td>15</td>
       </tr>
       <tr>
-        <td><code>PrintStudentRecord</code> accepts correct parameters and prints name + grade</td>
+        <td><code>CheckBatteryStatus(int percentage, bool isCharging)</code> defined with correct if/else structure</td>
         <td>20</td>
       </tr>
       <tr>
-        <td>Letter grade logic (A/B/C/D/F) is correct for all boundaries</td>
-        <td>20</td>
+        <td>All four battery status conditions produce correct output messages</td>
+        <td>15</td>
       </tr>
       <tr>
-        <td><code>PrintReportFooter(int studentCount)</code> prints correct count</td>
+        <td>Each method called at least twice from <code>Main</code> with different arguments</td>
         <td>15</td>
       </tr>
       <tr>
         <td><code>Main</code> contains no display/formatting logic — all delegated to methods</td>
-        <td>15</td>
+        <td>10</td>
       </tr>
       <tr>
         <td>Output format matches specification, K&amp;R braces, compiles and runs</td>
@@ -217,7 +239,7 @@ static void PrintReportFooter(int studentCount)
 
 ## Submission
 
-When your program produces the correct output for all three students:
+When your program produces the correct output:
 
 1. Verify your name is in a header comment at the top of the file
 2. Click **Save** to save your work

@@ -1007,14 +1007,15 @@ Summary: # Week 10: Methods — Modular Architecture 🏗️ 🔧 Welcome to Mod
 
 Summary: # Week 10 Lab: Student Profile Class ## Overview Create a Student class with properties and a method that returns a formatted summary string. ## Requirements checklist (acceptance criteria) - [ ] Defines a Student class with at least 3 properties (example: Id, Name, Major) - [ ] Includes a construct...
 
-### 🔬 Lab: Lab 10 • The Modular System
+### 🔬 Lab: Lab 10 • The Modular Utility Suite
 Key Concepts:
 - Time: 60 minutes
 - Points: 100
-- Student Report Generator
-- all display logic must live inside named, parameterized methods
+- modular utility suite
+- three utility methods
+- at least twice
 
-Summary: # Lab 10: The Modular System **Time: 60 minutes** **Points: 100** 10.3: The Decomposition Challenge You have learned how to define methods with the correct signature and how to make them dynamic through parameters. This lab applies both skills. You are given a program specification — you must archit...
+Summary: # Lab 10: The Modular Utility Suite **Time: 60 minutes** **Points: 100** 10.3: The Decomposition Challenge You have learned how to define methods with the correct signature and how to make them dynamic through parameters. This lab applies both skills. You will refactor a linear program into a modula...
 
 ### 📖 Lesson: Week 10 • Lesson 1
 Key Concepts:

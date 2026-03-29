@@ -44,7 +44,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
   <p class="video-intro">Watch this briefing on method signatures — the three-part declaration that every method requires, and how to define your first custom methods.</p>
   <div class="video-container">
     <iframe
-      src="https://www.youtube.com/embed/placeholder-10-1"
+      src="https://www.youtube.com/embed/KSqW0U0Ttxc"
       title="10.1: The Method Signature — Access Modifier, Return Type, and Identifier in C#"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -188,6 +188,8 @@ A good identifier is a **verb phrase** that describes what the method does:
 
 When a method is called, program execution leaves `Main`, enters the method body, executes every statement in the method, and then returns to the line immediately after the call. This is **sequential execution across method boundaries**:
 
+<img src="/media/week%2010/10.1/Call%20Stack%20Flow.jpeg" alt="Call Stack Flow — arrows showing program execution jumping from Main into a method body and returning back after the method completes" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
 ```csharp
 Console.WriteLine("Start of Main");   // 1. Executes
 SayHello();                           // 2. Jumps to SayHello
@@ -222,6 +224,8 @@ Back in Main
 ### Architect's Rule: Method Placement in Top-Level Programs
 
 In a top-level C# program, custom methods are defined **after** the top-level statements (i.e., after your `Main` logic). The compiler enforces this — you cannot interleave method definitions with top-level statements. Place all custom method definitions at the bottom of the file, below the last top-level statement.
+
+<img src="/media/week%2010/10.1/Method%20Placement.jpeg" alt="Method Placement — a code file split into two zones: top-level statements on top, custom method definitions on the bottom, with a clear dividing line between them" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ```csharp
 // TOP-LEVEL STATEMENTS (your Main logic)

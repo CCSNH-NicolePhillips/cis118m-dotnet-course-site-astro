@@ -44,7 +44,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
   <p class="video-intro">Watch this briefing on parameterization — how to declare parameters in a method signature and pass arguments at the call site to make methods dynamic and reusable.</p>
   <div class="video-container">
     <iframe
-      src="https://www.youtube.com/embed/placeholder-10-2"
+      src="https://www.youtube.com/embed/zxlprMpWmMo"
       title="10.2: Parameters and Arguments — Passing Data into Methods in C#"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -58,6 +58,8 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 ---
 
 ## Parameters vs Arguments
+
+<img src="/media/week%2010/10.2/Parameter%20vs%20Argument.jpeg" alt="Parameter vs Argument — a split diagram showing a parameter declaration in the method signature on the left and the argument value being passed at the call site on the right, with an arrow connecting them" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 These two terms describe the same data at two different points in the program:
 
@@ -149,6 +151,8 @@ When parameters have the same type (e.g., two `int` parameters), a reversed argu
 
 ## The DRY Principle: Don't Repeat Yourself
 
+<img src="/media/week%2010/10.2/DRY%20Principle.jpeg" alt="The DRY Principle — left side shows three nearly identical code blocks highlighted in red (repetition), right side shows one clean parameterized method highlighted in green (DRY)" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
 Before parameters, you might write separate methods for every variation of a task:
 
 ```csharp
@@ -205,6 +209,8 @@ The argument is evaluated at the call site — whatever value `earned` holds at 
 ---
 
 ## Parameters Are Local to the Method
+
+<img src="/media/week%2010/10.2/Pass%20by%20Value.jpeg" alt="Pass by Value — a diagram showing a variable in Main being copied into a method's parameter box, with the original value unchanged after the method modifies its copy" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 A parameter variable exists only for the duration of the method call. It is created when the method is invoked, receives the argument value, and is destroyed when the method returns. It is not the same variable as anything in the calling code — it is a separate copy:
 
