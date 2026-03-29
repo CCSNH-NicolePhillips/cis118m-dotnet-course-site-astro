@@ -13,7 +13,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 <div class="section-header">
   <div class="section-badge">📋 The Department Contract</div>
-  <p class="section-time">Estimated Time: 30 minutes</p>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -62,8 +62,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 A method signature has exactly three required elements. Every method you write — from the simplest printer to a complex calculation engine — must declare all three:
 
 ```csharp
-static void PrintHeader()
-{
+static void PrintHeader() {
     Console.WriteLine("=== SYSTEM REPORT ===");
 }
 ```
@@ -77,7 +76,7 @@ static void PrintHeader()
     { text: " ", type: "punctuation" },
     { text: "PrintHeader", type: "string", tooltip: "IDENTIFIER: the name of the method. Must be PascalCase in C# (capitalize every word). Describes the action the method performs — a verb or verb phrase." },
     { text: "()", type: "punctuation", tooltip: "PARAMETER LIST: empty parentheses mean this method takes no input. You will add parameters in Section 10.2." },
-    { text: "\n{", type: "punctuation", tooltip: "Method body opens here. Everything between the braces is executed when the method is called." },
+    { text: " {", type: "punctuation", tooltip: "Method body opens here. Everything between the braces is executed when the method is called." },
     { text: "\n    Console.WriteLine(\"=== SYSTEM REPORT ===\");", type: "string", tooltip: "The method body — the code that runs when the method is called." },
     { text: "\n}", type: "punctuation", tooltip: "Method body closes. Control returns to the caller." }
   ]}
@@ -91,8 +90,7 @@ The **access modifier** controls which code is allowed to call this method. In t
 
 ```csharp
 // static — accessible from Main and any other static method in the class
-static void DisplayWelcome()
-{
+static void DisplayWelcome() {
     Console.WriteLine("System initialized.");
 }
 ```
@@ -120,14 +118,12 @@ This section focuses on `void` methods. Return types that produce values are cov
 
 ```csharp
 // void — this method prints, it does not produce a returnable value
-static void PrintSeparator()
-{
+static void PrintSeparator() {
     Console.WriteLine("----------------------------");
 }
 
 // void — display methods perform actions, they do not calculate results
-static void PrintFooter()
-{
+static void PrintFooter() {
     Console.WriteLine("Report complete.");
 }
 ```
@@ -137,25 +133,20 @@ static void PrintFooter()
 A `void` method is called as a standalone statement — it is not assigned to a variable because it returns no value:
 
 ```csharp
-static void Main()
-{
-    PrintHeader();      // Calls PrintHeader — executes its body, then returns here
-    PrintSeparator();   // Calls PrintSeparator — same pattern
-    PrintFooter();      // Calls PrintFooter
-}
+PrintHeader();      // Calls PrintHeader — executes its body, then returns here
+PrintSeparator();   // Calls PrintSeparator — same pattern
+PrintFooter();      // Calls PrintFooter
 
-static void PrintHeader()
-{
+// CUSTOM METHOD DEFINITIONS — always below top-level statements
+static void PrintHeader() {
     Console.WriteLine("=== SYSTEM REPORT ===");
 }
 
-static void PrintSeparator()
-{
+static void PrintSeparator() {
     Console.WriteLine("----------------------------");
 }
 
-static void PrintFooter()
-{
+static void PrintFooter() {
     Console.WriteLine("Report complete.");
 }
 ```
@@ -198,15 +189,11 @@ A good identifier is a **verb phrase** that describes what the method does:
 When a method is called, program execution leaves `Main`, enters the method body, executes every statement in the method, and then returns to the line immediately after the call. This is **sequential execution across method boundaries**:
 
 ```csharp
-static void Main()
-{
-    Console.WriteLine("Start of Main");   // 1. Executes
-    SayHello();                           // 2. Jumps to SayHello
-    Console.WriteLine("Back in Main");   // 4. Resumes here after SayHello returns
-}
+Console.WriteLine("Start of Main");   // 1. Executes
+SayHello();                           // 2. Jumps to SayHello
+Console.WriteLine("Back in Main");    // 4. Resumes here after SayHello returns
 
-static void SayHello()
-{
+static void SayHello() {
     Console.WriteLine("Inside SayHello"); // 3. Executes inside the method
 }
 ```
@@ -217,6 +204,18 @@ Start of Main
 Inside SayHello
 Back in Main
 ```
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>Method decomposition is the first step toward professional architecture.</strong> In industry codebases, you will never see a 500-line <code>Main</code> method that does everything. Senior engineers decompose logic into named methods as the default practice — not as an optimization, but as a readability contract. When a new developer joins a team and opens a file, they should be able to read <code>Main</code> like a table of contents: <code>LoadConfig()</code>, <code>ValidateInput()</code>, <code>ProcessRecords()</code>, <code>GenerateReport()</code>. Each name tells the reader what happens without reading the implementation. This is what you are learning to do now — give every action a name.</p>
+  </div>
+</div>
+
+---
 
 <div class="architect-rule">
 
@@ -231,13 +230,11 @@ Console.WriteLine("Hello");
 PrintFooter();
 
 // CUSTOM METHOD DEFINITIONS — always below top-level statements
-static void PrintHeader()
-{
+static void PrintHeader() {
     Console.WriteLine("=== REPORT ===");
 }
 
-static void PrintFooter()
-{
+static void PrintFooter() {
     Console.WriteLine("=== END ===");
 }
 ```
@@ -251,19 +248,15 @@ static void PrintFooter()
 The defining advantage of a method is that it can be **called multiple times** without repeating its code. The method body is written once; calling it is a single line each time:
 
 ```csharp
-static void Main()
-{
-    PrintSeparator();
-    Console.WriteLine("Section 1: Initialization");
-    PrintSeparator();
-    Console.WriteLine("Section 2: Processing");
-    PrintSeparator();
-    Console.WriteLine("Section 3: Summary");
-    PrintSeparator();
-}
+PrintSeparator();
+Console.WriteLine("Section 1: Initialization");
+PrintSeparator();
+Console.WriteLine("Section 2: Processing");
+PrintSeparator();
+Console.WriteLine("Section 3: Summary");
+PrintSeparator();
 
-static void PrintSeparator()
-{
+static void PrintSeparator() {
     Console.WriteLine("==============================");
 }
 ```
@@ -283,51 +276,101 @@ Section 3: Summary
 
 ---
 
+<DeepDiveTabs
+  title="Method Signatures in Real Systems"
+  tabs={[
+    {
+      id: "utilities",
+      label: "Utility Methods",
+      content: "Every large .NET application has a set of utility methods — PrintSeparator, LogMessage, FormatDate. These are static void methods called dozens of times throughout the codebase. The method signature tells every developer on the team exactly what the method does and what it returns (nothing) without reading the body. In a 100,000-line codebase, this clarity is not optional — it is survival.",
+      keyPoints: ["static void is the workhorse signature for action-only methods", "Utility methods are called many times, defined once", "The signature is the contract — the body is the implementation"]
+    },
+    {
+      id: "logging",
+      label: "Logging Systems",
+      content: "Production applications log events constantly: LogInfo, LogWarning, LogError. Each is a static void method. The identifier tells you the severity level. The access modifier (static) tells you it can be called from anywhere. The return type (void) tells you it performs a side effect (writing to a log file) and does not return data. Three elements, instant understanding.",
+      keyPoints: ["Log methods are void — they write to a file, not return data", "PascalCase naming: LogInfo, LogWarning, LogError", "Called hundreds of times per minute in production systems"]
+    },
+    {
+      id: "testing",
+      label: "Test Harnesses",
+      content: "Unit test methods follow the exact same signature pattern. A test named RunPayrollTest is a static void method that exercises one behavior and reports pass/fail. Test runners call dozens of these methods in sequence. The method name IS the test documentation — if RunPayrollTest fails, the developer knows exactly which system broke without reading a single line of test code.",
+      keyPoints: ["Test methods are void — they assert, not return", "Method name serves as documentation", "Hundreds of test methods called automatically by the runner"]
+    },
+    {
+      id: "initialization",
+      label: "Startup Sequences",
+      content: "Application startup is a sequence of void method calls: InitializeDatabase, LoadConfiguration, StartServer, RegisterRoutes. Each method name describes one step of the boot process. Main becomes a readable checklist. If the app crashes on startup, the stack trace points to the exact method that failed. This architecture pattern starts with the simple static void methods you are writing now.",
+      keyPoints: ["Main reads like a startup checklist", "Each method name describes one initialization step", "Stack traces identify the exact failing method"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Your First Custom Method
+
+Define your own methods and call them from the top-level statements:
+
 <TryItNowRunner
-  title="Your First Custom Method"
-  instructions="Define a method called PrintDivider that prints a line of 20 dashes. Call it from Main before and after a Console.WriteLine statement of your choice. Then define a second method called PrintTitle that prints your name. Call PrintTitle first, then PrintDivider, then any message, then PrintDivider again."
-  starterCode={`// Define your methods below the top-level statements
+  starterId="week-10-lesson-1"
+  height={520}
+  code={`// Define your methods below the top-level statements
 
 PrintTitle();
 PrintDivider();
 Console.WriteLine("System Online");
 PrintDivider();
 
-static void PrintTitle()
-{
+static void PrintTitle() {
     // TODO: print your name
 }
 
-static void PrintDivider()
-{
+static void PrintDivider() {
     // TODO: print 20 dashes
 }`}
+  instructions="Implement PrintTitle to display your name and PrintDivider to print a line of 20 dashes. Then add a third method called PrintTimestamp that prints the current date, and call it after the second PrintDivider."
+  enableStdin={false}
 />
 
 ---
 
 <Checkpoint
-  question="A method declared as 'static void DisplayMenu()' — what does 'void' specify?"
-  options={[
-    "The method belongs to the class, not an instance",
-    "The method does not return a value to the caller",
-    "The method can be called from anywhere in the program",
-    "The method takes no parameters"
+  checkpointId="week-10-lesson-1-check"
+  title="Section 10.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "A method declared as static void DisplayMenu() — what does void specify?",
+      options: ["The method belongs to the class, not an instance", "The method does not return a value to the caller", "The method can be called from anywhere in the program", "The method takes no parameters"],
+      correctAnswer: "The method does not return a value to the caller",
+      explanation: "'void' is the return type — it declares that this method performs an action and sends no value back to the caller. 'static' is the access modifier that specifies class membership. The empty parentheses indicate no parameters."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "A method named greetUser() violates which C# naming convention?",
+      options: ["Method identifiers must be a single word", "Method identifiers must follow PascalCase — every word capitalized", "Method identifiers cannot include the word user", "Method identifiers must begin with a verb ending in -ing"],
+      correctAnswer: "Method identifiers must follow PascalCase — every word capitalized",
+      explanation: "C# method names follow PascalCase — every word is capitalized, including the first. 'greetUser' is camelCase (the convention for variables). The correct form is 'GreetUser'."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "In a top-level C# program, where must custom method definitions be placed?",
+      options: ["Before the first Console.WriteLine", "Anywhere in the file", "After all top-level statements", "Inside a namespace block"],
+      correctAnswer: "After all top-level statements",
+      explanation: "The compiler requires custom method definitions to appear after all top-level statements. You cannot interleave method definitions with your Main logic in a top-level program."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "A void method can be assigned to a variable, such as: string result = PrintHeader();",
+      correctAnswer: "False",
+      explanation: "A void method returns nothing — it cannot be assigned to a variable. Attempting to assign a void method call to a variable causes a compiler error. Only methods with a non-void return type produce a value that can be stored."
+    }
   ]}
-  correctIndex={1}
-  explanation="'void' is the return type — it declares that this method performs an action and sends no value back to the caller. 'static' is the access modifier that specifies class membership. The empty parentheses indicate no parameters."
-/>
-
-<Checkpoint
-  question="A method named 'greetUser()' violates which C# naming convention?"
-  options={[
-    "Method identifiers must be a single word",
-    "Method identifiers must follow PascalCase — every word capitalized",
-    "Method identifiers cannot include the word 'user'",
-    "Method identifiers must begin with a verb ending in -ing"
-  ]}
-  correctIndex={1}
-  explanation="C# method names follow PascalCase — every word is capitalized, including the first. 'greetUser' is camelCase (the convention for variables). The correct form is 'GreetUser'."
 />
 
 ---
@@ -367,6 +410,7 @@ static void PrintDivider()
     align-items: center;
     gap: 1rem;
     margin: 0.5rem 0 1.5rem;
+    flex-wrap: wrap;
   }
 
   .section-badge {
@@ -426,6 +470,39 @@ static void PrintDivider()
     color: #ffc107;
   }
 
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon {
+    font-size: 1.25rem;
+  }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
   .next-section {
     background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
     border: 1px solid rgba(78, 201, 176, 0.3);
@@ -444,4 +521,6 @@ static void PrintDivider()
   body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
 `}</style>

@@ -986,15 +986,35 @@ Summary: # Week 10 Extra Practice: Mini models Pick **1–2** items (optional). 
 
 Summary: # Week 10 Homework: Bank Account (tiny simulation) ## Overview Create a BankAccount class and simulate deposits/withdrawals with simple rules. ## Requirements checklist (acceptance criteria) - [ ] Defines a BankAccount class with Owner and Balance - [ ] Constructor sets Owner and starting Balance - ...
 
+### 📝 Homework: Homework 10 • Technical Reflection: Methods & the DRY Principle
+
+Summary: # Homework 10: Technical Reflection — (GRADED) ## Homework 10: The Method Design Analysis You have worked with methods this week — defining signatures, declaring parameters, and applying the DRY Principle to program architecture. This reflection requires you to demonstrate analytical understanding ,...
+
 ### 📚 Overview: Week 10
 Key Concepts:
 - Focus:
 
 Summary: # Week 10 **Focus:** Classes & objects: modeling real things with code. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/) —...
 
+### 📚 Overview: Week 10 • Methods
+Key Concepts:
+- Don't Repeat Yourself
+- The most common failure this week will be copy-paste programming
+
+Summary: # Week 10: Methods — Modular Architecture 🏗️ 🔧 Welcome to Modular Programming Every program you have written so far lives inside a single Main method. That works for small programs — but it does not scale. This week you begin modular programming : the practice of breaking a program into named, reu...
+
 ### 🔬 Lab: Week 10 • Week 10 Lab: Student Profile Class
 
 Summary: # Week 10 Lab: Student Profile Class ## Overview Create a Student class with properties and a method that returns a formatted summary string. ## Requirements checklist (acceptance criteria) - [ ] Defines a Student class with at least 3 properties (example: Id, Name, Major) - [ ] Includes a construct...
+
+### 🔬 Lab: Lab 10 • The Modular System
+Key Concepts:
+- Time: 60 minutes
+- Points: 100
+- Student Report Generator
+- all display logic must live inside named, parameterized methods
+
+Summary: # Lab 10: The Modular System **Time: 60 minutes** **Points: 100** 10.3: The Decomposition Challenge You have learned how to define methods with the correct signature and how to make them dynamic through parameters. This lab applies both skills. You are given a program specification — you must archit...
 
 ### 📖 Lesson: Week 10 • Lesson 1
 Key Concepts:
@@ -1018,6 +1038,16 @@ p.Age = 19;
 
 Console.WriteLine($"{p.Name} is {p.Age}.");
 ```
+
+### 📖 Lesson: Section 10.1 • The Method Signature
+Key Concepts:
+- access modifier
+- return type
+- Output:
+- identifier
+- PascalCase
+
+Summary: # Section 10.1: The Method Signature 📋 The Department Contract ⏱️ Estimated Time: 30 minutes --- From One Method to Many Every C# program has at least one method: Main . When you write static void Main() , you are using the complete method signature syntax without knowing it. This section makes tha...
 
 ### 📖 Lesson: Week 10 • Lesson 2
 Key Concepts:
@@ -1045,6 +1075,15 @@ class Person
 Person p = new Person("Ava", 19);
 Console.WriteLine($"{p.Name} is {p.Age}.");
 ```
+
+### 📖 Lesson: Section 10.2 • Parameters & Arguments
+Key Concepts:
+- Parameter
+- Argument
+- Output:
+- count, order, and type
+
+Summary: # Section 10.2: Parameters & Arguments 🔌 The Resource Intake ⏱️ Estimated Time: 30 minutes --- Making Methods Dynamic: The Parameter A method defined in Section 10.1 — static void PrintHeader() — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A t...
 
 ---
 

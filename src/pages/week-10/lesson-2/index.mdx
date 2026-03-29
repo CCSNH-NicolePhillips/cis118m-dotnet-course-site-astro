@@ -13,7 +13,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 <div class="section-header">
   <div class="section-badge">🔌 The Resource Intake</div>
-  <p class="section-time">Estimated Time: 30 minutes</p>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -68,16 +68,14 @@ These two terms describe the same data at two different points in the program:
 
 ```csharp
 // "name" is the PARAMETER — declared in the signature
-static void Greet(string name)
-{
+static void Greet(string name) {
     Console.WriteLine($"Hello, {name}.");
 }
+```
 
-static void Main()
-{
-    Greet("Alice");   // "Alice" is the ARGUMENT — passed at the call site
-    Greet("Bob");     // "Bob" is the ARGUMENT on this call
-}
+```csharp
+Greet("Alice");   // "Alice" is the ARGUMENT — passed at the call site
+Greet("Bob");     // "Bob" is the ARGUMENT on this call
 ```
 
 **Output:**
@@ -93,11 +91,10 @@ The same method, two different behaviors — driven entirely by the argument pas
   tokens={[
     { text: "static void Greet(", type: "keyword", tooltip: "Access modifier + return type — same as Section 10.1" },
     { text: "string name", type: "parameter", tooltip: "PARAMETER: 'string' is the type, 'name' is the variable name. Inside the method body, 'name' holds the value passed by the caller." },
-    { text: ")", type: "punctuation" },
-    { text: "\n{", type: "punctuation" },
+    { text: ") {", type: "punctuation" },
     { text: "\n    Console.WriteLine($\"Hello, {name}.\");", type: "string", tooltip: "The parameter 'name' is used inside the body just like any local variable." },
     { text: "\n}", type: "punctuation" },
-    { text: "\n\n// At the call site:\nGreet(", type: "string" },
+    { text: "\n\nGreet(", type: "string" },
     { text: "\"Alice\"", type: "string", tooltip: "ARGUMENT: the literal string 'Alice' is passed to the 'name' parameter. The type must match — a string argument for a string parameter." },
     { text: ");", type: "punctuation" }
   ]}
@@ -110,17 +107,15 @@ The same method, two different behaviors — driven entirely by the argument pas
 A method can declare multiple parameters, separated by commas. Each parameter has its own type and name. Arguments at the call site must match the parameters in **count, order, and type**:
 
 ```csharp
-static void PrintItemPrice(string item, decimal price)
-{
+static void PrintItemPrice(string item, decimal price) {
     Console.WriteLine($"{item}: {price:C}");
 }
+```
 
-static void Main()
-{
-    PrintItemPrice("Laptop", 1299.99m);
-    PrintItemPrice("Monitor", 399.00m);
-    PrintItemPrice("Keyboard", 89.95m);
-}
+```csharp
+PrintItemPrice("Laptop", 1299.99m);
+PrintItemPrice("Monitor", 399.00m);
+PrintItemPrice("Keyboard", 89.95m);
 ```
 
 **Output:**
@@ -137,12 +132,12 @@ Keyboard: $89.95
 Arguments are matched to parameters by position — not by name. The first argument maps to the first parameter, the second to the second, and so on. Passing them in the wrong order does not cause a compile error if the types happen to match — it produces wrong output silently:
 
 ```csharp
-static void PrintItemPrice(string item, decimal price) { ... }
+static void PrintItemPrice(string item, decimal price) { /* ... */ }
 
 // CORRECT: string first, decimal second
 PrintItemPrice("Laptop", 1299.99m);
 
-// WRONG: decimal first, string second — compiler error (type mismatch in this case)
+// WRONG: decimal first, string second — compiler error (type mismatch)
 PrintItemPrice(1299.99m, "Laptop");
 ```
 
@@ -167,13 +162,22 @@ This violates the **DRY Principle** — the same structure appears three times. 
 
 ```csharp
 // WITH parameters — DRY
-static void Greet(string name)
-{
+static void Greet(string name) {
     Console.WriteLine($"Hello, {name}.");
 }
 ```
 
 Change the format once; it applies to every call. This is not just a style preference — it is a **maintenance contract**. A codebase that repeats logic accumulates inconsistencies over time as some copies get updated and others are missed.
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>DRY violations are the number one source of production bugs.</strong> In a real codebase, repeated logic means repeated maintenance. When a tax rate changes, a format updates, or a business rule evolves — every copy must be found and changed identically. Miss one, and you have a silent inconsistency that customers discover before engineers do. Senior developers enforce DRY not because it looks cleaner, but because it prevents the most common and most expensive category of software defect: the copy that was never updated.</p>
+  </div>
+</div>
 
 ---
 
@@ -182,20 +186,18 @@ Change the format once; it applies to every call. This is not just a style prefe
 Arguments do not have to be literals — you can pass any expression of the correct type, including variables:
 
 ```csharp
-static void DisplayScore(string playerName, int score)
-{
+static void DisplayScore(string playerName, int score) {
     Console.WriteLine($"{playerName}: {score} points");
 }
+```
 
-static void Main()
-{
-    string player = Console.ReadLine();
-    int earned = 450;
+```csharp
+string player = Console.ReadLine();
+int earned = 450;
 
-    DisplayScore(player, earned);      // Variables as arguments
-    DisplayScore("Computer", 300);     // Literals as arguments
-    DisplayScore(player, earned + 50); // Expression as argument
-}
+DisplayScore(player, earned);      // Variables as arguments
+DisplayScore("Computer", 300);     // Literals as arguments
+DisplayScore(player, earned + 50); // Expression as argument
 ```
 
 The argument is evaluated at the call site — whatever value `earned` holds at that moment, that value is passed into the `score` parameter.
@@ -207,18 +209,16 @@ The argument is evaluated at the call site — whatever value `earned` holds at 
 A parameter variable exists only for the duration of the method call. It is created when the method is invoked, receives the argument value, and is destroyed when the method returns. It is not the same variable as anything in the calling code — it is a separate copy:
 
 ```csharp
-static void Double(int x)
-{
+static void Double(int x) {
     x = x * 2;   // Modifies the local copy only
     Console.WriteLine($"Inside Double: {x}");
 }
+```
 
-static void Main()
-{
-    int value = 10;
-    Double(value);
-    Console.WriteLine($"After call: {value}");  // Still 10
-}
+```csharp
+int value = 10;
+Double(value);
+Console.WriteLine($"After call: {value}");  // Still 10
 ```
 
 **Output:**
@@ -231,39 +231,65 @@ The `value` variable in `Main` is unchanged because the method received a **copy
 
 ---
 
+<DeepDiveTabs
+  title="Parameters and DRY in Real Systems"
+  tabs={[
+    {
+      id: "invoicing",
+      label: "Invoice Generation",
+      content: "An invoicing system generates hundreds of invoices per day. Without parameters, you would need a separate method for every customer: PrintInvoiceAlice, PrintInvoiceBob, PrintInvoiceCarlos — impossible to maintain. With parameters, one method handles every invoice: PrintInvoice(string customerName, decimal total, string date). The DRY principle reduces hundreds of potential methods to one. When the invoice format changes (new logo, new footer), you update one method and every invoice reflects the change immediately.",
+      keyPoints: ["One parameterized method replaces hundreds of hard-coded copies", "Format changes propagate to all invoices automatically", "Parameter types enforce data consistency at compile time"]
+    },
+    {
+      id: "notifications",
+      label: "Notification Engine",
+      content: "A notification system sends alerts to users: SendNotification(string userId, string message, string channel). The same method handles email, SMS, and push notifications by changing the channel argument. Without DRY, you would write SendEmailNotification, SendSMSNotification, SendPushNotification — three methods with 90% identical logic. When the notification format changes, three methods need updating instead of one.",
+      keyPoints: ["Arguments control behavior without duplicating logic", "channel parameter selects the delivery method", "One update point instead of three maintenance targets"]
+    },
+    {
+      id: "reporting",
+      label: "Report Formatting",
+      content: "A reporting engine formats data rows: FormatRow(string label, decimal value). The same method formats revenue rows, expense rows, and summary rows. The label and value change; the formatting logic stays constant. When the CFO requests right-aligned currency values, the change happens in one method. Every row in every report updates simultaneously. This is DRY at scale.",
+      keyPoints: ["Same format logic applied to all row types", "Single point of change for formatting rules", "Parameters separate data from presentation"]
+    },
+    {
+      id: "passByValue",
+      label: "Pass-by-Value Safety",
+      content: "Pass-by-value is a safety mechanism. When you pass an int to a method, the method gets its own copy. It can modify that copy freely without affecting the caller. This prevents a common bug category: a utility method accidentally corrupting the caller's data. In large systems with many method calls, pass-by-value ensures that methods are isolated units that cannot interfere with each other's state. This isolation is a foundation of reliable software.",
+      keyPoints: ["Method receives a copy, not the original", "Caller's data is protected from modification", "Isolation prevents cross-method state corruption"]
+    }
+  ]}
+/>
+
+---
+
 ## Practical Architecture: A Multi-Parameter Report
 
 The following program demonstrates a complete parameterized design — `Main` collects data and calls methods, each method handles a specific output task:
 
 ```csharp
-static void Main()
-{
-    string employeeName = "Jordan Reyes";
-    int hoursWorked = 42;
-    decimal hourlyRate = 28.50m;
-    decimal total = hoursWorked * hourlyRate;
+string employeeName = "Jordan Reyes";
+int hoursWorked = 42;
+decimal hourlyRate = 28.50m;
+decimal total = hoursWorked * hourlyRate;
 
-    PrintPaystubHeader(employeeName);
-    PrintPayLine("Hours Worked", hoursWorked.ToString());
-    PrintPayLine("Hourly Rate", hourlyRate.ToString("C"));
-    PrintPayLine("Gross Pay", total.ToString("C"));
-    PrintPaystubFooter();
-}
+PrintPaystubHeader(employeeName);
+PrintPayLine("Hours Worked", hoursWorked.ToString());
+PrintPayLine("Hourly Rate", hourlyRate.ToString("C"));
+PrintPayLine("Gross Pay", total.ToString("C"));
+PrintPaystubFooter();
 
-static void PrintPaystubHeader(string name)
-{
+static void PrintPaystubHeader(string name) {
     Console.WriteLine("=== PAY STATEMENT ===");
     Console.WriteLine($"Employee: {name}");
     Console.WriteLine("---------------------");
 }
 
-static void PrintPayLine(string label, string value)
-{
+static void PrintPayLine(string label, string value) {
     Console.WriteLine($"{label,-20} {value,10}");
 }
 
-static void PrintPaystubFooter()
-{
+static void PrintPaystubFooter() {
     Console.WriteLine("---------------------");
     Console.WriteLine("Payment Processed.");
 }
@@ -273,43 +299,65 @@ static void PrintPaystubFooter()
 
 ---
 
+## Try It: Parameterized Greeting System
+
+Build a method that takes parameters and call it multiple times with different data:
+
 <TryItNowRunner
-  title="Parameterized Greeting System"
-  instructions="Define a method called PrintNameBadge that takes two parameters: a string for the person's name and a string for their department. The method should print: 'Name: [name]' on one line, and 'Department: [department]' on the next line, followed by a separator of 20 dashes. Call the method three times from Main with different names and departments."
-  starterCode={`// Call your method three times here
+  starterId="week-10-lesson-2"
+  height={520}
+  code={`// Call your method three times here
 PrintNameBadge("Alice Chen", "Engineering");
 // TODO: add two more calls with different data
 
-static void PrintNameBadge(string name, string department)
-{
+static void PrintNameBadge(string name, string department) {
     // TODO: implement the method
+    // Print: "Name: [name]"
+    // Print: "Department: [department]"
+    // Print a separator of 20 dashes
 }`}
+  instructions="Implement PrintNameBadge to display the name, department, and a separator line. Then call it three times from Main with different names and departments."
+  enableStdin={false}
 />
 
 ---
 
 <Checkpoint
-  question="In the call 'PrintScore(\"Alice\", 95)', what is '95' called?"
-  options={[
-    "A parameter",
-    "A return value",
-    "An argument",
-    "A local variable"
+  checkpointId="week-10-lesson-2-check"
+  title="Section 10.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "In the call PrintScore('Alice', 95), what is 95 called?",
+      options: ["A parameter", "A return value", "An argument", "A local variable"],
+      correctAnswer: "An argument",
+      explanation: "95 is an argument — the actual value passed at the call site. The method signature declares the parameter (e.g., int score), and the call site passes the argument (95). Parameter is the placeholder; argument is the value."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "A method has signature: static void Report(string title, int count). Which call is correct?",
+      options: ["Report(42, \"Monthly\")", "Report(\"Monthly\", 42)", "Report(\"Monthly\")", "Report()"],
+      correctAnswer: "Report(\"Monthly\", 42)",
+      explanation: "Arguments must match parameters by position and type. The first parameter is string title, so the first argument must be a string. The second parameter is int count, so the second argument must be an int. Report(\"Monthly\", 42) is the correct positional match."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What does the DRY principle stand for?",
+      options: ["Debug, Refactor, Yield", "Don't Repeat Yourself", "Define, Run, Yield", "Data Retrieval Year"],
+      correctAnswer: "Don't Repeat Yourself",
+      explanation: "DRY — Don't Repeat Yourself — means that every piece of logic should exist in exactly one place. Parameterized methods are the primary tool for achieving DRY: one method definition, many calls with different arguments."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "When you pass an int variable to a method, the method can change the original variable's value in the caller.",
+      correctAnswer: "False",
+      explanation: "C# uses pass-by-value for value types (int, double, decimal, bool). The method receives a copy of the value. Changes to the copy inside the method do not affect the original variable in the calling code."
+    }
   ]}
-  correctIndex={2}
-  explanation="'95' is an argument — the actual value passed at the call site. The method signature declares the parameter (e.g., 'int score'), and the call site passes the argument (95). Parameter is the placeholder; argument is the value."
-/>
-
-<Checkpoint
-  question="A method has signature 'static void Report(string title, int count)'. Which call is correct?"
-  options={[
-    "Report(42, \"Monthly\")",
-    "Report(\"Monthly\", 42)",
-    "Report(\"Monthly\")",
-    "Report(title: \"Monthly\")"
-  ]}
-  correctIndex={1}
-  explanation="Arguments must match parameters by position and type. The first parameter is 'string title', so the first argument must be a string. The second parameter is 'int count', so the second argument must be an int. 'Report(\"Monthly\", 42)' is the correct positional match."
 />
 
 ---
@@ -350,6 +398,7 @@ static void PrintNameBadge(string name, string department)
     align-items: center;
     gap: 1rem;
     margin: 0.5rem 0 1.5rem;
+    flex-wrap: wrap;
   }
 
   .section-badge {
@@ -409,6 +458,39 @@ static void PrintNameBadge(string name, string department)
     color: #ffc107;
   }
 
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon {
+    font-size: 1.25rem;
+  }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
   .next-section {
     background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
     border: 1px solid rgba(78, 201, 176, 0.3);
@@ -422,8 +504,11 @@ static void PrintNameBadge(string name, string department)
   .next-section a { display: inline-block; }
 
   body[data-theme="light"] .section-badge { color: #1a4a9a !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), rgba(255, 152, 0, 0.06)) !important; }
   body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
   body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
 `}</style>
