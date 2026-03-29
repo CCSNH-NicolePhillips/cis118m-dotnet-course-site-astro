@@ -695,6 +695,83 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["for", "while", "initializer", "off-by-one"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  "week-10-lab": {
+    title: "Week 10: Lab - The Modular Utility Suite",
+    type: "lab",
+    week: "10",
+    taughtConcepts: `
+      - Method signature: three elements — access modifier (static), return type (void), identifier (PascalCase)
+      - void methods perform an action and return nothing to the caller
+      - Methods must be defined BELOW top-level statements in a top-level program
+      - Execution flow: Main calls method → method body runs → control returns to line after the call
+      - Parameter: typed variable declared in the method signature (e.g., string name)
+      - Argument: the actual value passed at the call site (e.g., "Alice")
+      - Arguments matched positionally — order, count, and type must all match
+      - Pass-by-value: method receives a copy of the value; original is unchanged
+      - DRY Principle (Don't Repeat Yourself): write logic once in a parameterized method, call it many times
+      - K&R (Egyptian) brace style: opening brace on same line
+      - String interpolation for formatted output
+      - if/else decision structure inside methods
+    `,
+    assignmentPrompt: `
+      Build a Modular Utility Suite with three utility methods:
+      1. static void GreetUser(string name) — prints a personalized system initialization greeting (e.g., "System initialized for user: [name]")
+      2. static void ConvertMilesToKm(double miles) — converts miles to kilometers using miles * 1.60934, prints result formatted to 2 decimal places
+      3. static void CheckBatteryStatus(int percentage, bool isCharging) — prints one of four messages based on conditions:
+         - percentage < 20 AND not charging → critical warning
+         - percentage < 20 AND charging → low battery, charging in progress
+         - percentage >= 20 AND charging → battery level, charging in progress
+         - percentage >= 20 AND not charging → battery level, running on battery power
+      Each method must be called from Main at least twice with different arguments.
+      Main must NOT contain any Console.WriteLine display logic — all output must be inside the methods.
+      NOTE: Do NOT penalize for missing separator lines (------), decorative borders, headers, or cosmetic formatting differences.
+      Grade on whether the three methods exist with correct signatures, correct logic, and are called at least twice each.
+    `,
+    rubric: `
+      GreetUser method (15pts): Defines static void GreetUser(string name). Prints a greeting/initialization message that includes the name parameter. Method signature is correct.
+      ConvertMilesToKm method (15pts): Defines static void ConvertMilesToKm(double miles). Calculates km = miles * 1.60934 (or close equivalent). Prints result with 2 decimal places (:F2 or :N2 or similar). Method signature is correct.
+      CheckBatteryStatus method with if/else (20pts): Defines static void CheckBatteryStatus(int percentage, bool isCharging). Uses if/else or if/else if/else structure. Handles at least the critical cases (low + not charging, and normal scenarios). Method signature is correct with both parameters.
+      Battery status conditions correct (15pts): All four conditions produce appropriate distinct messages: critical (< 20 not charging), low charging (< 20 charging), healthy charging (>= 20 charging), healthy not charging (>= 20 not charging). Messages include the percentage value. Exact wording does not need to match — grade on whether the four branches exist and produce distinct, appropriate output.
+      Methods called at least twice with different arguments (15pts): Each of the three methods is called from Main at least twice. Different argument values are used each time. This demonstrates reusability — the core purpose of methods.
+      Main contains no display logic (10pts): All Console.WriteLine calls are inside the methods, not in Main. Main only calls the methods and passes arguments. Main is the orchestrator, not the printer.
+      Code compiles, runs, K&R braces (10pts): Code compiles and runs without errors. K&R brace style used. Clean code structure. Do NOT deduct for missing separator lines, decorative output, or cosmetic formatting differences.
+    `,
+    requiredKeywords: ["static", "void", "GreetUser", "ConvertMilesToKm", "CheckBatteryStatus"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-10-homework": {
+    title: "Week 10: Methods & DRY Reflection",
+    type: "homework",
+    week: "10",
+    taughtConcepts: `
+      - Method signature: three elements — access modifier (static), return type (void), identifier (PascalCase)
+      - void means the method performs an action and returns nothing
+      - If the return type were int, the method would need a return statement with an integer value
+      - Parameter = typed variable in the method signature (placeholder)
+      - Argument = the actual value passed at the call site
+      - Arguments are matched positionally — order, count, and type must all match
+      - Pass-by-value: method receives a copy; original variable is unchanged
+      - DRY Principle (Don't Repeat Yourself): the same logic written once in a parameterized method, called many times
+      - Why repeated code is dangerous: if you change one copy but forget the others, you introduce inconsistency
+      - Parameterized methods eliminate repetition by accepting different inputs and producing dynamic output
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer the following about Methods and the DRY Principle:
+      1. Method Signature Anatomy: Describe the three elements of a method signature (access modifier, return type, identifier). Explain what each element controls. What would change if the return type were int instead of void?
+      2. Parameter vs Argument: Define what a parameter is and what an argument is. Explain how they are matched (positionally). Give an example of what goes wrong if argument order is reversed when two parameters have the same type.
+      3. DRY Principle: Explain what DRY means and why repeated code is a maintenance liability. How do parameterized methods solve the repetition problem? Give a concrete scenario.
+    `,
+    rubric: `
+      Method signature anatomy (35pts): Student correctly names all three elements: access modifier (static), return type (void), and identifier (PascalCase verb). Explains what each controls. Explains that changing void to int would require a return statement with an integer value.
+      Parameter vs argument (35pts): Student defines parameter as the typed variable in the signature and argument as the actual value at the call site. Explains positional matching (order, count, type). Gives an example of reversed argument order causing wrong behavior without a compiler error.
+      DRY Principle (20pts): Student explains Don't Repeat Yourself. Identifies that repeated code is dangerous because changes to one copy may not be made to others (inconsistency). Explains how parameterized methods eliminate repetition by accepting different inputs.
+      Clarity and terminology (10pts): Clear writing using terms like "access modifier", "return type", "identifier", "parameter", "argument", "positional", "DRY"
+    `,
+    requiredKeywords: ["static", "void", "parameter", "argument", "DRY"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 

@@ -449,6 +449,7 @@ internal static class CheckRunner
             "week-07-lab" => Week07LabChecks(programCs),
             "week-08-lab" => Week08LabChecks(programCs),
             "week-09-lab" => Week09LabChecks(programCs),
+            "week-10-lab" => Week10LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -467,6 +468,7 @@ internal static class CheckRunner
             "week-07-lab" => Week07LabHint(checks),
             "week-08-lab" => Week08LabHint(checks),
             "week-09-lab" => Week09LabHint(checks),
+            "week-10-lab" => Week10LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -1422,6 +1424,94 @@ internal static class CheckRunner
             "HasF2Format" => "Stage II: Console.WriteLine($\"Average: {average:F2}\");",
             "HasNestedForLoops" => "Stage III needs two for loops — the inner one inside the outer one.",
             "HasConsoleWrite" => "Stage III: Console.Write(\"* \") inside inner loop, Console.WriteLine() after inner loop closes.",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    private static List<CheckResult> Week10LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var notPlaceholder = !Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult("HasHeaderComment", hasNameComment && notPlaceholder,
+            hasNameComment && notPlaceholder ? "✅ Header comment with name found" : "❌ Replace 'Your Name Here' with your actual name in the header comment"));
+
+        // Check 2: GreetUser method defined
+        var hasGreetUser = Regex.IsMatch(programCs, @"static\s+void\s+GreetUser\s*\(\s*string\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasGreetUser", hasGreetUser,
+            hasGreetUser ? "✅ GreetUser(string) method found" : "❌ Define: static void GreetUser(string name) — prints a greeting with the name"));
+
+        // Check 3: ConvertMilesToKm method defined
+        var hasConvert = Regex.IsMatch(programCs, @"static\s+void\s+ConvertMilesToKm\s*\(\s*double\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasConvertMilesToKm", hasConvert,
+            hasConvert ? "✅ ConvertMilesToKm(double) method found" : "❌ Define: static void ConvertMilesToKm(double miles) — prints miles converted to km"));
+
+        // Check 4: CheckBatteryStatus method defined
+        var hasBattery = Regex.IsMatch(programCs, @"static\s+void\s+CheckBatteryStatus\s*\(\s*int\s+\w+\s*,\s*bool\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasCheckBatteryStatus", hasBattery,
+            hasBattery ? "✅ CheckBatteryStatus(int, bool) method found" : "❌ Define: static void CheckBatteryStatus(int percentage, bool isCharging) — prints battery status"));
+
+        // Check 5: Conversion factor present (1.60934)
+        var hasConversionFactor = programCs.Contains("1.60934");
+        checks.Add(new CheckResult("HasConversionFactor", hasConversionFactor,
+            hasConversionFactor ? "✅ Miles-to-km conversion factor (1.60934) found" : "❌ Use the conversion factor: miles * 1.60934"));
+
+        // Check 6: Has if/else for battery status
+        var hasIfElse = Regex.IsMatch(programCs, @"if\s*\(") && Regex.IsMatch(programCs, @"else");
+        checks.Add(new CheckResult("HasIfElse", hasIfElse,
+            hasIfElse ? "✅ if/else decision structure found for battery status" : "❌ CheckBatteryStatus needs if/else to handle the four battery conditions"));
+
+        // Check 7: GreetUser called at least twice
+        var greetCalls = Regex.Matches(programCs, @"GreetUser\s*\(").Count;
+        var greetCalledTwice = greetCalls >= 3; // 1 definition + 2 calls
+        // Better: count calls outside the method definition
+        var greetCallCount = greetCalls - (hasGreetUser ? 1 : 0);
+        greetCalledTwice = greetCallCount >= 2;
+        checks.Add(new CheckResult("GreetUserCalledTwice", greetCalledTwice,
+            greetCalledTwice ? $"✅ GreetUser called {greetCallCount} time(s)" : $"❌ Call GreetUser at least twice with different names — found {greetCallCount} call(s)"));
+
+        // Check 8: ConvertMilesToKm called at least twice
+        var convertCalls = Regex.Matches(programCs, @"ConvertMilesToKm\s*\(").Count;
+        var convertCallCount = convertCalls - (hasConvert ? 1 : 0);
+        var convertCalledTwice = convertCallCount >= 2;
+        checks.Add(new CheckResult("ConvertCalledTwice", convertCalledTwice,
+            convertCalledTwice ? $"✅ ConvertMilesToKm called {convertCallCount} time(s)" : $"❌ Call ConvertMilesToKm at least twice with different values — found {convertCallCount} call(s)"));
+
+        // Check 9: CheckBatteryStatus called at least twice
+        var batteryCalls = Regex.Matches(programCs, @"CheckBatteryStatus\s*\(").Count;
+        var batteryCallCount = batteryCalls - (hasBattery ? 1 : 0);
+        var batteryCalledTwice = batteryCallCount >= 2;
+        checks.Add(new CheckResult("BatteryCalledTwice", batteryCalledTwice,
+            batteryCalledTwice ? $"✅ CheckBatteryStatus called {batteryCallCount} time(s)" : $"❌ Call CheckBatteryStatus at least twice with different arguments — found {batteryCallCount} call(s)"));
+
+        // Check 10: TODOs completed
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO", RegexOptions.IgnoreCase).Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult("HasRealContent", hasRealContent,
+            hasRealContent ? "✅ TODO comments completed" : $"❌ Complete all TODO steps — {todoCount} TODOs remaining"));
+
+        return checks;
+    }
+
+    private static string Week10LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasGreetUser" => "Define the method below Main: static void GreetUser(string name) { Console.WriteLine($\"System initialized for user: {name}\"); }",
+            "HasConvertMilesToKm" => "Define: static void ConvertMilesToKm(double miles) { double km = miles * 1.60934; Console.WriteLine($\"{miles:F2} miles = {km:F2} km\"); }",
+            "HasCheckBatteryStatus" => "Define: static void CheckBatteryStatus(int percentage, bool isCharging) with if/else for the four conditions.",
+            "HasConversionFactor" => "Inside ConvertMilesToKm, multiply: double km = miles * 1.60934;",
+            "HasIfElse" => "Inside CheckBatteryStatus, use if/else to check: percentage < 20 with isCharging true/false, then the >= 20 cases.",
+            "GreetUserCalledTwice" => "In Main, call GreetUser twice: GreetUser(\"Alice Chen\"); GreetUser(\"Marcus Webb\");",
+            "ConvertCalledTwice" => "In Main, call ConvertMilesToKm twice: ConvertMilesToKm(5.0); ConvertMilesToKm(26.2);",
+            "BatteryCalledTwice" => "In Main, call CheckBatteryStatus twice: CheckBatteryStatus(12, false); CheckBatteryStatus(85, true);",
             "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };

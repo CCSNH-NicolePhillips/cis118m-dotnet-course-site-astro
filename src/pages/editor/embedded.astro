@@ -387,6 +387,52 @@ class Program
 }
 `,
 
+        "week-10-lab": `// Name: Your Name Here
+// Assignment: Lab 10 - The Modular Utility Suite
+
+using System;
+
+// === YOUR METHODS GO BELOW Main ===
+
+// --- Main (top-level statements) ---
+Console.WriteLine("=== MODULAR UTILITY SUITE ===");
+
+// TODO: Step 1 — Call GreetUser twice with different names
+Console.WriteLine("\\n--- System Greeting ---");
+// GreetUser("Alice Chen");
+// GreetUser("Marcus Webb");
+
+// TODO: Step 2 — Call ConvertMilesToKm twice with different values
+Console.WriteLine("\\n--- Measurement Converter ---");
+// ConvertMilesToKm(5.0);
+// ConvertMilesToKm(26.2);
+
+// TODO: Step 3 — Call CheckBatteryStatus twice with different values
+Console.WriteLine("\\n--- Status Monitor ---");
+// CheckBatteryStatus(12, false);
+// CheckBatteryStatus(85, true);
+
+// === DEFINE YOUR METHODS BELOW THIS LINE ===
+
+// TODO: Step 4 — Define static void GreetUser(string name)
+// Print a greeting that includes the name parameter
+// Example output: "System initialized for user: Alice Chen"
+
+
+// TODO: Step 5 — Define static void ConvertMilesToKm(double miles)
+// Calculate km = miles * 1.60934
+// Print the result formatted to 2 decimal places (:F2)
+// Example output: "5.00 miles = 8.05 km"
+
+
+// TODO: Step 6 — Define static void CheckBatteryStatus(int percentage, bool isCharging)
+// Use if/else to handle four cases:
+// percentage < 20 AND not charging → WARNING: Battery critical
+// percentage < 20 AND charging     → Battery low, charging in progress
+// percentage >= 20 AND charging    → Battery at N%, charging in progress
+// percentage >= 20 AND not charging → Battery at N%, running on battery power
+`,
+
       };
 
       const genericTemplate = (id) => `// Starter: ${id}\n\nusing System;\n\nclass Program\n{\n    static void Main()\n    {\n        Console.WriteLine("Hello from ${id}");\n    }\n}\n`;
