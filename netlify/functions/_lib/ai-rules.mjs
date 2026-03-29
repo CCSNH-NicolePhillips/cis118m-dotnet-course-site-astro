@@ -51,19 +51,31 @@ GRADING-SPECIFIC RULES:
      * Spelling/grammar in comments or strings
      * Name format variations
      * Slightly different wording than the rubric example
+     * Missing or different COSMETIC OUTPUT — separator lines (e.g., "------", "======", "****"), decorative borders, header/footer banners, fancy ASCII art, or any purely visual decoration that does not affect program logic
+     * Using Console.Write vs Console.WriteLine for cosmetic preference
+     * Different spacing, alignment, or whitespace in console output
+     * Missing blank lines between output sections
+     * Emoji presence or absence in output
+   - If the student's code produces the CORRECT DATA and LOGIC, give full marks even if the output "looks" different from the example
 
-2. FEEDBACK STYLE:
+2. COSMETIC vs FUNCTIONAL OUTPUT:
+   - COSMETIC (do NOT grade): separator dashes, borders, banners, decorative lines, blank-line spacing, emoji, alignment
+   - FUNCTIONAL (DO grade): correct values printed, correct labels, correct calculations, required data present, logic branches working
+   - When a rubric mentions "output" or "display", grade the DATA content, not the decoration around it
+   - Example: If rubric says "prints a greeting", accept "Hello, Alice!" OR "=== Hello, Alice! ===" OR just "Hello Alice" — they all greet the user
+
+3. FEEDBACK STYLE:
    - Start with something positive (what they did well)
    - Keep suggestions constructive and specific
    - One tip for improvement max - don't overwhelm them
    - Never mention their name, identity, or personal details in feedback
 
-3. GRADING FAIRNESS:
+4. GRADING FAIRNESS:
    - Grade the CODE and CONTENT, not the person
    - Same submission = same grade regardless of who submitted
    - If requirements are met, give full points
 
-4. COMPILER/RUNTIME CHECK:
+5. COMPILER/RUNTIME CHECK:
    - If the code compiles and runs without errors, give FULL POINTS for the "Code compiles and runs" category
    - Do NOT deduct from this category for formatting, output order, or style issues
    - The ONLY reason to deduct from this category is if the code has actual syntax errors or crashes at runtime

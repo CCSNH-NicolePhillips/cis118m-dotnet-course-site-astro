@@ -57,6 +57,35 @@ const ASSIGNMENTS = {
   // Week 5 (Boss Fight week — no separate lab/homework/quiz)
   'week-05-participation': { name: 'Week 5 Participation', points: 100, isParticipation: true, week: 'week-05' },
   'week-05-boss-fight': { name: 'Week 5 Boss Fight', points: 200 },
+
+  // Week 6
+  'week-06-participation': { name: 'Week 6 Participation', points: 100, isParticipation: true, week: 'week-06' },
+  'week-06-lab': { name: 'Week 6 Lab', points: 100 },
+  'week-06-homework': { name: 'Week 6 Homework', points: 100 },
+  'week-06-quiz': { name: 'Week 6 Quiz', points: 100 },
+
+  // Week 7
+  'week-07-participation': { name: 'Week 7 Participation', points: 100, isParticipation: true, week: 'week-07' },
+  'week-07-lab': { name: 'Week 7 Lab', points: 100 },
+  'week-07-homework': { name: 'Week 7 Homework', points: 100 },
+  'week-07-quiz': { name: 'Week 7 Quiz', points: 100 },
+
+  // Week 8
+  'week-08-participation': { name: 'Week 8 Participation', points: 100, isParticipation: true, week: 'week-08' },
+  'week-08-lab': { name: 'Week 8 Lab', points: 100 },
+  'week-08-homework': { name: 'Week 8 Homework', points: 100 },
+  'week-08-quiz': { name: 'Week 8 Quiz', points: 100 },
+
+  // Week 9 (Boss Fight week — no separate quiz)
+  'week-09-participation': { name: 'Week 9 Participation', points: 100, isParticipation: true, week: 'week-09' },
+  'week-09-boss-fight': { name: 'Week 9 Boss Fight', points: 200 },
+  'week-09-homework': { name: 'Week 9 Homework', points: 100 },
+
+  // Week 10
+  'week-10-participation': { name: 'Week 10 Participation', points: 100, isParticipation: true, week: 'week-10' },
+  'week-10-lab': { name: 'Week 10 Lab', points: 100 },
+  'week-10-homework': { name: 'Week 10 Homework', points: 100 },
+  'week-10-quiz': { name: 'Week 10 Quiz', points: 100 },
 };
 
 // Expected sections per week for participation scoring
