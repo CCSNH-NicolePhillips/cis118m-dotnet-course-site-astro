@@ -118,7 +118,8 @@ export const WEEKS: WeekConfig[] = [
       { title: '10.1 The Method Signature', href: '/week-10/lesson-1/' },
       { title: '10.2 Parameters & Arguments', href: '/week-10/lesson-2/' },
       { title: 'Lab: The Modular System (Graded)', href: '/week-10/lab/' },
-      { title: 'Technical Reflection 10 (Graded)', href: '/week-10/homework/' }
+      { title: 'Technical Reflection 10 (Graded)', href: '/week-10/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-10/weekly-assessment/' }
     ] },
   { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-11/' },

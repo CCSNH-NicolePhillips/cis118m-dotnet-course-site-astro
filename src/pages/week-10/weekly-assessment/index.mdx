@@ -1,0 +1,211 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 10 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 10 Technical Assessment
+
+<DueDateBanner week={10} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-10-quiz"
+  title="Week 10: Methods — Modular Architecture (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What are the three required elements of a method signature in C#?",
+      options: [
+        "Name, body, return statement",
+        "Access modifier, return type, identifier",
+        "Class, method, parameter",
+        "Static, public, private"
+      ],
+      correctAnswer: "Access modifier, return type, identifier",
+      explanation: "Every method signature has exactly three elements: (1) Access modifier — like 'static', controls who can call it, (2) Return type — like 'void' or 'int', declares what value (if any) the method sends back, (3) Identifier — the PascalCase name that describes the method's action."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "In the signature 'static void PrintHeader()', what does 'void' mean?",
+      options: [
+        "The method takes no parameters",
+        "The method belongs to the class, not an instance",
+        "The method does not return a value to the caller",
+        "The method cannot be called from Main"
+      ],
+      correctAnswer: "The method does not return a value to the caller",
+      explanation: "'void' is the return type — it declares that this method performs an action (like printing) and sends no value back to the caller. 'static' is the access modifier. The empty parentheses indicate no parameters."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "Why must custom methods be declared 'static' in a top-level C# program?",
+      options: [
+        "Static methods run faster",
+        "Main is static — it can only call other static members directly",
+        "Non-static methods cause compiler warnings",
+        "Static is required for all methods in C#"
+      ],
+      correctAnswer: "Main is static — it can only call other static members directly",
+      explanation: "In a top-level program, the compiler generates Main as a static method behind the scenes. A static method can only call other static members directly. Every helper method you define must also be static to be callable from Main."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Which method name follows correct C# naming conventions?",
+      options: [
+        "printReport()",
+        "print_report()",
+        "PrintReport()",
+        "PRINTREPORT()"
+      ],
+      correctAnswer: "PrintReport()",
+      explanation: "C# method names follow PascalCase — every word is capitalized, including the first. 'printReport' is camelCase (the convention for variables). 'print_report' is snake_case (not used in C#). 'PRINTREPORT' is SCREAMING_CASE (not standard)."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "In a top-level C# program, where must custom method definitions be placed?",
+      options: [
+        "Before the first Console.WriteLine",
+        "Anywhere in the file — order doesn't matter",
+        "Inside a separate class file",
+        "After all top-level statements"
+      ],
+      correctAnswer: "After all top-level statements",
+      explanation: "The compiler requires custom method definitions to appear after all top-level statements. You cannot interleave method definitions with your Main logic. Place all custom methods at the bottom of the file, below the last top-level statement."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What is the difference between a parameter and an argument?",
+      options: [
+        "They are two names for the same thing",
+        "A parameter is the variable in the method signature; an argument is the value passed at the call site",
+        "A parameter is the value; an argument is the variable",
+        "Parameters are used in void methods; arguments are used in return methods"
+      ],
+      correctAnswer: "A parameter is the variable in the method signature; an argument is the value passed at the call site",
+      explanation: "A parameter is the typed variable declared in the method signature (e.g., 'string name'). An argument is the actual value passed when the method is called (e.g., \"Alice\"). Parameter = placeholder in definition, argument = value at call site."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "A method has signature: static void Report(string title, int count). Which call is correct?",
+      options: [
+        "Report(42, \"Monthly\")",
+        "Report(\"Monthly\", 42)",
+        "Report(\"Monthly\")",
+        "Report()"
+      ],
+      correctAnswer: "Report(\"Monthly\", 42)",
+      explanation: "Arguments must match parameters by position, count, and type. The first parameter is 'string title' (needs a string), the second is 'int count' (needs an int). Report(\"Monthly\", 42) is the only call that matches all three requirements."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What is the output of this code?",
+      codeBlock: `int value = 10;
+Double(value);
+Console.WriteLine(value);
+
+static void Double(int x) {
+    x = x * 2;
+}`,
+      options: [
+        "20",
+        "10",
+        "0",
+        "Compiler error"
+      ],
+      correctAnswer: "10",
+      explanation: "C# uses pass-by-value for value types like int. The method receives a COPY of the value, not the original variable. Doubling x inside the method changes only the local copy. The original 'value' in Main remains 10."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "What does the DRY Principle stand for, and why does it matter?",
+      options: [
+        "Debug, Refactor, Yield — a testing workflow",
+        "Don't Repeat Yourself — repeated logic creates maintenance liabilities when changes are needed",
+        "Data Retrieval Yield — a database optimization technique",
+        "Don't Repeat Yourself — it saves typing time but has no other benefit"
+      ],
+      correctAnswer: "Don't Repeat Yourself — repeated logic creates maintenance liabilities when changes are needed",
+      explanation: "DRY means Don't Repeat Yourself. When the same logic exists in multiple places and a change is needed, every copy must be found and updated. Missing one creates inconsistent behavior. Parameterized methods solve this by putting logic in one place, called many times."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "A method static void LogEntry(string user, string action) is called as LogEntry(\"delete\", \"Alice\"). What happens?",
+      options: [
+        "Compiler error — the arguments are in the wrong order",
+        "Runtime error — the types don't match",
+        "No error — but user becomes \"delete\" and action becomes \"Alice\" (wrong behavior)",
+        "C# automatically detects the reversed order and fixes it"
+      ],
+      correctAnswer: "No error — but user becomes \"delete\" and action becomes \"Alice\" (wrong behavior)",
+      explanation: "Arguments are matched to parameters by POSITION, not by name. Since both parameters are strings, reversing the arguments compiles and runs without error — but produces completely wrong behavior. The method thinks the user is 'delete' and the action is 'Alice'. This is a silent bug."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 10 Complete!</strong></p>
+  <p>You've mastered methods and modular architecture! Next up: <strong>Returning Values</strong> in Week 11!</p>
+  <a href="/week-11/" class="vscode-button">Preview Week 11 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 { margin-top: 0; color: #818cf8; }
+  .mission-brief ul { margin-bottom: 0; }
+  .mission-brief li { margin: 8px 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: #6366f1 !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #4f46e5 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>
