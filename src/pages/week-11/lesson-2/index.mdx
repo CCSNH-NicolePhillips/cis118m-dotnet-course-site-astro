@@ -1,0 +1,568 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 11.2 • Result Capture"
+description: "How to store the result of a method call into a variable — the caller's side of the return contract"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 11.2: Result Capture
+
+<div class="section-header">
+  <div class="section-badge">📦 Variable Assignment Logic</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>The Caller's Side of the Return Contract</h2>
+      <p>
+        Section 11.1 taught you how to write methods that deliver values via <code>return</code>. This section focuses on the <strong>caller's responsibility</strong>: how to receive, store, and use the returned value. When a method returns a value, the caller must <strong>capture</strong> it — assign it to a variable of the correct type. That variable then holds the result for use in further computation, display, or decision-making.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2011/11.2/Header%20Image.jpeg"
+        alt="Diagram showing a method call on the right side of an assignment operator, with the returned value flowing into a variable on the left side"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: Result Capture
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on result capture — how to assign a method's return value to a variable and use it in further operations.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/placeholder-11-2"
+      title="11.2: Result Capture — Storing Method Return Values in Variables in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 11.2 Result Capture — variable assignment from method calls in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## The Assignment Pattern
+
+When a method returns a value, the call appears on the **right side** of an assignment statement. The variable on the left receives the returned value:
+
+```csharp
+int result = Add(10, 25);    // Add returns 35 → stored in result
+Console.WriteLine(result);    // Prints: 35
+```
+
+<AnnotatedCode
+  title="Capturing a Return Value"
+  tokens={[
+    { text: "int", type: "keyword", tooltip: "VARIABLE TYPE: must match the method's return type. Add returns int, so the variable must be int." },
+    { text: " ", type: "punctuation" },
+    { text: "result", type: "string", tooltip: "VARIABLE NAME: holds the returned value for use in subsequent code." },
+    { text: " = ", type: "punctuation", tooltip: "ASSIGNMENT OPERATOR: takes the value returned by the method call and stores it in the variable." },
+    { text: "Add(10, 25)", type: "string", tooltip: "METHOD CALL: executes the Add method with arguments 10 and 25. The method computes 35 and returns it. That returned value flows into 'result'." },
+    { text: ";", type: "punctuation", tooltip: "Statement complete. 'result' now holds 35 and can be used anywhere below this line." }
+  ]}
+/>
+
+This is the **result capture pattern**: `type variableName = MethodCall(arguments);`. The variable type must match the method's declared return type — `int` method → `int` variable, `string` method → `string` variable.
+
+---
+
+## The Variable Is Independent of the Method
+
+Once the returned value is stored in a variable, it is completely independent of the method. The variable holds a copy of the result — modifying the variable does not affect the method, and calling the method again does not change the variable:
+
+```csharp
+int total = Add(10, 20);     // total = 30
+total = total + 5;            // total = 35 — modifying the variable, not the method
+Console.WriteLine(total);     // Prints: 35
+
+int otherTotal = Add(100, 200);  // otherTotal = 300 — a separate call, separate result
+Console.WriteLine(otherTotal);   // Prints: 300
+
+static int Add(int a, int b) {
+    return a + b;
+}
+```
+
+Each call produces an independent value. Each assignment stores that value in a separate variable. The method has no memory of previous calls — it computes fresh every time.
+
+---
+
+## Using Captured Results in Expressions
+
+A captured result can be used anywhere a value of that type is valid — in arithmetic, conditions, string interpolation, or as an argument to another method call:
+
+```csharp
+// Arithmetic
+int width = 10;
+int height = 5;
+int area = CalculateArea(width, height);     // area = 50
+int doubleArea = area * 2;                    // doubleArea = 100
+
+// String interpolation
+string greeting = FormatGreeting("Jordan");
+Console.WriteLine($"Message: {greeting}");
+
+// Decision-making
+bool eligible = IsOldEnough(21);
+if (eligible) {
+    Console.WriteLine("Access granted.");
+}
+
+// As an argument to another method
+int perimeter = CalculatePerimeter(width, height);
+DisplayResult("Perimeter", perimeter);
+
+// METHOD DEFINITIONS
+static int CalculateArea(int w, int h) {
+    return w * h;
+}
+
+static int CalculatePerimeter(int w, int h) {
+    return 2 * (w + h);
+}
+
+static string FormatGreeting(string name) {
+    return $"Welcome aboard, {name}!";
+}
+
+static bool IsOldEnough(int age) {
+    return age >= 18;
+}
+
+static void DisplayResult(string label, int value) {
+    Console.WriteLine($"{label}: {value}");
+}
+```
+
+The captured variable behaves exactly like any other variable — it can be printed, compared, passed as an argument, or used in calculations.
+
+<div class="architect-rule">
+
+### Architect's Rule: Capture, Then Use — Separation of Concerns
+
+The pattern `type result = Method(args);` followed by `Console.WriteLine(result);` separates **computation** from **display**. The method computes. The caller decides how to use the result. This is a core principle called **separation of concerns** — each unit of code has one responsibility. The method does not need to know how its result will be used. The caller does not need to know how the result was computed.
+
+```csharp
+// GOOD: computation separated from display
+double converted = CelsiusToFahrenheit(100.0);
+Console.WriteLine($"Temperature: {converted:F1}°F");
+
+// ALSO VALID: inline form (skip the variable)
+Console.WriteLine($"Temperature: {CelsiusToFahrenheit(100.0):F1}°F");
+
+// But the first form is clearer when the result is used in multiple places
+```
+
+</div>
+
+---
+
+## Inline Calls vs Variable Capture
+
+You do not always need to store the return value in a named variable. You can use the method call directly in an expression — this is called an **inline call**:
+
+```csharp
+// Variable capture — clear, debuggable, reusable
+int total = Add(10, 20);
+Console.WriteLine(total);
+
+// Inline call — compact, but the value cannot be reused
+Console.WriteLine(Add(10, 20));
+
+// Inline in a condition
+if (IsOldEnough(25)) {
+    Console.WriteLine("Eligible.");
+}
+```
+
+Both approaches are valid. Use **variable capture** when:
+- The result is used more than once
+- You want to inspect the value during debugging
+- The expression is complex and a named variable improves readability
+
+Use **inline calls** when:
+- The result is used exactly once
+- The method name makes the intent clear
+
+---
+
+## Chaining Results: Method Call as Argument
+
+A method's return value can be passed directly as an argument to another method. This is called **chaining**:
+
+```csharp
+// Chain: Add returns 30, which becomes the argument to Double
+int result = Double(Add(10, 20));    // Double(30) → 60
+Console.WriteLine(result);           // Prints: 60
+
+static int Add(int a, int b) {
+    return a + b;
+}
+
+static int Double(int value) {
+    return value * 2;
+}
+```
+
+The inner method (`Add`) executes first, returns its value, and that value becomes the argument to the outer method (`Double`). This is powerful but can become hard to read — when a chain involves more than two method calls, use intermediate variables for clarity.
+
+---
+
+## Ignoring a Return Value
+
+You are not required to capture a return value. C# allows you to call a return-type method without storing the result — but the value is discarded:
+
+```csharp
+Add(10, 20);  // The method runs, returns 30, but the value is thrown away
+```
+
+This is legal but usually wasteful. If you call a method that computes something and throw away the result, you are paying the cost of computation for nothing. In most cases, if you do not need the return value, you should be calling a `void` method instead.
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>In production code, discarded return values are a code review flag.</strong> When a reviewer sees a return-type method called without assignment, they ask: "Why are you computing a value and throwing it away?" It usually means one of two things — the wrong method is being called (should be void), or the developer forgot to capture the result. Some teams configure their linters to warn on ignored return values. It is a habit worth forming now: if a method returns something, capture it.</p>
+  </div>
+</div>
+
+---
+
+## Type Mismatch: The Variable Must Match the Return Type
+
+The variable that receives the returned value must be declared with the same type (or a compatible type) as the method's return type:
+
+```csharp
+// CORRECT: int method → int variable
+int total = Add(10, 20);
+
+// CORRECT: double method → double variable
+double temp = CelsiusToFahrenheit(100.0);
+
+// COMPILER ERROR: int method → string variable
+string text = Add(10, 20);  // Cannot convert int to string
+
+// CORRECT: compatible widening — int → double
+double widened = Add(10, 20);  // int 30 automatically widens to double 30.0
+```
+
+---
+
+## Practical Architecture: A Multi-Step Calculation
+
+The following program demonstrates the full result-capture workflow — compute, capture, use, and display:
+
+```csharp
+double price = 49.99;
+int quantity = 3;
+
+double subtotal = CalculateSubtotal(price, quantity);
+double tax = CalculateTax(subtotal, 0.08);
+double total = subtotal + tax;
+string receipt = FormatReceipt(subtotal, tax, total);
+
+Console.WriteLine(receipt);
+
+// METHOD DEFINITIONS
+static double CalculateSubtotal(double unitPrice, int qty) {
+    return unitPrice * qty;
+}
+
+static double CalculateTax(double amount, double taxRate) {
+    return amount * taxRate;
+}
+
+static string FormatReceipt(double subtotal, double tax, double total) {
+    return $"Subtotal: {subtotal:C}\nTax: {tax:C}\nTotal: {total:C}";
+}
+```
+
+**Output:**
+```
+Subtotal: $149.97
+Tax: $12.00
+Total: $161.97
+```
+
+Each method handles one computation. `Main` orchestrates the workflow by capturing each result and feeding it into the next step. Changing the tax rate, receipt format, or subtotal logic requires updating only the affected method.
+
+---
+
+<DeepDiveTabs
+  title="Result Capture in Real Systems"
+  tabs={[
+    {
+      id: "pipeline",
+      label: "Data Pipelines",
+      content: "Real applications process data in stages: rawData → validated → transformed → formatted → displayed. Each stage is a method that takes input and returns output. The caller captures each result and passes it to the next stage. This is a data pipeline — and result capture is the mechanism that connects each stage. Without return values, every stage would need to write to a shared variable — fragile and error-prone. With return values, each stage is an independent, testable unit.",
+      keyPoints: ["Data flows through a chain of return-type methods", "Each stage is independent and testable", "Variables connect stages without shared state"]
+    },
+    {
+      id: "decisions",
+      label: "Decision Trees",
+      content: "Many business decisions require computed values: bool isEligible = CheckEligibility(customer). The returned bool drives an if/else tree that determines the next action. Without result capture, you would need to set a global variable inside the method — any other code could accidentally modify it. Captured return values are local, controlled, and predictable. The method checks eligibility; the caller decides what to do with the answer.",
+      keyPoints: ["Returned booleans drive if/else decision structures", "Local capture prevents accidental modification", "Method checks; caller decides"]
+    },
+    {
+      id: "composition",
+      label: "Method Composition",
+      content: "Advanced programs compose methods: double total = Add(GetSubtotal(items), CalculateTax(items)). Each method returns a value that feeds into the next. This is method composition — building complex behavior from simple, focused methods. Each method is small enough to understand in isolation. The composition (how they connect) is visible in Main. This is the goal of modular architecture: simple parts, clear connections.",
+      keyPoints: ["Complex behavior built from simple return methods", "Each method is small and focused", "Composition logic visible in the calling code"]
+    },
+    {
+      id: "testing",
+      label: "Testability",
+      content: "Return-type methods are inherently testable. To verify Add(10, 20), call it and check: does it return 30? A void method that prints cannot be tested this way — you would need to capture console output. Return values make testing trivial: call the method, compare the result to the expected value. This is why professional codebases prefer return-type methods over void methods whenever possible — testability drives design.",
+      keyPoints: ["Return values enable simple equality testing", "void methods require capturing console output to test", "Testability is a design driver in professional code"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Multi-Step Calculation
+
+Practice the full result-capture workflow — compute, capture, and display:
+
+<TryItNowRunner
+  starterId="week-11-lesson-2"
+  height={540}
+  code={`// Step 1: Calculate the area
+double length = 12.5;
+double width = 8.0;
+double area = CalculateArea(length, width);
+Console.WriteLine($"Area: {area} sq ft");
+
+// Step 2: Calculate the cost
+// TODO: Call CalculatePaintCost with area, capture in a variable, print it
+
+// Step 3: Format a summary
+// TODO: Call FormatSummary with area and cost, capture and print
+
+static double CalculateArea(double l, double w) {
+    return l * w;
+}
+
+static double CalculatePaintCost(double squareFeet) {
+    double costPerSqFt = 0.35;
+    return squareFeet * costPerSqFt;
+}
+
+static string FormatSummary(double area, double cost) {
+    return $"Room: {area:F1} sq ft | Paint cost: {cost:C}";
+}`}
+  instructions="Complete Step 2 by calling CalculatePaintCost with the area variable, capture the result, and print it. Then complete Step 3 by calling FormatSummary with both values, capture the string, and print it."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-11-lesson-2-check"
+  title="Section 11.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the correct way to capture the return value of a method that returns int?",
+      options: ["void result = Method();", "int result = Method();", "Method() = int result;", "return int result = Method();"],
+      correctAnswer: "int result = Method();",
+      explanation: "The pattern is: type variableName = MethodCall(args). The variable type must match the method's return type. 'int result = Method()' declares an int variable and assigns the returned value to it."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What happens if you call a return-type method without assigning the result to a variable?",
+      options: ["Compiler error — you must capture the value", "The method does not execute", "The method executes, but the returned value is discarded", "The value is automatically printed to the console"],
+      correctAnswer: "The method executes, but the returned value is discarded",
+      explanation: "C# allows you to call a return-type method without capturing the result. The method still runs, but the returned value is thrown away. This is usually wasteful — if you don't need the value, consider whether a void method is more appropriate."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "Given: static double GetTax(double amount) { return amount * 0.08; } — which line correctly captures the result?",
+      options: ["string tax = GetTax(100.0);", "double tax = GetTax(100.0);", "void tax = GetTax(100.0);", "int tax = GetTax(100.0);"],
+      correctAnswer: "double tax = GetTax(100.0);",
+      explanation: "GetTax returns double, so the receiving variable must be double (or a compatible wider type). 'double tax = GetTax(100.0)' correctly captures the returned value 8.0 into a double variable."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "A return value stored in a variable can be used in arithmetic, conditions, and as an argument to other methods.",
+      correctAnswer: "True",
+      explanation: "Once a returned value is captured in a variable, it behaves exactly like any other variable of that type. It can be used in arithmetic expressions, if/else conditions, string interpolation, and passed as an argument to other method calls."
+    }
+  ]}
+/>
+
+---
+
+## Summary: Result Capture
+
+| Concept | Description |
+|---------|-------------|
+| Result capture | `type var = Method(args);` — store the returned value in a variable |
+| Type matching | Variable type must match the method's return type |
+| Inline call | Use the method call directly in an expression without a variable |
+| Chaining | Pass one method's return value as an argument to another |
+| Discarded result | Calling a return-type method without assignment is legal but wasteful |
+
+---
+
+<div class="next-section">
+  <p>You can now write methods that return values and capture those values in variables. The Lab applies both skills to a multi-method calculation engine.</p>
+  <a href="/week-11/lab/" class="vscode-button">Continue to Lab 11 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.2), rgba(107, 159, 255, 0.1));
+    border: 1px solid rgba(107, 159, 255, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b9fff;
+  }
+
+  .section-time {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .video-section {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .video-intro {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon {
+    font-size: 1.25rem;
+  }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .section-badge { color: #1a4a9a !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), rgba(255, 152, 0, 0.06)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+`}</style>

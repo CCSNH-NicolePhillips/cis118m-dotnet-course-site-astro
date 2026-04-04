@@ -450,6 +450,7 @@ internal static class CheckRunner
             "week-08-lab" => Week08LabChecks(programCs),
             "week-09-lab" => Week09LabChecks(programCs),
             "week-10-lab" => Week10LabChecks(programCs),
+            "week-11-lab" => Week11LabChecks(programCs),
             _ => new List<CheckResult>()
         };
     }
@@ -469,6 +470,7 @@ internal static class CheckRunner
             "week-08-lab" => Week08LabHint(checks),
             "week-09-lab" => Week09LabHint(checks),
             "week-10-lab" => Week10LabHint(checks),
+            "week-11-lab" => Week11LabHint(checks),
             _ => "Keep working on your solution."
         };
     }
@@ -1512,6 +1514,95 @@ internal static class CheckRunner
             "GreetUserCalledTwice" => "In Main, call GreetUser twice: GreetUser(\"Alice Chen\"); GreetUser(\"Marcus Webb\");",
             "ConvertCalledTwice" => "In Main, call ConvertMilesToKm twice: ConvertMilesToKm(5.0); ConvertMilesToKm(26.2);",
             "BatteryCalledTwice" => "In Main, call CheckBatteryStatus twice: CheckBatteryStatus(12, false); CheckBatteryStatus(85, true);",
+            "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
+            _ => "Keep working on your solution!"
+        };
+    }
+
+    // ==================== WEEK 11: RETURNING VALUES ====================
+
+    private static List<CheckResult> Week11LabChecks(string programCs)
+    {
+        var checks = new List<CheckResult>();
+
+        // Check 1: Header comment with name
+        var hasNameComment = Regex.IsMatch(programCs, @"//.*Name:\s*\S+", RegexOptions.IgnoreCase);
+        var notPlaceholder = !Regex.IsMatch(programCs, @"//.*Name:\s*Your\s+Name", RegexOptions.IgnoreCase);
+        checks.Add(new CheckResult("HasHeaderComment", hasNameComment && notPlaceholder,
+            hasNameComment && notPlaceholder ? "✅ Header comment with name found" : "❌ Replace 'Your Name Here' with your actual name in the header comment"));
+
+        // Check 2: CalculateArea method defined with int return type
+        var hasCalculateArea = Regex.IsMatch(programCs, @"static\s+int\s+CalculateArea\s*\(\s*int\s+\w+\s*,\s*int\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasCalculateArea", hasCalculateArea,
+            hasCalculateArea ? "✅ CalculateArea(int, int) method defined with int return type" : "❌ Define: static int CalculateArea(int length, int width) — must return int, not void"));
+
+        // Check 3: CelsiusToFahrenheit method defined with double return type
+        var hasCelsius = Regex.IsMatch(programCs, @"static\s+double\s+CelsiusToFahrenheit\s*\(\s*double\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasCelsiusToFahrenheit", hasCelsius,
+            hasCelsius ? "✅ CelsiusToFahrenheit(double) method defined with double return type" : "❌ Define: static double CelsiusToFahrenheit(double celsius) — must return double"));
+
+        // Check 4: FormatFullName method defined with string return type
+        var hasFormatName = Regex.IsMatch(programCs, @"static\s+string\s+FormatFullName\s*\(\s*string\s+\w+\s*,\s*string\s+\w+\s*\)");
+        checks.Add(new CheckResult("HasFormatFullName", hasFormatName,
+            hasFormatName ? "✅ FormatFullName(string, string) method defined with string return type" : "❌ Define: static string FormatFullName(string firstName, string lastName) — must return string"));
+
+        // Check 5: Has return statements (at least 3 — one per method)
+        var returnCount = Regex.Matches(programCs, @"\breturn\b").Count;
+        var hasReturns = returnCount >= 3;
+        checks.Add(new CheckResult("HasReturnStatements", hasReturns,
+            hasReturns ? "✅ Return statements found in methods" : $"❌ Each method needs a return statement — found {returnCount}, need at least 3"));
+
+        // Check 6: CalculateArea called at least twice and results captured
+        var areaCalls = Regex.Matches(programCs, @"CalculateArea\s*\(").Count;
+        var areaCallCount = areaCalls - (hasCalculateArea ? 1 : 0);
+        var areaCalledTwice = areaCallCount >= 2;
+        checks.Add(new CheckResult("AreaCalledTwice", areaCalledTwice,
+            areaCalledTwice ? "✅ CalculateArea called at least twice" : $"❌ Call CalculateArea at least twice with different arguments — found {areaCallCount} call(s)"));
+
+        // Check 7: CelsiusToFahrenheit called at least twice
+        var celsiusCalls = Regex.Matches(programCs, @"CelsiusToFahrenheit\s*\(").Count;
+        var celsiusCallCount = celsiusCalls - (hasCelsius ? 1 : 0);
+        var celsiusCalledTwice = celsiusCallCount >= 2;
+        checks.Add(new CheckResult("CelsiusCalledTwice", celsiusCalledTwice,
+            celsiusCalledTwice ? "✅ CelsiusToFahrenheit called at least twice" : $"❌ Call CelsiusToFahrenheit at least twice with different arguments — found {celsiusCallCount} call(s)"));
+
+        // Check 8: FormatFullName called at least twice
+        var nameCalls = Regex.Matches(programCs, @"FormatFullName\s*\(").Count;
+        var nameCallCount = nameCalls - (hasFormatName ? 1 : 0);
+        var nameCalledTwice = nameCallCount >= 2;
+        checks.Add(new CheckResult("NameCalledTwice", nameCalledTwice,
+            nameCalledTwice ? "✅ FormatFullName called at least twice" : $"❌ Call FormatFullName at least twice with different arguments — found {nameCallCount} call(s)"));
+
+        // Check 9: Result capture pattern — variables assigned from method calls
+        var hasResultCapture = Regex.IsMatch(programCs, @"(int|double|string|var)\s+\w+\s*=\s*(CalculateArea|CelsiusToFahrenheit|FormatFullName)\s*\(");
+        checks.Add(new CheckResult("HasResultCapture", hasResultCapture,
+            hasResultCapture ? "✅ Return values captured in variables" : "❌ Capture return values: int area = CalculateArea(10, 5);"));
+
+        // Check 10: TODOs completed
+        var todoCount = Regex.Matches(programCs, @"//\s*TODO", RegexOptions.IgnoreCase).Count;
+        var hasRealContent = todoCount <= 1;
+        checks.Add(new CheckResult("HasRealContent", hasRealContent,
+            hasRealContent ? "✅ TODO comments completed" : $"❌ Complete all TODO steps — {todoCount} TODOs remaining"));
+
+        return checks;
+    }
+
+    private static string Week11LabHint(List<CheckResult> checks)
+    {
+        var firstFailed = checks.FirstOrDefault(c => !c.Passed);
+        if (firstFailed == null) return "";
+
+        return firstFailed.Name switch
+        {
+            "HasHeaderComment" => "Change '// Name: Your Name Here' to your actual name.",
+            "HasCalculateArea" => "Define the method below Main: static int CalculateArea(int length, int width) { return length * width; }",
+            "HasCelsiusToFahrenheit" => "Define: static double CelsiusToFahrenheit(double celsius) { return (celsius * 9.0 / 5.0) + 32.0; }",
+            "HasFormatFullName" => "Define: static string FormatFullName(string firstName, string lastName) { return $\"{lastName}, {firstName}\"; }",
+            "HasReturnStatements" => "Each method must have a return statement. Example: return length * width;",
+            "AreaCalledTwice" => "In Main, call CalculateArea twice: int area1 = CalculateArea(10, 5); int area2 = CalculateArea(12, 8);",
+            "CelsiusCalledTwice" => "In Main, call CelsiusToFahrenheit twice: double temp1 = CelsiusToFahrenheit(100.0); double temp2 = CelsiusToFahrenheit(37.0);",
+            "NameCalledTwice" => "In Main, call FormatFullName twice: string name1 = FormatFullName(\"Jordan\", \"Reyes\"); string name2 = FormatFullName(\"Alice\", \"Chen\");",
+            "HasResultCapture" => "Capture the return value in a variable: int area = CalculateArea(10, 5); then use area in Console.WriteLine.",
             "HasRealContent" => "Complete each TODO step and remove the TODO comments.",
             _ => "Keep working on your solution!"
         };

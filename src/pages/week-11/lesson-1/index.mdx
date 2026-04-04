@@ -1,0 +1,487 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 11.1 • The Return Statement"
+description: "Transition from void to typed return values — the return keyword as the method's exit gate and delivery mechanism"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 11.1: The Return Statement
+
+<div class="section-header">
+  <div class="section-badge">🚪 The Exit Gate</div>
+  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>From Action to Output</h2>
+      <p>
+        In Week 10, every method you wrote was <code>void</code> — it performed an action (printing, displaying) and returned nothing. The caller triggered the method and moved on. This week, methods become <strong>producers</strong>. A method with a typed return value computes a result and <strong>delivers it back</strong> to the caller. The <code>return</code> keyword is the delivery mechanism: it exits the method body and hands the computed value to the line that called the method.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2011/11.1/Header%20Image.jpeg"
+        alt="Diagram showing a method with a return type delivering a value back through an exit gate to the caller, contrasted with a void method that exits with nothing"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: The Return Statement
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on the return statement — how to declare a return type, use the return keyword to deliver a value, and why void methods cannot be assigned to variables.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/placeholder-11-1"
+      title="11.1: The Return Statement — From void to Typed Return Values in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 11.1 The Return Statement — transitioning from void to typed returns in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## void vs Typed Return: The Fundamental Shift
+
+In Week 10, you learned the method signature has three elements: access modifier, return type, and identifier. The return type was always `void`. Now you replace `void` with an actual data type — and add the `return` keyword inside the method body:
+
+```csharp
+// Week 10: void — performs an action, returns nothing
+static void PrintSum(int a, int b) {
+    Console.WriteLine(a + b);   // Displays the result — caller cannot use it
+}
+
+// Week 11: int — computes a value and RETURNS it to the caller
+static int Add(int a, int b) {
+    return a + b;               // Delivers the result — caller can store and use it
+}
+```
+
+The difference is fundamental: `PrintSum` displays a number on screen — the caller cannot capture, store, or reuse that number. `Add` computes a number and hands it back — the caller stores it in a variable and decides what to do with it.
+
+<AnnotatedCode
+  title="Anatomy of a Return Method"
+  tokens={[
+    { text: "static", type: "keyword", tooltip: "ACCESS MODIFIER: same as Week 10 — static makes the method callable from Main." },
+    { text: " ", type: "punctuation" },
+    { text: "int", type: "keyword", tooltip: "RETURN TYPE: 'int' replaces 'void'. This declares a contract: this method MUST deliver an integer value back to the caller via the return keyword." },
+    { text: " ", type: "punctuation" },
+    { text: "Add", type: "string", tooltip: "IDENTIFIER: PascalCase name. Describes the computation — not a display action, but a calculation that produces a result." },
+    { text: "(", type: "punctuation" },
+    { text: "int a, int b", type: "parameter", tooltip: "PARAMETERS: two integer inputs. The method computes a result from these inputs and returns it." },
+    { text: ") {", type: "punctuation" },
+    { text: "\n    return a + b;", type: "keyword", tooltip: "RETURN STATEMENT: computes a + b, then immediately exits the method and delivers that value to the caller. The returned value must match the declared return type (int)." },
+    { text: "\n}", type: "punctuation", tooltip: "Method body closes. Control returns to the caller with the computed value." }
+  ]}
+/>
+
+---
+
+## The return Keyword: Exit and Deliver
+
+The `return` keyword does two things simultaneously:
+
+1. **Exits the method** — no code after a `return` statement executes
+2. **Delivers a value** — the expression after `return` is sent to the caller
+
+```csharp
+static int Multiply(int x, int y) {
+    return x * y;
+    Console.WriteLine("This line never executes");  // Unreachable code
+}
+```
+
+The compiler will warn you about unreachable code after a `return`. Once `return` executes, the method is done — control jumps back to the caller immediately.
+
+<div class="architect-rule">
+
+### Architect's Rule: The Return Type Is a Promise
+
+When you declare `static int Add(int a, int b)`, you make a promise: this method will deliver an `int` to the caller. The `return` statement fulfills that promise. If you forget the `return` statement, the compiler will not build your program — the promise is broken. If you return a `string` from a method declared `int`, the compiler rejects it — the delivered type does not match the promised type.
+
+```csharp
+// COMPILER ERROR: not all code paths return a value
+static int GetScore() {
+    // Missing return statement — the promise is unfulfilled
+}
+
+// COMPILER ERROR: cannot convert string to int
+static int GetScore() {
+    return "ninety-five";  // Wrong type returned
+}
+
+// CORRECT: return type matches the declared type
+static int GetScore() {
+    return 95;             // Promise fulfilled
+}
+```
+
+</div>
+
+---
+
+## Common Return Types
+
+You can return any data type. The return type in the signature must match the type of the value in the `return` statement:
+
+| Return Type | What the Method Delivers | Example |
+|-------------|--------------------------|---------|
+| `int` | A whole number | `return 42;` |
+| `double` | A decimal number | `return 3.14159;` |
+| `string` | A text value | `return "Hello";` |
+| `bool` | A true/false value | `return age >= 18;` |
+| `decimal` | A precise monetary value | `return 99.95m;` |
+
+```csharp
+static double CalculateCircleArea(double radius) {
+    return Math.PI * radius * radius;
+}
+
+static string FormatGreeting(string name) {
+    return $"Welcome aboard, {name}!";
+}
+
+static bool IsEligible(int age) {
+    return age >= 18;
+}
+```
+
+Each method computes a result and delivers it. The caller decides what to do with the returned value — print it, store it, pass it to another method, or use it in a condition.
+
+---
+
+## void Methods Cannot Be Assigned
+
+A `void` method returns nothing. Attempting to store its result causes a compiler error:
+
+```csharp
+// void method — performs an action only
+static void PrintMessage(string msg) {
+    Console.WriteLine(msg);
+}
+
+// COMPILER ERROR: cannot assign void to a variable
+string result = PrintMessage("Hello");  // ERROR
+
+// CORRECT: call void methods as standalone statements
+PrintMessage("Hello");                  // No assignment — just call it
+```
+
+This is the key decision you must make when designing a method: **Does the caller need the result?** If yes, use a typed return. If the method only displays or logs, use `void`.
+
+---
+
+## Designing the Return: When to Use void vs a Return Type
+
+<div class="from-the-field">
+  <div class="field-header">
+    <span class="field-icon" aria-hidden="true">🏗️</span>
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>The decision between void and a return type is the first architectural choice for every method.</strong> In professional codebases, the rule is simple: if the caller needs the computed value for further work (storing, comparing, passing to another method), the method must return it. If the method only produces a side effect (displaying, logging, writing to a file), it stays void. Most calculation and validation methods return values. Most display and output methods are void. Getting this decision right is essential — changing a void method to a return method later requires updating every call site.</p>
+  </div>
+</div>
+
+| The Caller Needs... | Use |
+|---------------------|-----|
+| The computed number | `static int Calculate(...)` |
+| The formatted string | `static string Format(...)` |
+| A yes/no answer | `static bool IsValid(...)` |
+| Nothing — just display | `static void Print(...)` |
+
+---
+
+## Multiple return Statements: Conditional Returns
+
+A method can have multiple `return` statements inside `if/else` branches. The first `return` that executes exits the method:
+
+```csharp
+static string GetGradeLabel(int score) {
+    if (score >= 90) {
+        return "A";
+    } else if (score >= 80) {
+        return "B";
+    } else if (score >= 70) {
+        return "C";
+    } else {
+        return "F";
+    }
+}
+```
+
+Every possible code path must end with a `return` statement. If the compiler detects any path that could exit without returning, it produces an error: "not all code paths return a value."
+
+---
+
+<DeepDiveTabs
+  title="Return Values in Real Systems"
+  tabs={[
+    {
+      id: "validation",
+      label: "Input Validation",
+      content: "Validation methods are the most common return-type methods in professional software. IsValidEmail(string email) returns bool. IsInStock(string productId) returns bool. HasPermission(string userId, string action) returns bool. Each method answers a yes/no question — the caller uses the returned bool in an if statement to decide what to do next. Without return values, you would have to use global variables or printed output to communicate results between methods — both are fragile and error-prone.",
+      keyPoints: ["Validation methods return bool — yes or no", "Caller uses returned bool in decision structures", "Return values replace fragile global-variable communication"]
+    },
+    {
+      id: "calculations",
+      label: "Financial Calculations",
+      content: "Every financial system relies on methods that return precise values: CalculateTax(decimal subtotal) returns decimal. ComputeinterestRate(decimal principal, int months) returns double. GetDiscountedPrice(decimal price, double discountPercent) returns decimal. These methods compute and RETURN — they do not print. The caller captures the returned value and uses it in further calculations. A tax method that prints instead of returning would be worthless — the caller cannot add the tax to a subtotal if the value was sent to the console instead of returned.",
+      keyPoints: ["Financial methods return decimal for precision", "Returned values feed into further calculations", "Printing instead of returning breaks the computation chain"]
+    },
+    {
+      id: "formatting",
+      label: "String Formatting",
+      content: "Format methods produce formatted strings for the caller to use: FormatCurrency(decimal amount) returns string. FormatDate(DateTime date) returns string. FormatPhoneNumber(string rawNumber) returns string. These methods transform raw data into display-ready strings and return them. The caller decides where and how to display the formatted string — in a console, in a UI, in a report, in an email. If the format method printed directly, it could only be used for console output.",
+      keyPoints: ["Format methods return strings, not print them", "Caller controls where the formatted result appears", "Returning strings enables reuse across output channels"]
+    },
+    {
+      id: "lookup",
+      label: "Data Lookup",
+      content: "Lookup methods retrieve and return specific values: GetUserName(int userId) returns string. GetAccountBalance(string accountId) returns decimal. GetItemCount(string category) returns int. Each method encapsulates the retrieval logic and delivers the result. The caller does not need to know how the lookup works — it only needs the returned value. This is abstraction in action: the return type defines WHAT the caller gets, the method body defines HOW it is obtained.",
+      keyPoints: ["Lookup methods return the retrieved value", "Caller is decoupled from retrieval logic", "Return type is the public contract; body is the private implementation"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Your First Return Method
+
+Write methods that return values instead of printing them. Notice how the caller captures and uses the returned value:
+
+<TryItNowRunner
+  starterId="week-11-lesson-1"
+  height={520}
+  code={`// Capture the returned values in variables
+int sum = Add(10, 25);
+Console.WriteLine($"Sum: {sum}");
+
+double area = CalculateRectangleArea(5.0, 3.0);
+Console.WriteLine($"Area: {area}");
+
+// TODO: Call GetGradeLabel with a score, store in a string variable, and print it
+
+static int Add(int a, int b) {
+    return a + b;
+}
+
+static double CalculateRectangleArea(double length, double width) {
+    return length * width;
+}
+
+// TODO: Write static string GetGradeLabel(int score) that returns "A", "B", "C", or "F"
+`}
+  instructions="Complete the GetGradeLabel method that returns a letter grade based on the score (90+ = A, 80+ = B, 70+ = C, else F). Call it with a score, capture the result in a variable, and print it."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-11-lesson-1-check"
+  title="Section 11.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the difference between a void method and a method with a return type like int?",
+      options: ["void methods take no parameters; int methods take parameters", "void methods return nothing; int methods compute and deliver an integer to the caller", "void methods are static; int methods are not static", "There is no difference — void and int are interchangeable"],
+      correctAnswer: "void methods return nothing; int methods compute and deliver an integer to the caller",
+      explanation: "A void method performs an action and returns nothing — the caller cannot capture a result. A method with return type int computes a value and delivers it back to the caller via the return keyword. The caller can store that value in a variable."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the return keyword do inside a method?",
+      options: ["It prints the value to the console", "It exits the method and delivers the specified value to the caller", "It creates a new variable in the calling code", "It restarts the method from the beginning"],
+      correctAnswer: "It exits the method and delivers the specified value to the caller",
+      explanation: "The return keyword does two things: (1) immediately exits the method — no code after it executes, and (2) delivers the specified value to the line that called the method. The value must match the declared return type."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What happens if a method declared as static int GetTotal() does not contain a return statement?",
+      options: ["It returns 0 automatically", "It returns null", "The compiler produces an error: 'not all code paths return a value'", "It runs but produces no output"],
+      correctAnswer: "The compiler produces an error: 'not all code paths return a value'",
+      explanation: "The return type is a contract — promising the caller will receive an int. If the method body has no return statement, the promise is broken. The C# compiler enforces this and refuses to build the program."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "A void method call can be assigned to a variable: string result = PrintHeader();",
+      correctAnswer: "False",
+      explanation: "A void method returns nothing — there is no value to assign. Attempting to assign a void method call to a variable causes a compiler error. Only methods with a non-void return type produce a value that can be stored."
+    }
+  ]}
+/>
+
+---
+
+## Summary: The Return Statement
+
+| Concept | Description |
+|---------|-------------|
+| Return Type | Declares what kind of value the method delivers (`int`, `double`, `string`, `bool`) |
+| `void` | Special return type meaning "no value returned" |
+| `return` keyword | Exits the method and delivers the value to the caller |
+| Return contract | The returned value must match the declared return type |
+| Unreachable code | Code after a `return` statement never executes |
+
+---
+
+<div class="next-section">
+  <p>You can now write methods that return values. Section 11.2 focuses on the caller's side: how to capture the returned value in a variable and use it for further computation.</p>
+  <a href="/week-11/lesson-2/" class="vscode-button">Continue to Section 11.2 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.2), rgba(78, 201, 176, 0.1));
+    border: 1px solid rgba(78, 201, 176, 0.4);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4ec9b0;
+  }
+
+  .section-time {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .video-section {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .video-intro {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    opacity: 0.85;
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .field-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-icon {
+    font-size: 1.25rem;
+  }
+
+  .field-header h3 {
+    margin: 0;
+    color: #a78bfa;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field-content p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; margin-top: 0; }
+
+  body[data-theme="light"] .section-badge { color: #1a7a64 !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255, 193, 7, 0.06), rgba(255, 152, 0, 0.06)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .video-section { background: rgba(0, 0, 0, 0.04) !important; border-color: rgba(0, 0, 0, 0.1) !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
+  body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+`}</style>

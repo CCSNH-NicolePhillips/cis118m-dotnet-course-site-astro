@@ -1,0 +1,139 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 11 • Technical Reflection: Return Values & Result Capture"
+description: "Analytical reflection on return-type methods — the return contract, result capture, and separation of concerns"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 11: Technical Reflection — (GRADED)
+
+<DueDateBanner week={11} type="Homework" />
+
+## Homework 11: The Return Value Design Analysis
+
+<p>You have worked with return-type methods this week — declaring return types, using the <code>return</code> keyword, and capturing results in variables. This reflection requires you to demonstrate <strong>analytical understanding</strong> of why methods return values, how the caller uses those values, and when to choose a return type over <code>void</code>. Engineering judgment, not a vocabulary list.</p>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <span class="telemetry-icon" aria-hidden="true">🛡️</span>
+    <h3>Academic Integrity Protocol — Homework 11</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a graded written reflection. It must represent your own analytical thinking. The following is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged. Responses that are paste-only with no revision history will be flagged for review.</li>
+      <li><strong>Active edit time:</strong> Total active writing time is measured. A correct, substantive reflection with minimal edit time is an integrity flag.</li>
+      <li><strong>AI pattern scanning:</strong> Response text is analyzed for AI-specific structural and syntactic patterns. Flagged submissions are archived in the course integrity database for Instructor Dashboard review.</li>
+    </ul>
+  </div>
+</div>
+
+---
+
+## Reflection Prompt
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Return Value Design Analysis</h3>
+    <p>In 3-5 sentences per question, answer the following:</p>
+    <ol>
+      <li>
+        <strong>The Return Contract:</strong> Explain what the return type in a method signature promises to the caller. What does the <code>return</code> keyword do (two things)? What happens if a method declared as <code>static int GetTotal()</code> does not contain a <code>return</code> statement?
+      </li>
+      <li>
+        <strong>void vs Return Type:</strong> Compare a <code>void</code> method and a method with a return type (e.g., <code>int</code>). When should you use <code>void</code>? When should you use a typed return? Give an example of a task that requires a return value and explain why <code>void</code> would not work for that task.
+      </li>
+      <li>
+        <strong>Result Capture and Separation of Concerns:</strong> Explain the result capture pattern (<code>type variable = MethodCall(args);</code>). Why is it better for a calculation method to <em>return</em> a value rather than <em>print</em> it directly? How does separating computation from display make code more reusable?
+      </li>
+    </ol>
+    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; font-size: 0.9rem;">
+      Reference: Return types and the return keyword are in Section 11.1. Result capture and separation of concerns are in Section 11.2.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-11-homework" />
+
+---
+
+## Reference Material
+
+If you need to review, revisit these sections:
+
+- [Section 11.1: The Return Statement](/week-11/lesson-1/) — Return types, the return keyword, void vs typed return, compiler enforcement
+- [Section 11.2: Result Capture](/week-11/lesson-2/) — Variable assignment from method calls, inline calls, chaining, separation of concerns
+
+---
+
+<div class="next-section">
+  <p>Homework submitted? You have completed Week 11. Week 12 continues with more advanced method patterns.</p>
+  <a href="/week-11/" class="vscode-button">Return to Week 11 Overview</a>
+</div>
+
+<style>{`
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .telemetry-icon { font-size: 1.25rem; }
+
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .telemetry-content li { margin: 0.25rem 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+`}</style>

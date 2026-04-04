@@ -1,0 +1,290 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 11 • Returning Values"
+description: "Methods that produce results — the return statement, return types, and capturing results in variables"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 11: Returning Values — The Output Contract 📤
+
+<DueDateBanner week={11} type="Lab" showLatePolicy={false} />
+
+<div class="mission-brief">
+  <h2>🔧 Welcome to the Other Half of Methods</h2>
+  <p>
+    Last week you built methods that <em>do things</em> — print messages, display status reports, format output. Those were <code>void</code> methods: they perform an action and return nothing. This week you learn methods that <strong>produce things</strong> — methods that compute a value and <strong>send it back</strong> to the caller. The caller captures that value in a variable and uses it for further computation, display, or decision-making.
+  </p>
+  <p>
+    Think of a <code>void</code> method as a department that performs a task (filing a report, sending an email). A <strong>return method</strong> is a department that performs a task <em>and delivers a result</em> — a calculated total, a formatted string, a validated status. The <code>return</code> keyword is the delivery mechanism: it exits the method and hands the result to the caller.
+  </p>
+</div>
+
+---
+
+## 🗺️ Week 11 Learning Path
+
+<div class="section-cards">
+  <a href="/week-11/lesson-1/" class="section-card return-stmt">
+    <div class="card-icon" aria-hidden="true">🚪</div>
+    <div class="card-content">
+      <h3>11.1 The Return Statement</h3>
+      <p class="metaphor">The Exit Gate</p>
+      <p>Transition from void to typed return values — the return keyword as the method's delivery mechanism</p>
+    </div>
+  </a>
+
+  <a href="/week-11/lesson-2/" class="section-card result-capture">
+    <div class="card-icon" aria-hidden="true">📦</div>
+    <div class="card-content">
+      <h3>11.2 Result Capture</h3>
+      <p class="metaphor">Variable Assignment Logic</p>
+      <p>How to store the result of a method call into a variable — the caller's side of the return contract</p>
+    </div>
+  </a>
+
+  <a href="/week-11/lab/" class="section-card lab">
+    <div class="card-icon" aria-hidden="true">🔬</div>
+    <div class="card-content">
+      <h3>Lab 11: The Calculation Engine</h3>
+      <p class="metaphor">Return Values in Practice</p>
+      <p>Build methods that compute and return results — capture each result in a variable and use it</p>
+    </div>
+  </a>
+</div>
+
+---
+
+## 📋 Week Overview Table
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Topic</th>
+        <th>Key Concept</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>11.1</strong></td>
+        <td><a href="/week-11/lesson-1/">The Return Statement</a></td>
+        <td>🚪 void → int, double, string returns</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>11.2</strong></td>
+        <td><a href="/week-11/lesson-2/">Result Capture</a></td>
+        <td>📦 Variable Assignment from Method Calls</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td><strong>Lab</strong></td>
+        <td><a href="/week-11/lab/">The Calculation Engine</a></td>
+        <td>🔬 Return Value Architecture</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td><strong>HW</strong></td>
+        <td><a href="/week-11/homework/">Technical Reflection 11</a></td>
+        <td>Return Value Design Analysis</td>
+        <td>20 min</td>
+      </tr>
+      <tr>
+        <td><strong>Quiz</strong></td>
+        <td><a href="/week-11/weekly-assessment/">Weekly Assessment</a></td>
+        <td>Checkpoint</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## 📤 The Return Contract: Methods That Deliver Results
+
+Last week, methods were action-only — they printed output and returned nothing. This week, methods become **producers**: they compute a result and deliver it to the caller via the `return` keyword. The caller captures that result in a variable and uses it for further work.
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>🔇 void Methods (Week 10)</h3>
+    <p>Perform an action. Return nothing. The caller cannot store or reuse the result because there is no result. Used for display, logging, and side-effect operations.</p>
+    <code>static void PrintTotal(decimal amount) &#123; Console.WriteLine(amount); &#125;</code>
+  </div>
+  <div class="component-card">
+    <h3>📤 Return Methods (Week 11)</h3>
+    <p>Compute a value. <strong>Deliver it back</strong> to the caller via the <code>return</code> keyword. The caller stores the result in a variable and uses it. The method's return type declares what kind of value is produced.</p>
+    <code>static int Add(int a, int b) &#123; return a + b; &#125;</code>
+  </div>
+</div>
+
+---
+
+## 🏗️ Senior Architect Perspective
+
+<div class="architect-rule">
+
+### ⚙️ Return Types Complete the Method Contract
+
+A method signature is a contract. The access modifier says *who can call*. The identifier says *what it does*. The return type says *what it delivers*. When the return type is `void`, the contract says: "I do work, but I hand nothing back." When the return type is `int`, the contract says: "I do work, and I hand back an integer." The `return` keyword fulfills that contract — it exits the method and delivers the promised value.
+
+🎯 **The most common mistake this week will be declaring a return type but forgetting the return statement** — or using `void` when the method should deliver a result. If a method computes something, it should return it. If a method only displays something, it stays void.
+
+</div>
+
+---
+
+## 🛡️ Instructor Perspective
+
+<div class="pro-tip">
+  <h3>📡 Phase III Continues</h3>
+  <p>You built methods last week. This week you complete the picture: methods that <strong>send data back</strong> to the caller. This is the mechanism behind every calculation, every data transformation, every validation check in professional software. When you call <code>Math.Sqrt(25)</code>, it returns <code>5.0</code> — you have been consuming return values all semester. Now you learn to <strong>produce</strong> them.</p>
+</div>
+
+---
+
+## 📋 Week 11 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead class="sr-only">
+      <tr>
+        <th scope="col">Deliverable</th>
+        <th scope="col">Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 0;"><strong>🔬 Lab 11: The Calculation Engine</strong> — Return Value Architecture</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>📝 Technical Reflection 11</strong> — Return Value Design Analysis</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>🧪 Weekly Assessment 11:</strong> Returning Values</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>✅ Knowledge Checks</strong> — Participation in each module</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>💬 Participation</strong> — Class engagement</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-11/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 11.1 <span aria-hidden="true">→</span>
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .section-card.return-stmt {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .section-card.result-capture {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+
+  .section-card.lab {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.85;
+  }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 152, 0, 0.08));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 8px 8px 0;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #ffc107;
+  }
+
+  .pro-tip {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(107, 159, 255, 0.08));
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .pro-tip h3 { color: #4ec9b0; margin-top: 0; }
+
+  body[data-theme="light"] .section-card.return-stmt { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08), rgba(78, 201, 176, 0.03)) !important; }
+  body[data-theme="light"] .section-card.result-capture { background: linear-gradient(135deg, rgba(107, 159, 255, 0.08), rgba(107, 159, 255, 0.03)) !important; }
+  body[data-theme="light"] .section-card.lab { background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 193, 7, 0.03)) !important; }
+  body[data-theme="light"] .card-content h3 { color: #1e1e1e !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b07d00 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #1a7a64 !important; }
+
+  body[data-theme="light"] .styled-table-container { background: #f8fafc !important; }
+  body[data-theme="light"] .styled-table-container th { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] .styled-table-container td { background: #ffffff !important; color: #1e293b !important; border-color: #cbd5e1 !important; }
+  body[data-theme="light"] .styled-table-container td strong { color: #0f172a !important; }
+  body[data-theme="light"] .styled-table-container code { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] .mission-brief { background: rgba(200, 220, 200, 0.2) !important; border-color: rgba(60, 160, 100, 0.3) !important; }
+`}</style>

@@ -1,0 +1,211 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 11 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# 🏁 Week 11 Technical Assessment
+
+<DueDateBanner week={11} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>📋 Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-11-quiz"
+  title="Week 11: Returning Values — The Output Contract (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the key difference between a void method and a method with return type int?",
+      options: [
+        "void methods cannot take parameters; int methods can",
+        "void methods return nothing; int methods compute and deliver an integer to the caller",
+        "void methods are faster than int methods",
+        "There is no practical difference — they are interchangeable"
+      ],
+      correctAnswer: "void methods return nothing; int methods compute and deliver an integer to the caller",
+      explanation: "A void method performs an action and returns nothing — the caller cannot capture a result. A method with return type int computes a value and delivers it back to the caller via the return keyword. The caller can then store that value in a variable."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the 'return' keyword do inside a method?",
+      options: [
+        "It prints the value to the console",
+        "It restarts the method from the beginning",
+        "It exits the method and delivers the specified value to the caller",
+        "It creates a new variable in the calling code"
+      ],
+      correctAnswer: "It exits the method and delivers the specified value to the caller",
+      explanation: "The return keyword does two things simultaneously: (1) immediately exits the method — no code after it executes, and (2) delivers the specified value to the line that called the method. The returned value must match the declared return type."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What happens if a method declared as 'static int GetTotal()' contains no return statement?",
+      options: [
+        "It returns 0 by default",
+        "It returns null",
+        "The compiler produces an error: 'not all code paths return a value'",
+        "It compiles but crashes at runtime"
+      ],
+      correctAnswer: "The compiler produces an error: 'not all code paths return a value'",
+      explanation: "The return type is a contract — a promise to deliver an int. If the method body has no return statement, the promise is broken. The C# compiler enforces this and refuses to build the program."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Which line correctly captures the return value of: static double GetTax(double amount) { return amount * 0.08; }",
+      options: [
+        "void tax = GetTax(100.0);",
+        "string tax = GetTax(100.0);",
+        "double tax = GetTax(100.0);",
+        "GetTax(100.0) = double tax;"
+      ],
+      correctAnswer: "double tax = GetTax(100.0);",
+      explanation: "The result capture pattern is: type variable = MethodCall(args). The variable type must match the method's return type. GetTax returns double, so the variable must be declared as double."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "What happens if you call a return-type method without assigning the result to a variable?",
+      options: [
+        "Compiler error — you must capture the value",
+        "The method does not execute at all",
+        "The method executes, but the returned value is discarded",
+        "The value is automatically stored in a hidden variable"
+      ],
+      correctAnswer: "The method executes, but the returned value is discarded",
+      explanation: "C# allows you to call a return-type method without capturing the result. The method still runs and computes the value, but the returned value is thrown away. This is usually wasteful — if you don't need the value, consider using a void method instead."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "Why is it better for a calculation method to RETURN the result rather than print it directly?",
+      options: [
+        "Printing is slower than returning",
+        "The return keyword is required by the compiler for all methods",
+        "Returning the value lets the caller decide how to use it — store it, compare it, or pass it to another method",
+        "There is no advantage — printing and returning are equivalent"
+      ],
+      correctAnswer: "Returning the value lets the caller decide how to use it — store it, compare it, or pass it to another method",
+      explanation: "When a method returns a value, the caller can store it in a variable, use it in arithmetic, pass it to another method, or display it. A method that prints directly locks the output to the console — the caller has no access to the computed value for further use. This is the principle of separation of concerns."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What is the output of this code?",
+      codeBlock: `static int Square(int n) {
+    return n * n;
+    Console.WriteLine("Done");
+}
+
+int result = Square(5);
+Console.WriteLine(result);`,
+      options: [
+        "25 followed by Done",
+        "Done followed by 25",
+        "25 (the Console.WriteLine inside Square never executes)",
+        "Compiler error"
+      ],
+      correctAnswer: "25 (the Console.WriteLine inside Square never executes)",
+      explanation: "The return statement immediately exits the method. The Console.WriteLine(\"Done\") after the return is unreachable code — it never executes. The compiler may produce a warning about this, but it still compiles. The output is just 25."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "Given: static string FormatName(string first, string last) { return $\"{last}, {first}\"; } — what does FormatName(\"Alice\", \"Chen\") return?",
+      options: [
+        "\"Alice Chen\"",
+        "\"Chen, Alice\"",
+        "\"Alice, Chen\"",
+        "\"Chen Alice\""
+      ],
+      correctAnswer: "\"Chen, Alice\"",
+      explanation: "The method uses string interpolation: $\"{last}, {first}\". The parameter 'last' receives \"Chen\" and 'first' receives \"Alice\" (positional matching). The return value is \"Chen, Alice\" — last name first, comma, then first name."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Can a void method call be assigned to a variable? Example: string result = PrintHeader();",
+      options: [
+        "Yes — result will contain whatever was printed",
+        "Yes — result will be an empty string",
+        "No — the compiler produces an error because void returns nothing",
+        "Yes — but result will be null"
+      ],
+      correctAnswer: "No — the compiler produces an error because void returns nothing",
+      explanation: "A void method returns nothing — there is no value to assign to a variable. Attempting to assign a void method call to a variable causes a compiler error. Only methods with a non-void return type produce a value that can be captured."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What is the result capture pattern?",
+      options: [
+        "return type variable = value;",
+        "MethodCall(args) = type variable;",
+        "type variable = MethodCall(args);",
+        "variable.capture(MethodCall(args));"
+      ],
+      correctAnswer: "type variable = MethodCall(args);",
+      explanation: "The result capture pattern is: type variable = MethodCall(args). The method call appears on the right side of the assignment. It executes, returns a value, and that value is stored in the variable on the left. The variable type must match the method's return type."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>🎉 <strong>Week 11 Complete!</strong></p>
+  <p>You've mastered return values and result capture! Next up: more advanced method patterns in Week 12!</p>
+  <a href="/week-12/" class="vscode-button">Preview Week 12 <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid #6366f1;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .mission-brief h2 { margin-top: 0; color: #818cf8; }
+  .mission-brief ul { margin-bottom: 0; }
+  .mission-brief li { margin: 8px 0; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 24px 0;
+  }
+
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+    border-color: #6366f1 !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #4f46e5 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+`}</style>

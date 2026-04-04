@@ -123,10 +123,11 @@ export const WEEKS: WeekConfig[] = [
     ] },
   { slug: '11', title: 'Week 11: Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-11/' },
-      { title: '11.1 Lesson 1', href: '/week-11/lesson-1/' },
-      { title: '11.2 Lesson 2', href: '/week-11/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-11/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-11/homework/' }
+      { title: '11.1 The Return Statement', href: '/week-11/lesson-1/' },
+      { title: '11.2 Result Capture', href: '/week-11/lesson-2/' },
+      { title: 'Lab: The Calculation Engine (Graded)', href: '/week-11/lab/' },
+      { title: 'Technical Reflection 11 (Graded)', href: '/week-11/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-11/weekly-assessment/' }
     ] },
   { slug: '12', title: 'Week 12: Array Architectures', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-12/' },

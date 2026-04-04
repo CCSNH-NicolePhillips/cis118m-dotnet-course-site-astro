@@ -772,6 +772,81 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["static", "void", "parameter", "argument", "DRY"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  // ==================== WEEK 11: RETURNING VALUES ====================
+
+  "week-11-lab": {
+    title: "Week 11: Lab - The Calculation Engine",
+    type: "lab",
+    week: "11",
+    taughtConcepts: `
+      - Return type replaces void in the method signature — declares what value the method delivers
+      - The return keyword exits the method and delivers the specified value to the caller
+      - Common return types: int, double, string, bool, decimal
+      - Return contract: the returned value must match the declared return type
+      - Compiler error if a non-void method has no return statement: "not all code paths return a value"
+      - void methods cannot be assigned to a variable — only return-type methods can
+      - Result capture pattern: type variable = MethodCall(args);
+      - Variable type must match the method's return type
+      - Captured results can be used in arithmetic, conditions, interpolation, or as arguments
+      - Separation of concerns: methods compute, callers decide how to use the result
+      - Methods should NOT print inside when they have a return type — return the value instead
+      - K&R (Egyptian) brace style: opening brace on same line
+    `,
+    assignmentPrompt: `
+      Build a Calculation Engine with three return-type methods:
+      1. static int CalculateArea(int length, int width) — returns length * width
+      2. static double CelsiusToFahrenheit(double celsius) — returns (celsius * 9.0 / 5.0) + 32.0
+      3. static string FormatFullName(string firstName, string lastName) — returns "LastName, FirstName" format
+      Each method must be called from Main at least twice with different arguments.
+      Every return value must be captured in a variable using the assignment pattern.
+      Main handles all Console.WriteLine display — methods only compute and return.
+      NOTE: Do NOT penalize for missing separator lines, decorative borders, headers, or cosmetic formatting differences.
+      Grade on whether the three methods exist with correct return types, correct return statements, and results are captured in variables.
+    `,
+    rubric: `
+      CalculateArea method (15pts): Defines static int CalculateArea(int length, int width). Returns length * width. Return type is int, not void. Has a return statement.
+      CelsiusToFahrenheit method (15pts): Defines static double CelsiusToFahrenheit(double celsius). Uses correct formula (celsius * 9.0 / 5.0) + 32.0 or equivalent. Return type is double. Has a return statement.
+      FormatFullName method (15pts): Defines static string FormatFullName(string firstName, string lastName). Returns "LastName, FirstName" format using string interpolation or concatenation. Return type is string. Has a return statement.
+      Result capture in variables (15pts): All return values are captured using the pattern: type variable = MethodCall(args). Variables are used in subsequent Console.WriteLine calls.
+      Methods called at least twice with different arguments (15pts): Each of the three methods is called from Main at least twice. Different argument values are used each time.
+      No computation logic in Main (15pts): All computation happens inside the methods. Main only calls methods, captures results, and displays output. Methods do not contain Console.WriteLine.
+      Code compiles, runs, K&R braces (10pts): Code compiles and runs without errors. K&R brace style used. Clean code structure.
+    `,
+    requiredKeywords: ["static", "int", "double", "string", "return", "CalculateArea", "CelsiusToFahrenheit", "FormatFullName"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-11-homework": {
+    title: "Week 11: Return Values & Result Capture Reflection",
+    type: "homework",
+    week: "11",
+    taughtConcepts: `
+      - Return type in a method signature is a contract: it promises the caller will receive a value of that type
+      - The return keyword does two things: exits the method AND delivers the value to the caller
+      - If a non-void method has no return statement, the compiler produces an error: "not all code paths return a value"
+      - void methods return nothing — they cannot be assigned to a variable
+      - Return-type methods compute and deliver — the caller captures the result in a variable
+      - Result capture pattern: type variable = MethodCall(args);
+      - Separation of concerns: methods compute, callers decide how to use the result
+      - A method that prints instead of returning locks the output to the console — the caller cannot reuse the value
+      - Returning values makes methods testable, composable, and reusable across different contexts
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer the following about Return Values and Result Capture:
+      1. The Return Contract: Explain what the return type in a method signature promises to the caller. What does the return keyword do (two things)? What happens if a method declared as static int GetTotal() does not contain a return statement?
+      2. void vs Return Type: Compare a void method and a method with a return type (e.g., int). When should you use void? When should you use a typed return? Give an example of a task that requires a return value and explain why void would not work.
+      3. Result Capture and Separation of Concerns: Explain the result capture pattern (type variable = MethodCall(args);). Why is it better for a calculation method to return a value rather than print it directly? How does separating computation from display make code more reusable?
+    `,
+    rubric: `
+      The return contract (35pts): Student explains that the return type promises to deliver a value of that type. Explains that return exits the method AND delivers the value. States that a missing return statement causes a compiler error.
+      void vs return type (35pts): Student correctly contrasts void (action only, no value) vs typed return (computes and delivers). Gives appropriate use cases for each. Provides an example where void would not work (e.g., a calculation whose result is needed for further work).
+      Result capture and separation of concerns (20pts): Student explains the assignment pattern. Explains why returning is better than printing (caller can reuse the value). Connects to separation of concerns (method computes, caller decides how to use).
+      Clarity and terminology (10pts): Clear writing using terms like "return type", "return keyword", "void", "result capture", "separation of concerns"
+    `,
+    requiredKeywords: ["return", "void", "int", "variable"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
@@ -846,6 +921,13 @@ export const TUTOR_CONTEXTS = {
   'week-10-lesson-2': "Week 10 Section 10.2: Parameters and Arguments. Focus: Parameter = typed variable in the method signature. Argument = the actual value passed at the call site. Arguments are matched positionally — order, count, and type must all match. Pass-by-value: method receives a copy of the value; original is unchanged. DRY Principle (Don't Repeat Yourself): the same logic written in one parameterized method, called many times, is better than duplicate methods for each variation. Common mistake: reversing argument order when two parameters have the same type — no compiler error but wrong behavior.",
   'week-10-lab': "Week 10 Lab: The Modular Utility Suite. Students define three methods: static void GreetUser(string name) — prints a personalized greeting, static void ConvertMilesToKm(double miles) — converts miles to kilometers (× 1.60934) and prints the result, static void CheckBatteryStatus(int percentage, bool isCharging) — prints one of four statuses based on a decision table: critical + not charging (≤ 20, false), low + charging (≤ 20, true), healthy + charging (> 20, true), healthy + not charging (> 20, false). Each method must be called at least twice with different arguments to demonstrate reuse. All Console.WriteLine output belongs inside the methods — Main only calls them. DRY principle enforced: no duplicate logic.",
   'week-10-homework': "Week 10 Homework: Methods and DRY Reflection. Students must explain: (1) the three elements of a method signature — access modifier (static), return type (void), identifier (PascalCase verb), and what changes if return type were int; (2) parameter vs argument — parameter is the placeholder in the signature, argument is the value at the call site, order matters positionally; (3) DRY Principle — what it means, why repeated code is a maintenance liability (inconsistency when changes are made to some copies but not others), how parameterized methods eliminate repetition.",
+
+  // Week 11
+  'week-11': "Week 11: Returning Values — methods that produce results. Students transition from void methods (Week 10) to methods with typed return values (int, double, string, bool). The return keyword exits the method and delivers a value to the caller. The caller captures that value in a variable using the result capture pattern: type variable = MethodCall(args). Key principle: separation of concerns — methods compute and return, callers decide how to use the result. A method that prints instead of returning locks output to the console and prevents reuse.",
+  'week-11-lesson-1': "Week 11 Section 11.1: The Return Statement. Focus: Transition from void to typed return values. The return type in the method signature is a contract — it promises the caller will receive a value of that type. The return keyword does two things: (1) immediately exits the method, (2) delivers the specified value to the caller. If a non-void method has no return statement, the compiler produces an error: 'not all code paths return a value'. Common return types: int, double, string, bool. void methods cannot be assigned to a variable. Common mistake: declaring a return type but forgetting the return statement.",
+  'week-11-lesson-2': "Week 11 Section 11.2: Result Capture. Focus: The caller's side of the return contract. Result capture pattern: type variable = MethodCall(args). The variable type must match the method's return type. Captured results can be used in arithmetic, conditions, string interpolation, or as arguments to other methods. Inline calls (using the method call directly in an expression) are valid but less debuggable. Chaining: passing one method's return as an argument to another. Separation of concerns: methods compute, callers decide how to display. Discarding a return value (calling without assignment) is legal but wasteful.",
+  'week-11-lab': "Week 11 Lab: The Calculation Engine. Students build three return-type methods: static int CalculateArea(int length, int width) — returns length * width, static double CelsiusToFahrenheit(double celsius) — returns (celsius * 9.0 / 5.0) + 32.0, static string FormatFullName(string firstName, string lastName) — returns 'LastName, FirstName' format. Each method must be called at least twice with different arguments. All return values must be captured in variables. Methods must NOT contain Console.WriteLine — Main handles all display. Separation of concerns enforced.",
+  'week-11-homework': "Week 11 Homework: Return Values and Result Capture Reflection. Students must explain: (1) the return contract — what the return type promises, what the return keyword does (exit + deliver), what happens if return is missing; (2) void vs typed return — when to use each, example of a task requiring a return value; (3) result capture pattern and separation of concerns — why returning is better than printing, how it enables reusability.",
 
   // Week 9
   'week-09': "Week 9: For Loops — counter-controlled iteration. The for loop has three clauses: (initializer; condition; iterator). Students learn to use the index variable to drive logic and build accumulation patterns. Key failure point: the off-by-one error (wrong boundary or wrong starting value). Accumulator pattern: declare sum = 0 before the loop. CRITICAL: cast to (double) before dividing for averages. Nested for loops for two-dimensional output (Stage III of Boss Fight II).",

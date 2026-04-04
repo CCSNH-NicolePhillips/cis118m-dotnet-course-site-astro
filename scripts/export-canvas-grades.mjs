@@ -86,6 +86,12 @@ const ASSIGNMENTS = {
   'week-10-lab': { name: 'Week 10 Lab', points: 100 },
   'week-10-homework': { name: 'Week 10 Homework', points: 100 },
   'week-10-quiz': { name: 'Week 10 Quiz', points: 100 },
+
+  // Week 11
+  'week-11-participation': { name: 'Week 11 Participation', points: 100, isParticipation: true, week: 'week-11' },
+  'week-11-lab': { name: 'Week 11 Lab', points: 100 },
+  'week-11-homework': { name: 'Week 11 Homework', points: 100 },
+  'week-11-quiz': { name: 'Week 11 Quiz', points: 100 },
 };
 
 // Expected sections per week for participation scoring
