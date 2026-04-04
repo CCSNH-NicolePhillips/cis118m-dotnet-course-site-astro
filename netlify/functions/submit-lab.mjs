@@ -2,6 +2,7 @@ import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
 import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
@@ -124,9 +125,30 @@ Return JSON:
   }
 }`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        // === AI Call with Gemini → OpenAI fallback ===
+        let text;
+        try {
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          text = response.text();
+        } catch (geminiError) {
+          const isRateLimit = geminiError.message?.includes('429') || geminiError.message?.includes('quota') || geminiError.message?.includes('exhausted');
+          
+          if (!isRateLimit || !process.env.OPENAI_API_KEY) {
+            throw geminiError;
+          }
+          
+          // Fallback to OpenAI
+          console.log('[submit-lab] Gemini rate limited, falling back to OpenAI');
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 2048,
+            response_format: { type: "json_object" },
+          });
+          text = completion.choices[0].message.content;
+        }
         console.log('[submit-lab] AI response length:', text.length, 'chars');
         
         // Extract JSON from response with robust parsing

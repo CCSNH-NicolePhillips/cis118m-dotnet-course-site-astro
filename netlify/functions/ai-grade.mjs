@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { getLessonContext } from "./_lib/lesson-contexts.mjs";
 import { getRedis } from "./_lib/redis.mjs";
 import { getGradingPromptRules } from "./_lib/ai-rules.mjs";
@@ -78,22 +79,47 @@ Return JSON:
 }
 `;
 
-  let result;
+  // === AI Call with Gemini → OpenAI fallback ===
+  let text;
   try {
-    result = await model.generateContent(prompt);
-  } catch (genError) {
-    console.error('[ai-grade] Gemini API error:', genError.message || genError);
-    return {
-      statusCode: 502,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "AI service unavailable", details: genError.message }),
-    };
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    text = response.text();
+  } catch (geminiError) {
+    const isRateLimit = geminiError.message?.includes('429') || geminiError.message?.includes('quota') || geminiError.message?.includes('exhausted');
+    
+    if (!isRateLimit || !process.env.OPENAI_API_KEY) {
+      console.error('[ai-grade] Gemini error (no fallback):', geminiError.message);
+      return {
+        statusCode: 502,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "AI service unavailable", details: geminiError.message }),
+      };
+    }
+    
+    // Fallback to OpenAI
+    console.log('[ai-grade] Gemini rate limited, falling back to OpenAI');
+    try {
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 800,
+        response_format: { type: "json_object" },
+      });
+      text = completion.choices[0].message.content;
+    } catch (openaiError) {
+      console.error('[ai-grade] OpenAI fallback also failed:', openaiError.message);
+      return {
+        statusCode: 502,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "AI service unavailable (both providers)", details: openaiError.message }),
+      };
+    }
   }
   
   try {
-    const response = await result.response;
-    const text = response.text();
-    console.log('[ai-grade] Gemini response:', text.substring(0, 200));
+    console.log('[ai-grade] AI response:', text.substring(0, 200));
     
     // We want to make sure we only send back the JSON part
     const jsonStart = text.indexOf('{');
