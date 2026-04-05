@@ -80,9 +80,14 @@ ${telemetry ? `EDITOR TELEMETRY (behavioral data from the code editor - DO NOT s
 - Total edits: ${telemetry.totalEdits || 0}
 - Final code length: ${telemetry.codeLength || 0} chars
 ` : ''}
+IMPORTANT GRADING RULES:
+- "No computation in Main" means Main should NOT contain math formulas or logic — but Console.WriteLine() calls in Main are EXPECTED and CORRECT. Displaying results in Main is the whole point.
+- If the student's code meets ALL rubric criteria, give FULL POINTS. Do NOT invent issues or dock points for things not in the rubric.
+- If the score is 90 or above, do NOT suggest improvements in the feedback — just celebrate their success.
+
 Grade the code and provide:
 1. "score": total points (0-100)
-2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with genuine praise for what they did well. If there are issues, frame them as "Next time you might try..." or "One small thing to polish..." Never say "wrong" or "incorrect" - use "almost there" or "close!"
+2. "feedback": 2-3 sentences that are WARM and ENCOURAGING. Start with genuine praise for what they did well. If the score is 90+, just celebrate — do NOT add suggestions or "one small thing" comments. For lower scores, frame issues as "Next time you might try..." or "One small thing to polish..." Never say "wrong" or "incorrect" - use "almost there" or "close!"
 3. "rubric": object with each rubric category from the RUBRIC section above, points awarded out of max, and brief rationale explaining WHY
 4. "detailedReport": 3-5 sentence instructor-facing summary explaining the overall grade, what the student did well, what they missed, and specific improvement areas
 5. "integrityAnalysis": INSTRUCTOR-ONLY analysis of whether this submission may have been AI-generated or copied. Be STRICT and SKEPTICAL — do NOT rationalize away red flags.
