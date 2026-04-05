@@ -399,38 +399,28 @@ Console.WriteLine("=== MODULAR UTILITY SUITE ===");
 
 // TODO: Step 1 — Call GreetUser twice with different names
 Console.WriteLine("\\n--- System Greeting ---");
-// GreetUser("Alice Chen");
-// GreetUser("Marcus Webb");
+
 
 // TODO: Step 2 — Call ConvertMilesToKm twice with different values
 Console.WriteLine("\\n--- Measurement Converter ---");
-// ConvertMilesToKm(5.0);
-// ConvertMilesToKm(26.2);
+
 
 // TODO: Step 3 — Call CheckBatteryStatus twice with different values
 Console.WriteLine("\\n--- Status Monitor ---");
-// CheckBatteryStatus(12, false);
-// CheckBatteryStatus(85, true);
+
 
 // === DEFINE YOUR METHODS BELOW THIS LINE ===
 
 // TODO: Step 4 — Define static void GreetUser(string name)
 // Print a greeting that includes the name parameter
-// Example output: "System initialized for user: Alice Chen"
 
 
 // TODO: Step 5 — Define static void ConvertMilesToKm(double miles)
-// Calculate km = miles * 1.60934
-// Print the result formatted to 2 decimal places (:F2)
-// Example output: "5.00 miles = 8.05 km"
+// Calculate and print the conversion (1 mile = 1.60934 km)
 
 
 // TODO: Step 6 — Define static void CheckBatteryStatus(int percentage, bool isCharging)
-// Use if/else to handle four cases:
-// percentage < 20 AND not charging → WARNING: Battery critical
-// percentage < 20 AND charging     → Battery low, charging in progress
-// percentage >= 20 AND charging    → Battery at N%, charging in progress
-// percentage >= 20 AND not charging → Battery at N%, running on battery power
+// Use if/else to handle four cases based on percentage and charging status
 `,
 
         "week-11-lab": `// Name: Your Name Here
@@ -443,39 +433,33 @@ using System;
 // --- Main (top-level statements) ---
 Console.WriteLine("=== CALCULATION ENGINE ===");
 
-// TODO: Step 1 — Call CalculateArea twice with different values, capture results
+// TODO: Step 1 — Call CalculateArea twice with different values
+// Capture each result in a variable and print it
 Console.WriteLine("\\n--- Area Calculator ---");
-// int area1 = CalculateArea(10, 5);
-// Console.WriteLine($"Room 1: 10 x 5 = {area1} sq units");
-// int area2 = CalculateArea(12, 8);
-// Console.WriteLine($"Room 2: 12 x 8 = {area2} sq units");
 
-// TODO: Step 2 — Call CelsiusToFahrenheit twice, capture results
+
+// TODO: Step 2 — Call CelsiusToFahrenheit twice with different values
+// Capture each result in a variable and print it
 Console.WriteLine("\\n--- Temperature Converter ---");
-// double temp1 = CelsiusToFahrenheit(100.0);
-// Console.WriteLine($"Water boiling: 100.0°C = {temp1:F1}°F");
-// double temp2 = CelsiusToFahrenheit(37.0);
-// Console.WriteLine($"Body temp: 37.0°C = {temp2:F1}°F");
 
-// TODO: Step 3 — Call FormatFullName twice, capture results
+
+// TODO: Step 3 — Call FormatFullName twice with different values
+// Capture each result in a variable and print it
 Console.WriteLine("\\n--- Name Formatter ---");
-// string name1 = FormatFullName("Jordan", "Reyes");
-// Console.WriteLine($"Employee 1: {name1}");
-// string name2 = FormatFullName("Alice", "Chen");
-// Console.WriteLine($"Employee 2: {name2}");
+
 
 // === DEFINE YOUR METHODS BELOW THIS LINE ===
 
 // TODO: Step 4 — Define static int CalculateArea(int length, int width)
-// Return length * width
+// Should return the area of a rectangle
 
 
 // TODO: Step 5 — Define static double CelsiusToFahrenheit(double celsius)
-// Return (celsius * 9.0 / 5.0) + 32.0
+// Should return the temperature converted to Fahrenheit
 
 
 // TODO: Step 6 — Define static string FormatFullName(string firstName, string lastName)
-// Return the name in "LastName, FirstName" format
+// Should return the name in "LastName, FirstName" format
 `,
 
       };
