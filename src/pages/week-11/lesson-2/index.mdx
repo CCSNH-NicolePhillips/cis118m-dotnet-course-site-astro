@@ -417,13 +417,20 @@ static string FormatSummary(double area, double cost) {
 
 ## Summary: Result Capture
 
-| Concept | Description |
-|---------|-------------|
-| Result capture | `type var = Method(args);` — store the returned value in a variable |
-| Type matching | Variable type must match the method's return type |
-| Inline call | Use the method call directly in an expression without a variable |
-| Chaining | Pass one method's return value as an argument to another |
-| Discarded result | Calling a return-type method without assignment is legal but wasteful |
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">Concept</th><th scope="col">Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Result capture</td><td><code>type var = Method(args);</code> — store the returned value in a variable</td></tr>
+<tr><td>Type matching</td><td>Variable type must match the method's return type</td></tr>
+<tr><td>Inline call</td><td>Use the method call directly in an expression without a variable</td></tr>
+<tr><td>Chaining</td><td>Pass one method's return value as an argument to another</td></tr>
+<tr><td>Discarded result</td><td>Calling a return-type method without assignment is legal but wasteful</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 

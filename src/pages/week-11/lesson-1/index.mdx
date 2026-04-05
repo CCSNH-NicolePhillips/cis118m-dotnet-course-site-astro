@@ -140,13 +140,20 @@ static int GetScore() {
 
 You can return any data type. The return type in the signature must match the type of the value in the `return` statement:
 
-| Return Type | What the Method Delivers | Example |
-|-------------|--------------------------|---------|
-| `int` | A whole number | `return 42;` |
-| `double` | A decimal number | `return 3.14159;` |
-| `string` | A text value | `return "Hello";` |
-| `bool` | A true/false value | `return age >= 18;` |
-| `decimal` | A precise monetary value | `return 99.95m;` |
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">Return Type</th><th scope="col">What the Method Delivers</th><th scope="col">Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>int</code></td><td>A whole number</td><td><code>return 42;</code></td></tr>
+<tr><td><code>double</code></td><td>A decimal number</td><td><code>return 3.14159;</code></td></tr>
+<tr><td><code>string</code></td><td>A text value</td><td><code>return "Hello";</code></td></tr>
+<tr><td><code>bool</code></td><td>A true/false value</td><td><code>return age &gt;= 18;</code></td></tr>
+<tr><td><code>decimal</code></td><td>A precise monetary value</td><td><code>return 99.95m;</code></td></tr>
+</tbody>
+</table>
+</div>
 
 ```csharp
 static double CalculateCircleArea(double radius) {
@@ -199,12 +206,19 @@ This is the key decision you must make when designing a method: **Does the calle
   </div>
 </div>
 
-| The Caller Needs... | Use |
-|---------------------|-----|
-| The computed number | `static int Calculate(...)` |
-| The formatted string | `static string Format(...)` |
-| A yes/no answer | `static bool IsValid(...)` |
-| Nothing — just display | `static void Print(...)` |
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">The Caller Needs...</th><th scope="col">Use</th></tr>
+</thead>
+<tbody>
+<tr><td>The computed number</td><td><code>static int Calculate(...)</code></td></tr>
+<tr><td>The formatted string</td><td><code>static string Format(...)</code></td></tr>
+<tr><td>A yes/no answer</td><td><code>static bool IsValid(...)</code></td></tr>
+<tr><td>Nothing — just display</td><td><code>static void Print(...)</code></td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
@@ -336,13 +350,20 @@ static double CalculateRectangleArea(double length, double width) {
 
 ## Summary: The Return Statement
 
-| Concept | Description |
-|---------|-------------|
-| Return Type | Declares what kind of value the method delivers (`int`, `double`, `string`, `bool`) |
-| `void` | Special return type meaning "no value returned" |
-| `return` keyword | Exits the method and delivers the value to the caller |
-| Return contract | The returned value must match the declared return type |
-| Unreachable code | Code after a `return` statement never executes |
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">Concept</th><th scope="col">Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Return Type</td><td>Declares what kind of value the method delivers (<code>int</code>, <code>double</code>, <code>string</code>, <code>bool</code>)</td></tr>
+<tr><td><code>void</code></td><td>Special return type meaning "no value returned"</td></tr>
+<tr><td><code>return</code> keyword</td><td>Exits the method and delivers the value to the caller</td></tr>
+<tr><td>Return contract</td><td>The returned value must match the declared return type</td></tr>
+<tr><td>Unreachable code</td><td>Code after a <code>return</code> statement never executes</td></tr>
+</tbody>
+</table>
+</div>
 
 ---
 
