@@ -290,13 +290,6 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-09-lab': "We are post-Spring Break. The instructor is back to full connectivity. Lab 09: Boss Fight II — The Arena. Students use counter-controlled for loops to complete multi-stage challenges. This is a Boss Fight week — no partial credit. They must use for loops (not while loops) and demonstrate mastery of the index pattern. Common errors: off-by-one in loop bounds, wrong accumulator initialization, incorrect loop direction (counting up vs down). Remind students that telemetry is active — keystrokes, edit time, and paste events are being recorded. Assistance is Socratic only: guide toward the insight, do not write code for them.",
   'week-09-homework': "We are post-Spring Break. The instructor is back to full connectivity. Homework 09: Technical Reflection — while vs for loop use cases. Students write a comparative analysis explaining when to use each loop type, giving a concrete example for each. Also requires an explanation of the off-by-one error with a specific example and correction. Assist with understanding the concepts, not with writing the reflection. Ask guiding questions: 'What do you know about the number of iterations before the loop starts?' and 'Where would the loop run one too many or too few times?'",
   
-  // Week 11
-  'week-11': "Topic: Methods. Focus: Reusable code blocks.",
-  'week-11-lesson-1': "Topic: Methods. Focus: Reusable code blocks with parameters.",
-  'week-11-lesson-2': "Topic: Return Values. Focus: Methods that compute and return results.",
-  'week-11-lab': "Topic: Code Organization. Mission: Breaking programs into methods.",
-  'week-11-homework': "Topic: Reflection. Focus: Understanding scope and method signatures.",
-  
   // Week 12
   'week-12': "Topic: Classes and Objects. Focus: Object-oriented programming basics.",
   'week-12-lesson-1': "Topic: Classes. Focus: Blueprints for creating objects.",
