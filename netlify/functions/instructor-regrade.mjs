@@ -1,6 +1,7 @@
 import { requireInstructor } from "./_lib/auth0-verify.mjs";
 import { getRedis } from "./_lib/redis.mjs";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import { getLessonContext } from "./_lib/lesson-contexts.mjs";
 import { getGradingPromptRules } from "./_lib/ai-rules.mjs";
 
@@ -79,16 +80,7 @@ export default async function handler(request, context) {
       );
     }
 
-    // Run AI grading
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-      generationConfig: {
-        responseMimeType: "application/json",
-        maxOutputTokens: 800,
-      }
-    });
-
+    // Build AI grading prompt
     const prompt = `You are a friendly programming instructor grading a student's work.
 
 ${getGradingPromptRules()}
@@ -123,20 +115,48 @@ Return JSON:
 }
 `;
 
-    let result;
+    let text;
     try {
-      result = await model.generateContent(prompt);
-    } catch (genError) {
-      console.error('[instructor-regrade] Gemini API error:', genError.message || genError);
-      return new Response(
-        JSON.stringify({ error: "AI service unavailable", details: genError.message }),
-        { status: 502, headers: { "Content-Type": "application/json" } }
-      );
+      // Try Gemini first
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.0-flash",
+        generationConfig: {
+          responseMimeType: "application/json",
+          maxOutputTokens: 800,
+        }
+      });
+      const result = await model.generateContent(prompt);
+      text = result.response.text();
+      console.log('[instructor-regrade] Gemini response:', text.substring(0, 200));
+    } catch (geminiError) {
+      console.error('[instructor-regrade] Gemini failed:', geminiError.message || geminiError);
+      // Fallback to OpenAI
+      if (!process.env.OPENAI_API_KEY) {
+        return new Response(
+          JSON.stringify({ error: "AI service unavailable (Gemini failed, no OpenAI key)", details: geminiError.message }),
+          { status: 502, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      try {
+        console.log('[instructor-regrade] Falling back to OpenAI gpt-4o-mini...');
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+          max_tokens: 800,
+        });
+        text = completion.choices[0].message.content;
+        console.log('[instructor-regrade] OpenAI response:', text.substring(0, 200));
+      } catch (openaiError) {
+        console.error('[instructor-regrade] OpenAI also failed:', openaiError.message || openaiError);
+        return new Response(
+          JSON.stringify({ error: "AI service unavailable (both providers failed)", details: openaiError.message }),
+          { status: 502, headers: { "Content-Type": "application/json" } }
+        );
+      }
     }
-
-    const response = await result.response;
-    const text = response.text();
-    console.log('[instructor-regrade] Gemini response:', text.substring(0, 200));
 
     const jsonStart = text.indexOf('{');
     const jsonEnd = text.lastIndexOf('}') + 1;
