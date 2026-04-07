@@ -163,6 +163,23 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       6: '2026-03-01T23:59:59-05:00',
       7: '2026-03-08T23:59:59-05:00',
       8: '2026-03-22T23:59:59-05:00',
+      9: '2026-03-29T23:59:59-04:00',
+      10: '2026-04-05T23:59:59-04:00',
+      11: '2026-04-12T23:59:59-04:00',
+      12: '2026-04-19T23:59:59-04:00',
+      13: '2026-04-26T23:59:59-04:00',
+      14: '2026-05-03T23:59:59-04:00',
+      15: '2026-05-10T23:59:59-04:00',
+    };
+    
+    // Week 15 grace period window
+    const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00';
+    const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00';
+    const GRACE_PERIOD_CAP   = 75;
+    
+    const isGracePeriodActive = () => {
+      const now = new Date();
+      return now >= new Date(GRACE_PERIOD_START) && now <= new Date(GRACE_PERIOD_END);
     };
     
     // Extract week number from quizId (e.g., "week-01-quiz" -> 1)
@@ -557,11 +574,25 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     loadProgress().then(() => {
       // Check if quiz is past due on page load (after unlock status is known)
       if (checkPastDue() && !isQuizUnlocked) {
-        const dueDate = getFormattedDueDate();
-        if (pastDueDiv && dueInfoDiv) {
-          dueInfoDiv.innerHTML = `<p>Due date was: <strong>${dueDate}</strong></p>`;
-          pastDueDiv.style.display = 'block';
-          form.style.display = 'none';
+        // Check if grace period is active — auto-unlock with notice
+        if (isGracePeriodActive()) {
+          // Grace period: show the form with a cap notice instead of locking
+          form.style.display = 'block';
+          if (pastDueDiv) pastDueDiv.style.display = 'none';
+          
+          const graceNotice = document.createElement('div');
+          graceNotice.className = 'grace-period-notice';
+          graceNotice.style.cssText = 'background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; color: #eab308;';
+          graceNotice.innerHTML = `<strong>🔄 GRACE PERIOD</strong> — This quiz is past its original due date, but has been reopened for the Week 15 grace window. Your maximum score will be capped at ${GRACE_PERIOD_CAP}/100.`;
+          form.insertBefore(graceNotice, form.firstChild);
+          console.log('[Quiz] Grace period auto-unlock for:', quizId);
+        } else {
+          const dueDate = getFormattedDueDate();
+          if (pastDueDiv && dueInfoDiv) {
+            dueInfoDiv.innerHTML = `<p>Due date was: <strong>${dueDate}</strong></p>`;
+            pastDueDiv.style.display = 'block';
+            form.style.display = 'none';
+          }
         }
       }
     });
@@ -571,8 +602,8 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       
       const errorSummary = document.getElementById(`error-summary-${quizId}`);
       
-      // Check if past due (unless instructor unlocked)
-      if (checkPastDue() && !isQuizUnlocked) {
+      // Check if past due (unless instructor unlocked or grace period active)
+      if (checkPastDue() && !isQuizUnlocked && !isGracePeriodActive()) {
         if (errorSummary) {
           errorSummary.textContent = 'Error: This quiz is past its due date. Please contact your instructor if you need an extension.';
           errorSummary.style.display = 'block';

@@ -3,7 +3,7 @@ import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
-import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
+import { getLatePenaltyInfo, formatLatePenaltyMessage, applyGracePeriod, formatGracePeriodMessage, getWeekFromPageId } from './_lib/due-dates.mjs';
 import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
 export async function handler(event, context) {
@@ -196,6 +196,7 @@ Return JSON:
         const prewaiveKey = `penalty:prewaive:${sub}:${assignmentId}`;
         const prewaive = await redis.get(prewaiveKey);
         let penaltyPreWaived = false;
+        let gracePeriodApplied = false;
         
         // Apply late penalty to the grade
         let finalGrade = aiGrade;
@@ -205,10 +206,21 @@ Return JSON:
           console.log(`[submit-lab] Late penalty PRE-WAIVED for ${sub}/${assignmentId} (${penaltyInfo.daysLate} days late)`);
           penaltyPreWaived = true;
         } else if (penaltyInfo.daysLate > 0) {
-          finalGrade = penaltyInfo.finalScore;
-          latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
-          aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
-          console.log(`[submit-lab] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+          // Check for Week 15 grace period
+          const graceResult = applyGracePeriod(assignmentId, originalGrade, penaltyInfo, new Date(submittedAt));
+          if (graceResult.gracePeriod) {
+            finalGrade = graceResult.finalScore;
+            gracePeriodApplied = true;
+            const weekNum = getWeekFromPageId(assignmentId);
+            const graceMsg = formatGracePeriodMessage(weekNum, finalGrade);
+            aiFeedback = `${graceMsg}\n\n${aiFeedback}`;
+            console.log(`[submit-lab] Grace period applied: ${originalGrade} -> ${finalGrade} (week ${weekNum}, ${penaltyInfo.daysLate} days late)`);
+          } else {
+            finalGrade = penaltyInfo.finalScore;
+            latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
+            aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
+            console.log(`[submit-lab] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+          }
         }
         
         // Update aiGrade to the final penalized score
@@ -250,6 +262,10 @@ Return JSON:
         if (penaltyPreWaived) {
           labProgressData[`${assignmentId}:penaltyWaived`] = 'true';
           labProgressData[`${assignmentId}:penaltyPreWaived`] = 'true';
+        }
+        if (gracePeriodApplied) {
+          labProgressData[`${assignmentId}:gracePeriod`] = 'true';
+          labProgressData[`${assignmentId}:penaltyWaived`] = 'true';
         }
         await redis.hset(`user:progress:data:${sub}`, labProgressData);
         

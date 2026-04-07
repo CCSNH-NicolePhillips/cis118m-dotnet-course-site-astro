@@ -107,6 +107,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   const weekNumber = getWeekNumber(starterId);
   
+  // Grace period constants
+  const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00';
+  const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00';
+  const GRACE_PERIOD_CAP   = 75;
+  const isGracePeriodActive = () => {
+    const now = new Date();
+    return now >= new Date(GRACE_PERIOD_START) && now <= new Date(GRACE_PERIOD_END);
+  };
+  
   // Display late penalty warning if applicable
   const weekNum = parseInt(weekNumber);
   const penaltyInfo = getLatePenaltyInfo(weekNum);
@@ -121,7 +130,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       submitBtn.parentNode.insertBefore(warningDiv, submitBtn);
     }
     
-    if (penaltyInfo.isZero) {
+    if (isGracePeriodActive() && weekNum < 15) {
+      // Grace period active — show grace notice instead of penalty warning
+      if (weekNum <= 13) {
+        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> Late penalty waived for this Week ${weekNum} lab. Your maximum score will be capped at ${GRACE_PERIOD_CAP}/100.`;
+        warningDiv.style.borderColor = "#eab308";
+        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
+        warningDiv.style.color = "#eab308";
+      } else if (weekNum === 14) {
+        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> This Week 14 lab is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} late. Normal penalty applies, but your score will not drop below ${GRACE_PERIOD_CAP}/100.`;
+        warningDiv.style.borderColor = "#eab308";
+        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
+        warningDiv.style.color = "#eab308";
+      }
+    } else if (penaltyInfo.isZero) {
       warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This lab is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points. Contact your instructor for an extension.`;
       warningDiv.style.borderColor = "#ef4444";
       warningDiv.style.background = "rgba(239, 68, 68, 0.15)";
@@ -222,7 +244,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (existingGrade !== null) {
       let confirmMsg = `You already have a grade of ${existingGrade}/100 for this lab.\n\nResubmitting will re-grade your work and replace your current score.`;
       if (penaltyInfo.daysLate > 0) {
-        if (penaltyInfo.isZero) {
+        if (isGracePeriodActive() && weekNum < 15) {
+          if (weekNum <= 13) {
+            confirmMsg += `\n\n🔄 GRACE PERIOD: Late penalty waived. Max score capped at ${GRACE_PERIOD_CAP}/100.`;
+          } else if (weekNum === 14) {
+            confirmMsg += `\n\n🔄 GRACE PERIOD: Late penalty applies but score will not drop below ${GRACE_PERIOD_CAP}/100.`;
+          }
+        } else if (penaltyInfo.isZero) {
           confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points.`;
         } else {
           confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% late penalty will be applied to your new score.`;

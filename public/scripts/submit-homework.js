@@ -31,6 +31,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     6: '2026-03-01T23:59:59-05:00',
     7: '2026-03-08T23:59:59-05:00',
     8: '2026-03-22T23:59:59-05:00',
+    9: '2026-03-29T23:59:59-04:00',
+    10: '2026-04-05T23:59:59-04:00',
+    11: '2026-04-12T23:59:59-04:00',
+    12: '2026-04-19T23:59:59-04:00',
+    13: '2026-04-26T23:59:59-04:00',
+    14: '2026-05-03T23:59:59-04:00',
+    15: '2026-05-10T23:59:59-04:00',
+  };
+  
+  // Grace period constants
+  const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00';
+  const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00';
+  const GRACE_PERIOD_CAP   = 75;
+  const isGracePeriodActive = () => {
+    const now = new Date();
+    return now >= new Date(GRACE_PERIOD_START) && now <= new Date(GRACE_PERIOD_END);
   };
   
   // Get week number from URL
@@ -73,7 +89,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       submitBtn.parentNode.insertBefore(warningDiv, submitBtn);
     }
     
-    if (penaltyInfo.isZero) {
+    if (isGracePeriodActive() && weekNum < 15) {
+      if (weekNum <= 13) {
+        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> Late penalty waived for this Week ${weekNum} homework. Your maximum score will be capped at ${GRACE_PERIOD_CAP}/100.`;
+        warningDiv.style.borderColor = "#eab308";
+        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
+        warningDiv.style.color = "#eab308";
+      } else if (weekNum === 14) {
+        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> This Week 14 homework is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} late. Normal penalty applies, but your score will not drop below ${GRACE_PERIOD_CAP}/100.`;
+        warningDiv.style.borderColor = "#eab308";
+        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
+        warningDiv.style.color = "#eab308";
+      }
+    } else if (penaltyInfo.isZero) {
       warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This homework is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points. Contact your instructor for an extension.`;
       warningDiv.style.borderColor = "#ef4444";
       warningDiv.style.background = "rgba(239, 68, 68, 0.15)";

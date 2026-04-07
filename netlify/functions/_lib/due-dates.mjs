@@ -3,6 +3,13 @@
  * 
  * Centralized logic for checking due dates and calculating late penalties.
  * Used by submit-quiz, submit-lab, and submit-homework functions.
+ * 
+ * WEEK 15 GRACE PERIOD:
+ * When Week 15 unlocks (May 4, 2026), students can submit/resubmit late work:
+ *   - Weeks 1-13: Late penalty WAIVED, max score capped at 75
+ *   - Week 14: Normal late penalty applies, but score FLOORS at 75
+ *   - Quizzes: Auto-unlocked, score capped at 75
+ * Only applies to NEW submissions made during the grace window.
  */
 
 /**
@@ -276,4 +283,124 @@ export function allowsLateWithPenalty(pageId) {
   // Quizzes are locked after due date (no late submissions)
   // Labs and homework allow late with penalty
   return type === 'lab' || type === 'homework';
+}
+
+// ============================================================
+// WEEK 15 GRACE PERIOD
+// ============================================================
+
+/**
+ * Week 15 Grace Period Window
+ * - Opens when Week 15 unlocks (May 4, 2026 midnight EDT)
+ * - Closes when Week 15 is due (May 10, 2026 11:59 PM EDT)
+ */
+const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00'; // Week 15 unlock
+const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00'; // Week 15 due
+const GRACE_PERIOD_CAP   = 75; // Max score for grace period submissions
+
+/**
+ * Check if the Week 15 grace period is currently active
+ * @param {Date} [submissionTime] - Time to check (defaults to now)
+ * @returns {boolean}
+ */
+export function isGracePeriodActive(submissionTime = new Date()) {
+  const start = new Date(GRACE_PERIOD_START);
+  const end   = new Date(GRACE_PERIOD_END);
+  return submissionTime >= start && submissionTime <= end;
+}
+
+/**
+ * Apply Week 15 grace period adjustments to a penalty result.
+ * 
+ * Policy:
+ *   Weeks 1-13: Late penalty WAIVED, score capped at 75
+ *   Week 14:    Normal late penalty applies, score FLOORS at 75
+ *   Week 15+:   No grace period (Week 15 has its own due date)
+ * 
+ * @param {string} pageId - Assignment ID (e.g., "week-03-lab")
+ * @param {number} originalScore - Score before any penalty (0-100)
+ * @param {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean }} penaltyResult - Normal penalty calc result
+ * @param {Date} [submissionTime] - Time of submission
+ * @returns {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean, gracePeriod: boolean, gracePeriodCap?: number }}
+ */
+export function applyGracePeriod(pageId, originalScore, penaltyResult, submissionTime = new Date()) {
+  // Only applies during the grace window
+  if (!isGracePeriodActive(submissionTime)) {
+    return { ...penaltyResult, gracePeriod: false };
+  }
+
+  const weekNum = getWeekFromPageId(pageId);
+  if (!weekNum || weekNum >= 15) {
+    // Week 15 itself or unknown weeks don't get grace period treatment
+    return { ...penaltyResult, gracePeriod: false };
+  }
+
+  if (weekNum <= 13) {
+    // Weeks 1-13: Waive the late penalty entirely, cap at 75
+    const cappedScore = Math.min(originalScore, GRACE_PERIOD_CAP);
+    return {
+      finalScore: cappedScore,
+      penaltyPercent: 0,
+      daysLate: penaltyResult.daysLate,
+      isZero: false,
+      gracePeriod: true,
+      gracePeriodCap: GRACE_PERIOD_CAP
+    };
+  }
+
+  if (weekNum === 14) {
+    // Week 14: Normal penalty applies, but score can't drop below 75
+    // Formula: min(originalScore, max(penalizedScore, 75))
+    // - The floor of 75 prevents the penalty from being too harsh
+    // - But the score can never exceed the original earned score
+    const floored = Math.min(originalScore, Math.max(penaltyResult.finalScore, GRACE_PERIOD_CAP));
+    return {
+      finalScore: floored,
+      penaltyPercent: penaltyResult.penaltyPercent,
+      daysLate: penaltyResult.daysLate,
+      isZero: false,
+      gracePeriod: true,
+      gracePeriodCap: GRACE_PERIOD_CAP
+    };
+  }
+
+  return { ...penaltyResult, gracePeriod: false };
+}
+
+/**
+ * Get grace period info for a quiz submission.
+ * During grace period, past-due quizzes are auto-unlocked with score capped at 75.
+ * 
+ * @param {string} pageId - Quiz ID (e.g., "week-05-quiz")
+ * @param {Date} [submissionTime]
+ * @returns {{ isGracePeriod: boolean, scoreCap: number|null, weekNum: number|null }}
+ */
+export function getQuizGracePeriodInfo(pageId, submissionTime = new Date()) {
+  if (!isGracePeriodActive(submissionTime)) {
+    return { isGracePeriod: false, scoreCap: null, weekNum: null };
+  }
+  
+  const weekNum = getWeekFromPageId(pageId);
+  if (!weekNum || weekNum >= 15) {
+    return { isGracePeriod: false, scoreCap: null, weekNum };
+  }
+  
+  // All past-due quizzes (weeks 1-14) are unlocked with score capped at 75
+  return { isGracePeriod: true, scoreCap: GRACE_PERIOD_CAP, weekNum };
+}
+
+/**
+ * Format a grace period message for the student
+ * @param {number} weekNum
+ * @param {number} cappedScore
+ * @returns {string}
+ */
+export function formatGracePeriodMessage(weekNum, cappedScore) {
+  if (weekNum <= 13) {
+    return `🔄 GRACE PERIOD: Late penalty waived for Week ${weekNum}. Maximum score capped at ${GRACE_PERIOD_CAP}/100.`;
+  }
+  if (weekNum === 14) {
+    return `🔄 GRACE PERIOD: Late penalty applied with a floor of ${GRACE_PERIOD_CAP}/100 for Week ${weekNum}. Final score: ${cappedScore}/100.`;
+  }
+  return '';
 }

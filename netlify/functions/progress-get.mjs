@@ -1,5 +1,6 @@
 import { requireAuth } from "./_lib/auth0-verify.mjs";
 import { getRedis } from "./_lib/redis.mjs";
+import { isGracePeriodActive } from "./_lib/due-dates.mjs";
 
 /**
  * Netlify Function: Get user's progress
@@ -140,9 +141,20 @@ export default async function handler(request, context) {
       'week-03-quiz',
       'week-03-weekly-assessment',
       'week-04-quiz',
+      'week-05-quiz',
       'week-06-quiz',
       'week-07-quiz',
-      'week-08-quiz'
+      'week-08-quiz',
+      'week-10-quiz',
+      'week-10-weekly-assessment',
+      'week-11-quiz',
+      'week-11-weekly-assessment',
+      'week-12-quiz',
+      'week-12-weekly-assessment',
+      'week-13-quiz',
+      'week-13-weekly-assessment',
+      'week-14-quiz',
+      'week-14-weekly-assessment'
     ];
     
     const quizUnlocks = {};
@@ -157,10 +169,14 @@ export default async function handler(request, context) {
     
     console.log('[progress-get] Quiz unlocks:', JSON.stringify(quizUnlocks));
 
+    // Check if Week 15 grace period is active
+    const gracePeriod = isGracePeriodActive();
+
     return new Response(
       JSON.stringify({ 
         progress: mergedProgress,
-        quizUnlocks: quizUnlocks
+        quizUnlocks: quizUnlocks,
+        gracePeriod: gracePeriod
       }),
       {
         status: 200,
