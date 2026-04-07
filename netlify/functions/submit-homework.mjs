@@ -2,7 +2,8 @@ import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { getLatePenaltyInfo, formatLatePenaltyMessage } from './_lib/due-dates.mjs';
+import OpenAI from "openai";
+import { getLatePenaltyInfo, formatLatePenaltyMessage, applyGracePeriod, formatGracePeriodMessage, getWeekFromPageId } from './_lib/due-dates.mjs';
 import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
 export async function handler(event, context) {
@@ -123,9 +124,31 @@ Return JSON:
   }
 }`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.text();
+        // === AI Call with Gemini → OpenAI fallback ===
+        let text;
+        try {
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          text = response.text();
+        } catch (geminiError) {
+          const isRateLimit = geminiError.message?.includes('429') || geminiError.message?.includes('quota') || geminiError.message?.includes('exhausted');
+          
+          if (!isRateLimit || !process.env.OPENAI_API_KEY) {
+            throw geminiError;
+          }
+          
+          // Fallback to OpenAI
+          console.log('[submit-homework] Gemini rate limited, falling back to OpenAI');
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 2048,
+            response_format: { type: "json_object" },
+          });
+          text = completion.choices[0].message.content;
+        }
+        console.log('[submit-homework] AI response length:', text.length, 'chars');
 
         let gradeData;
         try {
@@ -153,10 +176,9 @@ Return JSON:
         var aiIntegrityAnalysis = gradeData.integrityAnalysis || {};
 
       } catch (gradeError) {
-        console.error('[submit-homework] AI grading failed:', gradeError.message);
-        // Default to 100 if submitted with reflection but grading failed
-        aiGrade = 100;
-        aiFeedback = 'Great job completing your reflection!';
+        console.error('[submit-homework] AI grading failed (Gemini + OpenAI):', gradeError.message);
+        aiGrade = null;
+        aiFeedback = 'Your submission was received but automatic grading encountered an issue. Your instructor will review it manually.';
       }
     } else if (reflection) {
       // No API key but has reflection - give full credit
@@ -169,6 +191,7 @@ Return JSON:
     let latePenaltyMessage = '';
     let penaltyInfo = { daysLate: 0, penaltyPercent: 0, finalScore: aiGrade };
     let penaltyPreWaived = false;
+    let gracePeriodApplied = false;
     
     if (aiGrade !== null) {
       // Check if instructor pre-waived penalty for this student/assignment
@@ -183,10 +206,21 @@ Return JSON:
         penaltyPreWaived = true;
         // Don't modify finalGrade — keep original aiGrade
       } else if (penaltyInfo.daysLate > 0) {
-        finalGrade = penaltyInfo.finalScore;
-        latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
-        aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
-        console.log(`[submit-homework] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+        // Check for Week 15 grace period
+        const graceResult = applyGracePeriod(assignmentId, aiGrade, penaltyInfo, new Date(submittedAt));
+        if (graceResult.gracePeriod) {
+          finalGrade = graceResult.finalScore;
+          gracePeriodApplied = true;
+          const weekNum = getWeekFromPageId(assignmentId);
+          const graceMsg = formatGracePeriodMessage(weekNum, finalGrade);
+          aiFeedback = `${graceMsg}\n\n${aiFeedback}`;
+          console.log(`[submit-homework] Grace period applied: ${aiGrade} -> ${finalGrade} (week ${weekNum}, ${penaltyInfo.daysLate} days late)`);
+        } else {
+          finalGrade = penaltyInfo.finalScore;
+          latePenaltyMessage = formatLatePenaltyMessage(penaltyInfo.daysLate, penaltyInfo.penaltyPercent, penaltyInfo.isZero);
+          aiFeedback = `${latePenaltyMessage}\n\n${aiFeedback}`;
+          console.log(`[submit-homework] Late penalty applied: ${aiGrade} -> ${finalGrade} (${penaltyInfo.daysLate} days late)`);
+        }
       }
     }
 
@@ -215,6 +249,10 @@ Return JSON:
       if (penaltyPreWaived) {
         progressData[`${assignmentId}:penaltyWaived`] = 'true';
         progressData[`${assignmentId}:penaltyPreWaived`] = 'true';
+      }
+      if (gracePeriodApplied) {
+        progressData[`${assignmentId}:gracePeriod`] = 'true';
+        progressData[`${assignmentId}:penaltyWaived`] = 'true';
       }
       await redis.hset(`user:progress:data:${sub}`, progressData);
       

@@ -1,5 +1,6 @@
 node_modules
 dist
+/scripts
 .astro
 .DS_Store
 .env
