@@ -847,6 +847,80 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["return", "void", "int", "variable"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  "week-12-lab": {
+    title: "Week 12: Lab - The Data Architect",
+    type: "lab",
+    week: "12",
+    taughtConcepts: `
+      - The class keyword defines a new custom data type (a blueprint for objects)
+      - Auto-implemented properties use { get; set; } — the compiler generates a backing field
+      - Access modifiers: public (accessible from anywhere), private (accessible only inside the class)
+      - The new keyword creates an object (instance) from a class blueprint and allocates memory
+      - The dot operator (.) accesses (reads or writes) an object's properties: object.Property
+      - Each object created with new is independent — changing one does not affect another
+      - Default values: string → null, int → 0, double → 0.0, bool → false
+      - Classes group related data into a single unit instead of loose disconnected variables
+      - Objects can be passed to methods as parameters (reference type — method receives same object)
+      - PascalCase for class names and property names, camelCase for local variables
+      - K&R (Egyptian) brace style: opening brace on same line
+    `,
+    assignmentPrompt: `
+      Build a Data Architect program with two custom classes and multiple objects:
+      1. Define a Student class with: public string Name { get; set; }, public int Id { get; set; }, public double Gpa { get; set; }
+      2. Define a Course class with: public string Title { get; set; }, public string Instructor { get; set; }, public int Credits { get; set; }
+      3. Create at least 3 Student objects using new Student(). Set all properties via dot operator with different values.
+      4. Create at least 2 Course objects using new Course(). Set all properties via dot operator with different values.
+      5. Write a static void DisplayStudent(Student s) method that prints a formatted Student record using string interpolation.
+      6. Display all objects with all properties visible.
+      7. All data must be stored as object properties — no loose variables for name, id, gpa, etc.
+      NOTE: Do NOT penalize for missing separator lines, decorative borders, headers, or cosmetic formatting differences.
+      Grade on whether the two classes are defined correctly, objects are created with new, properties are set via dot operator, and DisplayStudent method exists.
+    `,
+    rubric: `
+      Student class (15pts): Defines class Student with three auto-implemented properties: Name (string), Id (int), Gpa (double). All properties are public with { get; set; }.
+      Course class (15pts): Defines class Course with three auto-implemented properties: Title (string), Instructor (string), Credits (int). All properties are public with { get; set; }.
+      Student instances (15pts): Creates at least 3 Student objects using new Student(). Sets all three properties on each via dot operator. Each student has different values.
+      Course instances (15pts): Creates at least 2 Course objects using new Course(). Sets all three properties on each via dot operator. Each course has different values.
+      DisplayStudent method (15pts): Defines static void DisplayStudent(Student s) that accepts a Student parameter and prints all properties using string interpolation. Called for each student.
+      Formatted output (15pts): All objects displayed with all properties visible. Uses Console.WriteLine with string interpolation. Output is organized and readable.
+      Code compiles, runs, K&R braces (10pts): Code compiles and runs without errors. K&R brace style used. No loose variables — all data stored in objects.
+    `,
+    requiredKeywords: ["class", "new", "public", "get", "set", "Student", "Course", "static", "void", "DisplayStudent"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-12-homework": {
+    title: "Week 12: Class Design & Object Architecture Reflection",
+    type: "homework",
+    week: "12",
+    taughtConcepts: `
+      - A class definition creates a new custom data type (blueprint) — it does NOT create data or objects
+      - The new keyword instantiates an object: allocates memory, initializes default values, returns a reference
+      - Auto-implemented properties { get; set; } are preferred over raw fields in modern C#
+      - public modifier allows external access; private restricts access to inside the class
+      - The dot operator (.) is the access gateway to an object's public members (read and write)
+      - Each object is independent: changing one does not affect another, even from the same class
+      - Classes group related data into one unit, improving organization and preventing mix-ups
+      - Reference types: assignment copies the reference, not the object — both variables point to the same object
+      - Default values: string → null, int → 0, double → 0.0, bool → false
+      - Objects can be passed as method parameters, replacing multiple separate parameters
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer the following about Class Design and Object Architecture:
+      1. The Class as a Blueprint: Explain what a class definition does versus what the new keyword does. Why does writing class Student { } not create any data? What happens in memory when you write Student s = new Student();?
+      2. Properties and Access Control: Compare a public field (e.g., public string name;) with an auto-implemented property (e.g., public string Name { get; set; }). Why are properties preferred in modern C#? What role does the private access modifier play in protecting class data?
+      3. Objects and the Dot Operator: Explain the dot operator pattern for reading and writing object properties. If you create two Student objects (s1 and s2) from the same class, why does changing s1.Name not affect s2.Name? How does bundling data into objects improve code organization compared to using separate loose variables?
+    `,
+    rubric: `
+      The class as a blueprint (35pts): Student explains that a class defines a type/blueprint, not data. Explains that new allocates memory and creates an object. Understands that the class describes structure, the object holds actual data.
+      Properties and access control (35pts): Student correctly contrasts fields (raw variables) with auto-implemented properties ({ get; set; }). Explains why properties are preferred (controlled access, future flexibility). Describes private as restricting access to inside the class.
+      Objects and the dot operator (20pts): Student explains dot operator for read/write. Explains that each new creates an independent object — changing s1 does not affect s2. Connects to code organization benefits (grouping related data, scaling to multiple records).
+      Clarity and terminology (10pts): Clear writing using terms like "class", "object", "instance", "property", "new", "dot operator", "access modifier", "blueprint"
+    `,
+    requiredKeywords: ["class", "new", "property", "object"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
@@ -928,6 +1002,13 @@ export const TUTOR_CONTEXTS = {
   'week-11-lesson-2': "Week 11 Section 11.2: Result Capture. Focus: The caller's side of the return contract. Result capture pattern: type variable = MethodCall(args). The variable type must match the method's return type. Captured results can be used in arithmetic, conditions, string interpolation, or as arguments to other methods. Inline calls (using the method call directly in an expression) are valid but less debuggable. Chaining: passing one method's return as an argument to another. Separation of concerns: methods compute, callers decide how to display. Discarding a return value (calling without assignment) is legal but wasteful.",
   'week-11-lab': "Week 11 Lab: The Calculation Engine. Students build three return-type methods: static int CalculateArea(int length, int width) — returns length * width, static double CelsiusToFahrenheit(double celsius) — returns (celsius * 9.0 / 5.0) + 32.0, static string FormatFullName(string firstName, string lastName) — returns 'LastName, FirstName' format. Each method must be called at least twice with different arguments. All return values must be captured in variables. Methods must NOT contain Console.WriteLine — Main handles all display. Separation of concerns enforced.",
   'week-11-homework': "Week 11 Homework: Return Values and Result Capture Reflection. Students must explain: (1) the return contract — what the return type promises, what the return keyword does (exit + deliver), what happens if return is missing; (2) void vs typed return — when to use each, example of a task requiring a return value; (3) result capture pattern and separation of concerns — why returning is better than printing, how it enables reusability.",
+
+  // Week 12
+  'week-12': "Week 12: Custom Data Types & Classes. Students learn to define their own data types using the class keyword. A class is a blueprint — it describes what properties the type holds. The new keyword creates an object (instance) from the class. Each object is independent. The dot operator accesses properties: object.Property. Access modifiers: public (accessible anywhere), private (only inside the class). Auto-implemented properties: public string Name { get; set; }. Fields vs properties. Default values: string → null, int → 0. Reference types: assignment copies the reference, not the object.",
+  'week-12-lesson-1': "Week 12 Section 12.1: The Class Blueprint. Focus: Defining custom data types with the class keyword. Access modifiers (public/private). Fields vs properties — properties with { get; set; } are preferred in modern C#. Auto-implemented properties generate a hidden backing field. PascalCase for class and property names. The class defines the type but does NOT create data — no object exists until you use new. Private is the default access modifier in C#. Encapsulation: the class controls access to its own data.",
+  'week-12-lesson-2': "Week 12 Section 12.2: Object Instances. Focus: Creating objects with the new keyword. new allocates memory, initializes defaults, returns a reference. The dot operator reads and writes properties: student.Name = 'Ada' (write), Console.WriteLine(student.Name) (read). Multiple instances from one class are independent — changing s1.Name does not affect s2. Reference types vs value types: assignment of a reference type copies the reference, not the object. Default values: string → null, int → 0, double → 0.0, bool → false. Objects can be passed to methods as parameters.",
+  'week-12-lab': "Week 12 Lab: The Data Architect. Students define two classes: Student (Name string, Id int, Gpa double) and Course (Title string, Instructor string, Credits int). All properties are public auto-implemented with { get; set; }. Create at least 3 Student objects and 2 Course objects using new. Set all properties via dot operator. Write a static void DisplayStudent(Student s) method. Display all objects with all properties. No loose variables — all data in objects. K&R brace style.",
+  'week-12-homework': "Week 12 Homework: Class Design and Object Architecture Reflection. Students must explain: (1) class as blueprint — what the class definition does vs what new does, why class Student { } creates no data, what happens in memory with new; (2) properties and access control — fields vs auto-implemented properties, why properties are preferred, role of private modifier; (3) objects and dot operator — read/write pattern, independent instances, code organization benefits of objects vs loose variables.",
 
   // Week 9
   'week-09': "Week 9: For Loops — counter-controlled iteration. The for loop has three clauses: (initializer; condition; iterator). Students learn to use the index variable to drive logic and build accumulation patterns. Key failure point: the off-by-one error (wrong boundary or wrong starting value). Accumulator pattern: declare sum = 0 before the loop. CRITICAL: cast to (double) before dividing for averages. Nested for loops for two-dimensional output (Stage III of Boss Fight II).",

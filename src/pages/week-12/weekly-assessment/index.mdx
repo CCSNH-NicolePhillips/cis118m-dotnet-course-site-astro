@@ -1,0 +1,181 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 12 • Technical Assessment"
+---
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Week 12 Technical Assessment
+
+<DueDateBanner week={12} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong> — keep trying until you master it!</li>
+    <li><strong>Scoring:</strong> Your highest score will be recorded</li>
+    <li><strong>Passing:</strong> 70% required to pass</li>
+    <li><strong>Time:</strong> No time limit — take your time to think</li>
+    <li><strong>Answers:</strong> Correct answers revealed after your final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz 
+  quizId="week-12-quiz"
+  title="Week 12: Custom Data Types and Classes (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does a class definition create in C#?",
+      options: [
+        "An object with data values stored in memory",
+        "A new custom data type — a blueprint for objects",
+        "A variable that holds a string value",
+        "A method that returns a value to the caller"
+      ],
+      correctAnswer: "A new custom data type — a blueprint for objects",
+      explanation: "A class definition creates a new data type (a blueprint). No object or data exists until you use the 'new' keyword to instantiate the class. The class describes WHAT the type contains; the object IS the actual data."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the 'new' keyword do?",
+      options: [
+        "It defines a new class",
+        "It deletes an existing object",
+        "It creates an object (instance) from a class and allocates memory for its properties",
+        "It makes a property public"
+      ],
+      correctAnswer: "It creates an object (instance) from a class and allocates memory for its properties",
+      explanation: "The 'new' keyword constructs a new object in memory from the class blueprint. It allocates space for all properties, initializes them to default values, and returns a reference to the new object."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What is the purpose of the dot operator (.) in 'student.Name = \"Ada\";'?",
+      options: [
+        "It creates a new property called Name",
+        "It accesses the Name property of the student object to write a value",
+        "It converts the student object to a string",
+        "It defines the Student class"
+      ],
+      correctAnswer: "It accesses the Name property of the student object to write a value",
+      explanation: "The dot operator accesses a member (property or method) of an object. On the left side of the assignment operator, it writes a value to the property. On the right side, it reads the property value."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What does '{ get; set; }' do in the declaration 'public string Name { get; set; }'?",
+      options: [
+        "It creates a method named get and a method named set",
+        "It makes the property auto-implemented — the compiler generates a backing field automatically",
+        "It makes the property read-only",
+        "It assigns a default value to the property"
+      ],
+      correctAnswer: "It makes the property auto-implemented — the compiler generates a backing field automatically",
+      explanation: "Auto-implemented properties use { get; set; } to tell the compiler to generate a hidden backing field. 'get' allows reading the property value and 'set' allows writing it. This is the standard practice in modern C#."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "What is the difference between 'public' and 'private' access modifiers?",
+      options: [
+        "public is for strings; private is for integers",
+        "public members are accessible from anywhere; private members are accessible only inside the class itself",
+        "public members are faster; private members are slower",
+        "There is no difference — they are interchangeable"
+      ],
+      correctAnswer: "public members are accessible from anywhere; private members are accessible only inside the class itself",
+      explanation: "The 'public' modifier allows access from any code — including Main and other classes. The 'private' modifier restricts access to the class body only. Code outside the class cannot read or write private members."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "If you create two Student objects (s1 and s2) from the same class, what happens when you change s1.Name?",
+      options: [
+        "Both s1.Name and s2.Name change because they share the same class",
+        "Only s1.Name changes — each object carries its own independent data",
+        "The compiler produces an error",
+        "The class definition is modified"
+      ],
+      correctAnswer: "Only s1.Name changes — each object carries its own independent data",
+      explanation: "Each 'new Student()' creates a separate, independent object in memory. Changing a property on s1 has no effect on s2. They share the same blueprint (class) but each object holds its own copy of the data."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "What is the default value of a string property in a newly created object?",
+      options: [
+        "An empty string (\"\")",
+        "The word \"default\"",
+        "null (no value assigned)",
+        "0"
+      ],
+      correctAnswer: "null (no value assigned)",
+      explanation: "String properties default to null — meaning no value has been assigned. Null is not the same as an empty string. You must assign a meaningful value to string properties after creating the object."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What is the default value of an int property in a newly created object?",
+      options: [
+        "null",
+        "-1",
+        "0",
+        "The property has no default — it causes an error if not set"
+      ],
+      correctAnswer: "0",
+      explanation: "Integer properties (and other numeric types) default to 0 when an object is created with 'new'. Boolean properties default to false. String and other reference types default to null."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Why are classes useful compared to using separate variables for each piece of data?",
+      options: [
+        "Classes make the program run faster",
+        "Classes group related data into a single unit, preventing mix-ups and scaling cleanly to multiple records",
+        "Classes are required by the compiler — variables alone do not work",
+        "Classes automatically print data to the console"
+      ],
+      correctAnswer: "Classes group related data into a single unit, preventing mix-ups and scaling cleanly to multiple records",
+      explanation: "With separate variables, a student requires three unconnected variables (name, id, gpa). Adding a second student doubles the variable count and risks mixing up values. A class bundles related data into one object — creating another student is just 'new Student()'."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "Given 'Student b = a;' where 'a' is an existing Student object, what does 'b' hold?",
+      options: [
+        "A completely independent copy of the Student object",
+        "A reference (pointer) to the same Student object that 'a' points to",
+        "The string value of the student's name",
+        "Nothing — the assignment fails because classes cannot be assigned"
+      ],
+      correctAnswer: "A reference (pointer) to the same Student object that 'a' points to",
+      explanation: "Classes are reference types. Assignment copies the reference, not the object. Both 'a' and 'b' now point to the same Student object in memory. Changing the object through 'b' is visible through 'a' and vice versa."
+    }
+  ]}
+/>
+
+<style>{`
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+
+  body[data-theme="light"] .mission-brief { background: linear-gradient(135deg, rgba(78,201,176,0.06) 0%, rgba(107,159,255,0.06) 100%) !important; }
+  body[data-theme="light"] .mission-brief h2 { color: #1a8a6e !important; }
+`}</style>

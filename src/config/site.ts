@@ -129,12 +129,13 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection 11 (Graded)', href: '/week-11/homework/' },
       { title: 'Weekly Assessment (Graded)', href: '/week-11/weekly-assessment/' }
     ] },
-  { slug: '12', title: 'Week 12: Array Architectures', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [
+  { slug: '12', title: 'Week 12: Custom Data Types & Classes', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-12/' },
-      { title: '12.1 Lesson 1', href: '/week-12/lesson-1/' },
-      { title: '12.2 Lesson 2', href: '/week-12/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-12/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-12/homework/' }
+      { title: '12.1 The Class Blueprint', href: '/week-12/lesson-1/' },
+      { title: '12.2 Object Instances', href: '/week-12/lesson-2/' },
+      { title: 'Lab: The Data Architect (Graded)', href: '/week-12/lab/' },
+      { title: 'Technical Reflection 12 (Graded)', href: '/week-12/homework/' },
+      { title: 'Weekly Assessment (Graded)', href: '/week-12/weekly-assessment/' }
     ] },
   { slug: '13', title: 'Week 13: Lists & Collections', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-13/' },

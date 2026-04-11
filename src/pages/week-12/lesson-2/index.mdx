@@ -1,0 +1,509 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 12.2 • Object Instances"
+description: "Create objects from class blueprints using the new keyword — reference types, the dot operator, and independent object state"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 12.2: Object Instances
+
+<div class="section-header">
+  <div class="section-badge">From Blueprint to Reality</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>Constructing Objects with new</h2>
+      <p>
+        Section 12.1 defined the blueprint — a class that describes what data a type holds. But a blueprint is not a building. To create actual data, you must <strong>instantiate</strong> the class: construct an object using the <code>new</code> keyword. Each object is an independent copy of the blueprint's structure, carrying its own values for every property. Changing one object does not affect another — even though they were built from the same class.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2012/12.2/Header%20Image.png"
+        alt="Diagram showing one Student class blueprint on the left with three separate Student objects on the right, each carrying different Name, Id, and Gpa values, with arrows from blueprint to each object labeled 'new'"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: Object Instantiation
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on object creation — the new keyword, the dot operator, reference types, and how multiple objects maintain independent state from the same class blueprint.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+      title="12.2: Object Instances — Creating and Using Objects in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 12.2 Object Instances — new keyword, dot operator, and independent object state in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## The new Keyword: Creating an Object
+
+The `new` keyword constructs an object from a class blueprint. It allocates memory for the object's properties and returns a reference to that memory:
+
+```csharp
+Student ada = new Student();
+```
+
+This line does three things:
+1. **Allocates memory** for a new Student object with space for Name, Id, and Gpa
+2. **Initializes properties** to their default values (`null` for strings, `0` for numbers)
+3. **Returns a reference** — `ada` now points to the newly created Student object
+
+<AnnotatedCode
+  title="Creating an Object Instance"
+  tokens={[
+    { text: "Student", type: "keyword", tooltip: "TYPE: the class name. This tells the compiler what kind of object the variable will hold." },
+    { text: " ", type: "punctuation" },
+    { text: "ada", type: "string", tooltip: "VARIABLE NAME: a reference that points to the Student object in memory. Lowercase camelCase by convention for local variables." },
+    { text: " = ", type: "punctuation", tooltip: "ASSIGNMENT: stores the reference returned by 'new' into the variable." },
+    { text: "new", type: "keyword", tooltip: "NEW KEYWORD: constructs a new object in memory. Allocates space for all properties defined in the Student class." },
+    { text: " ", type: "punctuation" },
+    { text: "Student", type: "keyword", tooltip: "CONSTRUCTOR CALL: creates an instance of the Student type. The parentheses invoke the default constructor." },
+    { text: "()", type: "punctuation", tooltip: "EMPTY PARENTHESES: no arguments passed to the constructor. Properties start at their default values." },
+    { text: ";", type: "punctuation", tooltip: "Statement complete. 'ada' now references a Student object with default values: Name = null, Id = 0, Gpa = 0.0" }
+  ]}
+/>
+
+---
+
+## The Dot Operator: Accessing Object State
+
+Once you have an object, the **dot operator** (`.`) lets you read and write its properties:
+
+```csharp
+Student ada = new Student();
+
+// WRITE: assign values to properties
+ada.Name = "Ada Lovelace";
+ada.Id = 1001;
+ada.Gpa = 3.9;
+
+// READ: access property values
+Console.WriteLine(ada.Name);   // Output: Ada Lovelace
+Console.WriteLine(ada.Id);     // Output: 1001
+Console.WriteLine(ada.Gpa);    // Output: 3.9
+```
+
+The dot operator follows the pattern: `objectVariable.PropertyName`. On the left side of `=`, it writes a value. On the right side (or in an expression), it reads the value.
+
+<div class="architect-rule">
+
+### Architect's Rule: The Dot Operator Is the Access Gateway
+
+Every interaction with an object goes through the dot operator. Reading data: `student.Name`. Writing data: `student.Name = "Ada"`. Calling methods: `account.Deposit(100)`. The dot operator is the single point of access — the object's public interface. If a property is `private`, the dot operator from outside the class will not reach it. The access modifier controls what the dot operator can access.
+
+</div>
+
+---
+
+## Multiple Instances: Independent Objects from One Blueprint
+
+The power of classes emerges when you create **multiple objects** from the same blueprint. Each object carries its own independent copy of the data:
+
+```csharp
+Student student1 = new Student();
+student1.Name = "Ada Lovelace";
+student1.Id = 1001;
+student1.Gpa = 3.9;
+
+Student student2 = new Student();
+student2.Name = "Alan Turing";
+student2.Id = 1002;
+student2.Gpa = 3.7;
+
+Student student3 = new Student();
+student3.Name = "Grace Hopper";
+student3.Id = 1003;
+student3.Gpa = 4.0;
+
+Console.WriteLine($"{student1.Name}: {student1.Gpa}");  // Ada Lovelace: 3.9
+Console.WriteLine($"{student2.Name}: {student2.Gpa}");  // Alan Turing: 3.7
+Console.WriteLine($"{student3.Name}: {student3.Gpa}");  // Grace Hopper: 4.0
+```
+
+Three objects, one class. Each `new Student()` creates a separate object in memory. Changing `student1.Gpa` does not affect `student2.Gpa` — they are independent instances.
+
+<img src="/media/week%2012/12.2/Independent%20Instances.png" alt="Independent Instances — one Student class blueprint at the top with three separate Student objects below, each in its own memory box with different Name, Id, and Gpa values, showing that modifying one object does not affect the others" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Reference Types vs Value Types
+
+Objects created from classes are **reference types**. The variable does not hold the object directly — it holds a **reference** (a pointer) to where the object lives in memory:
+
+```csharp
+Student a = new Student();
+a.Name = "Ada";
+
+Student b = a;        // b points to the SAME object as a
+b.Name = "Changed";
+
+Console.WriteLine(a.Name);  // Output: Changed — both variables reference the same object
+```
+
+This is different from value types like `int` and `double`, where assignment creates an independent copy:
+
+```csharp
+int x = 10;
+int y = x;   // y gets a COPY of the value
+y = 99;
+Console.WriteLine(x);  // Output: 10 — x is unchanged
+```
+
+<img src="/media/week%2012/12.2/Reference%20vs%20Value.png" alt="Reference vs Value Type assignment — left side shows value type assignment where int y = x copies the value into a separate memory box, right side shows reference type assignment where Student b = a creates two variable names pointing to the same single object in memory" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Value Types (int, double, bool)</h3>
+    <p>Assignment copies the value. Each variable holds its own independent data. Changing one does not affect the other.</p>
+    <code>int x = 10; int y = x; y = 99; // x is still 10</code>
+  </div>
+  <div class="component-card">
+    <h3>Reference Types (class objects)</h3>
+    <p>Assignment copies the reference. Both variables point to the <strong>same object</strong> in memory. Changing the object through one variable is visible through the other.</p>
+    <code>Student a = new Student(); Student b = a; // same object</code>
+  </div>
+</div>
+
+<div class="from-the-field">
+  <div class="field-header">
+    <h3>From the Field</h3>
+  </div>
+  <div class="field-content">
+    <p><strong>The reference type behavior catches every beginner at least once.</strong> When you write <code>Student b = a;</code>, you are not creating a new student — you are creating a second name tag that points to the same student. Both <code>a</code> and <code>b</code> see the same Name, the same Id, the same Gpa. If you need an independent copy, you must create a new object with <code>new Student()</code> and manually copy each property value. Understanding this distinction is critical for debugging.</p>
+  </div>
+</div>
+
+---
+
+## Default Values
+
+When you create an object with `new`, all properties start at their type's default value:
+
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">Property Type</th><th scope="col">Default Value</th><th scope="col">Example</th></tr>
+</thead>
+<tbody>
+<tr><td><code>string</code></td><td><code>null</code> (no value)</td><td><code>student.Name</code> is <code>null</code> until assigned</td></tr>
+<tr><td><code>int</code></td><td><code>0</code></td><td><code>student.Id</code> is <code>0</code> until assigned</td></tr>
+<tr><td><code>double</code></td><td><code>0.0</code></td><td><code>student.Gpa</code> is <code>0.0</code> until assigned</td></tr>
+<tr><td><code>bool</code></td><td><code>false</code></td><td><code>product.InStock</code> is <code>false</code> until assigned</td></tr>
+<tr><td><code>decimal</code></td><td><code>0.0m</code></td><td><code>product.Price</code> is <code>0.0m</code> until assigned</td></tr>
+</tbody>
+</table>
+</div>
+
+Always assign meaningful values to properties after creating an object. Relying on default values (especially `null` for strings) leads to runtime errors.
+
+---
+
+## Passing Objects to Methods
+
+Objects can be passed as arguments to methods, just like any other type. The method receives a reference to the object — not a copy:
+
+```csharp
+Student ada = new Student();
+ada.Name = "Ada Lovelace";
+ada.Id = 1001;
+ada.Gpa = 3.9;
+
+DisplayStudent(ada);
+
+static void DisplayStudent(Student s) {
+    Console.WriteLine($"Name: {s.Name}");
+    Console.WriteLine($"ID:   {s.Id}");
+    Console.WriteLine($"GPA:  {s.Gpa}");
+}
+
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+```
+
+Instead of passing three separate parameters (`string name, int id, double gpa`), you pass one `Student` object. The method accesses the data through the dot operator. This is a direct improvement over the parameter-heavy methods from earlier weeks.
+
+---
+
+<DeepDiveTabs
+  title="Object Instances in Professional Systems"
+  tabs={[
+    {
+      id: "web-apps",
+      label: "Web Applications",
+      content: "Every web request in a professional C# application creates objects. When a user submits a form, the framework creates a User object from the form data. When the server queries a database, each row becomes an object — a Product, an Order, a Customer. The controller method receives these objects, processes them, and returns response objects. The entire request-response cycle is a chain of object creation, manipulation, and serialization.",
+      keyPoints: ["Form data becomes objects automatically", "Database rows map to class instances", "Request-response cycle is object creation and processing"]
+    },
+    {
+      id: "game-dev",
+      label: "Game Development",
+      content: "Games create hundreds or thousands of objects at runtime. Each enemy is an instance of an Enemy class. Each bullet is an instance of a Projectile class. Each item in the inventory is an instance of an Item class. The game loop iterates through these objects every frame — updating positions, checking collisions, rendering sprites. The class defines the behavior; each object carries its own state (position, health, speed).",
+      keyPoints: ["Each game entity is a class instance", "Hundreds of independent objects at runtime", "Each object carries its own state"]
+    },
+    {
+      id: "data-processing",
+      label: "Data Processing",
+      content: "Data pipelines read CSV files, JSON feeds, or API responses and convert each record into an object. A payroll system reads employee records and creates Employee objects. A weather service parses JSON and creates WeatherReport objects. Once the data is in objects, the program can sort, filter, aggregate, and transform it using strongly-typed properties instead of raw string parsing.",
+      keyPoints: ["Raw data is converted to typed objects", "Enables sorting, filtering, and aggregation", "Type safety prevents data handling errors"]
+    },
+    {
+      id: "testing",
+      label: "Testing",
+      content: "Unit tests create objects in controlled scenarios. To test a GPA calculation method, you create a Student object with known values and verify the result. To test an order total, you create Product and Order objects with specific prices and quantities. Objects make tests readable: the test data is structured and named, not a series of anonymous numbers and strings passed as parameters.",
+      keyPoints: ["Tests create objects with known state", "Object properties make test data readable", "Each test scenario uses independent objects"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Multiple Objects from One Blueprint
+
+Create multiple Student objects and display their data:
+
+<div class="from-the-field">
+<div class="field-header">Editor Tabs</div>
+<div class="field-content">
+The editor below uses **file tabs**. Your main code is in the **Program.cs** tab. The `Student` class definition is in the **Student.cs** tab. Click the tabs to switch between them. You can also click **+ Add Class** to create additional class files.
+</div>
+</div>
+
+<TryItNowRunner
+  starterId="week-12-lesson-2"
+  height={580}
+  files={[
+    { name: "Program.cs", content: `// Create two students
+Student s1 = new Student();
+s1.Name = "Ada Lovelace";
+s1.Id = 1001;
+s1.Gpa = 3.9;
+
+Student s2 = new Student();
+s2.Name = "Alan Turing";
+s2.Id = 1002;
+s2.Gpa = 3.7;
+
+Console.WriteLine(\$"{s1.Name} (ID: {s1.Id}) -- GPA: {s1.Gpa}");
+Console.WriteLine(\$"{s2.Name} (ID: {s2.Id}) -- GPA: {s2.Gpa}");
+
+// TODO: Create a third student, set all three properties, and display using Console.WriteLine
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="Create a third Student object (s3) with different values for Name, Id, and Gpa. Print the student's information using string interpolation in the same format as s1 and s2."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-12-lesson-2-check"
+  title="Section 12.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does the 'new' keyword do?",
+      options: ["It defines a new class", "It creates an object (instance) from a class blueprint and allocates memory for it", "It deletes an existing object", "It makes a property public"],
+      correctAnswer: "It creates an object (instance) from a class blueprint and allocates memory for it",
+      explanation: "The 'new' keyword constructs a new object in memory based on the class definition. It allocates space for all properties, initializes them to default values, and returns a reference to the new object."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does the dot operator (.) do with an object?",
+      options: ["It creates a new object", "It deletes a property from the object", "It accesses (reads or writes) a property or method of the object", "It converts the object to a string"],
+      correctAnswer: "It accesses (reads or writes) a property or method of the object",
+      explanation: "The dot operator is the access gateway to an object's public members. Use it to read (student.Name), write (student.Name = 'Ada'), or call methods (account.Deposit(100)) on the object."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "If you create two Student objects (s1 and s2) from the same class, what happens when you change s1.Name?",
+      options: ["Both s1.Name and s2.Name change", "Only s1.Name changes — s2 is an independent object", "The compiler produces an error", "The class definition changes"],
+      correctAnswer: "Only s1.Name changes — s2 is an independent object",
+      explanation: "Each 'new Student()' creates a separate, independent object in memory. Changing a property on s1 has no effect on s2. They share the same blueprint (class) but hold their own data."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "What is the default value of a string property in a newly created object?",
+      options: ["An empty string \"\"", "The word 'default'", "null (no value)", "0"],
+      correctAnswer: "null (no value)",
+      explanation: "String properties default to null — not an empty string. Null means 'no value assigned.' You should always assign meaningful values to string properties after creating an object to avoid null reference errors."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>You can now define classes and create objects. Time to apply both skills in the lab.</p>
+  <a href="/week-12/lab/" class="vscode-button">Continue to Lab 12: The Data Architect &rarr;</a>
+</div>
+
+<style>{`
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: rgba(107, 159, 255, 0.15);
+    border: 1px solid rgba(107, 159, 255, 0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6b9fff;
+  }
+
+  .section-time {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .concept-header { margin: 2rem 0; }
+
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .header-text { flex: 1; min-width: 280px; }
+  .header-text h2 { margin-top: 0; color: #6b9fff; }
+  .header-image { flex: 0 0 320px; }
+
+  .video-section { margin: 2rem 0; }
+  .video-intro { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .styled-table-container { overflow-x: auto; margin: 1.5rem 0; }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .styled-table-container th,
+  .styled-table-container td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .styled-table-container th {
+    background: rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+
+  .component-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .component-card h3 { margin-top: 0; font-size: 1rem; }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,152,0,0.05));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .architect-rule h3 { margin-top: 0; color: #ffc107; }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(107,159,255,0.1), rgba(107,159,255,0.05));
+    border-left: 4px solid #6b9fff;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .from-the-field h3 { margin-top: 0; color: #6b9fff; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78,201,176,0.1) 0%, rgba(107,159,255,0.1) 100%);
+    border: 1px solid rgba(78,201,176,0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255,255,255,0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .section-badge { color: #3d6dc9 !important; }
+  body[data-theme="light"] .header-text h2 { color: #3d6dc9 !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255,193,7,0.08), rgba(255,152,0,0.04)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b08800 !important; }
+  body[data-theme="light"] .from-the-field { background: linear-gradient(135deg, rgba(107,159,255,0.08), rgba(107,159,255,0.04)) !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78,201,176,0.08) 0%, rgba(107,159,255,0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  @media (max-width: 768px) {
+    .header-content { flex-direction: column; }
+    .header-image { flex: 1; }
+  }
+`}</style>

@@ -1,0 +1,412 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 12 • The Data Architect"
+description: "Define custom classes, create multiple object instances, assign properties, and display formatted records — applying class blueprints and the dot operator"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 12: The Data Architect
+
+<DueDateBanner week={12} type="Lab" />
+
+**Time: 60 minutes**
+**Points: 100**
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>12.3: Class Definition and Object Instantiation</h2>
+      <p>
+        You have learned how to define classes with properties and how to create objects using the <code>new</code> keyword. This lab applies both skills. You will design two custom data types — <code>Student</code> and <code>Course</code> — and instantiate multiple objects from each. Every property must be set via the dot operator, and every object must be displayed using formatted output. No raw loose variables — all data lives inside objects.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2012/12.3/Header%20Image.png"
+        alt="Architectural diagram showing two class blueprints (Student and Course) with multiple object instances flowing from each, each instance displaying distinct property values"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <h3>Academic Integrity Protocol — Lab 12</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a graded lab assignment. It must represent your own individual engineering work. The following active monitoring is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged with timestamps and byte counts.</li>
+      <li><strong>Active edit time:</strong> The total duration of active coding sessions is measured and reported.</li>
+      <li><strong>AI pattern scanning:</strong> Submitted code is scanned for AI-specific syntax patterns and structural signatures. Flagged submissions are archived in the course integrity database for Instructor Dashboard review.</li>
+    </ul>
+    <p>
+      Suspiciously low edit time combined with correct output is a flag. Submissions that show paste-only activity with no edit history will be held for review. Use the AI Tutor for guidance — not for solutions.
+    </p>
+  </div>
+</div>
+
+---
+
+## Mission Objective
+
+Build a **Data Architect** program that defines two custom classes and creates multiple objects from each. You must demonstrate the ability to:
+
+1. Define a class with auto-implemented properties (`{ get; set; }`)
+2. Use `public` access modifiers on all properties
+3. Create objects with the `new` keyword
+4. Set property values using the dot operator
+5. Display formatted object data using string interpolation
+
+Your program will contain **two class definitions** and at least **five total object instances** (three Students and two Courses). All data must live inside objects — no loose variables for student names, IDs, or course titles.
+
+---
+
+## Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Requirement</th>
+        <th scope="col">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Student Class</strong></td>
+        <td>Define a class named <code>Student</code> with three auto-implemented properties: <code>public string Name &#123; get; set; &#125;</code>, <code>public int Id &#123; get; set; &#125;</code>, and <code>public double Gpa &#123; get; set; &#125;</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Course Class</strong></td>
+        <td>Define a class named <code>Course</code> with three auto-implemented properties: <code>public string Title &#123; get; set; &#125;</code>, <code>public string Instructor &#123; get; set; &#125;</code>, and <code>public int Credits &#123; get; set; &#125;</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Student Instances</strong></td>
+        <td>Create at least <strong>3</strong> Student objects using <code>new Student()</code>. Set all three properties on each object via the dot operator. Each student must have different values.</td>
+      </tr>
+      <tr>
+        <td><strong>Course Instances</strong></td>
+        <td>Create at least <strong>2</strong> Course objects using <code>new Course()</code>. Set all three properties on each object via the dot operator. Each course must have different values.</td>
+      </tr>
+      <tr>
+        <td><strong>Formatted Display</strong></td>
+        <td>Display each object's data using <code>Console.WriteLine</code> with string interpolation. Include all properties in the output for every object.</td>
+      </tr>
+      <tr>
+        <td><strong>Display Method</strong></td>
+        <td>Write a <code>static void DisplayStudent(Student s)</code> method that prints a formatted Student record. Call it for each Student object instead of writing separate <code>Console.WriteLine</code> calls for each.</td>
+      </tr>
+      <tr>
+        <td><strong>No loose variables</strong></td>
+        <td>All data must be stored as object properties. Do NOT create separate <code>string name</code>, <code>int id</code>, or <code>double gpa</code> variables outside of objects.</td>
+      </tr>
+      <tr>
+        <td><strong>Brace style</strong></td>
+        <td>K&amp;R — opening brace on same line as the class definition, method signature, and control structures</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Class Definitions
+
+Your required class definitions — do not change the property names or types:
+
+```csharp
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+
+class Course {
+    public string Title { get; set; }
+    public string Instructor { get; set; }
+    public int Credits { get; set; }
+}
+```
+
+---
+
+## Display Method Signature
+
+Your required display method for Student objects:
+
+```csharp
+static void DisplayStudent(Student s) {
+    // Print all three properties of the Student using string interpolation
+}
+```
+
+You may also write a `DisplayCourse(Course c)` method for Course objects, but this is optional.
+
+---
+
+## Object Creation Pattern
+
+Every object must follow this pattern — create with `new`, assign properties via dot operator:
+
+```csharp
+Student s1 = new Student();
+s1.Name = "Ada Lovelace";
+s1.Id = 1001;
+s1.Gpa = 3.9;
+DisplayStudent(s1);
+```
+
+Do NOT do this:
+
+```csharp
+// WRONG — loose variables, not using a class
+string name = "Ada Lovelace";
+int id = 1001;
+double gpa = 3.9;
+
+// WRONG — object created but properties never set
+Student s1 = new Student();
+Console.WriteLine(s1.Name);  // Prints nothing useful — Name is null
+```
+
+---
+
+## Expected Output Format
+
+Your output should display each object clearly. The exact formatting is flexible, but every property must appear. Example:
+
+```
+--- Student Records ---
+Name: Ada Lovelace | ID: 1001 | GPA: 3.9
+Name: Alan Turing  | ID: 1002 | GPA: 3.7
+Name: Grace Hopper | ID: 1003 | GPA: 4.0
+
+--- Course Catalog ---
+Course: Intro to C# | Instructor: Prof. Smith | Credits: 3
+Course: Data Structures | Instructor: Prof. Johnson | Credits: 4
+```
+
+---
+
+## Starter Code
+
+Use this as your starting point:
+
+<div class="architect-rule">
+
+### Multi-File Editor
+
+This editor has **three tabs**: **Program.cs** (your main logic), **Student.cs**, and **Course.cs**. Click the tabs to switch between files. Write your main code in `Program.cs` -- the class definitions are already set up in their own tabs. Need another class? Click **+ Add Class**. When you click **Run**, all files are compiled together.
+
+</div>
+
+<TryItNowRunner
+  starterId="week-12-lab"
+  height={650}
+  files={[
+    { name: "Program.cs", content: `// --- Student Records ---
+Console.WriteLine("--- Student Records ---");
+
+Student s1 = new Student();
+s1.Name = "Ada Lovelace";
+s1.Id = 1001;
+s1.Gpa = 3.9;
+DisplayStudent(s1);
+
+// TODO: Create Student s2 and s3 with different values
+// TODO: Call DisplayStudent for each
+
+// --- Course Catalog ---
+Console.WriteLine();
+Console.WriteLine("--- Course Catalog ---");
+
+// TODO: Create Course c1 and c2
+// TODO: Display each course's properties
+
+// --- Methods ---
+static void DisplayStudent(Student s) {
+    Console.WriteLine(\$"Name: {s.Name} | ID: {s.Id} | GPA: {s.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` },
+    { name: "Course.cs", content: `class Course
+{
+    public string Title { get; set; }
+    public string Instructor { get; set; }
+    public int Credits { get; set; }
+}` }
+  ]}
+  instructions="Complete the program: create 2 more Student objects and 2 Course objects. Set all properties via dot operator and display each using Console.WriteLine with string interpolation."
+  enableStdin={false}
+/>
+
+---
+
+## Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Criterion</th>
+        <th scope="col">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Student class</strong> — Defines class with 3 auto-implemented properties (Name, Id, Gpa) with correct types and public access</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>Course class</strong> — Defines class with 3 auto-implemented properties (Title, Instructor, Credits) with correct types and public access</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>Student instances</strong> — Creates at least 3 Student objects with <code>new</code>, sets all properties via dot operator with different values</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>Course instances</strong> — Creates at least 2 Course objects with <code>new</code>, sets all properties via dot operator with different values</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>DisplayStudent method</strong> — Defines <code>static void DisplayStudent(Student s)</code> that prints all Student properties using string interpolation</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>Formatted output</strong> — All objects displayed with all properties visible. Uses string interpolation. Output is organized and readable.</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td><strong>Code compiles, runs, K&R braces</strong> — Code compiles and runs without errors. K&R brace style used. No loose variables for data.</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Reference Material
+
+If you need to review, revisit these sections:
+
+- [Section 12.1: The Class Blueprint](/week-12/lesson-1/) — class keyword, access modifiers, fields vs properties, auto-implemented properties
+- [Section 12.2: Object Instances](/week-12/lesson-2/) — new keyword, dot operator, multiple instances, reference types
+
+---
+
+<div class="next-section">
+  <p>Lab submitted? Continue to the Technical Reflection for Week 12.</p>
+  <a href="/week-12/homework/" class="vscode-button">Continue to Homework 12 &rarr;</a>
+</div>
+
+<style>{`
+  .concept-header { margin: 2rem 0; }
+
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .header-text { flex: 1; min-width: 280px; }
+  .header-text h2 { margin-top: 0; color: #4ec9b0; }
+  .header-image { flex: 0 0 320px; }
+
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .telemetry-content li { margin: 0.25rem 0; }
+
+  .styled-table-container { overflow-x: auto; margin: 1.5rem 0; }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .styled-table-container th,
+  .styled-table-container td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .styled-table-container th {
+    background: rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78,201,176,0.1) 0%, rgba(107,159,255,0.1) 100%);
+    border: 1px solid rgba(78,201,176,0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255,255,255,0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .header-text h2 { color: #1a8a6e !important; }
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78,201,176,0.08) 0%, rgba(107,159,255,0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  @media (max-width: 768px) {
+    .header-content { flex-direction: column; }
+    .header-image { flex: 1; }
+  }
+`}</style>

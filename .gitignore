@@ -3,6 +3,7 @@ dist
 /scripts
 .astro
 .DS_Store
+IMAGE-PROMPTS-*.md
 .env
 .env.*
 

@@ -1,0 +1,493 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 12.1 • The Class Blueprint"
+description: "Define custom data types with the class keyword — access modifiers, fields, and properties as the architectural foundation of object-oriented C#"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 12.1: The Class Blueprint
+
+<div class="section-header">
+  <div class="section-badge">The Architectural Drawing</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>From Loose Variables to Structured Types</h2>
+      <p>
+        Until now, modeling a student required three separate variables — <code>string name</code>, <code>int id</code>, <code>double gpa</code>. They are unconnected: nothing in the code binds them together as "one student." If you need two students, you need six variables. Ten students, thirty variables. This does not scale, and it is error-prone — nothing prevents you from accidentally pairing one student's name with another student's GPA.
+      </p>
+      <p>
+        A <strong>class</strong> solves this. It defines a new data type that groups related values into a single unit. Once you define a <code>Student</code> class, every <code>Student</code> object automatically carries its own name, ID, and GPA — bundled together, impossible to mix up.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2012/12.1/Header%20Image.png"
+        alt="Diagram showing three separate variables (name, id, gpa) on the left transforming into a single Student class blueprint on the right, with labeled fields grouped inside a box"
+        style="max-width: 100%; border-radius: 10px;"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Technical Briefing: The Class Keyword
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on the class keyword — how to define a custom data type, declare properties, and control access with public and private modifiers.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/VIDEO_ID_HERE"
+      title="12.1: The Class Blueprint — Defining Custom Data Types in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 12.1 The Class Blueprint — defining custom data types with class, properties, and access modifiers in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## Defining a Class: The Syntax
+
+A class definition starts with the `class` keyword followed by a PascalCase name. Inside the curly braces, you declare the data the type will hold:
+
+```csharp
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+```
+
+This code does not create a student. It defines what a `Student` **is** — a data type with three properties. Think of it as an architectural blueprint: the blueprint describes the building, but no building exists until someone constructs one.
+
+<AnnotatedCode
+  title="Anatomy of a Class Definition"
+  tokens={[
+    { text: "class", type: "keyword", tooltip: "CLASS KEYWORD: declares a new custom data type. Everything inside the braces defines the shape of this type." },
+    { text: " ", type: "punctuation" },
+    { text: "Student", type: "string", tooltip: "CLASS NAME: PascalCase by convention. This becomes a valid type name — you can now declare variables of type Student." },
+    { text: " {", type: "punctuation", tooltip: "Opening brace: the class body begins. All fields, properties, and methods for this type go inside." },
+    { text: "\n    public", type: "keyword", tooltip: "ACCESS MODIFIER: 'public' means this property can be read and written from outside the class — including from Main." },
+    { text: " ", type: "punctuation" },
+    { text: "string", type: "keyword", tooltip: "PROPERTY TYPE: this property holds a string value. The type follows the access modifier." },
+    { text: " ", type: "punctuation" },
+    { text: "Name", type: "string", tooltip: "PROPERTY NAME: PascalCase. This is the identifier used with the dot operator: student.Name" },
+    { text: " { get; set; }", type: "keyword", tooltip: "AUTO-IMPLEMENTED PROPERTY: the compiler generates a hidden backing field automatically. 'get' allows reading, 'set' allows writing." },
+    { text: "\n    public int Id { get; set; }", type: "keyword", tooltip: "Second property: an integer ID. Same pattern — public access, auto-implemented with get and set." },
+    { text: "\n    public double Gpa { get; set; }", type: "keyword", tooltip: "Third property: a double GPA. Each Student object will carry its own independent copy of Name, Id, and Gpa." },
+    { text: "\n}", type: "punctuation", tooltip: "Class body closes. The Student type is now defined and available for use anywhere in the program." }
+  ]}
+/>
+
+---
+
+## Access Modifiers: public vs private
+
+Access modifiers control **who can see and use** the members of a class. At the introductory level, you need two:
+
+<div class="styled-table-container">
+<table>
+<thead>
+<tr><th scope="col">Modifier</th><th scope="col">Visibility</th><th scope="col">When to Use</th></tr>
+</thead>
+<tbody>
+<tr><td><code>public</code></td><td>Accessible from anywhere — Main, other classes, other methods</td><td>Properties and methods that the outside world needs to read or call</td></tr>
+<tr><td><code>private</code></td><td>Accessible only inside the class itself</td><td>Internal data or helper logic that should not be exposed</td></tr>
+</tbody>
+</table>
+</div>
+
+```csharp
+class BankAccount {
+    public string Owner { get; set; }       // Anyone can read/write the owner name
+    private decimal balance;                 // Only the class itself can touch the balance
+
+    public decimal GetBalance() {            // Public method provides controlled access
+        return balance;
+    }
+
+    public void Deposit(decimal amount) {    // Public method modifies the private field
+        balance += amount;
+    }
+}
+```
+
+The `private` modifier is the default in C# — if you omit the access modifier, the member is private. This is an important safety mechanism: data that should not be changed directly from outside the class stays hidden behind `private`.
+
+<img src="/media/week%2012/12.1/Access%20Modifiers.png" alt="Access Modifiers diagram — a class box with two zones: a public zone at the top with properties visible to outside code through a green open gate, and a private zone at the bottom with fields behind a red locked gate, showing that Main can only reach the public members" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+<div class="architect-rule">
+
+### Architect's Rule: Start Private, Expose Only What Is Needed
+
+In professional software, the default posture is privacy. Every field starts as private. You expose a public interface — properties and methods — only for data that the outside world genuinely needs to access. This principle is called **encapsulation**: the class controls access to its own data. For this introductory course, most of your properties will be `public` with `{ get; set; }`, but understanding the role of `private` is essential for reading and reasoning about real-world code.
+
+</div>
+
+---
+
+## Fields vs Properties
+
+C# classes can hold data in two ways: **fields** and **properties**. Both store values, but they differ in how they control access:
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Fields</h3>
+    <p>Raw variables declared directly inside the class. No access control beyond the modifier. If a field is <code>public</code>, anyone can read or write it without restriction.</p>
+    <code>public string name;</code>
+    <p style="margin-top: 8px; font-size: 0.85rem; opacity: 0.7;">Direct access — no validation, no interception. Used for simple internal storage.</p>
+  </div>
+  <div class="component-card">
+    <h3>Properties</h3>
+    <p>Managed accessors with <code>get</code> and <code>set</code>. The property can include logic — validation on set, computation on get, or restricted access (read-only).</p>
+    <code>public string Name &#123; get; set; &#125;</code>
+    <p style="margin-top: 8px; font-size: 0.85rem; opacity: 0.7;">Controlled access — the class decides how data is read and written. Industry standard.</p>
+  </div>
+</div>
+
+<img src="/media/week%2012/12.1/Fields%20vs%20Properties.png" alt="Fields vs Properties comparison — left side shows a raw public field with direct uncontrolled access, right side shows an auto-implemented property with get and set accessors providing a controlled gateway to a hidden backing field" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+**In this course, use auto-implemented properties** (`{ get; set; }`) for all class data. This is the standard practice in modern C#. The compiler generates a hidden backing field automatically — you get the safety of a property without writing extra code.
+
+```csharp
+// PREFERRED: auto-implemented property
+public string Name { get; set; }
+
+// ALSO VALID but verbose: property with explicit backing field
+private string name;
+public string Name {
+    get { return name; }
+    set { name = value; }
+}
+```
+
+Both versions produce identical behavior. The auto-implemented version is shorter and cleaner — the compiler handles the backing field for you.
+
+---
+
+## Class Placement in Your Program
+
+For this course, define your classes **inside the same file as Main**, but **outside the Main method**. In C# 10+ with top-level statements, the class goes after your Main code:
+
+```csharp
+// Main code (top-level statements)
+Student s = new Student();
+s.Name = "Ada Lovelace";
+s.Id = 1001;
+s.Gpa = 3.9;
+Console.WriteLine($"{s.Name} (ID: {s.Id}) — GPA: {s.Gpa}");
+
+// Class definition — after the top-level statements
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+```
+
+The class definition can appear after the top-level statements. The compiler resolves types regardless of declaration order within the file.
+
+---
+
+## A Complete Example: Defining and Using a Class
+
+```csharp
+// Create a Product object and set its properties
+Product laptop = new Product();
+laptop.Name = "Developer Laptop";
+laptop.Price = 1299.99m;
+laptop.InStock = true;
+
+Console.WriteLine($"Product: {laptop.Name}");
+Console.WriteLine($"Price: {laptop.Price:C}");
+Console.WriteLine($"Available: {laptop.InStock}");
+
+// Class definition
+class Product {
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public bool InStock { get; set; }
+}
+```
+
+Output:
+```
+Product: Developer Laptop
+Price: $1,299.99
+Available: True
+```
+
+The `Product` class defines a type with three properties. The code in Main creates one `Product` object, assigns values via the dot operator, and displays them. The class is the blueprint — the object is the actual data.
+
+---
+
+<DeepDiveTabs
+  title="Classes in Professional Software"
+  tabs={[
+    {
+      id: "data-models",
+      label: "Data Models",
+      content: "Every application that stores or displays data uses classes to model its entities. An e-commerce system has Product, Customer, Order, and ShippingAddress classes. A school system has Student, Course, Instructor, and Enrollment classes. Each class defines one entity. Each object represents one specific instance of that entity. The class defines WHAT data the entity carries — the object holds the ACTUAL data for one specific record.",
+      keyPoints: ["Classes model real-world entities", "Each class defines one type of entity", "Objects hold actual data for one specific record"]
+    },
+    {
+      id: "encapsulation",
+      label: "Encapsulation",
+      content: "Encapsulation means a class controls access to its own data. Instead of exposing raw fields, the class provides properties and methods that enforce rules. A BankAccount class does not let outside code modify the balance directly — it provides a Deposit method that validates the amount before adding it. This prevents invalid states: a negative deposit, a balance below zero, or an unauthorized withdrawal. The class is the gatekeeper of its own data.",
+      keyPoints: ["Class controls access to its own data", "Properties and methods enforce business rules", "Prevents invalid state changes from outside code"]
+    },
+    {
+      id: "type-safety",
+      label: "Type Safety",
+      content: "Once you define a Student class, the compiler enforces type safety. You cannot accidentally assign a Product to a Student variable. You cannot call student.Price because Student has no Price property. The compiler catches these mistakes before the program runs. With loose variables, nothing prevents you from using the wrong variable — a student name where a product name was expected. Custom types eliminate this category of bugs entirely.",
+      keyPoints: ["Compiler enforces type correctness", "Cannot mix incompatible types", "Catches mistakes at compile time, not runtime"]
+    },
+    {
+      id: "code-organization",
+      label: "Code Organization",
+      content: "Classes organize code by responsibility. Instead of a single Main method with hundreds of variables, each class manages its own data and behavior. The Student class handles student data. The Course class handles course data. When a bug appears in student GPA calculations, you know exactly where to look — the Student class. This organizational principle scales from small programs to applications with millions of lines of code.",
+      keyPoints: ["Each class has a single responsibility", "Bugs are localized to the relevant class", "Scales from small programs to massive codebases"]
+    }
+  ]}
+/>
+
+---
+
+## Try It: Define Your First Class
+
+Define a `Car` class with three properties and create an object from it:
+
+<div class="architect-rule">
+
+### Using the Tabbed Editor
+
+This editor has **file tabs** above the code area -- just like a real IDE. Click the tabs to switch between files:
+
+- **Program.cs** -- your main program logic goes here (creating objects, calling methods, printing output).
+- **Car.cs** -- the class definition lives in its own tab. You can edit the class here.
+- **+ Add Class** -- click this button to create a new class file. Enter a name like `Truck` and a new tab appears with a class skeleton ready to fill in.
+
+When you click **Run**, all tabs are combined and compiled together automatically. Write your main code in `Program.cs` and your class definitions in their own tabs.
+
+</div>
+
+<TryItNowRunner
+  starterId="week-12-lesson-1"
+  height={520}
+  files={[
+    { name: "Program.cs", content: `// Create a Car object and set its properties
+Car myCar = new Car();
+myCar.Make = "Toyota";
+myCar.Model = "Camry";
+myCar.Year = 2024;
+Console.WriteLine(\$"{myCar.Year} {myCar.Make} {myCar.Model}");
+
+// TODO: Create a second Car object with different values and print it
+` },
+    { name: "Car.cs", content: `class Car
+{
+    public string Make { get; set; }
+    public string Model { get; set; }
+    public int Year { get; set; }
+}` }
+  ]}
+  instructions="Create a second Car object with different property values. Assign Make, Model, and Year using the dot operator, then print the details using string interpolation."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-12-lesson-1-check"
+  title="Section 12.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does a class definition create in C#?",
+      options: ["An object with data values", "A new custom data type (a blueprint)", "A variable that holds a number", "A method that returns a value"],
+      correctAnswer: "A new custom data type (a blueprint)",
+      explanation: "A class definition creates a new data type — a blueprint that describes what data objects of that type will hold. No actual object or data exists until you use the 'new' keyword to instantiate the class."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the difference between a field and an auto-implemented property?",
+      options: ["Fields are public; properties are always private", "Fields are raw variables; auto-implemented properties use { get; set; } and provide controlled access", "There is no difference — they are interchangeable", "Fields hold numbers; properties hold strings"],
+      correctAnswer: "Fields are raw variables; auto-implemented properties use { get; set; } and provide controlled access",
+      explanation: "A field is a raw variable declared in the class with no access control beyond the modifier. An auto-implemented property uses { get; set; } syntax — the compiler generates a hidden backing field and provides getter/setter methods. Properties are the standard practice in modern C#."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What does the 'private' access modifier do?",
+      options: ["Makes the member accessible from anywhere", "Makes the member accessible only inside the class itself", "Deletes the member when the program ends", "Makes the member read-only"],
+      correctAnswer: "Makes the member accessible only inside the class itself",
+      explanation: "The 'private' modifier restricts access to the class body only. Code outside the class — including Main — cannot read or write a private member. This is the foundation of encapsulation: the class controls its own data."
+    },
+    {
+      id: "q4",
+      type: "true-false",
+      question: "The line 'class Student { }' creates a Student object with default values.",
+      correctAnswer: "False",
+      explanation: "A class definition creates a TYPE, not an object. No object exists until you write 'new Student()'. The class is the blueprint — the 'new' keyword constructs an actual object from that blueprint."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Class blueprint defined. Next: create actual objects from your blueprints using the <code>new</code> keyword.</p>
+  <a href="/week-12/lesson-2/" class="vscode-button">Continue to 12.2: Object Instances &rarr;</a>
+</div>
+
+<style>{`
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+
+  .section-badge {
+    background: rgba(78, 201, 176, 0.15);
+    border: 1px solid rgba(78, 201, 176, 0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4ec9b0;
+  }
+
+  .section-time {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .concept-header { margin: 2rem 0; }
+
+  .header-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .header-text { flex: 1; min-width: 280px; }
+  .header-text h2 { margin-top: 0; color: #4ec9b0; }
+  .header-image { flex: 0 0 320px; }
+
+  .video-section { margin: 2rem 0; }
+  .video-intro { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+
+  .styled-table-container { overflow-x: auto; margin: 1.5rem 0; }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .styled-table-container th,
+  .styled-table-container td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .styled-table-container th {
+    background: rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+
+  .component-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .component-card h3 { margin-top: 0; font-size: 1rem; }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,152,0,0.05));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .architect-rule h3 { margin-top: 0; color: #ffc107; }
+
+  .from-the-field {
+    background: linear-gradient(135deg, rgba(107,159,255,0.1), rgba(107,159,255,0.05));
+    border-left: 4px solid #6b9fff;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .from-the-field h3 { margin-top: 0; color: #6b9fff; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78,201,176,0.1) 0%, rgba(107,159,255,0.1) 100%);
+    border: 1px solid rgba(78,201,176,0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255,255,255,0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .section-badge { color: #1a8a6e !important; }
+  body[data-theme="light"] .header-text h2 { color: #1a8a6e !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255,193,7,0.08), rgba(255,152,0,0.04)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b08800 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78,201,176,0.08) 0%, rgba(107,159,255,0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+
+  @media (max-width: 768px) {
+    .header-content { flex-direction: column; }
+    .header-image { flex: 1; }
+  }
+`}</style>

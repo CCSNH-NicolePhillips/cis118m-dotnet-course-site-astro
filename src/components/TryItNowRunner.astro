@@ -1,6 +1,7 @@
 ---
 interface Props {
-  code: string;
+  code?: string;
+  files?: Array<{name: string, content: string}>;
   starterId: string;
   height?: number;
   instructions?: string;
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const { 
-  code, 
+  code: codeProp, 
+  files: filesProp,
   starterId, 
   height = 200,
   instructions,
@@ -22,6 +24,14 @@ const {
   stdinPlaceholder = "Enter input values, one per line",
   enableInteractiveTerminal = false
 } = Astro.props;
+
+// Build initial files array from either `files` or `code` prop
+const initialFiles = filesProp && filesProp.length > 0
+  ? filesProp
+  : [{ name: 'Program.cs', content: codeProp || '' }];
+const initialFilesJson = JSON.stringify(initialFiles);
+const enableMultiFile = !!(filesProp && filesProp.length > 0);
+const code = codeProp || initialFiles[0].content;
 
 const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
@@ -44,6 +54,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   )}
   
   <div class="editor-container">
+    <div class="file-tabs-bar" style="display:none"></div>
     <div class="editor-wrapper" style={`height: ${height}px`}>
       <div id={`editor-${runnerId}`} class="monaco-editor-container" role="application" aria-label="C# code editor"></div>
     </div>
@@ -99,7 +110,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   </div>
 </div>
 
-<script define:vars={{ runnerId, code, starterId }}>
+<script define:vars={{ runnerId, code, starterId, initialFilesJson, enableMultiFile }}>
   (async () => {
     const container = document.querySelector(`[data-runner-id="${runnerId}"]`);
     if (!container) return;
@@ -129,6 +140,115 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     let editor = null;
     const originalCode = code;
     const defaultHeight = parseInt(container.dataset.defaultHeight) || 200;
+    
+    // ===== Multi-file state =====
+    const initialFilesData = JSON.parse(initialFilesJson);
+    let fileState = initialFilesData.map(f => ({ name: f.name, content: f.content }));
+    let activeFileIndex = 0;
+    const fileTabsBar = container.querySelector('.file-tabs-bar');
+    
+    function renderTabs() {
+      if (!enableMultiFile) {
+        fileTabsBar.style.display = 'none';
+        return;
+      }
+      fileTabsBar.style.display = 'flex';
+      fileTabsBar.innerHTML = '';
+      
+      fileState.forEach((file, index) => {
+        const tab = document.createElement('button');
+        tab.className = 'file-tab' + (index === activeFileIndex ? ' active' : '');
+        tab.type = 'button';
+        
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = file.name;
+        tab.appendChild(nameSpan);
+        
+        if (index > 0) {
+          const closeBtn = document.createElement('span');
+          closeBtn.className = 'file-tab-close';
+          closeBtn.textContent = '\u00d7';
+          closeBtn.title = 'Remove ' + file.name;
+          closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeFile(index);
+          });
+          tab.appendChild(closeBtn);
+        }
+        
+        tab.addEventListener('click', () => switchToFile(index));
+        fileTabsBar.appendChild(tab);
+      });
+      
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-class-btn';
+      addBtn.type = 'button';
+      addBtn.textContent = '+ Add Class';
+      addBtn.title = 'Add a new class file';
+      addBtn.addEventListener('click', addClass);
+      fileTabsBar.appendChild(addBtn);
+    }
+    
+    function switchToFile(index) {
+      if (index === activeFileIndex) return;
+      if (editor) {
+        fileState[activeFileIndex].content = editor.getValue();
+      }
+      activeFileIndex = index;
+      if (editor) {
+        editor.setValue(fileState[activeFileIndex].content);
+      }
+      renderTabs();
+    }
+    
+    function addClass() {
+      const name = prompt('Enter class name (e.g., Student):');
+      if (!name) return;
+      const className = name.replace(/\.cs$/i, '').trim();
+      if (!className || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(className)) {
+        alert('Please enter a valid C# class name (letters, digits, underscores).');
+        return;
+      }
+      const fileName = className + '.cs';
+      if (fileState.some(f => f.name.toLowerCase() === fileName.toLowerCase())) {
+        alert('A file with that name already exists.');
+        return;
+      }
+      if (editor) {
+        fileState[activeFileIndex].content = editor.getValue();
+      }
+      fileState.push({
+        name: fileName,
+        content: 'class ' + className + '\n{\n    // Add properties here\n    // public string Name { get; set; }\n}'
+      });
+      activeFileIndex = fileState.length - 1;
+      if (editor) {
+        editor.setValue(fileState[activeFileIndex].content);
+      }
+      renderTabs();
+    }
+    
+    function removeFile(index) {
+      if (index === 0) return;
+      if (!confirm('Remove ' + fileState[index].name + '?')) return;
+      fileState.splice(index, 1);
+      if (activeFileIndex >= fileState.length) {
+        activeFileIndex = fileState.length - 1;
+      } else if (activeFileIndex === index) {
+        activeFileIndex = Math.max(0, index - 1);
+      }
+      if (editor) {
+        editor.setValue(fileState[activeFileIndex].content);
+      }
+      renderTabs();
+    }
+    
+    function getAllCode() {
+      if (editor) {
+        fileState[activeFileIndex].content = editor.getValue();
+      }
+      return fileState.map(f => f.content).join('\n\n');
+    }
     
     // Wait for Monaco to load
     const waitForMonaco = async () => {
@@ -574,6 +694,22 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       window.monacoEditorInstances = window.monacoEditorInstances || {};
       window.monacoEditorInstances[starterId] = editor;
       
+      // Render file tabs for multi-file mode
+      renderTabs();
+      
+      // Proxy monacoEditorInstances for multi-file to return concatenated code
+      if (enableMultiFile) {
+        window.monacoEditorInstances[starterId] = new Proxy(editor, {
+          get(target, prop) {
+            if (prop === 'getValue') {
+              return () => getAllCode();
+            }
+            const val = target[prop];
+            return typeof val === 'function' ? val.bind(target) : val;
+          }
+        });
+      }
+      
       // Listen for theme changes
       const themeObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -629,7 +765,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     
     // Run code
     async function runCode() {
-      const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
+      const currentCode = enableMultiFile ? getAllCode() : (editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode);
       
       // Get stdin input if enabled
       const stdinInput = container.querySelector('.stdin-input');
@@ -801,7 +937,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     
     // Interactive run via WebSocket
     async function runCodeInteractive() {
-      const currentCode = editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode;
+      const currentCode = enableMultiFile ? getAllCode() : (editor ? editor.getValue() : editorDiv.querySelector('textarea')?.value || originalCode);
       
       // Close any existing connection
       if (currentWs) {
@@ -941,8 +1077,13 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     
     // Reset code
     function resetCode() {
+      if (enableMultiFile) {
+        fileState = initialFilesData.map(f => ({ name: f.name, content: f.content }));
+        activeFileIndex = 0;
+        renderTabs();
+      }
       if (editor) {
-        editor.setValue(originalCode);
+        editor.setValue(enableMultiFile ? fileState[0].content : originalCode);
       } else {
         const textarea = editorDiv.querySelector('textarea');
         if (textarea) textarea.value = originalCode;
@@ -971,7 +1112,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     // Expand editor - open in popup window
     expandBtn.addEventListener('click', () => {
       // Save current code to localStorage so popup can load it
-      const currentCode = editor ? editor.getValue() : originalCode;
+      const currentCode = enableMultiFile ? getAllCode() : (editor ? editor.getValue() : originalCode);
       const storageKey = `cis118m:${starterId}:Program.cs`;
       try {
         localStorage.setItem(storageKey, currentCode);
@@ -1054,6 +1195,82 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   
   .editor-container {
     border-bottom: 1px solid var(--border);
+  }
+  
+  .file-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--panel2);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    padding: 0 4px;
+  }
+  
+  .file-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+  
+  .file-tab:hover {
+    color: var(--text);
+    background: var(--navitem-hover);
+  }
+  
+  .file-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--panel);
+  }
+  
+  .file-tab-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.4;
+    transition: all 0.15s;
+  }
+  
+  .file-tab-close:hover {
+    opacity: 1;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+  }
+  
+  .add-class-btn {
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 4px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  
+  .add-class-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(78, 201, 176, 0.1);
   }
   
   .editor-wrapper {

@@ -1,0 +1,326 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 12 • Custom Data Types & Classes"
+description: "Define your own data types using the class keyword — blueprint fields, properties, and access modifiers to model real-world entities in code"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 12: Custom Data Types & Classes
+
+<DueDateBanner week={12} />
+
+<div class="mission-brief">
+  <h2>Mission Brief: Building Your Own Data Types</h2>
+  <p>
+    Every program you have written so far uses built-in types — <code>int</code>, <code>string</code>, <code>double</code>, <code>bool</code>. These types represent single values: one number, one name, one true/false flag. But real software models <strong>entities</strong> — a student has a name, an ID, and a GPA. A product has a title, a price, and a stock count. No single built-in type can represent these compound structures. This week, you learn to define your own data types using the <code>class</code> keyword.
+  </p>
+  <p>
+    A class is a <strong>blueprint</strong>. It describes the shape of a data type — what fields it contains, what properties expose those fields, and what access modifiers control visibility. The class itself holds no data. To get actual data, you create an <strong>object</strong> — an instance of the class — using the <code>new</code> keyword. Each object is independent: it carries its own copy of the data defined by the blueprint.
+  </p>
+</div>
+
+---
+
+<div class="section-cards">
+  <a href="/week-12/lesson-1/" class="section-card blueprint">
+    <div class="card-icon" aria-hidden="true">[ ]</div>
+    <div class="card-content">
+      <h3>12.1 The Class Blueprint</h3>
+      <p class="metaphor">The architectural drawing before the building exists</p>
+      <p>Define custom data types with the <code>class</code> keyword. Control visibility with access modifiers. Distinguish fields from properties and understand auto-implemented property syntax.</p>
+    </div>
+  </a>
+  <a href="/week-12/lesson-2/" class="section-card instances">
+    <div class="card-icon" aria-hidden="true">{ }</div>
+    <div class="card-content">
+      <h3>12.2 Object Instances</h3>
+      <p class="metaphor">Every building constructed from the same blueprint is unique</p>
+      <p>Create objects with the <code>new</code> keyword. Understand reference types. Use the dot operator to read and write object state. Build multiple independent instances from one class definition.</p>
+    </div>
+  </a>
+  <a href="/week-12/lab/" class="section-card lab">
+    <div class="card-icon" aria-hidden="true">&gt;_</div>
+    <div class="card-content">
+      <h3>Lab 12: The Data Architect</h3>
+      <p class="metaphor">From blueprint to working structures</p>
+      <p>Define two custom classes, instantiate multiple objects, assign property values via the dot operator, and display formatted records.</p>
+    </div>
+  </a>
+</div>
+
+---
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Section</th>
+        <th scope="col">Topic</th>
+        <th scope="col">Key Concept</th>
+        <th scope="col">Est. Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>12.1</td>
+        <td>The Class Blueprint</td>
+        <td>class keyword, access modifiers, fields vs properties</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>12.2</td>
+        <td>Object Instances</td>
+        <td>new keyword, reference types, dot operator</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>Lab</td>
+        <td>The Data Architect</td>
+        <td>Define classes, create objects, display records</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td>Homework</td>
+        <td>Technical Reflection</td>
+        <td>Class design analysis and object reasoning</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>Assessment</td>
+        <td>Weekly Assessment 12</td>
+        <td>Classes, objects, properties, access modifiers</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## The Type System Shift: From Primitives to Custom Types
+
+Until now, every variable in your programs has used a built-in primitive type — `int`, `double`, `string`, `bool`. These types are defined by the C# language itself. This week, you cross a fundamental boundary: **you define your own types**. The `class` keyword lets you create a new data type that groups related values into a single unit.
+
+<img src="/media/week%2012/12.0/The%20Type%20System%20Shift.png" alt="The Type System Shift — three separate disconnected variables on the left (name, id, gpa) transforming into a single class box on the right with all three values grouped together, illustrating the move from loose variables to a structured custom type" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Primitive Types (Weeks 1-11)</h3>
+    <p>Each variable holds one value. A student requires separate variables for name, ID, and GPA — unconnected, scattered across the code. Adding a second student doubles the variable count.</p>
+    <code>string name = "Ada"; int id = 1001; double gpa = 3.8;</code>
+  </div>
+  <div class="component-card">
+    <h3>Custom Types (Week 12)</h3>
+    <p>A class groups related values into one unit. A <code>Student</code> object carries name, ID, and GPA together. Creating a second student is one line — <code>new Student()</code>.</p>
+    <code>Student s = new Student(); s.Name = "Ada"; s.Id = 1001;</code>
+  </div>
+</div>
+
+---
+
+## Senior Architect Perspective
+
+<div class="architect-rule">
+
+### The Class Is the Fundamental Unit of Object-Oriented Design
+
+Every professional C# application is built from classes. A class defines a type — a contract that says: "Any object of this type will have these properties and these behaviors." When you write `class Student`, you are telling the compiler: "I am defining a new data type called Student." From that point on, `Student` is as valid a type as `int` or `string`. You can declare variables of type `Student`, pass `Student` objects to methods, return them from methods, and store them in collections.
+
+The decision of **what classes to define** and **what data each class holds** is the first and most important architectural decision in any C# project. Get the class design right, and the rest of the code follows naturally. Get it wrong, and every feature built on top of that foundation will be harder than it should be.
+
+</div>
+
+---
+
+## Instructor Perspective
+
+<div class="pro-tip">
+  <h3>Phase IV: Object-Oriented Thinking</h3>
+  <p>You have been writing procedural code — variables, conditions, loops, methods. This week marks the shift to <strong>object-oriented programming</strong>. Instead of managing dozens of loose variables, you define a class that bundles related data together. Instead of passing five separate parameters to a method, you pass one object. This is how every modern C# application is structured. The concepts this week — classes, properties, objects, the <code>new</code> keyword — are the foundation for everything that follows.</p>
+</div>
+
+---
+
+## Week 12 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead class="sr-only">
+      <tr>
+        <th scope="col">Deliverable</th>
+        <th scope="col">Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Lab 12: The Data Architect</strong> — Class Definition and Object Instantiation</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Technical Reflection 12</strong> — Class Design Analysis</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Weekly Assessment 12:</strong> Custom Data Types and Classes</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Knowledge Checks</strong> — Participation in each module</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Participation</strong> — Class engagement</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-12/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 12.1 <span aria-hidden="true">&rarr;</span>
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .section-card.blueprint {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .section-card.instances {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+
+  .section-card.lab {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+
+  .component-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .component-card h3 { margin-top: 0; font-size: 1rem; }
+
+  .architect-rule {
+    background: linear-gradient(135deg, rgba(255,193,7,0.1), rgba(255,152,0,0.05));
+    border-left: 4px solid #ffc107;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .architect-rule h3 { margin-top: 0; color: #ffc107; }
+
+  .pro-tip {
+    background: linear-gradient(135deg, rgba(78,201,176,0.1), rgba(78,201,176,0.05));
+    border-left: 4px solid #4ec9b0;
+    border-radius: 0 12px 12px 0;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .pro-tip h3 { margin-top: 0; color: #4ec9b0; }
+
+  .styled-table-container { overflow-x: auto; margin: 1.5rem 0; }
+
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .styled-table-container th,
+  .styled-table-container td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .styled-table-container th {
+    background: rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+
+  body[data-theme="light"] .mission-brief { background: linear-gradient(135deg, rgba(78,201,176,0.06) 0%, rgba(107,159,255,0.06) 100%) !important; }
+  body[data-theme="light"] .mission-brief h2 { color: #1a8a6e !important; }
+  body[data-theme="light"] .architect-rule { background: linear-gradient(135deg, rgba(255,193,7,0.08), rgba(255,152,0,0.04)) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #b08800 !important; }
+  body[data-theme="light"] .pro-tip { background: linear-gradient(135deg, rgba(78,201,176,0.08), rgba(78,201,176,0.04)) !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #1a8a6e !important; }
+`}</style>

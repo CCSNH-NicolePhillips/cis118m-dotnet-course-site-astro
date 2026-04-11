@@ -1,0 +1,152 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 12 • Technical Reflection: Class Design & Object Architecture"
+description: "Analytical reflection on custom data types — class blueprints, properties vs fields, object instantiation, and the dot operator"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 12: Technical Reflection — (GRADED)
+
+<DueDateBanner week={12} type="Homework" />
+
+## Homework 12: Class Design Analysis
+
+<p>You have defined custom data types using the <code>class</code> keyword and created objects using <code>new</code>. This reflection requires you to demonstrate <strong>analytical understanding</strong> of why classes exist, how properties control data access, and what the <code>new</code> keyword does in memory. Engineering judgment, not a vocabulary list.</p>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <h3>Academic Integrity Protocol — Homework 12</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a graded written reflection. It must represent your own analytical thinking. The following is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged. Responses that are paste-only with no revision history will be flagged for review.</li>
+      <li><strong>Active edit time:</strong> Total active writing time is measured. A correct, substantive reflection with minimal edit time is an integrity flag.</li>
+      <li><strong>AI pattern scanning:</strong> Response text is analyzed for AI-specific structural and syntactic patterns. Flagged submissions are archived in the course integrity database for Instructor Dashboard review.</li>
+    </ul>
+  </div>
+</div>
+
+---
+
+## Reflection Prompt
+
+<div class="component-cards">
+  <div class="component-card">
+    <h3>Class Design Analysis</h3>
+    <p>In 3-5 sentences per question, answer the following:</p>
+    <ol>
+      <li>
+        <strong>The Class as a Blueprint:</strong> Explain what a class definition does versus what the <code>new</code> keyword does. Why does writing <code>class Student &#123; &#125;</code> not create any data? What happens in memory when you write <code>Student s = new Student();</code>?
+      </li>
+      <li>
+        <strong>Properties and Access Control:</strong> Compare a <code>public</code> field (e.g., <code>public string name;</code>) with an auto-implemented property (e.g., <code>public string Name &#123; get; set; &#125;</code>). Why are properties preferred in modern C#? What role does the <code>private</code> access modifier play in protecting class data?
+      </li>
+      <li>
+        <strong>Objects and the Dot Operator:</strong> Explain the dot operator pattern for reading and writing object properties. If you create two Student objects (<code>s1</code> and <code>s2</code>) from the same class, why does changing <code>s1.Name</code> not affect <code>s2.Name</code>? How does bundling data into objects improve code organization compared to using separate loose variables?
+      </li>
+    </ol>
+    <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; font-size: 0.9rem;">
+      Reference: Class definitions and properties are in Section 12.1. Object instantiation and the dot operator are in Section 12.2.
+    </p>
+  </div>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-12-homework" />
+
+---
+
+## Reference Material
+
+If you need to review, revisit these sections:
+
+- [Section 12.1: The Class Blueprint](/week-12/lesson-1/) — class keyword, access modifiers, fields vs properties, auto-implemented properties
+- [Section 12.2: Object Instances](/week-12/lesson-2/) — new keyword, dot operator, multiple instances, reference types, default values
+
+---
+
+<div class="next-section">
+  <p>Homework submitted? Continue to the Weekly Assessment for Week 12.</p>
+  <a href="/week-12/weekly-assessment/" class="vscode-button">Continue to Weekly Assessment 12 &rarr;</a>
+</div>
+
+<style>{`
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .telemetry-content li { margin: 0.25rem 0; }
+
+  .component-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .component-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .component-card h3 { margin-top: 0; font-size: 1rem; }
+
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .next-section p { margin: 0 0 1rem; color: rgba(255, 255, 255, 0.9); }
+  .next-section a { display: inline-block; }
+
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+`}</style>
