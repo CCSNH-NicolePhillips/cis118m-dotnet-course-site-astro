@@ -75,6 +75,8 @@ static int Add(int a, int b) {
 
 The difference is fundamental: `PrintSum` displays a number on screen — the caller cannot capture, store, or reuse that number. `Add` computes a number and hands it back — the caller stores it in a variable and decides what to do with it.
 
+<img src="/media/week%2011/11.1/Void%20vs%20Return.jpeg" alt="Side-by-side comparison showing a void method that only displays output on the left versus a typed return method that delivers a value back to the caller on the right" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
 <AnnotatedCode
   title="Anatomy of a Return Method"
   tokens={[
@@ -90,6 +92,8 @@ The difference is fundamental: `PrintSum` displays a number on screen — the ca
     { text: "\n}", type: "punctuation", tooltip: "Method body closes. Control returns to the caller with the computed value." }
   ]}
 />
+
+<img src="/media/week%2011/11.1/Return%20Method%20Anatomy.jpeg" alt="Annotated diagram showing the anatomy of a return method — access modifier, return type, identifier, parameters, and the return statement delivering a value back through the exit gate" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 

@@ -78,6 +78,8 @@ Console.WriteLine(result);    // Prints: 35
   ]}
 />
 
+<img src="/media/week%2011/11.2/Result%20Capture%20Pipeline.jpeg" alt="Diagram showing a method call on the right side of an assignment flowing its return value into a variable on the left side, illustrating the result capture pipeline" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
 This is the **result capture pattern**: `type variableName = MethodCall(arguments);`. The variable type must match the method's declared return type — `int` method → `int` variable, `string` method → `string` variable.
 
 ---
@@ -174,6 +176,8 @@ Console.WriteLine($"Temperature: {CelsiusToFahrenheit(100.0):F1}°F");
 ---
 
 ## Inline Calls vs Variable Capture
+
+<img src="/media/week%2011/11.2/Inline%20vs%20Capture.jpeg" alt="Side-by-side comparison showing variable capture on the left where a return value is stored in a named variable versus an inline call on the right where the method call is used directly in an expression" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 You do not always need to store the return value in a named variable. You can use the method call directly in an expression — this is called an **inline call**:
 
