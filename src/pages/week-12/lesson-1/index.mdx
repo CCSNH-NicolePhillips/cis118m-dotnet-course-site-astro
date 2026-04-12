@@ -31,7 +31,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
     </div>
     <div class="header-image">
       <img
-        src="/media/week%2012/12.1/Header%20Image.png"
+        src="/media/week%2012/12.1/Header%20Image.jpeg"
         alt="Diagram showing three separate variables (name, id, gpa) on the left transforming into a single Student class blueprint on the right, with labeled fields grouped inside a box"
         style="max-width: 100%; border-radius: 10px;"
       />
@@ -128,7 +128,7 @@ class BankAccount {
 
 The `private` modifier is the default in C# — if you omit the access modifier, the member is private. This is an important safety mechanism: data that should not be changed directly from outside the class stays hidden behind `private`.
 
-<img src="/media/week%2012/12.1/Access%20Modifiers.png" alt="Access Modifiers diagram — a class box with two zones: a public zone at the top with properties visible to outside code through a green open gate, and a private zone at the bottom with fields behind a red locked gate, showing that Main can only reach the public members" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2012/12.1/Access%20Modifiers.jpeg" alt="Access Modifiers diagram — a class box with two zones: a public zone at the top with properties visible to outside code through a green open gate, and a private zone at the bottom with fields behind a red locked gate, showing that Main can only reach the public members" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 <div class="architect-rule">
 
@@ -159,7 +159,7 @@ C# classes can hold data in two ways: **fields** and **properties**. Both store 
   </div>
 </div>
 
-<img src="/media/week%2012/12.1/Fields%20vs%20Properties.png" alt="Fields vs Properties comparison — left side shows a raw public field with direct uncontrolled access, right side shows an auto-implemented property with get and set accessors providing a controlled gateway to a hidden backing field" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2012/12.1/Fields%20vs%20Properties.jpeg" alt="Fields vs Properties comparison — left side shows a raw public field with direct uncontrolled access, right side shows an auto-implemented property with get and set accessors providing a controlled gateway to a hidden backing field" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 **In this course, use auto-implemented properties** (`{ get; set; }`) for all class data. This is the standard practice in modern C#. The compiler generates a hidden backing field automatically — you get the safety of a property without writing extra code.
 
