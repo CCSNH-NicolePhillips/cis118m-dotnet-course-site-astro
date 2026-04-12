@@ -82,12 +82,12 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
   </div>
   
   <div class="output-container" id="lab-output" data-collapsed="true">
-    <button class="output-header" data-action="toggle-output" type="button" aria-expanded="false">
+    <button class="output-header" data-action="toggle-output" type="button" aria-expanded="false" aria-controls={`output-content-${runnerId}`}>
       <span class="icon" aria-hidden="true">▼</span>
       <span class="title">{enableInteractiveTerminal ? 'Terminal' : 'Output'}</span>
       <span class="status" aria-live="polite"></span>
     </button>
-    <div class="output-content">
+    <div class="output-content" id={`output-content-${runnerId}`}>
       {enableInteractiveTerminal ? (
         <div class="terminal-panel">
           <div class="terminal-container"></div>
@@ -143,6 +143,21 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     
     // ===== Multi-file state =====
     const initialFilesData = JSON.parse(initialFilesJson);
+    
+    // Inline error helper (replaces alert() for WCAG 3.3.1)
+    function showInlineError(msg) {
+      let errRegion = container.querySelector('.file-error-msg');
+      if (!errRegion) {
+        errRegion = document.createElement('div');
+        errRegion.className = 'file-error-msg';
+        errRegion.setAttribute('aria-live', 'assertive');
+        errRegion.setAttribute('role', 'alert');
+        const fileTabsBar = container.querySelector('.file-tabs-bar');
+        fileTabsBar.insertAdjacentElement('afterend', errRegion);
+      }
+      errRegion.textContent = msg;
+      setTimeout(() => { errRegion.textContent = ''; }, 4000);
+    }
     let fileState = initialFilesData.map(f => ({ name: f.name, content: f.content }));
     let activeFileIndex = 0;
     const fileTabsBar = container.querySelector('.file-tabs-bar');
@@ -154,21 +169,26 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       }
       fileTabsBar.style.display = 'flex';
       fileTabsBar.innerHTML = '';
+      fileTabsBar.setAttribute('role', 'tablist');
+      fileTabsBar.setAttribute('aria-label', 'Source files');
       
       fileState.forEach((file, index) => {
         const tab = document.createElement('button');
         tab.className = 'file-tab' + (index === activeFileIndex ? ' active' : '');
         tab.type = 'button';
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-selected', index === activeFileIndex ? 'true' : 'false');
         
         const nameSpan = document.createElement('span');
         nameSpan.textContent = file.name;
         tab.appendChild(nameSpan);
         
         if (index > 0) {
-          const closeBtn = document.createElement('span');
+          const closeBtn = document.createElement('button');
           closeBtn.className = 'file-tab-close';
+          closeBtn.type = 'button';
           closeBtn.textContent = '\u00d7';
-          closeBtn.title = 'Remove ' + file.name;
+          closeBtn.setAttribute('aria-label', 'Remove ' + file.name);
           closeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             removeFile(index);
@@ -184,7 +204,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       addBtn.className = 'add-class-btn';
       addBtn.type = 'button';
       addBtn.textContent = '+ Add Class';
-      addBtn.title = 'Add a new class file';
+      addBtn.setAttribute('aria-label', 'Add a new class file');
       addBtn.addEventListener('click', addClass);
       fileTabsBar.appendChild(addBtn);
     }
@@ -206,12 +226,12 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       if (!name) return;
       const className = name.replace(/\.cs$/i, '').trim();
       if (!className || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(className)) {
-        alert('Please enter a valid C# class name (letters, digits, underscores).');
+        showInlineError('Please enter a valid C# class name (letters, digits, underscores).');
         return;
       }
       const fileName = className + '.cs';
       if (fileState.some(f => f.name.toLowerCase() === fileName.toLowerCase())) {
-        alert('A file with that name already exists.');
+        showInlineError('A file with that name already exists.');
         return;
       }
       if (editor) {
@@ -281,6 +301,7 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       // Show success banner
       const banner = document.createElement('div');
       banner.className = 'celebration-banner';
+      banner.setAttribute('role', 'status');
       banner.innerHTML = '🎉 Lab Complete! Great work!';
       container.insertBefore(banner, container.firstChild);
       
@@ -1246,6 +1267,11 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     line-height: 1;
     opacity: 0.4;
     transition: all 0.15s;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
   }
   
   .file-tab-close:hover {
@@ -1275,7 +1301,17 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     color: var(--text);
     background: var(--navitem-hover);
   }
-  
+
+  .file-error-msg {
+    color: #ef4444;
+    font-size: 13px;
+    padding: 4px 12px;
+    min-height: 0;
+  }
+  .file-error-msg:empty {
+    display: none;
+  }
+
   .editor-wrapper {
     border-bottom: 1px solid var(--border);
   }
@@ -1502,6 +1538,12 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
       transform: translateY(0);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .celebration-banner {
+      animation: none;
+    }
+  }
 </style>
 
 <style is:global>
@@ -1533,6 +1575,13 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
     100% {
       transform: translateY(100vh) rotate(720deg);
       opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .confetti-piece {
+      animation: none;
+      display: none;
     }
   }
 </style>
