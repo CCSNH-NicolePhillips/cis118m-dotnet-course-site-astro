@@ -30,7 +30,7 @@ const WEEKS = [
   { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT", isBossFight: true, bossFightName: "Logic Engine Implementation" },
   { week: 10, title: "Methods", dueDate: "Sunday, April 5, 2026 at 11:59 PM EDT" },
   { week: 11, title: "Returning Values", dueDate: "Sunday, April 12, 2026 at 11:59 PM EDT" },
-  { week: 12, title: "Array Architectures", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
+  { week: 12, title: "Custom Data Types & Classes", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
   { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT", isBossFight: true, bossFightName: "Data Collection Manager" },
   { week: 14, title: "Program Integration", dueDate: "Sunday, May 3, 2026 at 11:59 PM EDT" },
   { week: 15, title: "Final Project", dueDate: "Sunday, May 10, 2026 at 11:59 PM EDT" }

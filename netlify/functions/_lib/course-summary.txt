@@ -1181,7 +1181,7 @@ else
 
 ---
 
-## Week 12: Array Architectures
+## Week 12: Custom Data Types & Classes
 
 ### 📚 Overview: Week 12 • Extra Practice
 

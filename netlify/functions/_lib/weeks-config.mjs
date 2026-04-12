@@ -19,7 +19,7 @@ export const WEEKS = [
   { id: 'week-09', title: '09. For Loops', unlockDate: '2026-03-23T00:00:00-04:00', dueDate: '2026-03-29T23:59:59-04:00' },
   { id: 'week-10', title: '10. Methods', unlockDate: '2026-03-30T00:00:00-04:00', dueDate: '2026-04-05T23:59:59-04:00' },
   { id: 'week-11', title: '11. Returning Values', unlockDate: '2026-04-06T00:00:00-04:00', dueDate: '2026-04-12T23:59:59-04:00' },
-  { id: 'week-12', title: '12. Arrays', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00' },
+  { id: 'week-12', title: '12. Custom Data Types & Classes', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00' },
   { id: 'week-13', title: '13. Lists', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00' },
   { id: 'week-14', title: '14. Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00' },
   { id: 'week-15', title: '15. Final Project Development', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00' },
