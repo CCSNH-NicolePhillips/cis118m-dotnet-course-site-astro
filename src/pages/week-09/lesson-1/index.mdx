@@ -100,6 +100,12 @@ The counter starts at `0`, runs while `i < 5`, and increments by one each time. 
 
 ---
 
+<img
+  src="/media/week%209/9.1/For%20Loop%20Anatomy.jpeg"
+  alt="For loop execution flow diagram showing initializer runs once, condition checked before each iteration, and iterator runs after each iteration"
+  style="width: 100%; max-width: 800px; border-radius: 10px; margin: 1rem auto; display: block;"
+/>
+
 ## The Three Clauses Explained
 
 Every `for` loop header contains exactly three semicolon-separated clauses:
@@ -172,6 +178,12 @@ Console.WriteLine($"Final i: {i}"); // i is accessible here
 ---
 
 ## The Off-By-One Error
+
+<img
+  src="/media/week%209/9.1/Off%20By%20One.jpeg"
+  alt="Side-by-side comparison: buggy loop using less-than misses the last value versus fixed loop using less-than-or-equal that includes all values"
+  style="width: 100%; max-width: 800px; border-radius: 10px; margin: 1rem auto; display: block;"
+/>
 
 The most common `for` loop failure is the **off-by-one error** — running one too many or one too few iterations. This always comes down to the **initializer** and the **condition boundary**:
 
