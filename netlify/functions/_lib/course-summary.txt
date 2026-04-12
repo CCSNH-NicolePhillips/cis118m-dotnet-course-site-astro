@@ -1086,6 +1086,42 @@ Key Concepts:
 
 Summary: # Section 10.2: Parameters & Arguments 🔌 The Resource Intake ⏱️ Estimated Time: 30 minutes --- Making Methods Dynamic: The Parameter A method defined in Section 10.1 — static void PrintHeader() — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A t...
 
+### 📋 Quiz: Week 10 • Technical Assessment
+
+Summary: # 🏁 Week 10 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
+
+Quiz Questions (10 questions):
+1. Q: What are the three required elements of a method signature in C#?
+   A: Access modifier, return type, identifier
+   Why: Every method signature has exactly three elements: (1) Access modifier — like 'static', controls who can call it, (2) Return type — like 'void' or 'int', declares what value (if any) the method sends back, (3) Identifier — the PascalCase name that describes the method's action.
+2. Q: In the signature 'static void PrintHeader()', what does 'void' mean?
+   A: The method does not return a value to the caller
+   Why: 'void' is the return type — it declares that this method performs an action (like printing) and sends no value back to the caller. 'static' is the access modifier. The empty parentheses indicate no parameters.
+3. Q: Why must custom methods be declared 'static' in a top-level C# program?
+   A: Main is static — it can only call other static members directly
+   Why: In a top-level program, the compiler generates Main as a static method behind the scenes. A static method can only call other static members directly. Every helper method you define must also be static to be callable from Main.
+4. Q: Which method name follows correct C# naming conventions?
+   A: PrintReport()
+   Why: C# method names follow PascalCase — every word is capitalized, including the first. 'printReport' is camelCase (the convention for variables). 'print_report' is snake_case (not used in C#). 'PRINTREPORT' is SCREAMING_CASE (not standard).
+5. Q: In a top-level C# program, where must custom method definitions be placed?
+   A: After all top-level statements
+   Why: The compiler requires custom method definitions to appear after all top-level statements. You cannot interleave method definitions with your Main logic. Place all custom methods at the bottom of the file, below the last top-level statement.
+6. Q: What is the difference between a parameter and an argument?
+   A: A parameter is the variable in the method signature; an argument is the value passed at the call site
+   Why: A parameter is the typed variable declared in the method signature (e.g., 'string name'). An argument is the actual value passed when the method is called (e.g., \
+7. Q: A method has signature: static void Report(string title, int count). Which call is correct?
+   A: Report(\
+   Why: Arguments must match parameters by position, count, and type. The first parameter is 'string title' (needs a string), the second is 'int count' (needs an int). Report(\
+8. Q: What is the output of this code?
+   A: 10
+   Why: C# uses pass-by-value for value types like int. The method receives a COPY of the value, not the original variable. Doubling x inside the method changes only the local copy. The original 'value' in Main remains 10.
+9. Q: What does the DRY Principle stand for, and why does it matter?
+   A: Don't Repeat Yourself — repeated logic creates maintenance liabilities when changes are needed
+   Why: DRY means Don't Repeat Yourself. When the same logic exists in multiple places and a change is needed, every copy must be found and updated. Missing one creates inconsistent behavior. Parameterized methods solve this by putting logic in one place, called many times.
+10. Q: A method static void LogEntry(string user, string action) is called as LogEntry(\
+   A: No error — but user becomes \
+   Why: Arguments are matched to parameters by POSITION, not by name. Since both parameters are strings, reversing the arguments compiles and runs without error — but produces completely wrong behavior. The method thinks the user is 'delete' and the action is 'Alice'. This is a silent bug.
+
 ---
 
 ## Week 11: Returning Values
@@ -1098,15 +1134,35 @@ Summary: # Week 11 Extra Practice: Mini roster features Pick **1–2** items (op
 
 Summary: # Week 11 Homework: Inventory Tracker (objects + list) ## Overview Create an Item class (Name, Quantity, maybe Price). Store items in a list and support at least one search or update. ## Requirements checklist (acceptance criteria) - [ ] Defines an Item class with at least 2 properties - [ ] Creates...
 
+### 📝 Homework: Homework 11 • Technical Reflection: Return Values & Result Capture
+
+Summary: # Homework 11: Technical Reflection — (GRADED) ## Homework 11: The Return Value Design Analysis You have worked with return-type methods this week — declaring return types, using the return keyword, and capturing results in variables. This reflection requires you to demonstrate analytical understand...
+
 ### 📚 Overview: Week 11
 Key Concepts:
 - Focus:
 
 Summary: # Week 11 **Focus:** Lists of objects: building small ‘real’ apps (rosters, inventories, trackers). ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: ...
 
+### 📚 Overview: Week 11 • Returning Values
+Key Concepts:
+- producers
+
+Summary: # Week 11: Returning Values — The Output Contract 📤 🔧 Welcome to the Other Half of Methods Last week you built methods that do things — print messages, display status reports, format output. Those were void methods: they perform an action and return nothing. This week you learn methods that produc...
+
 ### 🔬 Lab: Week 11 • Week 11 Lab: Class Roster Manager
 
 Summary: # Week 11 Lab: Class Roster Manager ## Overview Build a tiny roster app: store students, print the roster, and search by ID. ## Requirements checklist (acceptance criteria) - [ ] Uses a Student class (or similar) with at least 2 properties - [ ] Stores at least 3 objects in a List - [ ] Prints the r...
+
+### 🔬 Lab: Lab 11 • The Calculation Engine
+Key Concepts:
+- Time: 60 minutes
+- Points: 100
+- Calculation Engine
+- three return-type methods
+- at least twice
+
+Summary: # Lab 11: The Calculation Engine **Time: 60 minutes** **Points: 100** 11.3: The Return Value Workflow You have learned how to write methods that return values and how to capture those values in variables. This lab applies both skills. You will build a Calculation Engine — a program where every compu...
 
 ### 📖 Lesson: Week 11 • Lesson 1
 Key Concepts:
@@ -1147,6 +1203,14 @@ foreach (Student s in roster)
 }
 ```
 
+### 📖 Lesson: Section 11.1 • The Return Statement
+Key Concepts:
+- Exits the method
+- Delivers a value
+- Does the caller need the result?
+
+Summary: # Section 11.1: The Return Statement 🚪 The Exit Gate ⏱️ Estimated Time: 30 minutes --- From Action to Output In Week 10, every method you wrote was void — it performed an action (printing, displaying) and returned nothing. The caller triggered the method and moved on. This week, methods become prod...
+
 ### 📖 Lesson: Week 11 • Lesson 2
 Key Concepts:
 - Linear search
@@ -1179,6 +1243,52 @@ else
 }
 ```
 
+### 📖 Lesson: Section 11.2 • Result Capture
+Key Concepts:
+- right side
+- result capture pattern
+- computation
+- display
+- separation of concerns
+
+Summary: # Section 11.2: Result Capture 📦 Variable Assignment Logic ⏱️ Estimated Time: 30 minutes --- The Caller's Side of the Return Contract Section 11.1 taught you how to write methods that deliver values via return . This section focuses on the caller's responsibility : how to receive, store, and use th...
+
+### 📋 Quiz: Week 11 • Technical Assessment
+
+Summary: # 🏁 Week 11 Technical Assessment 📋 Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt --- --...
+
+Quiz Questions (10 questions):
+1. Q: What is the key difference between a void method and a method with return type int?
+   A: void methods return nothing; int methods compute and deliver an integer to the caller
+   Why: A void method performs an action and returns nothing — the caller cannot capture a result. A method with return type int computes a value and delivers it back to the caller via the return keyword. The caller can then store that value in a variable.
+2. Q: What does the 'return' keyword do inside a method?
+   A: It exits the method and delivers the specified value to the caller
+   Why: The return keyword does two things simultaneously: (1) immediately exits the method — no code after it executes, and (2) delivers the specified value to the line that called the method. The returned value must match the declared return type.
+3. Q: What happens if a method declared as 'static int GetTotal()' contains no return statement?
+   A: The compiler produces an error: 'not all code paths return a value'
+   Why: The return type is a contract — a promise to deliver an int. If the method body has no return statement, the promise is broken. The C# compiler enforces this and refuses to build the program.
+4. Q: Which line correctly captures the return value of: static double GetTax(double amount) { return amount * 0.08; }
+   A: double tax = GetTax(100.0);
+   Why: The result capture pattern is: type variable = MethodCall(args). The variable type must match the method's return type. GetTax returns double, so the variable must be declared as double.
+5. Q: What happens if you call a return-type method without assigning the result to a variable?
+   A: The method executes, but the returned value is discarded
+   Why: C# allows you to call a return-type method without capturing the result. The method still runs and computes the value, but the returned value is thrown away. This is usually wasteful — if you don't need the value, consider using a void method instead.
+6. Q: Why is it better for a calculation method to RETURN the result rather than print it directly?
+   A: Returning the value lets the caller decide how to use it — store it, compare it, or pass it to another method
+   Why: When a method returns a value, the caller can store it in a variable, use it in arithmetic, pass it to another method, or display it. A method that prints directly locks the output to the console — the caller has no access to the computed value for further use. This is the principle of separation of concerns.
+7. Q: What is the output of this code?
+   A: 25 (the Console.WriteLine inside Square never executes)
+   Why: The return statement immediately exits the method. The Console.WriteLine(\
+8. Q: Given: static string FormatName(string first, string last) { return $\
+   A: \
+   Why: The method uses string interpolation: $\
+9. Q: Can a void method call be assigned to a variable? Example: string result = PrintHeader();
+   A: No — the compiler produces an error because void returns nothing
+   Why: A void method returns nothing — there is no value to assign to a variable. Attempting to assign a void method call to a variable causes a compiler error. Only methods with a non-void return type produce a value that can be captured.
+10. Q: What is the result capture pattern?
+   A: type variable = MethodCall(args);
+   Why: The result capture pattern is: type variable = MethodCall(args). The method call appears on the right side of the assignment. It executes, returns a value, and that value is stored in the variable on the left. The variable type must match the method's return type.
+
 ---
 
 ## Week 12: Custom Data Types & Classes
@@ -1187,65 +1297,82 @@ else
 
 Summary: # Week 12 Extra Practice: Test case gym Pick **1–2** items (optional). - Pick a method you wrote earlier (Add, IsEven, IsBetween). Write 8 test cases, including edge cases. - Write a method SafeDivide(double a, double b) that returns 0 when b is 0 (or returns null/NaN if you prefer). Write test case...
 
-### 📝 Homework: Week 12 • Week 12 Homework: Mini Test Harness
+### 📝 Homework: Homework 12 • Technical Reflection: Class Design & Object Architecture
 
-Summary: # Week 12 Homework: Mini Test Harness ## Overview Write 2–3 pure methods and a tiny test runner that checks expected vs actual results. ## Requirements checklist (acceptance criteria) - [ ] Includes at least 2 methods that return values (no reading input inside them) - [ ] Defines at least 6 test ca...
+Summary: # Homework 12: Technical Reflection — (GRADED) ## Homework 12: Class Design Analysis You have defined custom data types using the class keyword and created objects using new . This reflection requires you to demonstrate analytical understanding of why classes exist, how properties control data acces...
 
-### 📚 Overview: Week 12
+### 📚 Overview: Week 12 • Custom Data Types & Classes
 Key Concepts:
-- Focus:
+- you define your own types
+- what classes to define
+- what data each class holds
 
-Summary: # Week 12 **Focus:** Reliability: handling errors (try/catch) and thinking like a tester. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homewor...
+Summary: # Week 12: Custom Data Types & Classes Mission Brief: Building Your Own Data Types Every program you have written so far uses built-in types — int , string , double , bool . These types represent single values: one number, one name, one true/false flag. But real software models entities — a student ...
 
-### 🔬 Lab: Week 12 • Week 12 Lab: Crash-Proof Input Program
-
-Summary: # Week 12 Lab: Crash-Proof Input Program ## Overview Build a small program that reads user input and does not crash—even when the user types nonsense. ## Requirements checklist (acceptance criteria) - [ ] Prompts for at least 2 inputs (one number, one string) - [ ] Validates the number using TryPars...
-
-### 📖 Lesson: Week 12 • Lesson 1
+### 🔬 Lab: Lab 12 • The Data Architect
 Key Concepts:
-- Exception
-- Finally (optional)
-- 1) When should you prefer TryParse over try/catch for input?
+- Time: 60 minutes
+- Points: 100
+- Data Architect
+- two class definitions
+- five total object instances
 
-Summary: # Week 12 Lesson 1: Exceptions + try/catch (don’t let programs explode) ## Goal - Understand what an exception is - Use try/catch to handle risky code - Print helpful messages instead of crashing ## What to know - **Exception**: A runtime error your program throws (like invalid input causing a crash...
+Summary: # Lab 12: The Data Architect **Time: 60 minutes** **Points: 100** 12.3: Class Definition and Object Instantiation You have learned how to define classes with properties and how to create objects using the new keyword. This lab applies both skills. You will design two custom data types — Student and ...
 
-Code Example:
-```csharp
-try
-{
-    Console.WriteLine("Enter a number:");
-    int n = int.Parse(Console.ReadLine());
-    Console.WriteLine($"You typed {n}");
-}
-catch
-{
-    Console.WriteLine("That was not a valid whole number.");
-}
-```
-
-### 📖 Lesson: Week 12 • Lesson 2
+### 📖 Lesson: Section 12.1 • The Class Blueprint
 Key Concepts:
-- Test case
-- Edge case
-- Pure method
-- 1) Why are pure methods easier to test?
+- who can see and use
+- encapsulation
+- fields
+- properties
 
-Summary: # Week 12 Lesson 2: Think like a tester (and design for testing) ## Goal - Write methods that return values (easy to test) - Create test cases: input → expected output - Understand Arrange–Act–Assert (AAA) ## What to know - **Test case**: A specific input with an expected result. - **Edge case**: A ...
+Summary: # Section 12.1: The Class Blueprint The Architectural Drawing Estimated Time: 30 minutes --- From Loose Variables to Structured Types Until now, modeling a student required three separate variables — string name , int id , double gpa . They are unconnected: nothing in the code binds them together as...
 
-Code Example:
-```csharp
-static int Clamp(int n, int min, int max)
-{
-    if (n < min) return min;
-    if (n > max) return max;
-    return n;
-}
+### 📖 Lesson: Section 12.2 • Object Instances
+Key Concepts:
+- Allocates memory
+- Initializes properties
+- Returns a reference
+- dot operator
+- multiple objects
 
-// Test ideas (manual):
-// Clamp(5, 1, 10) => 5
-// Clamp(-1, 1, 10) => 1
-// Clamp(99, 1, 10) => 10
-```
+Summary: # Section 12.2: Object Instances From Blueprint to Reality Estimated Time: 30 minutes --- Constructing Objects with new Section 12.1 defined the blueprint — a class that describes what data a type holds. But a blueprint is not a building. To create actual data, you must instantiate the class: constr...
+
+### 📋 Quiz: Week 12 • Technical Assessment
+
+Summary: # Week 12 Technical Assessment Assessment Parameters Attempts: Unlimited — keep trying until you master it! Scoring: Your highest score will be recorded Passing: 70% required to pass Time: No time limit — take your time to think Answers: Correct answers revealed after your final attempt ---...
+
+Quiz Questions (10 questions):
+1. Q: What does a class definition create in C#?
+   A: A new custom data type — a blueprint for objects
+   Why: A class definition creates a new data type (a blueprint). No object or data exists until you use the 'new' keyword to instantiate the class. The class describes WHAT the type contains; the object IS the actual data.
+2. Q: What does the 'new' keyword do?
+   A: It creates an object (instance) from a class and allocates memory for its properties
+   Why: The 'new' keyword constructs a new object in memory from the class blueprint. It allocates space for all properties, initializes them to default values, and returns a reference to the new object.
+3. Q: What is the purpose of the dot operator (.) in 'student.Name = \
+   A: It accesses the Name property of the student object to write a value
+   Why: The dot operator accesses a member (property or method) of an object. On the left side of the assignment operator, it writes a value to the property. On the right side, it reads the property value.
+4. Q: What does '{ get; set; }' do in the declaration 'public string Name { get; set; }'?
+   A: It makes the property auto-implemented — the compiler generates a backing field automatically
+   Why: Auto-implemented properties use { get; set; } to tell the compiler to generate a hidden backing field. 'get' allows reading the property value and 'set' allows writing it. This is the standard practice in modern C#.
+5. Q: What is the difference between 'public' and 'private' access modifiers?
+   A: public members are accessible from anywhere; private members are accessible only inside the class itself
+   Why: The 'public' modifier allows access from any code — including Main and other classes. The 'private' modifier restricts access to the class body only. Code outside the class cannot read or write private members.
+6. Q: If you create two Student objects (s1 and s2) from the same class, what happens when you change s1.Name?
+   A: Only s1.Name changes — each object carries its own independent data
+   Why: Each 'new Student()' creates a separate, independent object in memory. Changing a property on s1 has no effect on s2. They share the same blueprint (class) but each object holds its own copy of the data.
+7. Q: What is the default value of a string property in a newly created object?
+   A: null (no value assigned)
+   Why: String properties default to null — meaning no value has been assigned. Null is not the same as an empty string. You must assign a meaningful value to string properties after creating the object.
+8. Q: What is the default value of an int property in a newly created object?
+   A: 0
+   Why: Integer properties (and other numeric types) default to 0 when an object is created with 'new'. Boolean properties default to false. String and other reference types default to null.
+9. Q: Why are classes useful compared to using separate variables for each piece of data?
+   A: Classes group related data into a single unit, preventing mix-ups and scaling cleanly to multiple records
+   Why: With separate variables, a student requires three unconnected variables (name, id, gpa). Adding a second student doubles the variable count and risks mixing up values. A class bundles related data into one object — creating another student is just 'new Student()'.
+10. Q: Given 'Student b = a;' where 'a' is an existing Student object, what does 'b' hold?
+   A: A reference (pointer) to the same Student object that 'a' points to
+   Why: Classes are reference types. Assignment copies the reference, not the object. Both 'a' and 'b' now point to the same Student object in memory. Changing the object through 'b' is visible through 'a' and vice versa.
 
 ---
 

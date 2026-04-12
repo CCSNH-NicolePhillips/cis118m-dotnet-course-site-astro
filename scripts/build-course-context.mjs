@@ -215,7 +215,7 @@ function getWeekTitle(weekNum) {
     9: "For Loops",
     10: "Methods",
     11: "Returning Values",
-    12: "Array Architectures",
+    12: "Custom Data Types & Classes",
     13: "Lists & Collections",
     14: "Program Integration",
     15: "Final Project"
