@@ -239,14 +239,14 @@ function detectMissedAssignments(assignments) {
     const quizId = `week-${weekNum}-quiz`;
     
     // Check lab
-    if (!assignments[labId] || assignments[labId].bestScore === undefined) {
+    if (!assignments[labId] || (assignments[labId].score === undefined && assignments[labId].bestScore === undefined)) {
       missed.push({ type: 'Lab', week: week.week, title: week.title });
-    } else if (parseFloat(assignments[labId].bestScore || 0) === 0) {
+    } else if (parseFloat(assignments[labId].score || assignments[labId].bestScore || 0) === 0) {
       missed.push({ type: 'Lab', week: week.week, title: week.title, zeroScore: true });
     }
     
     // Check homework (less critical)
-    if (!assignments[homeworkId] || assignments[homeworkId].bestScore === undefined) {
+    if (!assignments[homeworkId] || (assignments[homeworkId].score === undefined && assignments[homeworkId].bestScore === undefined)) {
       missed.push({ type: 'Homework', week: week.week, title: week.title });
     }
   }
@@ -382,7 +382,7 @@ async function fetchStudentGrades(userId) {
     
     for (const id of sortedIds) {
       const a = assignments[id];
-      const score = a.bestScore || a.score;
+      const score = a.score || a.bestScore;
       if (score === undefined && !a.status) continue; // skip empty entries
       
       // Format assignment name from ID (week-01-lab → Week 01 Lab)
@@ -401,38 +401,6 @@ async function fetchStudentGrades(userId) {
         line += `, Attempts: ${a.attempts}`;
       }
       lines.push(line);
-      
-      // Add feedback from progress data
-      if (a.feedback) {
-        lines.push(`  Feedback: ${a.feedback}`);
-      }
-      
-      // Include rubric breakdown from progress data
-      if (a.rubric) {
-        try {
-          const rubricObj = typeof a.rubric === 'string' ? JSON.parse(a.rubric) : a.rubric;
-          if (rubricObj && typeof rubricObj === 'object') {
-            const rubricItems = Object.entries(rubricObj)
-              .map(([category, details]) => {
-                if (typeof details === 'object' && details.points !== undefined) {
-                  return `${category.replace(/-/g, ' ')}: ${details.points}${details.maxPoints ? `/${details.maxPoints}` : ''} - ${details.rationale || ''}`;
-                }
-                return `${category}: ${JSON.stringify(details)}`;
-              })
-              .join('; ');
-            if (rubricItems) {
-              lines.push(`  Rubric: ${rubricItems}`);
-            }
-          }
-        } catch (e) {
-          // Skip if can't parse rubric
-        }
-      }
-      
-      // Include detailed report if available
-      if (a.detailedReport) {
-        lines.push(`  Detailed Report: ${a.detailedReport}`);
-      }
     }
     
     if (lines.length === 0) return { summary: '', submissions: {}, analysis: null };
@@ -447,7 +415,7 @@ async function fetchStudentGrades(userId) {
     
     for (const id of sortedIds) {
       const a = assignments[id];
-      const score = parseFloat(a.bestScore || a.score);
+      const score = parseFloat(a.score || a.bestScore);
       if (isNaN(score)) continue;
       
       if (id.includes('-lab') || id.includes('-boss-fight')) {
@@ -887,7 +855,7 @@ export async function handler(event, context) {
   
   // Truncate grade summary to prevent token overflow
   const gradeSummaryTruncated = studentGradesData.summary 
-    ? studentGradesData.summary.slice(0, 6000) 
+    ? studentGradesData.summary.slice(0, 12000) 
     : '';
 
   const prompt = `You are a warm, patient, and encouraging tutor helping a college freshman learn C# programming in the course CIS 118M.
