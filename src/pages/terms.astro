@@ -1,0 +1,119 @@
+---
+import CourseLayout from "../layouts/CourseLayout.astro";
+import { COURSE } from "../config/site";
+---
+
+<CourseLayout title="Terms of Use">
+  <div class="legal-page">
+    <h1>Terms of Use</h1>
+    <p class="effective-date">Effective Date: January 27, 2026</p>
+
+    <p>By accessing and using the {COURSE.code} — {COURSE.title} course site, you agree to the following terms.</p>
+
+    <h2>1. Purpose</h2>
+
+    <p>This site is an educational platform operated for students enrolled in {COURSE.code} at the Community College System of New Hampshire (CCSNH) during the {COURSE.term} term. It provides course content, a code editor, AI-assisted grading, an AI tutor, and assignment submission tools.</p>
+
+    <h2>2. Authorized Use</h2>
+
+    <ul>
+      <li>Access is limited to <strong>enrolled students</strong> and authorized instructors.</li>
+      <li>You must log in with your <strong>CCSNH student credentials</strong> via Auth0.</li>
+      <li>You may not share your login credentials with anyone.</li>
+      <li>You may not access another student&rsquo;s account, submissions, or grades.</li>
+    </ul>
+
+    <h2>3. Academic Integrity</h2>
+
+    <ul>
+      <li>All work you submit must be <strong>your own</strong>, consistent with the course syllabus and CCSNH academic integrity policies.</li>
+      <li>The site collects <strong>editor telemetry</strong> (keystroke counts, paste events, edit duration) to support integrity monitoring. See the <a href="/privacy">Privacy Policy</a> for details.</li>
+      <li>Submissions are analyzed for integrity concerns. Flagged submissions are reviewed by the instructor.</li>
+      <li>Attempting to circumvent telemetry collection, manipulate submission data, or exploit the grading system is a violation of these terms and the college&rsquo;s academic integrity policy.</li>
+    </ul>
+
+    <h2>4. AI-Assisted Features</h2>
+
+    <ul>
+      <li>This site uses AI (Google Gemini and OpenAI) for <strong>automated grading</strong> and an <strong>AI Tutor</strong>.</li>
+      <li>AI-generated grades and feedback are subject to <strong>instructor review</strong> and may be adjusted.</li>
+      <li>The AI Tutor is a learning aid, not a substitute for course instruction. Responses may occasionally be inaccurate.</li>
+      <li>Do not submit sensitive personal information (beyond what is required for assignments) to the AI Tutor.</li>
+    </ul>
+
+    <h2>5. Code Execution</h2>
+
+    <p>C# code you write in the editor is sent to a remote compilation service for execution. You agree not to submit code that:</p>
+    <ul>
+      <li>Attempts to access the file system, network, or operating system beyond what the assignment requires</li>
+      <li>Contains intentionally malicious or destructive logic</li>
+      <li>Attempts to exploit the compilation service or consume excessive resources</li>
+    </ul>
+
+    <h2>6. Intellectual Property</h2>
+
+    <ul>
+      <li>Course content (lessons, assignments, rubrics, images) is the intellectual property of the instructor and CCSNH.</li>
+      <li>You retain ownership of the code and written work you submit, but grant the site a license to store, process, and evaluate it for grading and integrity purposes.</li>
+      <li>You may not redistribute course materials without permission.</li>
+    </ul>
+
+    <h2>7. Availability</h2>
+
+    <p>The site is provided &quot;as is.&quot; We make reasonable efforts to keep the site available but do not guarantee uninterrupted access. Planned maintenance or service provider outages may temporarily affect availability.</p>
+    <p>If the site is unavailable near an assignment deadline, contact your instructor for accommodations.</p>
+
+    <h2>8. Termination</h2>
+
+    <p>Access to the site may be revoked if you violate these terms, the course academic integrity policy, or CCSNH student conduct policies.</p>
+
+    <h2>9. Changes</h2>
+
+    <p>These terms may be updated during the course term. Changes will be noted on this page with an updated effective date.</p>
+
+    <h2>10. Contact</h2>
+
+    <p>For questions about these terms, contact:</p>
+    <p><a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a></p>
+  </div>
+</CourseLayout>
+
+<style>
+  .legal-page {
+    max-width: 720px;
+  }
+
+  .legal-page h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .effective-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .legal-page h2 {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legal-page p {
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-page ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-page li {
+    line-height: 1.7;
+    margin-bottom: 0.35rem;
+  }
+</style>

@@ -1,0 +1,218 @@
+---
+import CourseLayout from "../layouts/CourseLayout.astro";
+import { COURSE } from "../config/site";
+---
+
+<CourseLayout title="Privacy Policy">
+  <div class="legal-page">
+    <h1>Privacy Policy</h1>
+    <p class="effective-date">Effective Date: January 27, 2026</p>
+
+    <p>This privacy policy describes how the {COURSE.code} — {COURSE.title} course site (&quot;we,&quot; &quot;our,&quot; or &quot;the site&quot;) collects, uses, and protects student data. This site is operated for educational purposes as part of a credit-bearing course at the Community College System of New Hampshire (CCSNH).</p>
+
+    <h2>1. Information We Collect</h2>
+
+    <h3>Account Information</h3>
+    <p>When you log in, we collect:</p>
+    <ul>
+      <li>Your <strong>email address</strong> (from your CCSNH student account)</li>
+      <li>Your <strong>name or nickname</strong> (from your identity provider or entered during onboarding)</li>
+      <li>A unique <strong>user identifier</strong> assigned by Auth0</li>
+    </ul>
+
+    <h3>Code Submissions &amp; Written Work</h3>
+    <p>When you complete assignments, we collect:</p>
+    <ul>
+      <li>Your <strong>C# source code</strong> (labs)</li>
+      <li>Your <strong>written reflections</strong> (homework)</li>
+      <li>Your <strong>quiz responses</strong></li>
+      <li><strong>Submission timestamps</strong> and attempt history (up to 5 recent attempts per assignment)</li>
+    </ul>
+
+    <h3>Editor Telemetry</h3>
+    <p>To support academic integrity, the code editor records:</p>
+    <ul>
+      <li><strong>Keystroke count</strong> (not individual keys)</li>
+      <li><strong>Paste event count</strong> and character totals</li>
+      <li><strong>Edit duration</strong> (time between first and last edit)</li>
+      <li><strong>Total edit operations</strong></li>
+    </ul>
+    <p>This data is used solely to detect potential academic integrity issues. Individual keystrokes are <strong>not</strong> recorded.</p>
+
+    <h3>Preferences</h3>
+    <p>Your browser stores the following locally:</p>
+    <ul>
+      <li>Theme preference (dark/light)</li>
+      <li>Sidebar state</li>
+      <li>Local code backups (fallback if cloud save is unavailable)</li>
+    </ul>
+
+    <h2>2. How We Use Your Data</h2>
+
+    <ul>
+      <li><strong>Grading:</strong> Your code and written reflections are evaluated by an AI grading system to provide scores and detailed feedback.</li>
+      <li><strong>Academic Integrity:</strong> Editor telemetry is analyzed alongside your submissions to identify potential integrity concerns. This analysis is visible only to the instructor.</li>
+      <li><strong>AI Tutoring:</strong> When you use the AI Tutor, your past submissions, grades, and code may be provided as context to generate personalized help.</li>
+      <li><strong>Code Compilation:</strong> Your C# code is sent to a remote compilation service to be compiled and executed.</li>
+      <li><strong>Grade Reporting:</strong> Grades may be exported to the Canvas LMS gradebook via instructor-managed CSV files.</li>
+    </ul>
+
+    <h2>3. Third-Party Services</h2>
+
+    <p>Your data is processed by the following services:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">Purpose</th>
+          <th scope="col">Data Shared</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Auth0</strong> (Okta)</td>
+          <td>Authentication</td>
+          <td>Email, name, login events</td>
+        </tr>
+        <tr>
+          <td><strong>Upstash Redis</strong></td>
+          <td>Cloud data storage</td>
+          <td>All stored student data (code, grades, profiles)</td>
+        </tr>
+        <tr>
+          <td><strong>Google Gemini</strong></td>
+          <td>AI grading &amp; tutoring</td>
+          <td>Submitted code, reflections, telemetry, grade history</td>
+        </tr>
+        <tr>
+          <td><strong>OpenAI</strong></td>
+          <td>Fallback AI grading</td>
+          <td>Same as Gemini (used only when Gemini is unavailable)</td>
+        </tr>
+        <tr>
+          <td><strong>Render</strong></td>
+          <td>Code compilation</td>
+          <td>C# source code for compilation and execution</td>
+        </tr>
+        <tr>
+          <td><strong>Netlify</strong></td>
+          <td>Hosting</td>
+          <td>All HTTP traffic passes through Netlify infrastructure</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>No data is sold to third parties. Data shared with AI providers is used solely for grading and tutoring within this course.</p>
+
+    <h2>4. Cookies &amp; Local Storage</h2>
+
+    <p>This site does <strong>not</strong> set tracking cookies or use third-party analytics (no Google Analytics, no tracking pixels).</p>
+    <p>Auth0 may set internal cookies for session management. Authentication tokens are stored in your browser&rsquo;s localStorage and are cleared when you log out.</p>
+
+    <h2>5. Data Retention</h2>
+
+    <p>Student data (submissions, grades, profiles) is retained in cloud storage for the duration of the course term ({COURSE.term}) and may be kept for academic record-keeping purposes afterward. Local browser data is cleared on logout (except theme preference).</p>
+
+    <h2>6. Data Security</h2>
+
+    <ul>
+      <li>All connections use <strong>HTTPS</strong> encryption.</li>
+      <li>Server-side functions are authenticated using <strong>access tokens</strong> verified against Auth0.</li>
+      <li>Redis credentials and API keys are stored as <strong>server-side environment variables</strong>, never exposed to the browser.</li>
+      <li>Instructor-only endpoints verify privileged access before returning sensitive data.</li>
+    </ul>
+
+    <h2>7. Your Rights</h2>
+
+    <p>As a student, you may:</p>
+    <ul>
+      <li><strong>View</strong> your submitted work and grades through the course site.</li>
+      <li><strong>Request</strong> information about what data is stored about you.</li>
+      <li><strong>Request deletion</strong> of your data after the course term ends.</li>
+    </ul>
+    <p>To make a request, contact your instructor at <a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a>.</p>
+
+    <h2>8. FERPA Compliance</h2>
+
+    <p>This site is operated as part of a CCSNH course. Student education records are protected under the <strong>Family Educational Rights and Privacy Act (FERPA)</strong>. Grades and academic records are not disclosed to third parties without student consent, except as permitted by FERPA.</p>
+
+    <h2>9. Changes to This Policy</h2>
+
+    <p>This policy may be updated during the course term. Changes will be noted on this page with an updated effective date.</p>
+
+    <h2>10. Contact</h2>
+
+    <p>For questions about this privacy policy or your data, contact:</p>
+    <p><a href={`mailto:${COURSE.instructorEmail}`}>{COURSE.instructorEmail}</a></p>
+  </div>
+</CourseLayout>
+
+<style>
+  .legal-page {
+    max-width: 720px;
+  }
+
+  .legal-page h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .effective-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .legal-page h2 {
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legal-page h3 {
+    font-size: 1.15rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .legal-page p {
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-page ul {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .legal-page li {
+    line-height: 1.7;
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .legal-page th,
+  .legal-page td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+  }
+
+  .legal-page th {
+    background: var(--bg-secondary, #f5f5f5);
+    font-weight: 600;
+  }
+
+  .legal-page tr:nth-child(even) td {
+    background: var(--bg-secondary, #fafafa);
+  }
+</style>
