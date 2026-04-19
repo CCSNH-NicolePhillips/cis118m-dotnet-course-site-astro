@@ -1,0 +1,173 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 13 • Collection Manager"
+description: "Implement fixed arrays and List<Student> with foreach iteration and collection operations"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 13: Collection Manager
+
+<DueDateBanner week={13} type="Lab" />
+
+**Time: 60 minutes**  
+**Points: 100**
+
+<img src="/media/week%2013/13.3/Header%20Image.jpeg" alt="Lab header diagram showing a collection manager console flow split into fixed array and dynamic list reporting tracks with foreach traversal" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Mission Objective
+
+Build a collection manager that stores Week 12 `Student` objects in both a fixed array and a `List<Student>`, then prints each collection with `foreach`.
+
+<img src="/media/week%2013/13.3/Collection%20Manager%20Architecture.jpeg" alt="Collection manager architecture diagram showing Student class, array and list initialization, add and remove operations, foreach output paths, and length and count telemetry" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Technical Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Requirement</th>
+        <th scope="col">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Student Class</strong></td>
+        <td>Use a <code>Student</code> class with <code>Name</code>, <code>Id</code>, and <code>Gpa</code> auto-implemented properties.</td>
+      </tr>
+      <tr>
+        <td><strong>Fixed Array</strong></td>
+        <td>Declare <code>Student[] roster = new Student[3];</code> and assign all three slots with zero-based indexes.</td>
+      </tr>
+      <tr>
+        <td><strong>Array Loop</strong></td>
+        <td>Use <code>foreach</code> to print all array elements. Also print <code>roster.Length</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Dynamic List</strong></td>
+        <td>Add <code>using System.Collections.Generic;</code>, create <code>List&lt;Student&gt;</code>, add at least 3 students using <code>.Add()</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Removal Operation</strong></td>
+        <td>Remove one student from the list using <code>.Remove()</code> and print <code>.Count</code> before and after removal.</td>
+      </tr>
+      <tr>
+        <td><strong>List Loop</strong></td>
+        <td>Use <code>foreach</code> to print remaining list items after removal.</td>
+      </tr>
+      <tr>
+        <td><strong>Output Format</strong></td>
+        <td>Output must be clearly sectioned: array report, list report, and count values.</td>
+      </tr>
+      <tr>
+        <td><strong>Brace Style</strong></td>
+        <td>K&amp;R style for class, methods, and control structures.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Starter Code
+
+<TryItNowRunner
+  starterId="week-13-lab"
+  height={680}
+  files={[
+    { name: "Program.cs", content: `using System.Collections.Generic;
+
+Student[] roster = new Student[3];
+roster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
+roster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
+// TODO: assign roster[2]
+
+Console.WriteLine("--- Fixed Array Report ---");
+Console.WriteLine("Array Length: " + roster.Length);
+foreach (Student student in roster) {
+    Console.WriteLine($"{student.Name} | {student.Id} | {student.Gpa}");
+}
+
+Console.WriteLine();
+Console.WriteLine("--- Dynamic List Report ---");
+List<Student> students = new List<Student>();
+students.Add(new Student { Name = "Katherine Johnson", Id = 1004, Gpa = 3.95 });
+students.Add(new Student { Name = "Margaret Hamilton", Id = 1005, Gpa = 3.92 });
+// TODO: add one more Student
+
+Console.WriteLine("List Count Before Remove: " + students.Count);
+// TODO: remove one student from the list
+Console.WriteLine("List Count After Remove: " + students.Count);
+
+foreach (Student student in students) {
+    Console.WriteLine($"{student.Name} | {student.Id} | {student.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="Complete all TODOs. Demonstrate array length, list count before/after remove, and foreach output for both collections."
+  enableStdin={false}
+/>
+
+---
+
+## Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Criterion</th>
+        <th scope="col">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Correct <code>Student</code> class and property types</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Fixed array declaration with valid zero-based assignments</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Array foreach output and <code>.Length</code> usage</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>List initialization with namespace and <code>.Add()</code></td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Removal logic with <code>.Remove()</code> and correct <code>.Count</code> display</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Readable formatted output for both collections</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Compiles and follows K&amp;R brace style</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="next-section">
+  <p>Lab submitted? Continue to Homework 13.</p>
+  <a href="/week-13/homework/" class="vscode-button">Continue to Homework 13 &rarr;</a>
+</div>

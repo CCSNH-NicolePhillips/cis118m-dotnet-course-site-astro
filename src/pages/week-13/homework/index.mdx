@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 13 • Technical Reflection: Array and List Architecture"
+description: "Analyze fixed arrays versus List<T> design decisions and foreach iteration over custom class objects"
+---
+
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 13: Technical Reflection - Array and List Architecture
+
+<DueDateBanner week={13} type="Homework" />
+
+## Reflection Prompt
+
+In 3-5 sentences per question, answer all prompts:
+
+1. **Array Strategy:** Explain the syntax `type[] name = new type[size]`. Why is indexing zero-based, and why is `array.Length` safer than hard-coded loop bounds?
+2. **List Strategy:** Explain why `List<T>` requires `System.Collections.Generic` and how `.Add()`, `.Remove()`, and `.Count` support runtime data changes.
+3. **Loop Integration:** You created `Student` class objects in Week 12. Explain how `foreach` improves readability when iterating `Student[]` and `List<Student>`.
+4. **Architecture Decision:** Given a fixed class roster of 20 students versus a live enrollment that can change daily, justify when array or list is the stronger design.
+
+<div class="architect-rule">
+
+### Senior Architect Expectation
+
+Your answers should argue from constraints, not preference. Discuss capacity predictability, mutation frequency, and maintenance risk.
+
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-13-homework" />
+
+---
+
+## Reference Material
+
+- [Section 13.1: Fixed Arrays](/week-13/lesson-1/) - declaration syntax, indexing, .Length
+- [Section 13.2: List<T>](/week-13/lesson-2/) - namespace, .Add(), .Remove(), .Count, foreach
+
+---
+
+<div class="next-section">
+  <p>Homework submitted? Continue to Weekly Assessment 13.</p>
+  <a href="/week-13/weekly-assessment/" class="vscode-button">Continue to Weekly Assessment 13 &rarr;</a>
+</div>

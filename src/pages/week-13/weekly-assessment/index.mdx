@@ -1,0 +1,134 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 13 • Technical Assessment"
+---
+
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Week 13 Technical Assessment
+
+<DueDateBanner week={13} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong></li>
+    <li><strong>Scoring:</strong> Highest score is recorded</li>
+    <li><strong>Passing:</strong> 70% required</li>
+    <li><strong>Time:</strong> No time limit</li>
+    <li><strong>Answers:</strong> Revealed after final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz
+  quizId="week-13-quiz"
+  title="Week 13: Data Collections (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Which declaration creates a fixed array of five integers?",
+      options: [
+        "int numbers = new int(5);",
+        "int[] numbers = new int[5];",
+        "List<int> numbers = new int[5];",
+        "int[5] numbers = new int[];"
+      ],
+      correctAnswer: "int[] numbers = new int[5];",
+      explanation: "Array syntax is type brackets variable equals new type bracket size."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "For an array with Length 6, what is the first valid index?",
+      options: ["1", "0", "-1", "6"],
+      correctAnswer: "0",
+      explanation: "C# arrays use zero-based indexing."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What is the last valid index of an array with Length 6?",
+      options: ["6", "5", "4", "0"],
+      correctAnswer: "5",
+      explanation: "Last index is Length - 1."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "Which property returns the size of an array?",
+      options: ["Count", "Size", "Length", "Capacity"],
+      correctAnswer: "Length",
+      explanation: "Arrays expose Length; List<T> exposes Count."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "Which namespace is required for List<T>?",
+      options: [
+        "System.Text",
+        "System.Collections.Generic",
+        "System.Linq",
+        "System.Runtime"
+      ],
+      correctAnswer: "System.Collections.Generic",
+      explanation: "List<T> is defined in System.Collections.Generic."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "Which List<T> method inserts a new element?",
+      options: ["Push", "Append", "Add", "InsertEnd"],
+      correctAnswer: "Add",
+      explanation: "Add appends an item to the list."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "Which List<T> member reports current element count?",
+      options: ["Length", "Count", "Size", "Items"],
+      correctAnswer: "Count",
+      explanation: "List<T> uses Count for active item total."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "What does Remove do on List<Student>?",
+      options: [
+        "Deletes the list type declaration",
+        "Removes a matching item from the list",
+        "Sets Count to zero always",
+        "Converts list to array"
+      ],
+      correctAnswer: "Removes a matching item from the list",
+      explanation: "Remove deletes one matching element from the list collection."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Why is foreach useful with Student collections?",
+      options: [
+        "It changes objects to primitive types",
+        "It avoids manual index math for sequential traversal",
+        "It requires arrays and cannot work with lists",
+        "It allocates memory for new students"
+      ],
+      correctAnswer: "It avoids manual index math for sequential traversal",
+      explanation: "foreach iterates each object directly and improves readability."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "Which collection is generally better for unpredictable runtime growth?",
+      options: ["Fixed array", "List<T>", "string", "bool"],
+      correctAnswer: "List<T>",
+      explanation: "List<T> supports dynamic size changes with Add and Remove operations."
+    }
+  ]}
+/>

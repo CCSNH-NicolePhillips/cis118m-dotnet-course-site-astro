@@ -1,0 +1,180 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 13.2 • List<T>"
+description: "Use System.Collections.Generic and List<T> with Add, Remove, Count, and foreach over custom objects"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+
+# Section 13.2: List<T>
+
+<div class="section-header">
+  <div class="section-badge">Dynamic Collections</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+<img src="/media/week%2013/13.2/Header%20Image.jpeg" alt="Header diagram for List of Student showing dynamic growth and key operations Add, Remove, and Count" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Namespace Requirement
+
+`List<T>` lives in `System.Collections.Generic`.
+
+```csharp
+using System.Collections.Generic;
+```
+
+Without this namespace, `List<T>` is not recognized by the compiler.
+
+---
+
+## Core List<T> Operations
+
+```csharp
+using System.Collections.Generic;
+
+List<Student> students = new List<Student>();
+students.Add(new Student { Name = "Ada", Id = 1001, Gpa = 3.9 });
+students.Add(new Student { Name = "Alan", Id = 1002, Gpa = 3.7 });
+
+Console.WriteLine("Count: " + students.Count);
+
+students.Remove(students[1]);
+Console.WriteLine("Count after removal: " + students.Count);
+```
+
+<AnnotatedCode
+  title="List<T> Operational Model"
+  tokens={[
+    { text: "List<Student>", type: "keyword", tooltip: "GENERIC LIST TYPE: dynamic collection where each element is a Student object." },
+    { text: " students = ", type: "punctuation", tooltip: "Variable declaration and assignment." },
+    { text: "new List<Student>()", type: "keyword", tooltip: "Constructs an empty list ready to receive elements." },
+    { text: ";\nstudents.Add(...)\n", type: "punctuation", tooltip: "Add inserts a new element into the list." },
+    { text: "students.Remove(...)\n", type: "keyword", tooltip: "Remove deletes one matching element from the list." },
+    { text: "students.Count", type: "string", tooltip: "Count reports active elements currently in the list." }
+  ]}
+/>
+
+<img src="/media/week%2013/13.2/List%20Operation%20Lifecycle.jpeg" alt="List operation lifecycle diagram showing initialization, adding student items, removing one item, and updated count values at each stage" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Foreach Integration with Week 12 Class Objects
+
+`foreach` works directly with `List<Student>` and provides clean object traversal:
+
+```csharp
+List<Student> students = new List<Student>();
+students.Add(new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 });
+students.Add(new Student { Name = "Grace Hopper", Id = 1003, Gpa = 4.0 });
+
+foreach (Student student in students) {
+    Console.WriteLine($"{student.Name} ({student.Id}) GPA: {student.Gpa}");
+}
+```
+
+<div class="architect-rule">
+
+### Senior Architect Perspective
+
+Use `foreach` for full-sequence reads and reporting workflows. Use index-based loops only when positional mutation is required. This division improves readability and reduces off-by-one errors.
+
+</div>
+
+<img src="/media/week%2013/13.2/Array%20vs%20List%20Decision%20Matrix.jpeg" alt="Decision matrix comparing Student array and List of Student across capacity, mutation support, performance profile, and API members including Length and Count" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Try It: Dynamic Student List
+
+<TryItNowRunner
+  starterId="week-13-lesson-2"
+  height={580}
+  files={[
+    { name: "Program.cs", content: `using System.Collections.Generic;
+
+List<Student> students = new List<Student>();
+
+students.Add(new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 });
+students.Add(new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 });
+
+// TODO: Add one more Student object
+
+Console.WriteLine("Count Before Remove: " + students.Count);
+
+// TODO: Remove one Student object
+
+Console.WriteLine("Count After Remove: " + students.Count);
+
+foreach (Student student in students) {
+    Console.WriteLine($"Name: {student.Name} | ID: {student.Id} | GPA: {student.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="Add a third student, remove one student, and verify Count changes correctly. Keep foreach output."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-13-lesson-2-check"
+  title="Section 13.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Which using directive is required for List<T>?",
+      options: [
+        "using System.Text;",
+        "using System.Collections.Generic;",
+        "using System.Linq;",
+        "using System.IO;"
+      ],
+      correctAnswer: "using System.Collections.Generic;",
+      explanation: "List<T> is defined in System.Collections.Generic."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What does Count represent in List<Student>?",
+      options: [
+        "Maximum capacity",
+        "Current number of elements",
+        "Last valid index",
+        "Number of properties in Student"
+      ],
+      correctAnswer: "Current number of elements",
+      explanation: "Count reflects how many items are currently in the list."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "When iterating all students for reporting, why prefer foreach?",
+      options: [
+        "It eliminates the need for Student class",
+        "It avoids manual index math and improves readability",
+        "It automatically sorts the list",
+        "It only works for arrays"
+      ],
+      correctAnswer: "It avoids manual index math and improves readability",
+      explanation: "foreach is concise and reduces indexing errors when scanning full collections."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Section 13.2 complete? Continue to Lab 13.</p>
+  <a href="/week-13/lab/" class="vscode-button">Continue to Lab 13: Collection Manager &rarr;</a>
+</div>

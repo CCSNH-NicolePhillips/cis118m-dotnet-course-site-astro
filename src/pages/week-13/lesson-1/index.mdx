@@ -1,0 +1,170 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 13.1 • Fixed Arrays"
+description: "Declare fixed arrays with type[] name = new type[size], use zero-based indexing, and iterate with .Length"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+
+# Section 13.1: Fixed Arrays
+
+<div class="section-header">
+  <div class="section-badge">Deterministic Capacity</div>
+  <p class="section-time">Estimated Time: 30 minutes</p>
+</div>
+
+<img src="/media/week%2013/13.1/Header%20Image.jpeg" alt="Header diagram for fixed arrays showing Student array declaration and three indexed slots 0, 1, and 2 as a fixed-capacity structure" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Technical Briefing: Array Syntax and Indexing
+
+An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern:
+
+```csharp
+Student[] roster = new Student[3];
+```
+
+`roster` now contains three slots indexed `0`, `1`, and `2`.
+
+<AnnotatedCode
+  title="Array Declaration Anatomy"
+  tokens={[
+    { text: "Student", type: "keyword", tooltip: "ELEMENT TYPE: each slot stores a Student object reference." },
+    { text: "[]", type: "punctuation", tooltip: "ARRAY MARKER: brackets on the type mean this variable is an array." },
+    { text: " roster ", type: "string", tooltip: "VARIABLE NAME: the array reference variable." },
+    { text: "=", type: "punctuation", tooltip: "ASSIGNMENT: stores the new array reference in roster." },
+    { text: " new ", type: "keyword", tooltip: "NEW KEYWORD: allocates array memory." },
+    { text: "Student", type: "keyword", tooltip: "ELEMENT TYPE repeated during allocation." },
+    { text: "[3]", type: "punctuation", tooltip: "CAPACITY: fixed length of 3 elements." },
+    { text: ";", type: "punctuation", tooltip: "Statement terminator." }
+  ]}
+/>
+
+---
+
+## Zero-Based Indexing and .Length
+
+Array positions start at `0`, not `1`. The last valid index is always `array.Length - 1`.
+
+<img src="/media/week%2013/13.1/Zero-Based%20Index%20Map.jpeg" alt="Zero-based index map showing five array slots labeled index 0 through 4 with corresponding human positions 1st through 5th and warnings about starting at index 1" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+```csharp
+Student[] roster = new Student[3];
+
+roster[0] = new Student { Name = "Ada", Id = 1001, Gpa = 3.9 };
+roster[1] = new Student { Name = "Alan", Id = 1002, Gpa = 3.7 };
+roster[2] = new Student { Name = "Grace", Id = 1003, Gpa = 4.0 };
+
+for (int i = 0; i < roster.Length; i++) {
+    Console.WriteLine($"{roster[i].Name} ({roster[i].Id}) GPA: {roster[i].Gpa}");
+}
+```
+
+<div class="architect-rule">
+
+### Senior Architect Perspective
+
+Bound checks should always be expressed with <code>.Length</code>, not hard-coded constants. If capacity changes, loop logic remains correct. Hard-coded bounds create maintenance defects and out-of-range exceptions.
+
+</div>
+
+<img src="/media/week%2013/13.1/Length%20Boundary%20Guard.jpeg" alt="Loop boundary safety diagram comparing i less than roster Length as valid iteration and i equals roster Length as out-of-range access condition" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Foreach with Arrays of Class Objects
+
+Use `foreach` when you need sequential read access without index math.
+
+```csharp
+foreach (Student student in roster) {
+    Console.WriteLine($"{student.Name} | {student.Id} | {student.Gpa}");
+}
+```
+
+This pattern is required for Week 13 loop integration: iterating collections of custom class objects introduced in Week 12.
+
+---
+
+## Try It: Build an Array Roster
+
+<TryItNowRunner
+  starterId="week-13-lesson-1"
+  height={560}
+  files={[
+    { name: "Program.cs", content: `Student[] roster = new Student[3];
+
+roster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
+roster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
+
+// TODO: Fill roster[2] with a third Student object
+
+Console.WriteLine("Array Length: " + roster.Length);
+
+foreach (Student student in roster) {
+    Console.WriteLine($"Name: {student.Name} | ID: {student.Id} | GPA: {student.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="Complete the third Student object and run. Keep zero-based indexing and foreach output unchanged."
+  enableStdin={false}
+/>
+
+---
+
+<Checkpoint
+  checkpointId="week-13-lesson-1-check"
+  title="Section 13.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What does this declaration create: Student[] roster = new Student[5];",
+      options: [
+        "Five Student objects with property values",
+        "One Student object",
+        "An array with five Student slots",
+        "A List<Student>"
+      ],
+      correctAnswer: "An array with five Student slots",
+      explanation: "The array allocates five slots for Student references. Objects must still be created and assigned to each index."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "Which is the last valid index of an array with Length 8?",
+      options: ["8", "7", "6", "0"],
+      correctAnswer: "7",
+      explanation: "Array indexing is zero-based, so last index is Length - 1."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "Why should loops use i < array.Length instead of a literal bound?",
+      options: [
+        "It compiles faster",
+        "It avoids maintenance bugs when size changes",
+        "It allows mixed data types",
+        "It changes array indexing to one-based"
+      ],
+      correctAnswer: "It avoids maintenance bugs when size changes",
+      explanation: "Length-based bounds stay accurate even if capacity changes."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Section 13.1 complete? Continue to dynamic collections in Section 13.2.</p>
+  <a href="/week-13/lesson-2/" class="vscode-button">Continue to 13.2: List&lt;T&gt; &rarr;</a>
+</div>

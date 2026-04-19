@@ -1,0 +1,245 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 13 • Data Collections"
+description: "Use fixed arrays and List<T> collections to store and iterate custom class objects with foreach loops"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 13: Data Collections
+
+<DueDateBanner week={13} />
+
+<div class="mission-brief">
+  <h2>Mission Brief: From Single Objects to Managed Collections</h2>
+  <p>
+    Week 12 introduced custom classes and object instantiation. This week extends that model to collections. Professional applications rarely process one object at a time. They process sets of related objects: student rosters, inventory records, and transaction histories. You need deterministic structures for fixed-size datasets and flexible structures for growing datasets.
+  </p>
+  <p>
+    You will build two collection strategies: fixed arrays using <code>type[] name = new type[size]</code>, and dynamic lists using <code>List&lt;T&gt;</code>. Then you will integrate both with <code>foreach</code> loops to iterate class objects created in Week 12.
+  </p>
+</div>
+
+<img src="/media/week%2013/13.0/Collection%20Shift.jpeg" alt="Collection Shift diagram showing transition from isolated Student objects to two structured collections, Student array and List of Student, with labels for fixed-size and dynamic-size data handling" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+<div class="section-cards">
+  <a href="/week-13/lesson-1/" class="section-card arrays">
+    <div class="card-icon" aria-hidden="true">[ ]</div>
+    <div class="card-content">
+      <h3>13.1 Fixed Arrays</h3>
+      <p class="metaphor">A fixed-capacity rack with numbered slots</p>
+      <p>Declare arrays with <code>type[] name = new type[size]</code>, access elements by zero-based index, and use <code>.Length</code> for bounds-safe iteration.</p>
+    </div>
+  </a>
+  <a href="/week-13/lesson-2/" class="section-card lists">
+    <div class="card-icon" aria-hidden="true">{ }</div>
+    <div class="card-content">
+      <h3>13.2 List&lt;T&gt;</h3>
+      <p class="metaphor">A dynamic container that grows with demand</p>
+      <p>Add <code>System.Collections.Generic</code>, use <code>.Add()</code> and <code>.Remove()</code>, and read current size with <code>.Count</code>.</p>
+    </div>
+  </a>
+  <a href="/week-13/lab/" class="section-card lab">
+    <div class="card-icon" aria-hidden="true">&gt;_</div>
+    <div class="card-content">
+      <h3>Lab 13: Collection Manager</h3>
+      <p class="metaphor">Organize and iterate object sets</p>
+      <p>Build a student collection manager that uses both fixed arrays and <code>List&lt;Student&gt;</code> with <code>foreach</code> output.</p>
+    </div>
+  </a>
+</div>
+
+---
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Section</th>
+        <th scope="col">Topic</th>
+        <th scope="col">Key Concept</th>
+        <th scope="col">Est. Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>13.1</td>
+        <td>Fixed Arrays</td>
+        <td>Array declaration, zero-based indexing, .Length</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>13.2</td>
+        <td>List&lt;T&gt;</td>
+        <td>System.Collections.Generic, .Add(), .Remove(), .Count</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>Lab</td>
+        <td>Collection Manager</td>
+        <td>List&lt;Student&gt; and foreach iteration</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td>Homework</td>
+        <td>Technical Reflection</td>
+        <td>Array vs List architectural tradeoff analysis</td>
+        <td>30 min</td>
+      </tr>
+      <tr>
+        <td>Assessment</td>
+        <td>Weekly Assessment 13</td>
+        <td>Arrays, List&lt;T&gt;, foreach with class objects</td>
+        <td>15 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Collection Shift: Object Sets as First-Class Data
+
+In Week 12, one variable referenced one object. In Week 13, one variable references a structured collection of objects. This shift enables bulk operations: reporting all students, removing specific records, and iterating every object using one loop construct.
+
+<div class="architect-rule">
+
+### Senior Architect Perspective
+
+Collection choice is an architecture decision, not syntax trivia. Use arrays when capacity is fixed and index access is the primary concern. Use <code>List&lt;T&gt;</code> when the dataset changes at runtime and operational methods such as <code>.Add()</code> and <code>.Remove()</code> are required. In both models, the collection element type should be your custom class, not disconnected primitive variables.
+
+</div>
+
+---
+
+## Week 13 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead class="sr-only">
+      <tr>
+        <th scope="col">Deliverable</th>
+        <th scope="col">Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Lab 13: Collection Manager</strong> - Arrays, List&lt;Student&gt;, foreach integration</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Technical Reflection 13</strong> - Collection design analysis</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Weekly Assessment 13</strong> - Data Collections</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Knowledge Checks</strong> - Participation in each module</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Participation</strong> - Class engagement</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">10%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-13/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 13.1 <span aria-hidden="true">&rarr;</span>
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+
+  .section-card.arrays {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+
+  .section-card.lists {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+
+  .section-card.lab {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+    font-size: 1.35rem;
+  }
+
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(78,201,176,0.06) 0%, rgba(107,159,255,0.06) 100%) !important;
+    border-color: rgba(78, 201, 176, 0.35) !important;
+  }
+
+  body[data-theme="light"] .mission-brief h2 {
+    color: #1a8a6e !important;
+  }
+`}</style>
