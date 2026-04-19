@@ -1245,11 +1245,11 @@ Summary: # Lab 13: Collection Manager **Time: 60 minutes** **Points: 100** --- #
 
 ### 📖 Lesson: Section 13.1 • Fixed Arrays
 
-Summary: # Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Array Syntax and Indexing An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern: roster now contains three slots indexed 0, 1...
+Summary: # Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Fixed Arrays Watch this briefing on fixed arrays — how to declare arrays with type[] syntax, use zero-based indexing, and iterate with .Length and foreach. --- ## Array Syntax and Indexing An ar...
 
 ### 📖 Lesson: Section 13.2 • List<T>
 
-Summary: # Section 13.2: List\ --- ## Namespace Requirement List --- ## Foreach Integration with Week 12 Class Objects foreach works directly with List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;...
+Summary: # Section 13.2: List\ --- ## Technical Briefing: List\ --- ## Foreach Integration with Week 12 Class Objects foreach works directly with `List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;...
 
 ### 📋 Quiz: Week 13 • Technical Assessment
 

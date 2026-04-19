@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T18:40:54.159Z",
+  "generatedAt": "2026-04-19T18:58:49.466Z",
   "courseInfo": {
     "code": "CIS 118M",
     "title": "Introduction to C# Programming",
@@ -2205,20 +2205,20 @@
         {
           "path": "week-13\\lesson-1\\index.mdx",
           "title": "Section 13.1 • Fixed Arrays",
-          "summary": "# Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Array Syntax and Indexing An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern: roster now contains three slots indexed 0, 1, and 2. --- ## Zero-Based Indexing and .Length Array positions start at 0, not 1. The last valid index is always array.Length - 1. ### Senior Architect Perspective Bound checks should always be expressed with .Length , not hard-coded constants. If capacity changes, loop logic remains correct. Hard-",
+          "summary": "# Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Fixed Arrays Watch this briefing on fixed arrays — how to declare arrays with type[] syntax, use zero-based indexing, and iterate with .Length and foreach. --- ## Array Syntax and Indexing An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern: roster now contains three slots indexed 0, 1, and 2. --- ## Zero-Based Indexing and .Length Array positions start at 0, not 1. The last valid index is always array.Length - 1. ### S",
           "keyConcepts": [],
           "codeExamples": [],
           "quizQuestions": [],
-          "fullText": "# Section 13.1: Fixed Arrays\r\n\r\n \r\n Deterministic Capacity \r\n Estimated Time: 30 minutes \r\n \r\n\r\n \r\n\r\n---\r\n\r\n## Technical Briefing: Array Syntax and Indexing\r\n\r\nAn array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern:\r\n\r\n\r\n\r\nroster now contains three slots indexed 0, 1, and 2.\r\n\r\n\r\n\r\n---\r\n\r\n## Zero-Based Indexing and .Length\r\n\r\nArray positions start at 0, not 1. The last valid index is always array.Length - 1.\r\n\r\n \r\n\r\n\r\n\r\n \r\n\r\n### Senior Architect Perspective\r\n\r\nBound checks should always be expressed with .Length , not hard-coded constants. If capacity changes, loop logic remains correct. Hard-coded bounds create maintenance defects and out-of-range exceptions.\r\n\r\n \r\n\r\n \r\n\r\n---\r\n\r\n## Foreach with Arrays of Class Objects\r\n\r\nUse foreach when you need sequential read access without index math.\r\n\r\n\r\n\r\nThis pattern is required for Week 13 loop integration: iterating collections of custom class objects introduced in Week 12.\r\n\r\n---\r\n\r\n## Try It: Build an Array Roster\r\n\r\n\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Section 13.1 complete? Continue to dynamic collections in Section 13.2. \r\n Continue to 13.2: List&lt;T&gt; &rarr;"
+          "fullText": "# Section 13.1: Fixed Arrays\r\n\r\n \r\n Deterministic Capacity \r\n Estimated Time: 30 minutes \r\n \r\n\r\n \r\n\r\n---\r\n\r\n## Technical Briefing: Fixed Arrays\r\n\r\n \r\n Watch this briefing on fixed arrays — how to declare arrays with type[] syntax, use zero-based indexing, and iterate with .Length and foreach. \r\n \r\n \r\n \r\n \r\n \r\n\r\n---\r\n\r\n## Array Syntax and Indexing\r\n\r\nAn array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern:\r\n\r\n\r\n\r\nroster now contains three slots indexed 0, 1, and 2.\r\n\r\n\r\n\r\n---\r\n\r\n## Zero-Based Indexing and .Length\r\n\r\nArray positions start at 0, not 1. The last valid index is always array.Length - 1.\r\n\r\n \r\n\r\n\r\n\r\n \r\n\r\n### Senior Architect Perspective\r\n\r\nBound checks should always be expressed with .Length , not hard-coded constants. If capacity changes, loop logic remains correct. Hard-coded bounds create maintenance defects and out-of-range exceptions.\r\n\r\n \r\n\r\n \r\n\r\n---\r\n\r\n## Foreach with Arrays of Class Objects\r\n\r\nUse foreach when you need sequential read access without index math.\r\n\r\n\r\n\r\nThis pattern is required for Week 13 loop integration: iterating collections of custom class objects introduced in Week 12.\r\n\r\n---\r\n\r\n## Try It: Build an Array Roster\r\n\r\n\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Section 13.1 complete? Continue to dynamic collections in Section 13.2. \r\n Continue to 13.2: List&lt;T&gt; &rarr;"
         },
         {
           "path": "week-13\\lesson-2\\index.mdx",
           "title": "Section 13.2 • List<T>",
-          "summary": "# Section 13.2: List\\ --- ## Namespace Requirement List --- ## Foreach Integration with Week 12 Class Objects foreach works directly with List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;",
+          "summary": "# Section 13.2: List\\ --- ## Technical Briefing: List\\ --- ## Foreach Integration with Week 12 Class Objects foreach works directly with `List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;",
           "keyConcepts": [],
           "codeExamples": [],
           "quizQuestions": [],
-          "fullText": "# Section 13.2: List\\\r\n\r\n---\r\n\r\n## Namespace Requirement\r\n\r\nList\r\n\r\n \r\n\r\n---\r\n\r\n## Foreach Integration with Week 12 Class Objects\r\n\r\nforeach works directly with List\r\n\r\n---\r\n\r\n## Try It: Dynamic Student List\r\n\r\n\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Section 13.2 complete? Continue to Lab 13. \r\n Continue to Lab 13: Collection Manager &rarr;"
+          "fullText": "# Section 13.2: List\\\r\n\r\n---\r\n\r\n## Technical Briefing: List\\\r\n\r\n \r\n\r\n---\r\n\r\n## Foreach Integration with Week 12 Class Objects\r\n\r\nforeach works directly with `List\r\n\r\n---\r\n\r\n## Try It: Dynamic Student List\r\n\r\n\r\n\r\n---\r\n\r\n\r\n\r\n---\r\n\r\n \r\n Section 13.2 complete? Continue to Lab 13. \r\n Continue to Lab 13: Collection Manager &rarr;"
         },
         {
           "path": "week-13\\weekly-assessment\\index.mdx",
