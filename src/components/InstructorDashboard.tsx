@@ -76,7 +76,7 @@ const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: st
 };
 
 // Assignment definitions for the course - dynamically generate all weeks
-const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // No quiz/homework
+const BOSS_FIGHT_ONLY_WEEKS = new Set([5, 9]); // No quiz/homework
 const BOSS_FIGHT_WEEKS = new Set([5]); // All boss fight weeks
 
 const generateAssignments = () => {
