@@ -12,8 +12,8 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 11.1: The Return Statement
 
 <div class="section-header">
-  <div class="section-badge">🚪 The Exit Gate</div>
-  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">🚪</span> The Exit Gate</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -21,17 +21,13 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>From Action to Output</h2>
+      <h2><span aria-hidden="true">✦</span> From Action to Output</h2>
       <p>
         In Week 10, every method you wrote was <code>void</code> — it performed an action (printing, displaying) and returned nothing. The caller triggered the method and moved on. This week, methods become <strong>producers</strong>. A method with a typed return value computes a result and <strong>delivers it back</strong> to the caller. The <code>return</code> keyword is the delivery mechanism: it exits the method body and hands the computed value to the line that called the method.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2011/11.1/Header%20Image.jpeg"
-        alt="Diagram showing a method with a return type delivering a value back through an exit gate to the caller, contrasted with a void method that exits with nothing"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2011/11.1/Header%20Image.jpeg" alt="Diagram showing a method with a return type delivering a value back through an exit gate to the caller, contrasted with a void method that exits with nothing" />
     </div>
   </div>
 </div>
@@ -280,7 +276,14 @@ Every possible code path must end with a `return` statement. If the compiler det
 
 ---
 
-## Try It: Your First Return Method
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: One Return Path per Concept</h4>
+  <p>A method should have <strong>one clear reason to return</strong>. If your method has 5 different <code>return</code> statements scattered throughout nested logic, consider refactoring. Guard clauses (from Week 7) are the exception — multiple early returns that reject invalid inputs are clean. But multiple returns buried inside complex branches create confusion about which path actually executes.</p>
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Your First Return Method
 
 Write methods that return values instead of printing them. Notice how the caller captures and uses the returned value:
 
@@ -309,6 +312,103 @@ static double CalculateRectangleArea(double length, double width) {
   instructions="Complete the GetGradeLabel method that returns a letter grade based on the score (90+ = A, 80+ = B, 70+ = C, else F). Call it with a score, capture the result in a variable, and print it."
   enableStdin={false}
 />
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Return Type Enforcement
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Change `Add` to return `double` instead of `int`.** Does the caller code still work?
+2. **Remove the `return` statement** from `Add`. Does it compile? What error do you get?
+3. **Add code after a `return` statement** inside `Add`. Does the compiler allow it?
+4. **Change `GetGradeLabel` to return `int` instead of `string`.** What happens to the `return "A"` lines?
+
+**Discovery**: The compiler enforces the return contract strictly. Every code path must return the declared type, and code after `return` is flagged as unreachable. This is a safety net, not a limitation!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Return-Based Decision Engine
+
+<TryItNowRunner
+  starterId="week-11-lesson-1"
+  height={560}
+  code={`// Build methods that return computed values
+
+string dayType = ClassifyDay("Saturday");
+Console.WriteLine($"Saturday is a {dayType}");
+
+dayType = ClassifyDay("Wednesday");
+Console.WriteLine($"Wednesday is a {dayType}");
+
+double price = CalculateDiscount(100.0, 0.15);
+Console.WriteLine($"Discounted price: {price:C}");
+
+bool canVote = IsEligibleToVote(17);
+Console.WriteLine($"Can vote at 17: {canVote}");
+
+canVote = IsEligibleToVote(18);
+Console.WriteLine($"Can vote at 18: {canVote}");
+
+static string ClassifyDay(string day) {
+    if (day == "Saturday" || day == "Sunday") {
+        return "weekend";
+    }
+    return "weekday";
+}
+
+static double CalculateDiscount(double original, double rate) {
+    return original - (original * rate);
+}
+
+static bool IsEligibleToVote(int age) {
+    return age >= 18;
+}`}
+  instructions="Run it, then add a method static int GetDaysInMonth(int month) that returns 30 or 31 (simplified). Call it and print the result."
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Return vs Print
+
+What does this code print? Read carefully — one method prints, one returns.
+
+```csharp
+string result = GetGreeting("Ada");
+DisplayGreeting("Alan");
+Console.WriteLine(result);
+
+static string GetGreeting(string name) {
+    return $"Hello, {name}!";
+}
+
+static void DisplayGreeting(string name) {
+    Console.WriteLine($"Welcome, {name}!");
+}
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+Welcome, Alan!
+Hello, Ada!
+```
+
+- `GetGreeting("Ada")` returns a string but prints **nothing** — the value is stored in `result`
+- `DisplayGreeting("Alan")` prints "Welcome, Alan!" immediately (void method with Console.WriteLine)
+- `Console.WriteLine(result)` prints the stored greeting "Hello, Ada!"
+
+🔑 **Key takeaway**: Return methods deliver data silently. Print methods produce output immediately. The order of output depends on when `Console.WriteLine` is actually called, not when the method runs.
+</div>
+</details>
+</div>
 
 ---
 
@@ -509,4 +609,25 @@ static double CalculateRectangleArea(double length, double width) {
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
   body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+
+  .pro-tip { background: rgba(78, 201, 176, 0.1); border: 1px solid #4ec9b0; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  .experiment-box { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.08) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.08) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

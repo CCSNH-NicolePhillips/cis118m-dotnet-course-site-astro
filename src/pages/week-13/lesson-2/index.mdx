@@ -7,12 +7,13 @@ description: "Use System.Collections.Generic and List<T> with Add, Remove, Count
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 13.2: List\<T\>
 
 <div class="section-header">
-  <div class="section-badge">Dynamic Collections</div>
-  <p class="section-time">Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">🔄</span> Dynamic Collections</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -20,24 +21,20 @@ import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>From Fixed Capacity to Dynamic Growth</h2>
+      <h2><span aria-hidden="true">✦</span> From Fixed Capacity to Dynamic Growth</h2>
       <p>
-        Arrays require you to declare capacity upfront — and that capacity never changes. But many real-world datasets grow and shrink at runtime: users register, orders arrive, items get removed. <code>List&lt;T&gt;</code> provides a dynamic collection that resizes automatically. You <code>.Add()</code> elements without worrying about capacity and <code>.Remove()</code> them without leaving empty slots.
+        Section 13.1 introduced arrays — fixed-size containers where capacity is locked at creation time. But real software rarely knows the exact count upfront. Users register throughout the day. Orders arrive unpredictably. Inventory items get added and removed constantly. A fixed array forces you to guess capacity in advance, and guessing wrong means either wasted memory or a crash. <code>List&lt;T&gt;</code> solves this by providing a <strong>dynamic collection</strong> that grows and shrinks automatically. You <code>.Add()</code> elements without worrying about capacity and <code>.Remove()</code> them without leaving empty holes.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2013/13.2/Header%20Image.jpeg"
-        alt="Header diagram for List of Student showing dynamic growth and key operations Add, Remove, and Count"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2013/13.2/Header%20Image.jpeg" alt="Header diagram for List of Student showing dynamic growth and key operations Add, Remove, and Count" />
     </div>
   </div>
 </div>
 
 ---
 
-## Technical Briefing: List\<T\>
+## <span aria-hidden="true">🎬</span> Technical Briefing: List\<T\>
 
 <div class="video-section">
   <p class="video-intro">Watch this briefing on List\<T\> — how to use System.Collections.Generic, add and remove elements dynamically, and iterate with foreach.</p>
@@ -56,19 +53,21 @@ import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 
 ---
 
-## Namespace Requirement
+## <span aria-hidden="true">🧠</span> Namespace Requirement
 
-`List<T>` lives in `System.Collections.Generic`.
+`List<T>` lives in `System.Collections.Generic`. This namespace must be imported at the top of your file before you can use any generic collection type:
 
 ```csharp
 using System.Collections.Generic;
 ```
 
-Without this namespace, `List<T>` is not recognized by the compiler.
+Without this line, the compiler does not recognize `List<T>` and reports an error. Think of it as unlocking the collections toolbox — the tools exist in the framework, but your code cannot see them until you import the namespace. This is the same pattern as `using System;` for `Console` — C# organizes functionality into namespaces to prevent name collisions and keep the global scope clean.
 
 ---
 
-## Core List\<T\> Operations
+## <span aria-hidden="true">🏗️</span> Core List\<T\> Operations
+
+A `List<T>` starts empty and grows as you add elements. Unlike an array, there is no capacity declaration — the list manages its own internal storage:
 
 ```csharp
 using System.Collections.Generic;
@@ -83,15 +82,48 @@ students.Remove(students[1]);
 Console.WriteLine("Count after removal: " + students.Count);
 ```
 
+Three operations define the `List<T>` lifecycle:
+1. **`.Add(item)`** — appends one element to the end of the list, increasing `Count` by 1
+2. **`.Remove(item)`** — finds and removes the first matching element, decreasing `Count` by 1
+3. **`.Count`** — returns the current number of elements (not maximum capacity)
+
+Notice `.Count` is a **property** (no parentheses), not a method. It reflects the live state of the list — after every `.Add()` it increases, after every `.Remove()` it decreases.
+
 <AnnotatedCode
-  title="List&lt;T&gt; Operational Model"
+  title="🔬 Anatomy of List&lt;T&gt; Operations"
   tokens={[
-    { text: "List<Student>", type: "keyword", tooltip: "GENERIC LIST TYPE: dynamic collection where each element is a Student object." },
-    { text: " students = ", type: "punctuation", tooltip: "Variable declaration and assignment." },
-    { text: "new List<Student>()", type: "keyword", tooltip: "Constructs an empty list ready to receive elements." },
-    { text: ";\nstudents.Add(...)\n", type: "punctuation", tooltip: "Add inserts a new element into the list." },
-    { text: "students.Remove(...)\n", type: "keyword", tooltip: "Remove deletes one matching element from the list." },
-    { text: "students.Count", type: "string", tooltip: "Count reports active elements currently in the list." }
+    { text: "List<Student>", type: "keyword", tooltip: "GENERIC LIST TYPE: dynamic collection where each element is a Student object. The <Student> specifies what type the list holds." },
+    { text: " students", type: "parameter", tooltip: "Variable name for the list reference." },
+    { text: " = ", type: "punctuation", tooltip: "Assignment operator." },
+    { text: "new List<Student>()", type: "keyword", tooltip: "Constructs an empty list. No capacity needed — it starts at 0 and grows automatically." },
+    { text: ";", type: "punctuation", tooltip: "Statement terminator." },
+    { text: "\nstudents.Add(...)", type: "keyword", tooltip: ".Add() appends one element to the end. Count increases by 1 each time." },
+    { text: "\nstudents.Remove(...)", type: "keyword", tooltip: ".Remove() finds and deletes the first matching element. Count decreases by 1." },
+    { text: "\nstudents.Count", type: "type", tooltip: ".Count property returns current number of elements. No parentheses — it's a property, not a method." }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="🔄 Dynamic Collections in the Real World"
+  tabs={[
+    {
+      id: "shopping",
+      label: "🛒 Shopping Cart",
+      content: "A shopping cart on an e-commerce site starts empty. As the customer browses, they Add items. They might Remove an item they changed their mind about. The cart total (Count) updates after every operation. No one declares 'I will buy exactly 7 items today' before shopping — the cart grows dynamically.",
+      keyPoints: ["Starts empty — no capacity declaration", "Add and Remove happen at any time", "Count reflects current state, not maximum"]
+    },
+    {
+      id: "playlist",
+      label: "🎵 Music Playlist",
+      content: "A playlist is a dynamic list of songs. You add tracks as you discover them, remove ones you're tired of, and the total song count updates automatically. You never need to declare 'this playlist will hold exactly 50 songs' — it just grows and shrinks with your taste.",
+      keyPoints: ["No fixed size needed", "Add songs anytime, remove anytime", "Count always shows current track total"]
+    },
+    {
+      id: "waitlist",
+      label: "📋 Doctor's Waitlist",
+      content: "A doctor's office maintains a patient waitlist. When a patient checks in, they're Added. When called for their appointment, they're Removed. The receptionist checks Count to know how many patients are waiting. The list adapts to the day's volume — 3 patients on a slow day, 30 on a busy one.",
+      keyPoints: ["Adapts to runtime volume", "Add on arrival, Remove on service", "Count is the live queue length"]
+    }
   ]}
 />
 
@@ -99,9 +131,9 @@ Console.WriteLine("Count after removal: " + students.Count);
 
 ---
 
-## Foreach Integration with Week 12 Class Objects
+## <span aria-hidden="true">🔀</span> Foreach Integration with Week 12 Class Objects
 
-`foreach` works directly with `List<Student>` and provides clean object traversal:
+`foreach` works directly with `List<Student>` and provides clean object traversal. The syntax is identical to arrays — `foreach` does not care whether the underlying collection is an array or a list:
 
 ```csharp
 List<Student> students = new List<Student>();
@@ -113,19 +145,73 @@ foreach (Student student in students) {
 }
 ```
 
+This is the power of C#'s collection model: both arrays and lists implement the same iteration interface. Code that uses `foreach` to process a collection works whether the data lives in a `Student[]` or a `List<Student>`. The loop variable `student` receives each element in order, and you access properties with the same dot operator from Week 12.
+
 <div class="architect-rule">
 
-### Senior Architect Perspective
+#### <span aria-hidden="true">⚠️</span> Architect’s Rule: Use foreach for Reads, for Loops for Mutation
 
-Use `foreach` for full-sequence reads and reporting workflows. Use index-based loops only when positional mutation is required. This division improves readability and reduces off-by-one errors.
+Use `foreach` for full-sequence reads and reporting workflows. Use index-based `for` loops only when positional mutation is required — such as replacing an element at a specific position. This division improves readability and reduces off-by-one errors. Never modify a list's contents (Add/Remove) while iterating it with `foreach` — this throws an `InvalidOperationException`.
 
+</div>
+
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: .Count vs .Length</h4>
+  <p>Arrays use <code>.Length</code> (a fixed property set at creation). Lists use <code>.Count</code> (a live property that changes with Add/Remove). If you accidentally write <code>students.Length</code> on a list, the compiler will catch it — but knowing the distinction prevents confusion. Remember: <strong>arrays are fixed → Length</strong>, <strong>lists are dynamic → Count</strong>.</p>
 </div>
 
 <img src="/media/week%2013/13.2/Array%20vs%20List%20Decision%20Matrix.jpeg" alt="Decision matrix comparing Student array and List of Student across capacity, mutation support, performance profile, and API members including Length and Count" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 
-## Try It: Dynamic Student List
+## <span aria-hidden="true">📐</span> Array vs. List: When to Use Which
+
+Choosing between `Student[]` and `List<Student>` is a design decision. Neither is universally better — each fits different requirements:
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>Student[] (Array)</th>
+        <th>List&lt;Student&gt;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Capacity</strong></td>
+        <td>Fixed at creation — cannot grow or shrink</td>
+        <td>Dynamic — grows with .Add(), shrinks with .Remove()</td>
+      </tr>
+      <tr>
+        <td><strong>Size property</strong></td>
+        <td><code>.Length</code> (never changes)</td>
+        <td><code>.Count</code> (changes with every Add/Remove)</td>
+      </tr>
+      <tr>
+        <td><strong>Best for</strong></td>
+        <td>Known, fixed datasets (days of week, RGB channels)</td>
+        <td>Unknown or changing datasets (user registrations, orders)</td>
+      </tr>
+      <tr>
+        <td><strong>Performance</strong></td>
+        <td>Slightly faster — no resize overhead</td>
+        <td>Slightly slower — occasional internal resizing</td>
+      </tr>
+      <tr>
+        <td><strong>Namespace</strong></td>
+        <td>Built-in — no using directive needed</td>
+        <td>Requires <code>using System.Collections.Generic;</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+In professional C# code, `List<T>` is the default choice for most scenarios. Arrays are used when the size is truly fixed and known at compile time (like the 12 months in a year) or when performance-critical code needs the minimal overhead of a raw array.
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Dynamic Student List
 
 <TryItNowRunner
   starterId="week-13-lesson-2"
@@ -161,11 +247,132 @@ foreach (Student student in students) {
   enableStdin={false}
 />
 
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: List Behavior Under Mutation
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Add 5 students** instead of 3. Does the list handle it without any capacity declaration?
+2. **Call `.Remove(students[0])`** — which student is removed? What happens to the remaining indexes?
+3. **Print `students.Count` before and after every Add/Remove.** Does Count always match the actual number of elements?
+4. **Try `students[10]`** on a list with only 3 elements. What happens?
+
+**Discovery**: Lists automatically manage their own capacity. You never declare a size, and `.Count` always reflects reality. But index-based access still requires the index to exist — accessing beyond `Count - 1` throws `ArgumentOutOfRangeException`!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Converting an Array to a List
+
+<TryItNowRunner
+  starterId="week-13-lesson-2"
+  height={600}
+  files={[
+    { name: "Program.cs", content: `using System.Collections.Generic;
+
+// Start with a fixed array (from Section 13.1)
+Student[] originalRoster = new Student[3];
+originalRoster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
+originalRoster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
+originalRoster[2] = new Student { Name = "Grace Hopper", Id = 1003, Gpa = 4.0 };
+
+Console.WriteLine("=== ORIGINAL ARRAY ===");
+Console.WriteLine("Array Length: " + originalRoster.Length);
+foreach (Student s in originalRoster) {
+    Console.WriteLine($"  {s.Name} ({s.Id})");
+}
+
+// Convert to a List for dynamic operations
+List<Student> dynamicRoster = new List<Student>();
+foreach (Student s in originalRoster) {
+    dynamicRoster.Add(s);
+}
+
+// Now we can grow beyond the original 3!
+dynamicRoster.Add(new Student { Name = "Charles Babbage", Id = 1004, Gpa = 3.5 });
+dynamicRoster.Add(new Student { Name = "Katherine Johnson", Id = 1005, Gpa = 3.95 });
+
+Console.WriteLine();
+Console.WriteLine("=== DYNAMIC LIST (expanded) ===");
+Console.WriteLine("List Count: " + dynamicRoster.Count);
+foreach (Student s in dynamicRoster) {
+    Console.WriteLine($"  {s.Name} ({s.Id}) GPA: {s.Gpa}");
+}
+
+// Remove one and verify
+dynamicRoster.Remove(dynamicRoster[1]);
+Console.WriteLine();
+Console.WriteLine("=== AFTER REMOVAL ===");
+Console.WriteLine("List Count: " + dynamicRoster.Count);
+foreach (Student s in dynamicRoster) {
+    Console.WriteLine($"  {s.Name} ({s.Id}) GPA: {s.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="This code starts with an array, converts to a List, then adds and removes students. Run it and watch how the Count changes. Try removing a different student by changing the index in Remove()."
+  enableStdin={false}
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: List Operations
+
+Trace through this code line by line. What does it print?
+
+```csharp
+using System.Collections.Generic;
+
+List<string> names = new List<string>();
+names.Add("Ada");
+names.Add("Alan");
+names.Add("Grace");
+
+Console.WriteLine(names.Count);
+Console.WriteLine(names[0]);
+
+names.Remove("Alan");
+
+Console.WriteLine(names.Count);
+Console.WriteLine(names[1]);
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+3
+Ada
+2
+Grace
+```
+
+- After 3 `.Add()` calls, `Count` is `3`
+- `names[0]` is `"Ada"` (first element added)
+- After removing `"Alan"`, `Count` drops to `2`
+- `names[1]` is now `"Grace"` — when an element is removed, all subsequent elements shift down to fill the gap. Grace moved from index 2 to index 1.
+
+🔑 **Key takeaway**: `.Remove()` doesn't leave an empty hole like setting an array slot to null. The list compacts itself — remaining elements shift to close the gap, and `Count` always reflects the true number of elements.
+</div>
+</details>
+</div>
+
 ---
 
 <Checkpoint
   checkpointId="week-13-lesson-2-check"
-  title="Section 13.2 Knowledge Check"
+  title="🔍 Section 13.2 Knowledge Check"
   questions={[
     {
       id: "q1",
@@ -178,33 +385,20 @@ foreach (Student student in students) {
         "using System.IO;"
       ],
       correctAnswer: "using System.Collections.Generic;",
-      explanation: "List<T> is defined in System.Collections.Generic."
+      explanation: "List<T> is defined in the System.Collections.Generic namespace. Without this using directive, the compiler cannot resolve the List type."
     },
     {
       id: "q2",
       type: "multiple-choice",
-      question: "What does Count represent in List<Student>?",
+      question: "After calling .Remove() on a List, what happens to the remaining elements?",
       options: [
-        "Maximum capacity",
-        "Current number of elements",
-        "Last valid index",
-        "Number of properties in Student"
+        "A null gap is left at the removed index",
+        "The list is unchanged",
+        "Remaining elements shift down to fill the gap",
+        "The list is sorted alphabetically"
       ],
-      correctAnswer: "Current number of elements",
-      explanation: "Count reflects how many items are currently in the list."
-    },
-    {
-      id: "q3",
-      type: "multiple-choice",
-      question: "When iterating all students for reporting, why prefer foreach?",
-      options: [
-        "It eliminates the need for Student class",
-        "It avoids manual index math and improves readability",
-        "It automatically sorts the list",
-        "It only works for arrays"
-      ],
-      correctAnswer: "It avoids manual index math and improves readability",
-      explanation: "foreach is concise and reduces indexing errors when scanning full collections."
+      correctAnswer: "Remaining elements shift down to fill the gap",
+      explanation: "Unlike arrays, List<T> compacts itself after removal. Elements after the removed item shift down by one index, and Count decreases by 1."
     }
   ]}
 />
@@ -212,6 +406,87 @@ foreach (Student student in students) {
 ---
 
 <div class="next-section">
-  <p>Section 13.2 complete? Continue to Lab 13.</p>
-  <a href="/week-13/lab/" class="vscode-button">Continue to Lab 13: Collection Manager &rarr;</a>
+  <p>Both collection types mastered? Time to build a real <strong>Collection Manager</strong> that uses both.</p>
+  <a href="/week-13/lab/" class="vscode-button">Continue to Lab 13: Collection Manager <span aria-hidden="true">→</span></a>
 </div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  .architect-rule p, .architect-rule code {
+    color: #e2e8f0;
+  }
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+`}</style>

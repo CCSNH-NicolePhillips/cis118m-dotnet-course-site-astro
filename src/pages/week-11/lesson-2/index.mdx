@@ -12,8 +12,8 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 11.2: Result Capture
 
 <div class="section-header">
-  <div class="section-badge">📦 Variable Assignment Logic</div>
-  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">📦</span> Variable Assignment Logic</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -21,17 +21,13 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>The Caller's Side of the Return Contract</h2>
+      <h2><span aria-hidden="true">✦</span> The Caller’s Side of the Return Contract</h2>
       <p>
         Section 11.1 taught you how to write methods that deliver values via <code>return</code>. This section focuses on the <strong>caller's responsibility</strong>: how to receive, store, and use the returned value. When a method returns a value, the caller must <strong>capture</strong> it — assign it to a variable of the correct type. That variable then holds the result for use in further computation, display, or decision-making.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2011/11.2/Header%20Image.jpeg"
-        alt="Diagram showing a method call on the right side of an assignment operator, with the returned value flowing into a variable on the left side"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2011/11.2/Header%20Image.jpeg" alt="Diagram showing a method call on the right side of an assignment operator, with the returned value flowing into a variable on the left side" />
     </div>
   </div>
 </div>
@@ -342,7 +338,14 @@ Each method handles one computation. `Main` orchestrates the workflow by capturi
 
 ---
 
-## Try It: Multi-Step Calculation
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: Always Capture Computed Results</h4>
+  <p>Calling a return method without storing the result — <code>CalculateArea(5.0, 3.0);</code> — is legal C# but wasteful. The computed value disappears immediately. If you’re calling a return method, <strong>capture the result</strong> in a variable or use it in an expression. If you truly don’t need the result, question why you’re calling the method at all.</p>
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Multi-Step Calculation
 
 Practice the full result-capture workflow — compute, capture, and display:
 
@@ -376,6 +379,91 @@ static string FormatSummary(double area, double cost) {
   instructions="Complete Step 2 by calling CalculatePaintCost with the area variable, capture the result, and print it. Then complete Step 3 by calling FormatSummary with both values, capture the string, and print it."
   enableStdin={false}
 />
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Result Capture Patterns
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Remove the variable** and call `CalculateArea(5.0, 3.0);` without storing the result. Does it compile? Does anything print?
+2. **Use an inline call**: `Console.WriteLine(CalculateArea(5.0, 3.0));` — no variable needed. Does the output change?
+3. **Chain two calls**: `Console.WriteLine(FormatSummary(CalculateArea(5.0, 3.0), CalculatePaintCost(CalculateArea(5.0, 3.0))));` — does it work?
+4. **Store the area in a `string` variable** instead of `double`. Does the compiler catch it?
+
+**Discovery**: Variables capture results for reuse. Inline calls save lines but hurt readability. Chaining works but gets messy fast — variables make complex workflows readable!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Chained Calculations
+
+<TryItNowRunner
+  starterId="week-11-lesson-2"
+  height={580}
+  code={`// Chain multiple return methods together
+
+double celsius = 100.0;
+double fahrenheit = CelsiusToFahrenheit(celsius);
+string label = FormatTemperature(celsius, fahrenheit);
+Console.WriteLine(label);
+
+celsius = 0.0;
+fahrenheit = CelsiusToFahrenheit(celsius);
+label = FormatTemperature(celsius, fahrenheit);
+Console.WriteLine(label);
+
+celsius = 37.0;
+fahrenheit = CelsiusToFahrenheit(celsius);
+label = FormatTemperature(celsius, fahrenheit);
+Console.WriteLine(label);
+
+// TODO: Add a call for -40 degrees (hint: it's the same in both scales!)
+
+static double CelsiusToFahrenheit(double c) {
+    return (c * 9.0 / 5.0) + 32.0;
+}
+
+static string FormatTemperature(double c, double f) {
+    return $"{c}\u00b0C = {f}\u00b0F";
+}`}
+  instructions="Run it, then add the -40 conversion. Notice how each method returns a value that feeds into the next call — this is the result-capture chain pattern."
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Capture and Reuse
+
+What does this code print? Trace variable assignments carefully.
+
+```csharp
+int a = Double(3);
+int b = Double(a);
+int c = Double(b);
+Console.WriteLine($"{a} {b} {c}");
+
+static int Double(int x) {
+    return x * 2;
+}
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `6 12 24`
+
+- `Double(3)` returns `6` → stored in `a`
+- `Double(6)` returns `12` → stored in `b`
+- `Double(12)` returns `24` → stored in `c`
+
+🔑 **Key takeaway**: Each captured result becomes input for the next call. This chaining pattern — where one method’s output feeds another’s input — is the foundation of composable software design.
+</div>
+</details>
+</div>
 
 ---
 
@@ -576,4 +664,25 @@ static string FormatSummary(double area, double cost) {
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
   body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+
+  .pro-tip { background: rgba(78, 201, 176, 0.1); border: 1px solid #4ec9b0; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  .experiment-box { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.08) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.08) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

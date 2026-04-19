@@ -12,8 +12,8 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 10.1: The Method Signature
 
 <div class="section-header">
-  <div class="section-badge">📋 The Department Contract</div>
-  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">📋</span> The Department Contract</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -21,17 +21,13 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>From One Method to Many</h2>
+      <h2><span aria-hidden="true">✦</span> From One Method to Many</h2>
       <p>
         Every C# program has at least one method: <code>Main</code>. When you write <code>static void Main()</code>, you are using the complete method signature syntax without knowing it. This section makes that syntax explicit and teaches you to define your own methods. A <strong>method signature</strong> is the declaration line that precedes the method body — it is the contract that specifies who can call the method, what data type it produces, and what name it is called by.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2010/10.1/Header%20Image.jpeg"
-        alt="Diagram of a method signature showing access modifier, return type, and identifier as three labeled components of the declaration line"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2010/10.1/Header%20Image.jpeg" alt="Diagram of a method signature showing access modifier, return type, and identifier as three labeled components of the declaration line" />
     </div>
   </div>
 </div>
@@ -312,7 +308,14 @@ Section 3: Summary
 
 ---
 
-## Try It: Your First Custom Method
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: Verb Phrases for Method Names</h4>
+  <p>Methods perform actions, so their names should be <strong>verb phrases</strong>: <code>PrintTitle()</code>, <code>CalculateTotal()</code>, <code>ValidateInput()</code>. A method named <code>Title()</code> or <code>Data()</code> reads like a noun — it does not tell the reader what the method <em>does</em>. Consistent verb-phrase naming makes code self-documenting.</p>
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Your First Custom Method
 
 Define your own methods and call them from the top-level statements:
 
@@ -336,6 +339,97 @@ static void PrintDivider() {
   instructions="Implement PrintTitle to display your name and PrintDivider to print a line of 20 dashes. Then add a third method called PrintTimestamp that prints the current date, and call it after the second PrintDivider."
   enableStdin={false}
 />
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Method Call Order
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Swap the order** of `PrintTitle()` and `PrintDivider()` calls. Does the output change?
+2. **Call `PrintTitle()` three times** in a row. What happens?
+3. **Remove the `static` keyword** from one method. Does it compile? What error do you get?
+4. **Rename `PrintDivider` to `printDivider`** (lowercase p). Does it still compile when you call `PrintDivider()`?
+
+**Discovery**: Methods execute in the order you call them, not the order you define them. The call sequence in your top-level code is the program’s script!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Multi-Method Console Report
+
+<TryItNowRunner
+  starterId="week-10-lesson-1"
+  height={520}
+  code={`// Build a structured report using multiple methods
+
+PrintHeader();
+PrintStudentRecord("Ada Lovelace", 1001);
+PrintStudentRecord("Alan Turing", 1002);
+PrintFooter();
+
+static void PrintHeader() {
+    Console.WriteLine("============================");
+    Console.WriteLine("     STUDENT ROSTER");
+    Console.WriteLine("============================");
+}
+
+static void PrintStudentRecord(string name, int id) {
+    Console.WriteLine($"  Name: {name}");
+    Console.WriteLine($"  ID:   {id}");
+    Console.WriteLine("----------------------------");
+}
+
+static void PrintFooter() {
+    Console.WriteLine("End of report.");
+}`}
+  instructions="Run the report, then add a third student by calling PrintStudentRecord again. Notice how one method definition handles all students — this is reusability."
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Method Execution Order
+
+What does this code print? Trace through every call before checking.
+
+```csharp
+PrintA();
+PrintB();
+PrintA();
+
+static void PrintA() {
+    Console.WriteLine("Alpha");
+}
+
+static void PrintB() {
+    Console.WriteLine("Bravo");
+    PrintA();
+}
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+Alpha
+Bravo
+Alpha
+Alpha
+```
+
+- `PrintA()` → prints "Alpha"
+- `PrintB()` → prints "Bravo", then calls `PrintA()` which prints "Alpha"
+- `PrintA()` → prints "Alpha" again
+
+🔑 **Key takeaway**: Methods can call other methods! `PrintB` calls `PrintA` internally. The call stack tracks where to return after each method finishes.
+</div>
+</details>
+</div>
 
 ---
 
@@ -527,4 +621,25 @@ static void PrintDivider() {
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
   body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+
+  .pro-tip { background: rgba(78, 201, 176, 0.1); border: 1px solid #4ec9b0; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  .experiment-box { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.08) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.08) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

@@ -12,8 +12,8 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 # Section 10.2: Parameters & Arguments
 
 <div class="section-header">
-  <div class="section-badge">🔌 The Resource Intake</div>
-  <p class="section-time">⏱️ Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">🔌</span> The Resource Intake</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -21,17 +21,13 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>Making Methods Dynamic: The Parameter</h2>
+      <h2><span aria-hidden="true">✦</span> Making Methods Dynamic: The Parameter</h2>
       <p>
         A method defined in Section 10.1 — <code>static void PrintHeader()</code> — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A truly reusable method must accept <strong>input data</strong> that determines its specific behavior on each call. That input data is specified through <strong>parameters</strong>. A parameter is a typed variable declared in the method signature that receives a value each time the method is called. The value passed in at the call site is called an <strong>argument</strong>.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2010/10.2/Header%20Image.jpeg"
-        alt="Diagram showing data flowing from a method call into a method's parameter variables — the argument at the call site maps to the parameter inside the method body"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2010/10.2/Header%20Image.jpeg" alt="Diagram showing data flowing from a method call into a method's parameter variables — the argument at the call site maps to the parameter inside the method body" />
     </div>
   </div>
 </div>
@@ -305,7 +301,14 @@ static void PrintPaystubFooter() {
 
 ---
 
-## Try It: Parameterized Greeting System
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: Parameter Order Matters</h4>
+  <p>When a method has multiple parameters, arguments are matched <strong>by position</strong>, not by name. Calling <code>PrintNameBadge("Engineering", "Alice")</code> swaps the name and department — the compiler won’t catch it because both are <code>string</code>. Use clear parameter names and consistent ordering to prevent silent bugs.</p>
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Parameterized Greeting System
 
 Build a method that takes parameters and call it multiple times with different data:
 
@@ -325,6 +328,73 @@ static void PrintNameBadge(string name, string department) {
   instructions="Implement PrintNameBadge to display the name, department, and a separator line. Then call it three times from Main with different names and departments."
   enableStdin={false}
 />
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Parameter Swapping
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Swap the argument order** in one call: `PrintNameBadge("Engineering", "Alice Chen")`. What gets printed as the name?
+2. **Add a third parameter** `int badgeNumber` to the method. What happens to existing calls?
+3. **Pass an integer where a string is expected.** Does the compiler catch it?
+4. **Call the method with empty strings** `PrintNameBadge("", "")`. Does it crash or print blanks?
+
+**Discovery**: The compiler enforces parameter types but not logical correctness. Two string parameters of the same type can be silently swapped — only careful naming prevents this!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Multi-Parameter Calculator
+
+<TryItNowRunner
+  starterId="week-10-lesson-2"
+  height={520}
+  code={`// Use parameters to make a reusable receipt printer
+
+PrintReceiptLine("Coffee", 4.50, 2);
+PrintReceiptLine("Muffin", 3.25, 1);
+PrintReceiptLine("Water", 1.00, 3);
+
+static void PrintReceiptLine(string item, double price, int quantity) {
+    double lineTotal = price * quantity;
+    Console.WriteLine($"  {item,-12} {quantity} x {price:C} = {lineTotal:C}");
+}`}
+  instructions="Run the receipt, then add a fourth item. Try changing quantities and prices. Notice how one method definition handles every line — the arguments make it dynamic."
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Argument vs Parameter
+
+What does this code print? Pay close attention to which value goes where.
+
+```csharp
+int x = 10;
+int y = 20;
+PrintDifference(y, x);
+
+static void PrintDifference(int a, int b) {
+    Console.WriteLine(a - b);
+}
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**: `10`
+
+- `y` (20) is passed as `a`, `x` (10) is passed as `b`
+- `a - b` = `20 - 10` = `10`
+
+🔑 **Key takeaway**: Arguments map to parameters **by position**. `y` became `a` and `x` became `b` because of their order in the call, not their variable names.
+</div>
+</details>
+</div>
 
 ---
 
@@ -517,4 +587,25 @@ static void PrintNameBadge(string name, string department) {
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .field-header h3 { color: #6d28d9 !important; }
   body[data-theme="light"] .from-the-field { background: rgba(99, 102, 241, 0.04) !important; }
+
+  .pro-tip { background: rgba(78, 201, 176, 0.1); border: 1px solid #4ec9b0; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  .experiment-box { background: rgba(16, 185, 129, 0.1); border: 2px solid #10b981; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge { background: rgba(245, 158, 11, 0.1); border: 2px solid #f59e0b; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 1rem; margin-top: 0.5rem; }
+
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.08) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.08) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

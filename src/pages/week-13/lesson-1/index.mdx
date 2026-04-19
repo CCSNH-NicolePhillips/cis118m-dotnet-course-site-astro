@@ -7,12 +7,13 @@ description: "Declare fixed arrays with type[] name = new type[size], use zero-b
 import Checkpoint from '../../../components/Checkpoint.astro';
 import TryItNowRunner from '../../../components/TryItNowRunner.astro';
 import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
 
 # Section 13.1: Fixed Arrays
 
 <div class="section-header">
-  <div class="section-badge">Deterministic Capacity</div>
-  <p class="section-time">Estimated Time: 30 minutes</p>
+  <div class="section-badge"><span aria-hidden="true">📦</span> Deterministic Capacity</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 30 minutes</p>
 </div>
 
 ---
@@ -20,24 +21,20 @@ import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 <div class="concept-header">
   <div class="header-content">
     <div class="header-text">
-      <h2>Storing Multiple Values in a Fixed Structure</h2>
+      <h2><span aria-hidden="true">✦</span> Storing Multiple Values in a Fixed Structure</h2>
       <p>
-        Until now, each variable held one value — one name, one ID, one GPA. But real programs work with sets of data: three students, five scores, ten products. An <strong>array</strong> solves this by storing multiple values of the same type in a fixed-size sequence. You declare the capacity once, and every slot is accessed by a zero-based index.
+        Until now, each variable held one value — one name, one ID, one GPA. But real programs work with <strong>sets of data</strong>: three students in a roster, five sensor readings from a device, ten products on a shelf. Storing each in its own variable creates an unmanageable mess of disconnected names. An <strong>array</strong> solves this by storing multiple values of the same type in a <em>fixed-size sequence</em>. You declare the capacity once, and every slot is accessed by a zero-based index — a single variable that holds an entire collection.
       </p>
     </div>
     <div class="header-image">
-      <img
-        src="/media/week%2013/13.1/Header%20Image.jpeg"
-        alt="Header diagram for fixed arrays showing Student array declaration and three indexed slots 0, 1, and 2 as a fixed-capacity structure"
-        style="max-width: 100%; border-radius: 10px;"
-      />
+      <img src="/media/week%2013/13.1/Header%20Image.jpeg" alt="Header diagram for fixed arrays showing Student array declaration and three indexed slots 0, 1, and 2 as a fixed-capacity structure" />
     </div>
   </div>
 </div>
 
 ---
 
-## Technical Briefing: Fixed Arrays
+## <span aria-hidden="true">🎬</span> Technical Briefing: Fixed Arrays
 
 <div class="video-section">
   <p class="video-intro">Watch this briefing on fixed arrays — how to declare arrays with type[] syntax, use zero-based indexing, and iterate with .Length and foreach.</p>
@@ -56,7 +53,7 @@ import AnnotatedCode from '../../../components/AnnotatedCode.astro';
 
 ---
 
-## Array Syntax and Indexing
+## <span aria-hidden="true">🧠</span> Array Syntax and Indexing
 
 An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern:
 
@@ -64,29 +61,60 @@ An array stores multiple values of the same type in a fixed-size sequence. C# ar
 Student[] roster = new Student[3];
 ```
 
-`roster` now contains three slots indexed `0`, `1`, and `2`.
+This line does three things:
+1. **Declares a variable** `roster` whose type is "array of Student"
+2. **Allocates memory** for exactly 3 Student slots using `new`
+3. **Initializes all slots** to `null` — no Student objects exist yet
+
+`roster` now contains three slots indexed `0`, `1`, and `2`. Each slot can hold a reference to a `Student` object, but the slots are **empty until you assign objects to them**. This is the fundamental difference between declaring an array and filling it — the container exists, but it starts with nothing inside.
 
 <AnnotatedCode
-  title="Array Declaration Anatomy"
+  title="🔬 Anatomy of an Array Declaration"
   tokens={[
     { text: "Student", type: "keyword", tooltip: "ELEMENT TYPE: each slot stores a Student object reference." },
     { text: "[]", type: "punctuation", tooltip: "ARRAY MARKER: brackets on the type mean this variable is an array." },
-    { text: " roster ", type: "string", tooltip: "VARIABLE NAME: the array reference variable." },
+    { text: " roster ", type: "parameter", tooltip: "VARIABLE NAME: the array reference variable." },
     { text: "=", type: "punctuation", tooltip: "ASSIGNMENT: stores the new array reference in roster." },
-    { text: " new ", type: "keyword", tooltip: "NEW KEYWORD: allocates array memory." },
+    { text: " new ", type: "keyword", tooltip: "NEW KEYWORD: allocates array memory on the heap." },
     { text: "Student", type: "keyword", tooltip: "ELEMENT TYPE repeated during allocation." },
-    { text: "[3]", type: "punctuation", tooltip: "CAPACITY: fixed length of 3 elements." },
+    { text: "[3]", type: "punctuation", tooltip: "CAPACITY: fixed length of 3 elements. Cannot be changed after creation." },
     { text: ";", type: "punctuation", tooltip: "Statement terminator." }
+  ]}
+/>
+
+<DeepDiveTabs
+  title="📦 Arrays in the Real World"
+  tabs={[
+    {
+      id: "parking",
+      label: "🅿️ Parking Lot",
+      content: "A parking lot has a fixed number of spaces. Space 0, Space 1, Space 2... up to the capacity. You can park a car in any empty space by its number, but you cannot add more spaces after the lot is built. An array works the same way: fixed capacity, numbered slots, each holding one item.",
+      keyPoints: ["Fixed number of spaces at construction", "Each space accessed by number (index)", "Cannot expand after creation"]
+    },
+    {
+      id: "classroom",
+      label: "🏫 Classroom Roster",
+      content: "A classroom has exactly 30 desks. The teacher assigns students to desk 0 through desk 29. If only 25 students enroll, 5 desks sit empty (null). The teacher cannot add a 31st desk mid-semester. Arrays enforce the same constraint: declare capacity upfront, live with it.",
+      keyPoints: ["Capacity set at creation time", "Unfilled slots remain null/default", "Cannot resize mid-execution"]
+    },
+    {
+      id: "hardware",
+      label: "💾 Memory Blocks",
+      content: "At the hardware level, an array is a contiguous block of memory. The runtime allocates one unbroken chunk sized for exactly N elements. This is why arrays are fast — the CPU can jump directly to any index using simple math (base address + index × element size). No searching, no linked pointers.",
+      keyPoints: ["Contiguous memory allocation", "O(1) random access by index", "Fixed size enables direct address calculation"]
+    }
   ]}
 />
 
 ---
 
-## Zero-Based Indexing and .Length
+## <span aria-hidden="true">🏗️</span> Zero-Based Indexing and .Length
 
-Array positions start at `0`, not `1`. The last valid index is always `array.Length - 1`.
+Array positions start at `0`, not `1`. The last valid index is always `array.Length - 1`. This is not arbitrary — it mirrors how memory offsets work at the hardware level. The first element is at offset 0 from the base address.
 
 <img src="/media/week%2013/13.1/Zero-Based%20Index%20Map.jpeg" alt="Zero-based index map showing five array slots labeled index 0 through 4 with corresponding human positions 1st through 5th and warnings about starting at index 1" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+After creating an array, you fill it by assigning objects to specific indexes. Each assignment places one `Student` object into one numbered slot:
 
 ```csharp
 Student[] roster = new Student[3];
@@ -100,21 +128,28 @@ for (int i = 0; i < roster.Length; i++) {
 }
 ```
 
+The `for` loop uses `i < roster.Length` as its boundary. This ensures the loop stops at the last valid index (`2` for a 3-element array) and never attempts to access `roster[3]`, which would throw an `IndexOutOfRangeException`.
+
 <div class="architect-rule">
 
-### Senior Architect Perspective
+#### <span aria-hidden="true">⚠️</span> Architect’s Rule: Always Use .Length for Bounds
 
-Bound checks should always be expressed with <code>.Length</code>, not hard-coded constants. If capacity changes, loop logic remains correct. Hard-coded bounds create maintenance defects and out-of-range exceptions.
+Bound checks should always be expressed with <code>.Length</code>, not hard-coded constants. If the array capacity changes from 3 to 5, a hard-coded <code>i &lt; 3</code> silently skips the new elements. A <code>.Length</code>-based bound stays correct automatically. Hard-coded bounds create maintenance defects and out-of-range exceptions in production.
 
 </div>
 
 <img src="/media/week%2013/13.1/Length%20Boundary%20Guard.jpeg" alt="Loop boundary safety diagram comparing i less than roster Length as valid iteration and i equals roster Length as out-of-range access condition" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: Default Values in Unassigned Slots</h4>
+  <p>When you create an array with <code>new Student[5]</code> but only fill 3 slots, the remaining 2 slots contain <code>null</code>. Attempting to access a property on a <code>null</code> slot (<code>roster[4].Name</code>) throws a <code>NullReferenceException</code>. Always either fill every slot or check for <code>null</code> before accessing properties.</p>
+</div>
+
 ---
 
-## Foreach with Arrays of Class Objects
+## <span aria-hidden="true">🔀</span> Foreach with Arrays of Class Objects
 
-Use `foreach` when you need sequential read access without index math.
+Use `foreach` when you need sequential read access without index math. The `foreach` loop automatically walks through every element in the array from index `0` to `Length - 1`:
 
 ```csharp
 foreach (Student student in roster) {
@@ -122,11 +157,13 @@ foreach (Student student in roster) {
 }
 ```
 
-This pattern is required for Week 13 loop integration: iterating collections of custom class objects introduced in Week 12.
+Each iteration assigns the current element to the loop variable `student`. You don't manage an index counter, and you can't accidentally go out of bounds. The tradeoff is that `foreach` provides **read-only sequential access** — you cannot modify the array or skip elements during iteration.
+
+When should you use `for` vs `foreach`? Use `for` when you need the index (to modify elements, access neighbors, or skip positions). Use `foreach` when you simply need to process every element in order. For Week 13's reporting workflows — printing every student in a roster — `foreach` is the correct tool.
 
 ---
 
-## Try It: Build an Array Roster
+## <span aria-hidden="true">🏗️</span> Try It: Build an Array Roster
 
 <TryItNowRunner
   starterId="week-13-lesson-1"
@@ -156,11 +193,150 @@ foreach (Student student in roster) {
   enableStdin={false}
 />
 
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Boundary Behavior
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Change the array size to `new Student[5]`** but only fill 3 slots. What happens when `foreach` reaches the empty slots?
+2. **Try accessing `roster[3]`** on a 3-element array. What exception do you get?
+3. **Change `roster.Length` to `roster.Length - 1`** in a for loop. Which student gets skipped?
+4. **Add a fourth student** without increasing the array size. Does it compile? Does it run?
+
+**Discovery**: Arrays enforce their capacity at runtime. Accessing beyond `Length - 1` crashes immediately — there is no silent failure. This strictness is a safety feature!
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: For Loop vs. Foreach Comparison
+
+<TryItNowRunner
+  starterId="week-13-lesson-1"
+  height={540}
+  files={[
+    { name: "Program.cs", content: `Student[] roster = new Student[3];
+
+roster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
+roster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
+roster[2] = new Student { Name = "Grace Hopper", Id = 1003, Gpa = 4.0 };
+
+Console.WriteLine("=== FOR LOOP (with index) ===");
+for (int i = 0; i < roster.Length; i++) {
+    Console.WriteLine($"  [{i}] {roster[i].Name} — GPA: {roster[i].Gpa}");
+}
+
+Console.WriteLine();
+Console.WriteLine("=== FOREACH (sequential read) ===");
+foreach (Student student in roster) {
+    Console.WriteLine($"  {student.Name} ({student.Id}) GPA: {student.Gpa}");
+}
+` },
+    { name: "Student.cs", content: `class Student
+{
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}` }
+  ]}
+  instructions="Run and compare both outputs. The for loop shows index numbers; foreach does not. Try changing a student's GPA inside the for loop using roster[i].Gpa = 4.0 — can you do the same inside foreach?"
+  enableStdin={false}
+/>
+
+---
+
+## <span aria-hidden="true">📐</span> Array Declaration Patterns
+
+C# offers multiple ways to declare and initialize arrays. The pattern you use depends on whether you know the values at declaration time:
+
+```csharp
+// Pattern 1: Declare then fill (when values come later)
+Student[] roster = new Student[3];
+roster[0] = new Student { Name = "Ada", Id = 1001, Gpa = 3.9 };
+
+// Pattern 2: Inline initialization (when values are known upfront)
+int[] scores = new int[] { 95, 87, 92, 78, 100 };
+
+// Pattern 3: Shorthand (compiler infers the type)
+string[] names = { "Ada", "Alan", "Grace" };
+```
+
+Pattern 1 is the standard for object arrays — you create the container first, then construct each object individually. Patterns 2 and 3 work best for primitive types where the values are known at compile time.
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Pattern</th>
+        <th>Use When</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Declare then fill</strong></td>
+        <td>Object values come from user input or computation</td>
+        <td><code>Student[] r = new Student[3]; r[0] = new Student &#123;...&#125;;</code></td>
+      </tr>
+      <tr>
+        <td><strong>Inline initialization</strong></td>
+        <td>Primitive values are known at compile time</td>
+        <td><code>int[] s = new int[] &#123; 95, 87, 92 &#125;;</code></td>
+      </tr>
+      <tr>
+        <td><strong>Shorthand</strong></td>
+        <td>Simple literal values with obvious type</td>
+        <td><code>string[] n = &#123; "Ada", "Alan" &#125;;</code></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Array Indexing
+
+What does this code print? Trace through every line before checking.
+
+```csharp
+int[] values = { 10, 20, 30, 40, 50 };
+
+Console.WriteLine(values[0]);
+Console.WriteLine(values[4]);
+Console.WriteLine(values.Length);
+Console.WriteLine(values[values.Length - 1]);
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+10
+50
+5
+50
+```
+
+- `values[0]` → first element is `10`
+- `values[4]` → last element (index 4) is `50`
+- `values.Length` → total count is `5`
+- `values[values.Length - 1]` → `values[4]` → `50` (this is the safe way to access the last element)
+
+🔑 **Key takeaway**: `array[array.Length - 1]` always gives you the last element regardless of array size. This pattern is universal across every C# array.
+</div>
+</details>
+</div>
+
 ---
 
 <Checkpoint
   checkpointId="week-13-lesson-1-check"
-  title="Section 13.1 Knowledge Check"
+  title="🔍 Section 13.1 Knowledge Check"
   questions={[
     {
       id: "q1",
@@ -169,11 +345,11 @@ foreach (Student student in roster) {
       options: [
         "Five Student objects with property values",
         "One Student object",
-        "An array with five Student slots",
-        "A List<Student>"
+        "An array with five null Student slots",
+        "A List<Student> with five elements"
       ],
-      correctAnswer: "An array with five Student slots",
-      explanation: "The array allocates five slots for Student references. Objects must still be created and assigned to each index."
+      correctAnswer: "An array with five null Student slots",
+      explanation: "The array allocates five slots for Student references, but all slots start as null. Objects must still be created and assigned to each index."
     },
     {
       id: "q2",
@@ -181,20 +357,7 @@ foreach (Student student in roster) {
       question: "Which is the last valid index of an array with Length 8?",
       options: ["8", "7", "6", "0"],
       correctAnswer: "7",
-      explanation: "Array indexing is zero-based, so last index is Length - 1."
-    },
-    {
-      id: "q3",
-      type: "multiple-choice",
-      question: "Why should loops use i < array.Length instead of a literal bound?",
-      options: [
-        "It compiles faster",
-        "It avoids maintenance bugs when size changes",
-        "It allows mixed data types",
-        "It changes array indexing to one-based"
-      ],
-      correctAnswer: "It avoids maintenance bugs when size changes",
-      explanation: "Length-based bounds stay accurate even if capacity changes."
+      explanation: "Array indexing is zero-based. The first index is 0, so the last valid index is Length - 1 = 7. Accessing index 8 throws IndexOutOfRangeException."
     }
   ]}
 />
@@ -202,6 +365,87 @@ foreach (Student student in roster) {
 ---
 
 <div class="next-section">
-  <p>Section 13.1 complete? Continue to dynamic collections in Section 13.2.</p>
-  <a href="/week-13/lesson-2/" class="vscode-button">Continue to 13.2: List&lt;T&gt; &rarr;</a>
+  <p>Arrays are powerful but rigid — what happens when your data needs to <strong>grow</strong>?</p>
+  <a href="/week-13/lesson-2/" class="vscode-button">Continue to 13.2: List&lt;T&gt; <span aria-hidden="true">→</span></a>
 </div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  .architect-rule p, .architect-rule code {
+    color: #e2e8f0;
+  }
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+`}</style>
