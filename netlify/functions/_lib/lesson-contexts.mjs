@@ -921,6 +921,79 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["class", "new", "property", "object"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  // ===== WEEK 13 =====
+  "week-13-lab": {
+    title: "Week 13: Lab - Collection Manager",
+    type: "lab",
+    week: "13",
+    taughtConcepts: `
+      - Fixed arrays: type[] name = new type[size] — fixed capacity set at declaration
+      - Zero-based indexing: first element is index 0, last valid index is Length - 1
+      - array.Length returns the fixed size of the array
+      - List<T> lives in System.Collections.Generic — must add using directive
+      - List<T> is dynamically sized: .Add() appends, .Remove() deletes a matching element
+      - .Count returns the current number of elements in a List<T>
+      - foreach iterates every element in an array or list without manual index math
+      - Week 12 Student class (Name, Id, Gpa) is reused as the element type for both collections
+      - Object initializer syntax: new Student { Name = "Ada", Id = 1001, Gpa = 3.9 }
+      - K&R (Egyptian) brace style: opening brace on same line
+    `,
+    assignmentPrompt: `
+      Build a Collection Manager that stores Student objects in both a fixed array and a List<Student>:
+      1. Use a Student class with Name (string), Id (int), and Gpa (double) auto-implemented properties.
+      2. Declare Student[] roster = new Student[3]; and assign all three slots using zero-based indexes.
+      3. Use foreach to print all array elements. Print roster.Length.
+      4. Add using System.Collections.Generic; and create List<Student>. Add at least 3 students with .Add().
+      5. Remove one student with .Remove() and print .Count before and after removal.
+      6. Use foreach to print remaining list items after removal.
+      7. Output must be clearly sectioned: array report, list report, and count values.
+      NOTE: Do NOT penalize cosmetic formatting differences. Grade on correct array/list usage, foreach, and Count/Length.
+    `,
+    rubric: `
+      Student class (15pts): Correct Student class with Name (string), Id (int), Gpa (double) auto-implemented properties.
+      Fixed array declaration (15pts): Declares Student[] with valid zero-based index assignments for all slots.
+      Array foreach and Length (15pts): Uses foreach to print all array elements. Displays roster.Length.
+      List initialization and Add (15pts): Adds using System.Collections.Generic. Creates List<Student> and uses .Add() for at least 3 students.
+      Removal and Count (15pts): Uses .Remove() to delete one student. Displays .Count before and after removal with correct values.
+      Readable formatted output (15pts): Output clearly sectioned for array report and list report. All properties displayed for each student.
+      Compiles and K&R braces (10pts): Code compiles and runs without errors. K&R brace style used.
+    `,
+    requiredKeywords: ["Student[]", "List", "foreach", "Add", "Remove", "Count", "Length"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-13-homework": {
+    title: "Week 13: Technical Reflection - Array and List Architecture",
+    type: "homework",
+    week: "13",
+    taughtConcepts: `
+      - Fixed arrays: type[] name = new type[size] — capacity is locked at declaration time
+      - Zero-based indexing: first element at index 0, last at Length - 1
+      - array.Length returns the fixed size — safer than hard-coded loop bounds
+      - List<T> requires using System.Collections.Generic
+      - List<T> supports runtime growth: .Add() appends, .Remove() deletes, .Count reports current size
+      - foreach iterates every element without manual index math — works with both arrays and lists
+      - Design decision: arrays for fixed-size known datasets, lists for dynamic/unpredictable sizes
+      - Week 12 Student class objects used as elements in both collection types
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer all prompts:
+      1. Array Strategy: Explain the syntax type[] name = new type[size]. Why is indexing zero-based, and why is array.Length safer than hard-coded loop bounds?
+      2. List Strategy: Explain why List<T> requires System.Collections.Generic and how .Add(), .Remove(), and .Count support runtime data changes.
+      3. Loop Integration: You created Student class objects in Week 12. Explain how foreach improves readability when iterating Student[] and List<Student>.
+      4. Architecture Decision: Given a fixed class roster of 20 students versus a live enrollment that can change daily, justify when array or list is the stronger design.
+    `,
+    rubric: `
+      Array strategy (25pts): Student explains array declaration syntax correctly. Explains zero-based indexing. Explains why .Length is safer than hard-coded bounds (avoids off-by-one, adapts to size changes).
+      List strategy (25pts): Student explains the System.Collections.Generic namespace requirement. Describes how Add, Remove, and Count enable dynamic runtime changes to the collection.
+      Loop integration (25pts): Student explains how foreach eliminates manual index math. Connects to Student class objects from Week 12. Describes readability and safety benefits.
+      Architecture decision (15pts): Student argues from constraints — fixed roster = array (known size, no mutation needed), live enrollment = list (unpredictable growth, Add/Remove required). Discusses capacity predictability and mutation frequency.
+      Clarity and terminology (10pts): Clear writing using terms like "array", "List", "foreach", "Length", "Count", "zero-based", "dynamic", "fixed".
+    `,
+    requiredKeywords: ["array", "List", "foreach", "Length", "Count"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
@@ -1009,6 +1082,13 @@ export const TUTOR_CONTEXTS = {
   'week-12-lesson-2': "Week 12 Section 12.2: Object Instances. Focus: Creating objects with the new keyword. new allocates memory, initializes defaults, returns a reference. The dot operator reads and writes properties: student.Name = 'Ada' (write), Console.WriteLine(student.Name) (read). Multiple instances from one class are independent — changing s1.Name does not affect s2. Reference types vs value types: assignment of a reference type copies the reference, not the object. Default values: string → null, int → 0, double → 0.0, bool → false. Objects can be passed to methods as parameters.",
   'week-12-lab': "Week 12 Lab: The Data Architect. Students define two classes: Student (Name string, Id int, Gpa double) and Course (Title string, Instructor string, Credits int). All properties are public auto-implemented with { get; set; }. Create at least 3 Student objects and 2 Course objects using new. Set all properties via dot operator. Write a static void DisplayStudent(Student s) method. Display all objects with all properties. No loose variables — all data in objects. K&R brace style.",
   'week-12-homework': "Week 12 Homework: Class Design and Object Architecture Reflection. Students must explain: (1) class as blueprint — what the class definition does vs what new does, why class Student { } creates no data, what happens in memory with new; (2) properties and access control — fields vs auto-implemented properties, why properties are preferred, role of private modifier; (3) objects and dot operator — read/write pattern, independent instances, code organization benefits of objects vs loose variables.",
+
+  // Week 13
+  'week-13': "Week 13: Data Collections. Students learn two collection strategies for storing Week 12 Student class objects: fixed arrays (type[] name = new type[size]) with zero-based indexing and .Length, and dynamic lists (List<T> from System.Collections.Generic) with .Add(), .Remove(), and .Count. foreach iterates both without manual index math. Design decision: arrays for known fixed-size datasets, lists for dynamic/unpredictable sizes.",
+  'week-13-lesson-1': "Week 13 Section 13.1: Fixed Arrays. Focus: Declaring arrays with type[] name = new type[size]. Zero-based indexing — first element at index 0, last at Length - 1. Accessing elements with roster[0], roster[1]. array.Length returns fixed size. foreach iterates all elements without index math. Common error: IndexOutOfRangeException from accessing roster[roster.Length]. Arrays cannot grow or shrink after creation.",
+  'week-13-lesson-2': "Week 13 Section 13.2: List<T>. Focus: using System.Collections.Generic is REQUIRED. List<Student> is dynamically sized. .Add() appends, .Remove() deletes matching element, .Count reports current size. foreach works the same as with arrays. Arrays use Length, Lists use Count — don't mix them up. Design choice: array when size is known and fixed, list when size changes at runtime.",
+  'week-13-lab': "Week 13 Lab: Collection Manager. Students store Student objects in both Student[] (fixed array, size 3) and List<Student> (dynamic). Array: assign all 3 slots with zero-based indexes, foreach to print, display .Length. List: Add at least 3 students, Remove one, display .Count before and after removal, foreach to print remaining. Output must be clearly sectioned. K&R brace style.",
+  'week-13-homework': "Week 13 Homework: Array and List Architecture Reflection. Students explain: (1) array declaration syntax and why zero-based indexing, why .Length is safer than hard-coded bounds; (2) why List<T> requires System.Collections.Generic, how Add/Remove/Count support runtime changes; (3) how foreach improves readability with Student[] and List<Student>; (4) when to choose array vs list given fixed roster vs live enrollment.",
 
   // Week 9
   'week-09': "Week 9: For Loops — counter-controlled iteration. The for loop has three clauses: (initializer; condition; iterator). Students learn to use the index variable to drive logic and build accumulation patterns. Key failure point: the off-by-one error (wrong boundary or wrong starting value). Accumulator pattern: declare sum = 0 before the loop. CRITICAL: cast to (double) before dividing for averages. Nested for loops for two-dimensional output (Stage III of Boss Fight II).",
