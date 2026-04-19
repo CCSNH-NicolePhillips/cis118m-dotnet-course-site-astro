@@ -243,19 +243,6 @@ Key Concepts:
 
 Summary: # Week 2 Lesson 1: Variables + data types (your program’s memory) ## Goal - Understand what a variable is (and why we use them) - Use string, int, double, and bool - Name variables so your code reads like a sentence ## What to know - **Variable**: A named box that stores a value (so you can use it l...
 
-Code Example:
-```csharp
-string name = "Jordan";
-int age = 18;
-double gpa = 3.5;
-bool likesPizza = true;
-
-Console.WriteLine(name);
-Console.WriteLine(age);
-Console.WriteLine(gpa);
-Console.WriteLine(likesPizza);
-```
-
 ### 📖 Lesson: Week 01 • Lesson 2
 Key Concepts:
 - Time: 45 minutes
@@ -272,15 +259,6 @@ Key Concepts:
 - 1) What does the $ do in $"Age: {age}"?
 
 Summary: # Week 2 Lesson 2: Printing values clearly (string interpolation) ## Goal - Print labeled output that humans can read - Use $"...{variable}..." (string interpolation) - Avoid confusing “mystery output” ## What to know - **Interpolation**: Put variables inside a string using { }. - **Label**: Text li...
-
-Code Example:
-```csharp
-string name = "Jordan";
-int age = 18;
-
-Console.WriteLine($"Name: {name}");
-Console.WriteLine($"Age: {age}");
-```
 
 ### 📋 Quiz: Week 02 • Technical Assessment
 
@@ -390,13 +368,6 @@ Key Concepts:
 
 Summary: # Week 3 Lesson 1: Getting input (Console.ReadLine) ## Goal - Ask the user a question (a prompt) - Read what they typed - Store that input in a variable ## What to know - **Prompt**: A message that tells the user what to type. - **Console.ReadLine()**: Reads a line of text the user typed (it always ...
 
-Code Example:
-```csharp
-Console.WriteLine("What is your name?");
-string name = Console.ReadLine();
-Console.WriteLine($"Hi, {name}!");
-```
-
 ### 📖 Lesson: Week 03 • Lesson 2
 Key Concepts:
 - Parsing
@@ -405,24 +376,6 @@ Key Concepts:
 - 1) What does TryParse return when parsing fails?
 
 Summary: # Week 3 Lesson 2: Converting input safely (TryParse + retry loop) ## Goal - Convert user input to a number without crashing - Use TryParse to check if conversion worked - Re-prompt if the input is invalid ## What to know - **Parsing**: Turning text into a number. - **TryParse**: A safe way to parse...
-
-Code Example:
-```csharp
-Console.WriteLine("Enter a whole number:");
-string text = Console.ReadLine();
-
-int number;
-bool ok = int.TryParse(text, out number);
-
-if (ok)
-{
-    Console.WriteLine($"You entered: {number}");
-}
-else
-{
-    Console.WriteLine("That was not a whole number.");
-}
-```
 
 ### 📋 Quiz: Week 03 • Technical Assessment
 
@@ -772,35 +725,12 @@ Key Concepts:
 
 Summary: # Week 7 Lesson 1: Arrays + indexing (boxes in a row) ## Goal - Understand what an array is - Use indexes to read and write array values - Know why indexes start at 0 ## What to know - **Array**: A fixed-size collection of values of the same type. - **Index**: A position number that points to an ite...
 
-Code Example:
-```csharp
-int[] scores = { 90, 82, 77, 100 };
-Console.WriteLine(scores[0]); // 90
-Console.WriteLine(scores[3]); // 100
-
-scores[1] = 85; // change the 2nd item
-Console.WriteLine(scores[1]);
-```
-
 ### 📖 Lesson: Week 07 • Lesson 2
 Key Concepts:
 - Traverse
 - Accumulator
 
 Summary: # Week 7 Lesson 2: Traversing arrays (looping through items) ## Goal - Use loops to process every item in an array - Compute sum/average/min/max - Recognize off-by-one bugs ## What to know - **Traverse**: Visit each item in the array one by one. - **Accumulator**: A variable that keeps a running tot...
-
-Code Example:
-```csharp
-int[] nums = { 2, 4, 6, 8 };
-int sum = 0;
-
-for (int i = 0; i < nums.Length; i++)
-{
-    sum += nums[i];
-}
-
-Console.WriteLine($"Sum: {sum}");
-```
 
 ### 📋 Quiz: Week 07 • Technical Assessment
 
@@ -1025,21 +955,6 @@ Key Concepts:
 
 Summary: # Week 10 Lesson 1: Classes = blueprints, objects = actual things ## Goal - Create a class with a few properties - Create objects from that class - Read and update property values ## What to know - **Class**: A blueprint that describes what something *has* and *can do*. - **Object**: A real instance...
 
-Code Example:
-```csharp
-class Person
-{
-    public string Name { get; set; }
-    public int Age { get; set; }
-}
-
-Person p = new Person();
-p.Name = "Ava";
-p.Age = 19;
-
-Console.WriteLine($"{p.Name} is {p.Age}.");
-```
-
 ### 📖 Lesson: Section 10.1 • The Method Signature
 Key Concepts:
 - access modifier
@@ -1058,24 +973,6 @@ Key Concepts:
 - 1) When does a constructor run?
 
 Summary: # Week 10 Lesson 2: Constructors (set up objects the easy way) ## Goal - Understand what a constructor does - Create a constructor with parameters - Use constructors to make cleaner code ## What to know - **Constructor**: A special method that runs when you create an object. - **Default constructor*...
-
-Code Example:
-```csharp
-class Person
-{
-    public string Name { get; set; }
-    public int Age { get; set; }
-
-    public Person(string name, int age)
-    {
-        Name = name;
-        Age = age;
-    }
-}
-
-Person p = new Person("Ava", 19);
-Console.WriteLine($"{p.Name} is {p.Age}.");
-```
 
 ### 📖 Lesson: Section 10.2 • Parameters & Arguments
 Key Concepts:
@@ -1172,37 +1069,6 @@ Key Concepts:
 
 Summary: # Week 11 Lesson 1: List of objects (rosters, inventories, etc.) ## Goal - Create objects and add them to a List - Use foreach to print objects - Write a method on the class that returns a summary string ## What to know - **List **: A flexible collection you can add/remove items from. - **List of ob...
 
-Code Example:
-```csharp
-using System.Collections.Generic;
-
-class Student
-{
-    public string Id { get; set; }
-    public string Name { get; set; }
-
-    public Student(string id, string name)
-    {
-        Id = id;
-        Name = name;
-    }
-
-    public string Summary()
-    {
-        return $"{Id} - {Name}";
-    }
-}
-
-List<Student> roster = new List<Student>();
-roster.Add(new Student("S001", "Ava"));
-roster.Add(new Student("S002", "Ben"));
-
-foreach (Student s in roster)
-{
-    Console.WriteLine(s.Summary());
-}
-```
-
 ### 📖 Lesson: Section 11.1 • The Return Statement
 Key Concepts:
 - Exits the method
@@ -1218,30 +1084,6 @@ Key Concepts:
 - 1) What should you do if the search does not find anything?
 
 Summary: # Week 11 Lesson 2: Searching and updating objects in a list ## Goal - Search for an object by a property (like Id) - Update a found object’s properties - Handle ‘not found’ in a friendly way ## What to know - **Linear search**: Checking each item one by one until you find a match. - **Found flag**:...
-
-Code Example:
-```csharp
-Student found = null;
-string targetId = "S002";
-
-foreach (Student s in roster)
-{
-    if (s.Id == targetId)
-    {
-        found = s;
-        break;
-    }
-}
-
-if (found != null)
-{
-    Console.WriteLine("Found: " + found.Summary());
-}
-else
-{
-    Console.WriteLine("Student not found.");
-}
-```
 
 ### 📖 Lesson: Section 11.2 • Result Capture
 Key Concepts:
@@ -1382,53 +1224,68 @@ Quiz Questions (10 questions):
 
 Summary: # Week 13 Extra Practice: File drills Pick **1–2** items (optional). - Save a list of 5 favorite foods to a file and reload it. - Make a ‘log file’ that appends a new line each time the program runs (use AppendAllText). - Challenge: Load a CSV file and count how many lines it contains. ## Open in Ed...
 
-### 📝 Homework: Week 13 • Week 13 Homework: CSV Roster Saver
-
-Summary: # Week 13 Homework: CSV Roster Saver ## Overview Create a small roster app that saves students to a CSV file and loads them back. ## Requirements checklist (acceptance criteria) - [ ] Defines a Student class with Id and Name (and optional Major) - [ ] Stores students in a List - [ ] Saves to student...
-
-### 📚 Overview: Week 13
+### 📝 Homework: Homework 13 • Technical Reflection: Array and List Architecture
 Key Concepts:
-- Focus:
+- Array Strategy:
+- List Strategy:
 
-Summary: # Week 13 **Focus:** Files: saving and loading data (so programs remember things). ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./h...
+Summary: # Homework 13: Technical Reflection - Array and List Architecture ## Reflection Prompt In 3-5 sentences per question, answer all prompts: 1. **Array Strategy:** Explain the syntax type[] name = new type[size]. Why is indexing zero-based, and why is array.Length safer than hard-coded loop bounds? 2. ...
 
-### 🔬 Lab: Week 13 • Week 13 Lab: Persistent To-Do List (file-based)
+### 📚 Overview: Week 13 • Data Collections
 
-Summary: # Week 13 Lab: Persistent To-Do List (file-based) ## Overview Upgrade your to-do list so it saves to a file and loads when the program starts. ## Requirements checklist (acceptance criteria) - [ ] Uses a List for tasks - [ ] Loads tasks from a file if it exists - [ ] Lets user add at least 1 task - ...
+Summary: # Week 13: Data Collections Mission Brief: From Single Objects to Managed Collections Week 12 introduced custom classes and object instantiation. This week extends that model to collections. Professional applications rarely process one object at a time. They process sets of related objects: student ...
 
-### 📖 Lesson: Week 13 • Lesson 1
+### 🔬 Lab: Lab 13 • Collection Manager
 Key Concepts:
-- Relative path
-- 1) Why check File.Exists(path) before reading?
+- Time: 60 minutes
+- Points: 100
+- Submit Lab
 
-Summary: # Week 13 Lesson 1: Reading and writing files (your program gets memory) ## Goal - Write text to a file - Read text from a file - Understand relative paths (where the file goes) ## What to know - **File**: Data stored on disk (like a .txt). - **I/O**: Input/Output: reading and writing. - **Path**: W...
+Summary: # Lab 13: Collection Manager **Time: 60 minutes** **Points: 100** --- ## Integrity Protocol 🛡️ Academic Integrity Protocol — Lab 13 This is a graded lab assignment. It must represent your own individual engineering work. The following active monitoring is in effect for this submission: Keystroke re...
 
-Code Example:
-```csharp
-using System.IO;
+### 📖 Lesson: Section 13.1 • Fixed Arrays
 
-string path = "notes.txt";
-File.WriteAllText(path, "Hello file!");
-Console.WriteLine("Saved.");
+Summary: # Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Array Syntax and Indexing An array stores multiple values of the same type in a fixed-size sequence. C# array declaration follows this exact pattern: roster now contains three slots indexed 0, 1...
 
-string contents = File.ReadAllText(path);
-Console.WriteLine("Loaded: " + contents);
-```
+### 📖 Lesson: Section 13.2 • List<T>
 
-### 📖 Lesson: Week 13 • Lesson 2
-Key Concepts:
-- 1) What does Split(',') return?
+Summary: # Section 13.2: List\ --- ## Namespace Requirement List --- ## Foreach Integration with Week 12 Class Objects foreach works directly with List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;...
 
-Summary: # Week 13 Lesson 2: Simple CSV (save multiple items) ## Goal - Store multiple records in one file - Split text into parts using Split(',') - Load data into objects ## What to know - **CSV**: Comma-separated values, like Id,Name,Major. Simple and common. - **Split**: Breaks a string into parts. - **J...
+### 📋 Quiz: Week 13 • Technical Assessment
 
-Code Example:
-```csharp
-string line = "S001,Ava,CS";
-string[] parts = line.Split(',');
-Console.WriteLine(parts[0]); // S001
-Console.WriteLine(parts[1]); // Ava
-Console.WriteLine(parts[2]); // CS
-```
+Summary: # Week 13 Technical Assessment Assessment Parameters Attempts: Unlimited Scoring: Highest score is recorded Passing: 70% required Time: No time limit Answers: Revealed after final attempt ---...
+
+Quiz Questions (10 questions):
+1. Q: Which declaration creates a fixed array of five integers?
+   A: int[] numbers = new int[5];
+   Why: Array syntax is type brackets variable equals new type bracket size.
+2. Q: For an array with Length 6, what is the first valid index?
+   A: 0
+   Why: C# arrays use zero-based indexing.
+3. Q: What is the last valid index of an array with Length 6?
+   A: 5
+   Why: Last index is Length - 1.
+4. Q: Which property returns the size of an array?
+   A: Length
+   Why: Arrays expose Length; List<T> exposes Count.
+5. Q: Which namespace is required for List<T>?
+   A: System.Collections.Generic
+   Why: List<T> is defined in System.Collections.Generic.
+6. Q: Which List<T> method inserts a new element?
+   A: Add
+   Why: Add appends an item to the list.
+7. Q: Which List<T> member reports current element count?
+   A: Count
+   Why: List<T> uses Count for active item total.
+8. Q: What does Remove do on List<Student>?
+   A: Removes a matching item from the list
+   Why: Remove deletes one matching element from the list collection.
+9. Q: Why is foreach useful with Student collections?
+   A: It avoids manual index math for sequential traversal
+   Why: foreach iterates each object directly and improves readability.
+10. Q: Which collection is generally better for unpredictable runtime growth?
+   A: List<T>
+   Why: List<T> supports dynamic size changes with Add and Remove operations.
 
 ---
 
@@ -1460,32 +1317,6 @@ Key Concepts:
 - 1) What does encapsulation help you prevent?
 
 Summary: # Week 14 Lesson 1: Encapsulation (protect your data) ## Goal - Understand why we ‘protect’ fields - Use private fields with public properties - Add validation rules (no negative balances, etc.) ## What to know - **Encapsulation**: Keeping data safe by controlling how it changes. - **private**: Only...
-
-Code Example:
-```csharp
-class BankAccount
-{
-    private double _balance;
-
-    public double Balance
-    {
-        get { return _balance; }
-        private set { _balance = value; } // only the class can change it
-    }
-
-    public BankAccount(double startingBalance)
-    {
-        if (startingBalance < 0) startingBalance = 0;
-        Balance = startingBalance;
-    }
-
-    public void Deposit(double amount)
-    {
-        if (amount <= 0) return;
-        Balance = Balance + amount;
-    }
-}
-```
 
 ### 📖 Lesson: Week 14 • Lesson 2
 Key Concepts:
@@ -1525,19 +1356,6 @@ Key Concepts:
 
 Summary: # Week 15 Lesson 1: Review map (what tool solves what problem?) ## Goal - Know when to use loops, lists, methods, and classes - Practice reading code and predicting output - Build a personal ‘cheat sheet’ of patterns ## What to know - **Loop**: Repeat work (while for retry, for for counting). - **Li...
 
-Code Example:
-```csharp
-// Pattern: input + TryParse + loop
-int n;
-while (true)
-{
-    Console.WriteLine("Enter a number:");
-    if (int.TryParse(Console.ReadLine(), out n)) break;
-    Console.WriteLine("Try again.");
-}
-Console.WriteLine($"You entered {n}.");
-```
-
 ### 📖 Lesson: Week 15 • Lesson 2
 Key Concepts:
 - Feature
@@ -1545,25 +1363,6 @@ Key Concepts:
 - 1) What’s the purpose of acceptance criteria?
 
 Summary: # Week 15 Lesson 2: Final project planning (feature list + acceptance criteria) ## Goal - Choose a final project idea (small, realistic) - Write features as checklists - Define ‘done’ with acceptance criteria ## What to know - **Feature**: A user-visible capability (Add student, Search, Save). - **A...
-
-Code Example:
-```csharp
-/* Example project: Roster Manager
-
-MVP Features:
-1) Add student
-   - [ ] User can enter ID + Name
-   - [ ] ID must be unique
-   - [ ] Program confirms student added
-
-2) List students
-   - [ ] Prints roster in readable format
-
-3) Save/Load
-   - [ ] Saves to students.csv
-   - [ ] Loads at startup if file exists
-*/
-```
 
 ---
 
@@ -1596,15 +1395,6 @@ Key Concepts:
 
 Summary: # Week 16 Lesson 1: Finishing strong (testing + polish) ## Goal - Run through a test checklist before submitting - Handle common edge cases (empty input, not found, invalid numbers) - Make output readable for grading ## What to know - **Edge cases**: Empty, 0, negative, large numbers, not found, fil...
 
-Code Example:
-```csharp
-// Example: friendly not-found handling
-if (found == null)
-{
-    Console.WriteLine("No match found. Check the ID and try again.");
-}
-```
-
 ### 📖 Lesson: Week 16 • Lesson 2
 Key Concepts:
 - Evidence
@@ -1612,13 +1402,6 @@ Key Concepts:
 - 1) What are 3 things you usually submit for the final?
 
 Summary: # Week 16 Lesson 2: Final submission checklist (what to turn in) ## Goal - Submit everything needed for grading - Provide proof your project runs - Reflect briefly on what you learned ## What to know - **Evidence**: Screenshots and sample output that prove features work. - **Reflection**: Short: wha...
-
-Code Example:
-```csharp
-/* Reflection example (3–5 sentences)
-I learned how to store objects in a list and search by ID. The hardest part was saving/loading CSV files without crashing. I fixed it by checking File.Exists and validating each line. Next, I would add a nicer menu and allow editing existing records.
-*/
-```
 
 ---
 
