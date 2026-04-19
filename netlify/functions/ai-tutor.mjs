@@ -27,11 +27,11 @@ const WEEKS = [
   { week: 7, title: "Logic & Multiple Conditions", dueDate: "Sunday, March 8, 2026 at 11:59 PM EST" },
   { week: 8, title: "While Loops", dueDate: "Sunday, March 15, 2026 at 11:59 PM EDT" },
   // Spring Break: March 16-22
-  { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT", isBossFight: true, bossFightName: "Logic Engine Implementation" },
+  { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT" },
   { week: 10, title: "Methods", dueDate: "Sunday, April 5, 2026 at 11:59 PM EDT" },
   { week: 11, title: "Returning Values", dueDate: "Sunday, April 12, 2026 at 11:59 PM EDT" },
   { week: 12, title: "Custom Data Types & Classes", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
-  { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT", isBossFight: true, bossFightName: "Data Collection Manager" },
+  { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT" },
   { week: 14, title: "Program Integration", dueDate: "Sunday, May 3, 2026 at 11:59 PM EDT" },
   { week: 15, title: "Final Project", dueDate: "Sunday, May 10, 2026 at 11:59 PM EDT" }
 ];
@@ -48,7 +48,7 @@ INSTRUCTOR INFORMATION:
 GRADING WEIGHTS:
 - Labs (Applied Skills): 40%
   * Regular weekly labs: 100 points each (Weeks 1-4, 6-8, 10-12, 14)
-  * Boss Fight projects: 200 points each — worth DOUBLE a regular lab (Phase I: Week 5, Phase II: Week 9, Phase III: Week 13)
+  * Boss Fight projects: 200 points each — worth DOUBLE a regular lab (Phase I: Week 5)
 - Quizzes (Checkpoint Quizzes): 20%
 - Homework (Auto-Checks): 20%
 - Participation (Activity): 10%
@@ -406,7 +406,7 @@ async function fetchStudentGrades(userId) {
     if (lines.length === 0) return { summary: '', submissions: {}, analysis: null };
     
     // Calculate cumulative weighted grade
-    const BOSS_FIGHT_WEEKS = new Set([5, 9, 13]);
+    const BOSS_FIGHT_WEEKS = new Set([5]);
     const labScores = [];
     const quizScores = [];
     const homeworkScores = [];

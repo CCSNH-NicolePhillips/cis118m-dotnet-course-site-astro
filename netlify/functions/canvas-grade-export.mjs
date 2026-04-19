@@ -67,8 +67,6 @@ function getExpectedSections(weekSlug) {
 // Boss fight weeks - Phase capstone projects worth 2x a regular lab
 const BOSS_FIGHT_WEEKS = {
   '05': { name: 'Boss Fight: Interactive Console App', id: 'week-05-boss-fight' },
-  '09': { name: 'Boss Fight: Logic Engine', id: 'week-09-boss-fight' },
-  '13': { name: 'Boss Fight: Data Collection Manager', id: 'week-13-boss-fight' },
 };
 
 // Generate assignment definitions in EXACT order to match Canvas columns

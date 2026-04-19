@@ -142,7 +142,8 @@ export const WEEKS: WeekConfig[] = [
       { title: '13.1 Lesson 1', href: '/week-13/lesson-1/' },
       { title: '13.2 Lesson 2', href: '/week-13/lesson-2/' },
       { title: 'Lab (Graded)', href: '/week-13/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' }
+      { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' },
+      { title: 'Weekly Assessment 13', href: '/week-13/weekly-assessment/' }
     ] },
   { slug: '14', title: 'Week 14: Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-14/' },
