@@ -27,7 +27,7 @@ const WEEKS = [
   { week: 7, title: "Logic & Multiple Conditions", dueDate: "Sunday, March 8, 2026 at 11:59 PM EST" },
   { week: 8, title: "While Loops", dueDate: "Sunday, March 15, 2026 at 11:59 PM EDT" },
   // Spring Break: March 16-22
-  { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT" },
+  { week: 9, title: "For Loops", dueDate: "Sunday, March 29, 2026 at 11:59 PM EDT", isBossFight: true, bossFightName: "The Arena" },
   { week: 10, title: "Methods", dueDate: "Sunday, April 5, 2026 at 11:59 PM EDT" },
   { week: 11, title: "Returning Values", dueDate: "Sunday, April 12, 2026 at 11:59 PM EDT" },
   { week: 12, title: "Custom Data Types & Classes", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
@@ -406,7 +406,7 @@ async function fetchStudentGrades(userId) {
     if (lines.length === 0) return { summary: '', submissions: {}, analysis: null };
     
     // Calculate cumulative weighted grade
-    const BOSS_FIGHT_WEEKS = new Set([5]);
+    const BOSS_FIGHT_WEEKS = new Set([5, 9]);
     const labScores = [];
     const quizScores = [];
     const homeworkScores = [];
@@ -422,8 +422,8 @@ async function fetchStudentGrades(userId) {
         labScores.push(score);
         // Boss fights count double
         const weekMatch = id.match(/week-(\d+)/);
-        if (weekMatch && BOSS_FIGHT_WEEKS.has(parseInt(weekMatch[1])) && id.includes('-boss-fight')) {
-          labScores.push(score);
+        if (weekMatch && BOSS_FIGHT_WEEKS.has(parseInt(weekMatch[1]))) {
+          labScores.push(score); // Boss fights count 2x regardless of -lab or -boss-fight ID
         }
       } else if (id.includes('-quiz')) {
         quizScores.push(score);

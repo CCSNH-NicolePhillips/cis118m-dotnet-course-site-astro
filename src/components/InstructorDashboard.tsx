@@ -78,7 +78,8 @@ const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: st
 // Assignment definitions for the course - dynamically generate all weeks
 const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // No quiz/homework
 const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
-const BOSS_FIGHT_WEEKS = new Set([5]); // All boss fight weeks
+const BOSS_FIGHT_ID_WEEKS = new Set([5]); // Boss fights that use -boss-fight assignment ID
+const BOSS_FIGHT_WEEKS = new Set([5, 9]); // All boss fight weeks (for 2x weight + display)
 
 const generateAssignments = () => {
   const assignments: { id: string; label: string; week: number; type: AssignmentType }[] = [];
@@ -103,8 +104,10 @@ const generateAssignments = () => {
     if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
     }
-    if (BOSS_FIGHT_WEEKS.has(w)) {
+    if (BOSS_FIGHT_ID_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-boss-fight`, label: 'Boss Fight', week: w, type: 'lab' });
+    } else if (BOSS_FIGHT_WEEKS.has(w)) {
+      assignments.push({ id: `week-${wStr}-lab`, label: 'Boss Fight', week: w, type: 'lab' });
     } else {
       assignments.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
     }

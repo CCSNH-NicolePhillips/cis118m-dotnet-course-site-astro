@@ -82,7 +82,8 @@ ASSIGNMENTS.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
 // Week 5 has no quiz or homework (boss fight only)
 const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // Weeks with boss fight but NO quiz/homework
 const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
-const BOSS_FIGHT_WEEKS = new Set([5]); // All boss fight weeks
+const BOSS_FIGHT_ID_WEEKS = new Set([5]); // Boss fights that use -boss-fight assignment ID
+const BOSS_FIGHT_WEEKS = new Set([5, 9]); // All boss fight weeks (for 2x weight + display)
 
 for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
@@ -93,8 +94,10 @@ for (let w = 2; w <= 14; w++) {
   if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
     ASSIGNMENTS.push({ id: `week-${wStr}-homework`, label: 'Homework', week: w, type: 'homework' });
   }
-  if (BOSS_FIGHT_WEEKS.has(w)) {
+  if (BOSS_FIGHT_ID_WEEKS.has(w)) {
     ASSIGNMENTS.push({ id: `week-${wStr}-boss-fight`, label: 'Boss Fight', week: w, type: 'lab' });
+  } else if (BOSS_FIGHT_WEEKS.has(w)) {
+    ASSIGNMENTS.push({ id: `week-${wStr}-lab`, label: 'Boss Fight', week: w, type: 'lab' });
   } else {
     ASSIGNMENTS.push({ id: `week-${wStr}-lab`, label: 'Lab', week: w, type: 'lab' });
   }
@@ -654,7 +657,7 @@ const StudentGrades: React.FC = () => {
               
               const hwScore = progress[`week-${wStr}-homework`]?.score;
               const isBossFightWeek = BOSS_FIGHT_WEEKS.has(week);
-              const labScore = isBossFightWeek
+              const labScore = BOSS_FIGHT_ID_WEEKS.has(week)
                 ? progress[`week-${wStr}-boss-fight`]?.score
                 : progress[`week-${wStr}-lab`]?.score;
               
