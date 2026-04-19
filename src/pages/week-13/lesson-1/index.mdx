@@ -173,8 +173,7 @@ When should you use `for` vs `foreach`? Use `for` when you need the index (to mo
 
 roster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
 roster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
-
-// TODO: Fill roster[2] with a third Student object
+roster[2] = new Student { Name = "Grace Hopper", Id = 1003, Gpa = 4.0 };
 
 Console.WriteLine("Array Length: " + roster.Length);
 
@@ -189,7 +188,7 @@ foreach (Student student in roster) {
     public double Gpa { get; set; }
 }` }
   ]}
-  instructions="Complete the third Student object and run. Keep zero-based indexing and foreach output unchanged."
+  instructions="Run the code to see how a fixed array stores Student objects. Try changing names, GPAs, or array size to explore boundaries."
   enableStdin={false}
 />
 

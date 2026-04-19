@@ -123,31 +123,23 @@ Build a collection manager that stores Week 12 `Student` objects in both a fixed
   files={[
     { name: "Program.cs", content: `using System.Collections.Generic;
 
+// --- Part 1: Fixed Array ---
 Student[] roster = new Student[3];
-roster[0] = new Student { Name = "Ada Lovelace", Id = 1001, Gpa = 3.9 };
-roster[1] = new Student { Name = "Alan Turing", Id = 1002, Gpa = 3.7 };
-// TODO: assign roster[2]
+// TODO: assign all three roster slots (roster[0], roster[1], roster[2])
+// Each Student needs Name, Id, and Gpa values
 
 Console.WriteLine("--- Fixed Array Report ---");
 Console.WriteLine("Array Length: " + roster.Length);
-foreach (Student student in roster) {
-    Console.WriteLine($"{student.Name} | {student.Id} | {student.Gpa}");
-}
+// TODO: use foreach to loop through roster and print each student
 
 Console.WriteLine();
-Console.WriteLine("--- Dynamic List Report ---");
-List<Student> students = new List<Student>();
-students.Add(new Student { Name = "Katherine Johnson", Id = 1004, Gpa = 3.95 });
-students.Add(new Student { Name = "Margaret Hamilton", Id = 1005, Gpa = 3.92 });
-// TODO: add one more Student
 
-Console.WriteLine("List Count Before Remove: " + students.Count);
-// TODO: remove one student from the list
-Console.WriteLine("List Count After Remove: " + students.Count);
+// --- Part 2: Dynamic List ---
+// TODO: create a List<Student> and add at least 3 students using .Add()
 
-foreach (Student student in students) {
-    Console.WriteLine($"{student.Name} | {student.Id} | {student.Gpa}");
-}
+// TODO: print the list count, remove one student, then print the count again
+
+// TODO: use foreach to print the remaining students in the list
 ` },
     { name: "Student.cs", content: `class Student
 {
@@ -156,7 +148,7 @@ foreach (Student student in students) {
     public double Gpa { get; set; }
 }` }
   ]}
-  instructions="Complete all TODOs. Demonstrate array length, list count before/after remove, and foreach output for both collections."
+  instructions="Build the entire Collection Manager from the TODOs. You must write the Student assignments, foreach loops, List creation, Add/Remove calls, and Count output yourself."
   enableStdin={false}
 />
 
