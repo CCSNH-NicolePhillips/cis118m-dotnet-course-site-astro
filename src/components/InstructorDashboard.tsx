@@ -76,7 +76,8 @@ const TYPE_COLORS: Record<AssignmentType, { text: string; bg: string; border: st
 };
 
 // Assignment definitions for the course - dynamically generate all weeks
-const BOSS_FIGHT_ONLY_WEEKS = new Set([5, 9]); // No quiz/homework
+const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // No quiz/homework
+const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
 const BOSS_FIGHT_WEEKS = new Set([5]); // All boss fight weeks
 
 const generateAssignments = () => {
@@ -96,8 +97,10 @@ const generateAssignments = () => {
   for (let w = 2; w <= 14; w++) {
     const wStr = w.toString().padStart(2, '0');
     assignments.push({ id: `week-${wStr}-participation`, label: 'Part', week: w, type: 'participation' });
-    if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
+    if (!NO_QUIZ_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
+    }
+    if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
       assignments.push({ id: `week-${wStr}-homework`, label: 'HW', week: w, type: 'homework' });
     }
     if (BOSS_FIGHT_WEEKS.has(w)) {

@@ -80,14 +80,17 @@ ASSIGNMENTS.push({ id: 'week-01-lab', label: 'Lab', week: 1, type: 'lab' });
 // Weeks 2-14: Participation, Quiz, Homework, Lab
 // Boss fight weeks (5) replace lab with boss-fight (200pts)
 // Week 5 has no quiz or homework (boss fight only)
-const BOSS_FIGHT_ONLY_WEEKS = new Set([5, 9]); // Weeks with boss fight but NO quiz/homework
+const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // Weeks with boss fight but NO quiz/homework
+const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
 const BOSS_FIGHT_WEEKS = new Set([5]); // All boss fight weeks
 
 for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
   ASSIGNMENTS.push({ id: `week-${wStr}-participation`, label: 'Participation', week: w, type: 'participation' });
-  if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
+  if (!NO_QUIZ_WEEKS.has(w)) {
     ASSIGNMENTS.push({ id: `week-${wStr}-quiz`, label: 'Quiz', week: w, type: 'quiz' });
+  }
+  if (!BOSS_FIGHT_ONLY_WEEKS.has(w)) {
     ASSIGNMENTS.push({ id: `week-${wStr}-homework`, label: 'Homework', week: w, type: 'homework' });
   }
   if (BOSS_FIGHT_WEEKS.has(w)) {
@@ -657,11 +660,15 @@ const StudentGrades: React.FC = () => {
               
               // Check if week is past due (for showing 0 on unsubmitted)
               const weekPastDue = isWeekPastDue(week);
+              const isNoQuizWeek = NO_QUIZ_WEEKS.has(week);
               const isBossFightOnly = BOSS_FIGHT_ONLY_WEEKS.has(week);
 
               const renderScore = (score: number | undefined, color: string, assignmentType: string, assignmentId?: string) => {
                 // Boss-fight-only weeks don't have quiz or homework - always show dash
-                if (isBossFightOnly && (assignmentType === 'quiz' || assignmentType === 'homework')) {
+                if (isNoQuizWeek && assignmentType === 'quiz') {
+                  return <span style={{ color: '#444' }}>—</span>;
+                }
+                if (isBossFightOnly && assignmentType === 'homework') {
                   return <span style={{ color: '#444' }}>—</span>;
                 }
 

@@ -83,7 +83,8 @@ function generateAssignments() {
   
   // Weeks 2-14: Participation, Lab/BossFight, Homework, Quiz
   // Week 5 is boss-fight-only (no homework or quiz)
-  const BOSS_FIGHT_ONLY_WEEKS = new Set(['05', '09']); // No quiz/homework
+  const BOSS_FIGHT_ONLY_WEEKS = new Set(['05']); // No quiz/homework
+  const NO_QUIZ_WEEKS = new Set(['05', '09']); // Weeks that skip quiz only
 
   for (let w = 2; w <= 14; w++) {
     const slug = w.toString().padStart(2, '0');
@@ -99,9 +100,11 @@ function generateAssignments() {
       assignments.push({ id: `week-${slug}-lab`, name: `Week ${w} Lab`, points: 100, week: slug });
     }
     
-    // Skip homework and quiz for boss-fight-only weeks
+    // Skip homework for boss-fight-only weeks, skip quiz for no-quiz weeks
     if (!BOSS_FIGHT_ONLY_WEEKS.has(slug)) {
       assignments.push({ id: `week-${slug}-homework`, name: `Week ${w} Homework`, points: 100, week: slug });
+    }
+    if (!NO_QUIZ_WEEKS.has(slug)) {
       assignments.push({ id: `week-${slug}-quiz`, name: `Week ${w} Quiz`, points: 100, week: slug });
     }
   }
