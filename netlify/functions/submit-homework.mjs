@@ -175,6 +175,19 @@ Return JSON:
         aiDetailedReport = gradeData.detailedReport || '';
         var aiIntegrityAnalysis = gradeData.integrityAnalysis || {};
 
+        // Reconcile: if rubric subtotals don't match the top-level score, use the rubric sum
+        if (aiRubric && typeof aiRubric === 'object') {
+          const rubricEntries = Object.values(aiRubric);
+          if (rubricEntries.length > 0 && rubricEntries.every(r => typeof r === 'object' && r !== null && typeof r.points === 'number')) {
+            const rubricSum = Math.min(100, Math.max(0, rubricEntries.reduce((sum, r) => sum + r.points, 0)));
+            if (rubricSum !== aiGrade) {
+              console.log(`[submit-homework] Score/rubric mismatch: score=${aiGrade}, rubricSum=${rubricSum}. Using rubric sum.`);
+              aiGrade = rubricSum;
+              gradeData.score = rubricSum;
+            }
+          }
+        }
+
       } catch (gradeError) {
         console.error('[submit-homework] AI grading failed (Gemini + OpenAI):', gradeError.message);
         aiGrade = null;

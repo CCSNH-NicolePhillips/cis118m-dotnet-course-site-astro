@@ -67,14 +67,14 @@ export function calculateLatePenalty(pageId, originalScore, submissionDate = new
   const msLate = submissionDate.getTime() - dueDate.getTime();
   const daysLate = Math.ceil(msLate / (1000 * 60 * 60 * 24));
   
-  // Syllabus policy: 10% penalty per day, 0 after 5 days (Mission Failure)
-  if (daysLate > 5) {
+  // Syllabus policy: 10% penalty per day (10 points off per day on a 100-point scale), 0 after 3 days
+  if (daysLate > 3) {
     return { isLate: true, daysLate, penalty: originalScore, penaltyPercent: 100, finalScore: 0, missionFailure: true };
   }
   
   const penaltyPercent = daysLate * 10;
-  const penalty = Math.round(originalScore * (penaltyPercent / 100));
-  const finalScore = Math.max(0, originalScore - penalty);
+  const penaltyPoints = daysLate * 10;
+  const finalScore = Math.max(0, originalScore - penaltyPoints);
   
-  return { isLate, daysLate, penalty, penaltyPercent, finalScore, missionFailure: false };
+  return { isLate, daysLate, penalty: penaltyPoints, penaltyPercent, finalScore, missionFailure: false };
 }

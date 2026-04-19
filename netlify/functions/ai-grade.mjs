@@ -174,6 +174,18 @@ Return JSON:
       }
     }
 
+    // Reconcile: if rubric subtotals don't match the top-level score, use the rubric sum
+    if (data.rubric && typeof data.rubric === 'object') {
+      const rubricEntries = Object.values(data.rubric);
+      if (rubricEntries.length > 0 && rubricEntries.every(r => typeof r === 'object' && r !== null && typeof r.points === 'number')) {
+        const rubricSum = Math.min(100, Math.max(0, rubricEntries.reduce((sum, r) => sum + r.points, 0)));
+        if (rubricSum !== data.score) {
+          console.log(`[ai-grade] Score/rubric mismatch: score=${data.score}, rubricSum=${rubricSum}. Using rubric sum.`);
+          data.score = rubricSum;
+        }
+      }
+    }
+
     // Save full grading record to Redis for instructor review AND progress tracking
     if (userId) {
       const redis = getRedis();

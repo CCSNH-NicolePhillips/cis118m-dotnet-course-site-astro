@@ -181,6 +181,21 @@ Return JSON:
         aiGrade = gradeData.score;
         aiFeedback = gradeData.feedback;
         
+        // Reconcile: if rubric subtotals don't match the top-level score, use the rubric sum
+        // This prevents AI hallucination where rubric shows full marks but score is lower
+        if (gradeData.rubric && typeof gradeData.rubric === 'object') {
+          const rubricEntries = Object.values(gradeData.rubric);
+          if (rubricEntries.length > 0 && rubricEntries.every(r => typeof r === 'object' && r !== null && typeof r.points === 'number')) {
+            const rubricSum = Math.min(100, Math.max(0, rubricEntries.reduce((sum, r) => sum + r.points, 0)));
+            if (rubricSum !== gradeData.score) {
+              console.log(`[submit-lab] Score/rubric mismatch: score=${gradeData.score}, rubricSum=${rubricSum}. Using rubric sum.`);
+              originalGrade = rubricSum;
+              aiGrade = rubricSum;
+              gradeData.score = rubricSum;
+            }
+          }
+        }
+        
         // Calculate late penalty if applicable
         // Derive assignment ID from starterId (week-01-lab-1 -> week-01-lab)
         const assignmentId = starterId.replace(/-\d+$/, ''); // Remove trailing number
