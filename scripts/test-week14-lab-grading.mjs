@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { getLessonContext } from "../netlify/functions/_lib/lesson-contexts.mjs";
 import { getGradingPromptRules } from "../netlify/functions/_lib/ai-rules.mjs";
 
@@ -270,7 +270,7 @@ async function testLabGrading() {
       maxOutputTokens: 1024,
     }
   });
-  const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+  const anthropic = process.env.CLAUDE_API_KEY ? new Anthropic({ apiKey: process.env.CLAUDE_API_KEY }) : null;
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i];
@@ -328,16 +328,15 @@ Return JSON:
         console.log('   🤖 Graded by: Gemini');
       } catch (geminiErr) {
         const isRateLimit = geminiErr.message?.includes('429') || geminiErr.message?.includes('quota');
-        if (!isRateLimit || !openai) throw geminiErr;
-        console.log('   ⚠️  Gemini rate limited — falling back to OpenAI');
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
+        if (!isRateLimit || !anthropic) throw geminiErr;
+        console.log('   ⚠️  Gemini rate limited — falling back to Claude');
+        const message = await anthropic.messages.create({
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 1024,
-          response_format: { type: "json_object" },
+          messages: [{ role: "user", content: prompt }],
         });
-        text = completion.choices[0].message.content;
-        console.log('   🤖 Graded by: OpenAI (fallback)');
+        text = message.content[0].text;
+        console.log('   🤖 Graded by: Claude (fallback)');
       }
       const jsonStart = text.indexOf('{');
       const jsonEnd = text.lastIndexOf('}') + 1;
@@ -349,7 +348,7 @@ Return JSON:
       if (data.rubric) {
         console.log('   📋 Rubric Breakdown:');
         for (const [key, val] of Object.entries(data.rubric)) {
-          const filled = Math.round((val.points / val.maxPoints) * 10);
+          const filled = Math.min(10, Math.max(0, Math.round((val.points / val.maxPoints) * 10)));
           const bar = '█'.repeat(filled) + '░'.repeat(10 - filled);
           console.log(`      ${bar} ${key}: ${val.points}/${val.maxPoints} — ${val.rationale}`);
         }

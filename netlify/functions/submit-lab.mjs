@@ -2,7 +2,7 @@ import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { getLatePenaltyInfo, formatLatePenaltyMessage, applyGracePeriod, formatGracePeriodMessage, getWeekFromPageId, isGracePeriodEnabled } from './_lib/due-dates.mjs';
 import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
@@ -139,20 +139,19 @@ Return JSON:
         } catch (geminiError) {
           const isRateLimit = geminiError.message?.includes('429') || geminiError.message?.includes('quota') || geminiError.message?.includes('exhausted');
           
-          if (!isRateLimit || !process.env.OPENAI_API_KEY) {
+          if (!isRateLimit || !process.env.CLAUDE_API_KEY) {
             throw geminiError;
           }
-          
-          // Fallback to OpenAI
-          console.log('[submit-lab] Gemini rate limited, falling back to OpenAI');
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-          const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
+
+          // Fallback to Claude
+          console.log('[submit-lab] Gemini rate limited, falling back to Claude');
+          const anthropic = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
+          const message = await anthropic.messages.create({
+            model: "claude-haiku-4-5-20251001",
             max_tokens: 2048,
-            response_format: { type: "json_object" },
+            messages: [{ role: "user", content: prompt }],
           });
-          text = completion.choices[0].message.content;
+          text = message.content[0].text;
         }
         console.log('[submit-lab] AI response length:', text.length, 'chars');
         
