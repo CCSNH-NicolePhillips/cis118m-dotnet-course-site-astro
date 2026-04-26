@@ -391,9 +391,9 @@ Product p2 = new Product("Keyboard", 89.99);     // stock defaults to 0
 Product p3 = new Product("Monitor");              // price and stock default to 0
 
 Console.WriteLine("=== PRODUCT CATALOG ===");
-Console.WriteLine($"{p1.Name} | ${p1.Price} | Stock: {p1.Stock} | {(p1.InStock ? "IN STOCK" : "OUT OF STOCK")}");
-Console.WriteLine($"{p2.Name} | ${p2.Price} | Stock: {p2.Stock} | {(p2.InStock ? "IN STOCK" : "OUT OF STOCK")}");
-Console.WriteLine($"{p3.Name} | ${p3.Price} | Stock: {p3.Stock} | {(p3.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+Console.WriteLine($"{p1.Name} | \${p1.Price} | Stock: {p1.Stock} | {(p1.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+Console.WriteLine($"{p2.Name} | \${p2.Price} | Stock: {p2.Stock} | {(p2.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+Console.WriteLine($"{p3.Name} | \${p3.Price} | Stock: {p3.Stock} | {(p3.InStock ? "IN STOCK" : "OUT OF STOCK")}");
 
 // Post-creation mutation through validated setters
 p2.Stock = 25;
@@ -402,9 +402,9 @@ p3.Stock = 5;
 
 Console.WriteLine();
 Console.WriteLine("=== AFTER UPDATES ===");
-Console.WriteLine($"{p1.Name} Total Value: ${p1.TotalValue}");
-Console.WriteLine($"{p2.Name} Total Value: ${p2.TotalValue}");
-Console.WriteLine($"{p3.Name} Total Value: ${p3.TotalValue}");
+Console.WriteLine($"{p1.Name} Total Value: \${p1.TotalValue}");
+Console.WriteLine($"{p2.Name} Total Value: \${p2.TotalValue}");
+Console.WriteLine($"{p3.Name} Total Value: \${p3.TotalValue}");
 ` },
     { name: "Product.cs", content: `class Product {
     private string _name;
