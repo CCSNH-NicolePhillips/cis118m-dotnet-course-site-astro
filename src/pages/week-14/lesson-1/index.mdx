@@ -260,7 +260,7 @@ Every assignment path goes through a guarded gate. `Name` refuses empty and whit
 
 <div class="architect-rule">
 
-#### <span aria-hidden="true">⚠️</span> Architect's Rule: Validation Belongs in the Class, Not the Caller
+### <span aria-hidden="true">⚠️</span> Architect's Rule: Validation Belongs in the Class, Not the Caller
 
 Never place business rule validation exclusively in <code>Main</code> or in the calling code. If the validation lives outside the class, every call site must duplicate it. Callers will forget. Callers will disagree. New callers will be added without the pattern. Put validation in the <code>set</code> accessor once. From that point forward, no assignment anywhere in the codebase can store an invalid value. The class becomes a single source of truth for its own integrity rules.
 
@@ -345,7 +345,7 @@ Console.WriteLine("After stock set to 0 — InStock: " + laptop.InStock);
 
 <div class="experiment-box">
 
-#### <span aria-hidden="true">🧪</span> Experiment: Testing the Firewall
+### <span aria-hidden="true">🧪</span> Experiment: Testing the Firewall
 
 Modify the code above and predict the result BEFORE running:
 
@@ -413,7 +413,7 @@ Console.WriteLine("Safe balance unchanged: $" + safe.Balance);
 
 <div class="predict-challenge">
 
-#### <span aria-hidden="true">🎯</span> Predict the Output: Property Accessor Behavior
+### <span aria-hidden="true">🎯</span> Predict the Output: Property Accessor Behavior
 
 What does this code print? Trace each get and set call before running.
 
@@ -468,7 +468,7 @@ Console.WriteLine(t.Fahrenheit);
 ---
 
 <div class="pro-tip">
-  <h4><span aria-hidden="true">💡</span> Pro Tip: Read-Only Properties with private set</h4>
+  <h3><span aria-hidden="true">💡</span> Pro Tip: Read-Only Properties with private set</h3>
   <p>Sometimes you want external code to read a property but never write it directly from outside the class. Declare the setter as <code>private set</code> — callers can read the value freely, but any assignment from outside the class is a compile-time error. Only methods inside the class can mutate the value. This is exactly the pattern in <code>BankAccountSafe</code>: <code>Balance</code> is readable by anyone but writable only by <code>Deposit</code> and <code>Withdraw</code>. The class controls all mutation paths.</p>
 </div>
 
@@ -534,7 +534,7 @@ Console.WriteLine(t.Fahrenheit);
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .architect-rule h4 {
+  .architect-rule h3 {
     color: #fca5a5;
     margin-top: 0;
   }
@@ -548,7 +548,7 @@ Console.WriteLine(t.Fahrenheit);
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .pro-tip h4 {
+  .pro-tip h3 {
     color: #4ec9b0;
     margin-top: 0;
   }
@@ -574,7 +574,7 @@ Console.WriteLine(t.Fahrenheit);
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .experiment-box h3 { color: #34d399; margin-top: 0; }
   .predict-challenge {
     background: rgba(245, 158, 11, 0.1);
     border: 2px solid #f59e0b;
@@ -582,7 +582,7 @@ Console.WriteLine(t.Fahrenheit);
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-challenge h3 { color: #fbbf24; margin-top: 0; }
   .predict-reveal { margin-top: 1rem; cursor: pointer; }
   .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
   .predict-answer {
@@ -592,17 +592,17 @@ Console.WriteLine(t.Fahrenheit);
     margin-top: 0.5rem;
   }
   body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
-  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #dc2626 !important; }
   body[data-theme="light"] .architect-rule p { color: #334155 !important; }
   body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
-  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #0a7c62 !important; }
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
-  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h3 { color: #047857 !important; }
   body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
-  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-challenge h3 { color: #92400e !important; }
   body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
   body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>

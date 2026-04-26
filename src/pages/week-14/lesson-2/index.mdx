@@ -291,7 +291,7 @@ class Student {
 
 <div class="architect-rule">
 
-#### <span aria-hidden="true">⚠️</span> Architect's Rule: One Constructor Owns the Validation
+### <span aria-hidden="true">⚠️</span> Architect's Rule: One Constructor Owns the Validation
 
 In a constructor chain, only the master constructor — the most complete overload — should contain validation logic and field assignments. Delegating constructors exist only to supply defaults and forward to the master. Placing duplicate validation in multiple constructors guarantees drift: when a rule changes, partial updates silently leave some creation paths broken. Write validation once, in the most complete constructor. Every other overload delegates to it.
 
@@ -364,7 +364,7 @@ try {
 
 <div class="experiment-box">
 
-#### <span aria-hidden="true">🧪</span> Experiment: Chain Verification
+### <span aria-hidden="true">🧪</span> Experiment: Chain Verification
 
 Modify the code above and predict the result BEFORE running:
 
@@ -459,7 +459,7 @@ Console.WriteLine($"{p3.Name} Total Value: \${p3.TotalValue}");
 
 <div class="predict-challenge">
 
-#### <span aria-hidden="true">🎯</span> Predict the Output: Constructor Chain Execution Order
+### <span aria-hidden="true">🎯</span> Predict the Output: Constructor Chain Execution Order
 
 Trace this code line by line. What prints, and in what order?
 
@@ -514,7 +514,7 @@ Area: 25
 ---
 
 <div class="pro-tip">
-  <h4><span aria-hidden="true">💡</span> Pro Tip: this() vs. Repeated Initialization</h4>
+  <h3><span aria-hidden="true">💡</span> Pro Tip: this() vs. Repeated Initialization</h3>
   <p>When you have multiple constructor overloads, always favor <code>: this(...)</code> chaining over duplicating initialization code across constructors. Duplication in constructors is especially dangerous because it is easy to update one and forget another — and the bug is silent: all constructors compile, all create objects, but different paths produce different behavior. If a validation rule or default value ever needs to change, chaining ensures exactly one edit updates all creation paths simultaneously.</p>
 </div>
 
@@ -580,7 +580,7 @@ Area: 25
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  .architect-rule h3 { color: #fca5a5; margin-top: 0; }
   .architect-rule p, .architect-rule code { color: #e2e8f0; }
   .pro-tip {
     background: rgba(78, 201, 176, 0.1);
@@ -589,7 +589,7 @@ Area: 25
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip h3 { color: #4ec9b0; margin-top: 0; }
   .pro-tip p { color: #e2e8f0; }
   .next-section {
     background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
@@ -607,7 +607,7 @@ Area: 25
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .experiment-box h3 { color: #34d399; margin-top: 0; }
   .predict-challenge {
     background: rgba(245, 158, 11, 0.1);
     border: 2px solid #f59e0b;
@@ -615,7 +615,7 @@ Area: 25
     padding: 1.5rem;
     margin: 1.5rem 0;
   }
-  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-challenge h3 { color: #fbbf24; margin-top: 0; }
   .predict-reveal { margin-top: 1rem; cursor: pointer; }
   .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
   .predict-answer {
@@ -625,17 +625,17 @@ Area: 25
     margin-top: 0.5rem;
   }
   body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
-  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #dc2626 !important; }
   body[data-theme="light"] .architect-rule p { color: #334155 !important; }
   body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
-  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip h3 { color: #0a7c62 !important; }
   body[data-theme="light"] .pro-tip p { color: #334155 !important; }
   body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
   body[data-theme="light"] .next-section p { color: #333 !important; }
   body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
-  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h3 { color: #047857 !important; }
   body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
-  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-challenge h3 { color: #92400e !important; }
   body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
   body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
 `}</style>
