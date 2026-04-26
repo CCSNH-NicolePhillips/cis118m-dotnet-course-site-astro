@@ -1,0 +1,249 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 14 • Object Architecture"
+description: "Protect object state with encapsulation and controlled constructors — private fields, property accessors with validation, and constructor overloading"
+---
+
+import DueDateBanner from '../../components/DueDateBanner.astro';
+
+# Week 14: Object Architecture
+
+<DueDateBanner week={14} />
+
+<div class="mission-brief">
+  <h2>Mission Brief: From Exposed State to Engineered Integrity</h2>
+  <p>
+    Weeks 12 and 13 established the object model: custom classes, object instantiation, and collections. But those classes used auto-implemented properties with unrestricted public access — any code could set any value to anything, including a negative GPA, a blank product name, or a stock count of -500. Production systems cannot tolerate this. An object that can silently hold invalid state is a liability at scale.
+  </p>
+  <p>
+    This week introduces two architectural mechanisms that control how objects are created and how their state changes after creation. <strong>Encapsulation</strong> — private fields with validated property accessors — makes it structurally impossible for external code to corrupt an object's data. <strong>Constructor overloading</strong> — multiple constructor signatures with the <code>this()</code> chaining keyword — enforces valid initial state from the moment an object is created. Together, these tools complete the object model: your classes become self-defending systems that enforce their own invariants.
+  </p>
+</div>
+
+<img src="/media/week%2014/14.0/Week%2014%20Architecture%20Shift.jpeg" alt="Architecture shift diagram showing the progression from Week 12 auto-implemented public properties with no validation to Week 14 encapsulated private fields with validated public property accessors and overloaded constructors enforcing state integrity from the moment of creation" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+<div class="section-cards">
+  <a href="/week-14/lesson-1/" class="section-card encapsulation">
+    <div class="card-icon" aria-hidden="true">🔒</div>
+    <div class="card-content">
+      <h3>14.1 Encapsulation</h3>
+      <p class="metaphor">A firewall between external code and internal state</p>
+      <p>Declare private backing fields, write <code>get</code> and <code>set</code> accessors, and embed validation logic that makes it impossible to assign an invalid value.</p>
+    </div>
+  </a>
+  <a href="/week-14/lesson-2/" class="section-card constructors">
+    <div class="card-icon" aria-hidden="true">⚙️</div>
+    <div class="card-content">
+      <h3>14.2 Constructors</h3>
+      <p class="metaphor">The controlled entry point for every new object</p>
+      <p>Write parameterized constructors that enforce initial state, use constructor overloading for flexible object creation, and chain constructors with the <code>this()</code> keyword.</p>
+    </div>
+  </a>
+  <a href="/week-14/lab/" class="section-card lab">
+    <div class="card-icon" aria-hidden="true">&gt;_</div>
+    <div class="card-content">
+      <h3>Lab 14: Product Manager</h3>
+      <p class="metaphor">Build a self-defending class system</p>
+      <p>Implement a <code>Product</code> class with price validation, stock guards, and overloaded constructors that enforce legal state from the first line of object creation.</p>
+    </div>
+  </a>
+</div>
+
+---
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Section</th>
+        <th scope="col">Topic</th>
+        <th scope="col">Key Concept</th>
+        <th scope="col">Est. Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>14.1</td>
+        <td>Encapsulation</td>
+        <td>Private fields, get/set accessors, validation in set, computed properties</td>
+        <td>35 min</td>
+      </tr>
+      <tr>
+        <td>14.2</td>
+        <td>Constructors</td>
+        <td>Constructor overloading, this() chaining, initial state enforcement</td>
+        <td>35 min</td>
+      </tr>
+      <tr>
+        <td>Lab</td>
+        <td>Product Manager</td>
+        <td>Encapsulated class with validated properties and overloaded constructors</td>
+        <td>60 min</td>
+      </tr>
+      <tr>
+        <td>Homework</td>
+        <td>Technical Reflection</td>
+        <td>Encapsulation and constructor design trade-off analysis</td>
+        <td>30 min</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## The Object Architecture Shift
+
+In Week 12, a `Student` class looked like this:
+
+```csharp
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+```
+
+Nothing prevents `student.Gpa = -5.0`, `student.Id = -9999`, or `student.Name = ""`. These are syntactically legal. The class does nothing to stop them. The only way to catch invalid data under this design is to write validation in every place that creates or modifies a `Student` — and that guarantee will erode the moment the codebase has more than one author or one calling location.
+
+Week 14 introduces the architectural response: move validation responsibility into the class itself. Private fields combined with validated set accessors create a hard boundary that external code cannot bypass. Constructors with required parameters make it impossible to instantiate an object without providing valid initial state. These two mechanisms together define a class that enforces its own contracts — a self-defending object.
+
+<div class="architect-rule">
+
+### Senior Architect Perspective
+
+An object's state integrity is the class's responsibility, not the caller's. Validation scattered across <code>Main</code> and caller code is a maintenance defect: it duplicates business logic, guarantees drift between call sites, and fails silently when a new caller is added without the validation pattern. Centralize all integrity rules in the class: in <code>set</code> accessors for post-creation mutation, and in constructors for initialization. An object that can exist in an invalid state is not a finished class — it is a data structure waiting to be misused.
+
+</div>
+
+---
+
+## Week 14 Deliverables
+
+<div class="component-card" style="margin: 20px 0; padding: 24px;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead class="sr-only">
+      <tr>
+        <th scope="col">Deliverable</th>
+        <th scope="col">Weight</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Lab 14: Product Manager</strong> — Encapsulation, validated properties, constructor overloading</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">40%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Technical Reflection 14</strong> — Object architecture design analysis</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Knowledge Checks</strong> — Participation in each module</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px 0;"><strong>Participation</strong> — Class engagement</td>
+        <td style="text-align: right; color: var(--vscode-charts-yellow);">20%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div style="text-align: center; margin-top: 40px;">
+  <a href="/week-14/lesson-1/" class="vscode-button" style="font-size: 18px; padding: 16px 32px;">
+    BEGIN SECTION 14.1 <span aria-hidden="true">&rarr;</span>
+  </a>
+</div>
+
+<style>{`
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid;
+  }
+  .section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+  .section-card.encapsulation {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.1), rgba(78, 201, 176, 0.05));
+    border-color: rgba(78, 201, 176, 0.4);
+  }
+  .section-card.constructors {
+    background: linear-gradient(135deg, rgba(107, 159, 255, 0.1), rgba(107, 159, 255, 0.05));
+    border-color: rgba(107, 159, 255, 0.4);
+  }
+  .section-card.lab {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+    border-color: rgba(255, 193, 7, 0.4);
+  }
+  .card-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    font-family: monospace;
+  }
+  .card-content h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--text);
+  }
+  .card-content .metaphor {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-style: italic;
+  }
+  .card-content p:last-child {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+    font-size: 1.35rem;
+  }
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  .architect-rule p, .architect-rule code {
+    color: #e2e8f0;
+  }
+  body[data-theme="light"] .mission-brief {
+    background: linear-gradient(135deg, rgba(78,201,176,0.06) 0%, rgba(107,159,255,0.06) 100%) !important;
+    border-color: rgba(78, 201, 176, 0.35) !important;
+  }
+  body[data-theme="light"] .mission-brief h2 { color: #1a8a6e !important; }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h3 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+`}</style>

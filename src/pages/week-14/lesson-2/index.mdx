@@ -1,0 +1,641 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 14.2 • Constructors"
+description: "Enforce valid initial state with parameterized constructors, constructor overloading, and this() chaining to build self-consistent objects from the first line of instantiation"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 14.2: Constructors
+
+<div class="section-header">
+  <div class="section-badge"><span aria-hidden="true">⚙️</span> Controlled Initialization</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 35 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2><span aria-hidden="true">✦</span> Setting the Initial State at the Moment of Creation</h2>
+      <p>
+        Section 14.1 introduced encapsulation: validated <code>set</code> accessors that reject invalid values when properties are assigned after an object is created. But there is still a gap. Consider a <code>Product</code> created without assigning any properties — <code>new Product()</code> with nothing after it. At that moment, <code>_name</code> is <code>null</code>, <code>_price</code> is <code>0</code>, <code>_stock</code> is <code>0</code>. The encapsulated setters can reject bad values later, but they cannot force you to provide values in the first place. An object with no name and no price is already invalid the moment it exists.
+      </p>
+      <p>
+        A <strong>constructor</strong> is the special method that runs at object creation — the one place where initial state can be required. By writing a constructor that takes required parameters, you make it impossible to create an object without providing the data it needs. <strong>Constructor overloading</strong> extends this by providing multiple valid signatures, each covering a different creation scenario. The <code>this()</code> keyword chains overloaded constructors together so that validation logic is written once, in one place, and all overloads benefit from it automatically.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%2014/14.2/Header%20Image.jpeg" alt="Constructor overloading diagram showing a Product class blueprint with three labeled entry doors: a minimal constructor with just name, a two-parameter constructor with name and price, and a full constructor with name, price, and stock — each door showing which fields get initialized, with arrows from three different new Product calls to the matching constructor" />
+    </div>
+  </div>
+</div>
+
+---
+
+## <span aria-hidden="true">🎬</span> Technical Briefing: Constructors
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on constructors — how they enforce initial state, how overloading provides flexible creation paths, and how the this() keyword chains constructors to avoid duplicating validation logic.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/Reeefq-Nxkk?si=placeholder"
+      title="14.2: Constructors — Overloading, this() Chaining, and Initial State Enforcement in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 14.2 Constructors — parameterized constructors, constructor overloading, and this() chaining in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## <span aria-hidden="true">🧠</span> What a Constructor Is and Why It Matters
+
+A **constructor** is a special method that the C# runtime calls automatically every time an object is created with `new`. It shares the class's exact name, has no return type (not even `void`), and runs before any other code can interact with the new object. This makes it the correct place to establish initial state — not `Main`, not a separate `Initialize()` method, not a convention that callers are supposed to follow.
+
+Without an explicit constructor, C# generates a hidden **default constructor** with no parameters that initializes all fields to their type defaults: `0` for numeric types, `null` for reference types, `false` for `bool`. This default constructor is what allows `new Product()` to work on a class that defines no constructor. The object is created in a zero-state that may or may not be valid for your domain.
+
+Once you define your own constructor, C# removes the implicit default constructor. The compiler will reject `new Product()` with no arguments — which is precisely the enforcement you want. Callers must provide the required initialization data. There is no path to an underinitialized object.
+
+```csharp
+class Product {
+    private string _name;
+    private double _price;
+    private int _stock;
+
+    public Product(string name, double price, int stock) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative.");
+        if (stock < 0)
+            throw new ArgumentException("Stock cannot be negative.");
+
+        _name  = name.Trim();
+        _price = price;
+        _stock = stock;
+    }
+
+    public string Name  { get { return _name; } }
+    public double Price { get { return _price; } }
+    public int    Stock { get { return _stock; } }
+}
+```
+
+Now `new Product()` is a compile error. Every `Product` must be created with a name, a price, and a stock count — and all three are validated before the object is considered ready to use.
+
+<AnnotatedCode
+  title="🔬 Anatomy of a Parameterized Constructor"
+  tokens={[
+    { text: "public", type: "keyword", tooltip: "ACCESS MODIFIER: public allows any code to call this constructor to create a Product. Constructors can also be internal or private (for factory patterns), but public is the standard default." },
+    { text: " Product", type: "string", tooltip: "CONSTRUCTOR NAME: must exactly match the class name. No return type — not void, not anything. This signature tells the compiler this is a constructor, not a regular method." },
+    { text: "(string name, double price, int stock)", type: "parameter", tooltip: "PARAMETER LIST: these are required values the caller must provide at the new Product(...) call site. No defaults — the compiler enforces all three arguments." },
+    { text: " {\n    if (string.IsNullOrWhiteSpace(name))\n        throw ...", type: "punctuation", tooltip: "VALIDATION BLOCK: runs before any field assignment. If any parameter is invalid, the exception throws and no Product object is returned. The object simply fails to exist." },
+    { text: "\n    _name = name.Trim();\n    _price = price;\n    _stock = stock;\n}", type: "punctuation", tooltip: "FIELD INITIALIZATION: only reached if all validations pass. After these assignments, the object is in a fully valid initial state with every field populated and verified." }
+  ]}
+/>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Constructor Overloading
+
+**Constructor overloading** means defining multiple constructors on the same class, each with a different parameter signature. The C# compiler resolves which constructor to call based on the argument types and count at the `new` expression. Overloading provides flexible creation paths without sacrificing the requirement to call a constructor — every path still goes through an initialization method, and every path can enforce its own rules.
+
+A common use case: a product catalog where some products are always in stock and require all three values, while draft products might be created with just a name and price, defaulting stock to zero:
+
+```csharp
+class Product {
+    private string _name;
+    private double _price;
+    private int _stock;
+
+    // Full constructor — all three values required
+    public Product(string name, double price, int stock) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative.");
+        if (stock < 0)
+            throw new ArgumentException("Stock cannot be negative.");
+        _name  = name.Trim();
+        _price = price;
+        _stock = stock;
+    }
+
+    // Two-param constructor — stock defaults to 0
+    public Product(string name, double price) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative.");
+        _name  = name.Trim();
+        _price = price;
+        _stock = 0;
+    }
+
+    // Name-only constructor — price and stock both default to 0
+    public Product(string name) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        _name  = name.Trim();
+        _price = 0;
+        _stock = 0;
+    }
+
+    public string Name  { get { return _name; } }
+    public double Price { get { return _price; } }
+    public int    Stock { get { return _stock; } }
+    public bool   InStock { get { return _stock > 0; } }
+}
+```
+
+This design gives callers three valid creation paths while ensuring that a `Product` is never created without at least a name. But notice the problem: the validation logic for `name` is written in all three constructors. And the validation for `price` is in two of them. If the rule changes — perhaps names must be at least 3 characters — you must find and update all three locations. This is the classic duplicated-logic maintenance hazard that constructor chaining solves.
+
+<DeepDiveTabs
+  title="⚙️ Constructors in the Real World"
+  tabs={[
+    {
+      id: "factory",
+      label: "🏭 Manufacturing Line",
+      content: "A factory produces products using different assembly configurations. A full-spec order uses the complete production line. A partial order uses a simplified line with defaults for missing specs. A prototype order uses the minimal line. Each production configuration maps to a constructor overload — different inputs, same quality guarantees at the output. Every product coming off any line has passed the inspection step (validation). No product skips the line.",
+      keyPoints: ["Multiple creation paths for different scenarios", "Every path passes through quality inspection (validation)", "No object exits the factory in an uninspected state"]
+    },
+    {
+      id: "hotel",
+      label: "🏨 Hotel Reservation",
+      content: "Booking a hotel room requires at minimum a check-in date. Optionally you can specify a room type, a floor preference, or a loyalty tier. But check-in date is always required — the system cannot create a reservation without it. The parameterized constructor enforces the required field. The overloaded constructors handle the optional fields with sensible defaults. No reservation object exists without a check-in date.",
+      keyPoints: ["Required field enforced by constructor parameter", "Optional fields handled by overloaded constructors with defaults", "No reservation can exist without the minimum required data"]
+    },
+    {
+      id: "database-row",
+      label: "🗃️ Database Record",
+      content: "When an ORM creates a domain object from a database row, it calls a constructor with the row's columns as arguments. The constructor validates the data and initializes the object. Fields marked NOT NULL in the database map to required constructor parameters. Nullable columns map to optional overloads. The object is ready to use the moment the constructor completes — there is no separate 'hydration' or 'activation' step.",
+      keyPoints: ["Required database columns map to required constructor params", "Nullable columns map to optional overloads", "Object is fully initialized and ready to use after constructor completes"]
+    }
+  ]}
+/>
+
+<img src="/media/week%2014/14.2/Constructor%20Overload%20Resolution.jpeg" alt="Constructor overload resolution diagram showing three new Product call expressions at the top — one with name only, one with name and price, one with all three parameters — and matching arrows pointing down to the corresponding constructor signatures, with labels showing how the compiler selects the overload based on argument count and type" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## <span aria-hidden="true">🔀</span> The this() Keyword: Constructor Chaining
+
+The validation duplication in the overloaded constructors above is a real maintenance problem. The solution is **constructor chaining** with the `this()` keyword. A constructor can delegate to another constructor on the same class using `: this(arguments)` in its signature. The delegated constructor runs first, then control returns to the calling constructor's body (which can then add additional logic if needed).
+
+The pattern is: write all validation in the most complete constructor, and have every simpler overload delegate to it with default values for the missing arguments:
+
+```csharp
+class Product {
+    private string _name;
+    private double _price;
+    private int _stock;
+
+    // MASTER constructor — owns all validation
+    public Product(string name, double price, int stock) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative.");
+        if (stock < 0)
+            throw new ArgumentException("Stock cannot be negative.");
+        _name  = name.Trim();
+        _price = price;
+        _stock = stock;
+    }
+
+    // Delegates to master — provides 0 as default for stock
+    public Product(string name, double price) : this(name, price, 0) { }
+
+    // Delegates to master — provides 0.0 and 0 as defaults
+    public Product(string name) : this(name, 0.0, 0) { }
+
+    public string Name    { get { return _name; } }
+    public double Price   { get { return _price; } }
+    public int    Stock   { get { return _stock; } }
+    public bool   InStock { get { return _stock > 0; } }
+    public double TotalValue { get { return _price * _stock; } }
+}
+```
+
+Now validation exists in exactly one place — the master constructor. If a business rule changes, one edit propagates to all creation paths automatically. The two-param and one-param constructors have empty bodies (`{ }`) because their only job is to delegate to the master with appropriate defaults.
+
+The `: this(name, price, 0)` syntax reads as "before running this constructor's body, call the constructor on this class that matches the signature `(string, double, int)` with these arguments." The master constructor runs first, validates everything, and assigns the fields. Then control returns to the delegating constructor's body — which is empty, so nothing else happens.
+
+<AnnotatedCode
+  title="🔬 Anatomy of Constructor Chaining with this()"
+  tokens={[
+    { text: "public Product", type: "keyword", tooltip: "CONSTRUCTOR: two-parameter overload. Provides a way to create a Product with just name and price — stock defaults to 0." },
+    { text: "(string name, double price)", type: "parameter", tooltip: "PARAMETER LIST: caller provides name and price. No stock argument — the constructor supplies a default." },
+    { text: " : this", type: "keyword", tooltip: "CHAINING SYNTAX: the colon followed by 'this' means 'before running this constructor body, call another constructor on this same class.' The master constructor runs first." },
+    { text: "(name, price, 0)", type: "parameter", tooltip: "DELEGATION ARGUMENTS: passes the caller's name and price through to the master constructor, and supplies 0 as the default stock value. The master constructor validates all three." },
+    { text: " { }", type: "punctuation", tooltip: "EMPTY BODY: no additional logic needed here because the master constructor handles all initialization. The body is intentionally empty — delegation did all the work." }
+  ]}
+/>
+
+<img src="/media/week%2014/14.2/Constructor%20Chain%20Diagram.jpeg" alt="Constructor chain diagram showing three constructor boxes connected by arrows: the one-param constructor delegating via this to the two-param constructor, which delegates via this to the three-param master constructor containing all validation and field assignments, with labels showing default values supplied at each delegation step" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## <span aria-hidden="true">🏗️</span> From the Field: Student Registration System
+
+In a student registration system, students can be created in multiple contexts: a full enrollment form with all details, a pre-registration with just a name and ID, or a roster import with name only and ID auto-assigned. Constructor overloading with chaining handles all three without duplicating the validation rules:
+
+```csharp
+class Student {
+    private string _name;
+    private int    _id;
+    private double _gpa;
+
+    // Master constructor — validates and initializes all state
+    public Student(string name, int id, double gpa) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Student name cannot be empty.");
+        if (id < 1000 || id > 9999)
+            throw new ArgumentException("Student ID must be between 1000 and 9999.");
+        if (gpa < 0.0 || gpa > 4.0)
+            throw new ArgumentException("GPA must be between 0.0 and 4.0.");
+        _name = name.Trim();
+        _id   = id;
+        _gpa  = gpa;
+    }
+
+    // Pre-registration — name and ID known, GPA starts at 0.0
+    public Student(string name, int id) : this(name, id, 0.0) { }
+
+    // Roster import — name only, ID and GPA set to defaults
+    public Student(string name) : this(name, 1000, 0.0) { }
+
+    public string Name   { get { return _name; } }
+    public int    Id     { get { return _id; } }
+    public double Gpa    { get { return _gpa; } }
+
+    public string Status {
+        get {
+            if (_gpa >= 3.5) return "Honors";
+            if (_gpa >= 2.0) return "Good Standing";
+            return "Academic Probation";
+        }
+    }
+}
+```
+
+`Status` is a computed property with no backing field: it derives a classification string from `_gpa` at read time. Changing a student's GPA through a validated setter would automatically change their `Status` on the next read — no manual update required. The entire chain — from the one-param constructor through the master constructor — runs the same validation rules, enforced once.
+
+<div class="architect-rule">
+
+#### <span aria-hidden="true">⚠️</span> Architect's Rule: One Constructor Owns the Validation
+
+In a constructor chain, only the master constructor — the most complete overload — should contain validation logic and field assignments. Delegating constructors exist only to supply defaults and forward to the master. Placing duplicate validation in multiple constructors guarantees drift: when a rule changes, partial updates silently leave some creation paths broken. Write validation once, in the most complete constructor. Every other overload delegates to it.
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Overloaded Constructors and this() Chaining
+
+<TryItNowRunner
+  starterId="week-14-lesson-2"
+  height={640}
+  files={[
+    { name: "Program.cs", content: `// Full constructor — all three arguments
+Student s1 = new Student("Ada Lovelace", 1001, 3.9);
+Console.WriteLine($"{s1.Name} | ID: {s1.Id} | GPA: {s1.Gpa} | {s1.Status}");
+
+// Two-param constructor — GPA defaults to 0.0 via chaining
+Student s2 = new Student("Alan Turing", 1002);
+Console.WriteLine($"{s2.Name} | ID: {s2.Id} | GPA: {s2.Gpa} | {s2.Status}");
+
+// One-param constructor — ID and GPA both default
+Student s3 = new Student("Grace Hopper");
+Console.WriteLine($"{s3.Name} | ID: {s3.Id} | GPA: {s3.Gpa} | {s3.Status}");
+
+// Validation rejection — GPA out of range
+try {
+    Student invalid = new Student("Bad Student", 1003, 5.5);
+} catch (ArgumentException ex) {
+    Console.WriteLine("Blocked: " + ex.Message);
+}
+` },
+    { name: "Student.cs", content: `class Student {
+    private string _name;
+    private int    _id;
+    private double _gpa;
+
+    public Student(string name, int id, double gpa) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Student name cannot be empty.");
+        if (id < 1000 || id > 9999)
+            throw new ArgumentException("Student ID must be between 1000 and 9999.");
+        if (gpa < 0.0 || gpa > 4.0)
+            throw new ArgumentException("GPA must be between 0.0 and 4.0.");
+        _name = name.Trim();
+        _id   = id;
+        _gpa  = gpa;
+    }
+
+    public Student(string name, int id) : this(name, id, 0.0) { }
+
+    public Student(string name) : this(name, 1000, 0.0) { }
+
+    public string Name { get { return _name; } }
+    public int    Id   { get { return _id; } }
+    public double Gpa  { get { return _gpa; } }
+
+    public string Status {
+        get {
+            if (_gpa >= 3.5) return "Honors";
+            if (_gpa >= 2.0) return "Good Standing";
+            return "Academic Probation";
+        }
+    }
+}` }
+  ]}
+  instructions="Run the code to see all three constructors in action. Notice that s2 and s3 both reach the master constructor through chaining — their validation still runs. Try creating a student with a negative GPA to test the master constructor's guard."
+  enableStdin={false}
+/>
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Chain Verification
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Try `new Student("")`** — the one-param constructor chains to master. Does the empty name guard fire?
+2. **Try `new Student("Test", 500)`** — ID 500 is below the valid range. Which constructor catches this?
+3. **Try removing the `: this(...)` from one delegating constructor** and add a direct field assignment instead. What happens if you now change the GPA validation rule — do both constructors need updating?
+4. **Add a fourth constructor `Student()`** with no parameters — it must chain to master with reasonable defaults. What defaults make a valid student?
+
+**Discovery**: All validation in the master constructor fires regardless of which overload you call. Chaining is not optional sugar — it is the mechanism that prevents duplication from becoming a maintenance hazard.
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Encapsulation + Constructors Combined
+
+<TryItNowRunner
+  starterId="week-14-lesson-2b"
+  height={680}
+  files={[
+    { name: "Program.cs", content: `// Create products using different overloads
+Product p1 = new Product("Laptop", 1299.99, 10);
+Product p2 = new Product("Keyboard", 89.99);     // stock defaults to 0
+Product p3 = new Product("Monitor");              // price and stock default to 0
+
+Console.WriteLine("=== PRODUCT CATALOG ===");
+Console.WriteLine($"{p1.Name} | ${p1.Price} | Stock: {p1.Stock} | {(p1.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+Console.WriteLine($"{p2.Name} | ${p2.Price} | Stock: {p2.Stock} | {(p2.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+Console.WriteLine($"{p3.Name} | ${p3.Price} | Stock: {p3.Stock} | {(p3.InStock ? "IN STOCK" : "OUT OF STOCK")}");
+
+// Post-creation mutation through validated setters
+p2.Stock = 25;
+p3.Price = 399.99;
+p3.Stock = 5;
+
+Console.WriteLine();
+Console.WriteLine("=== AFTER UPDATES ===");
+Console.WriteLine($"{p1.Name} Total Value: ${p1.TotalValue}");
+Console.WriteLine($"{p2.Name} Total Value: ${p2.TotalValue}");
+Console.WriteLine($"{p3.Name} Total Value: ${p3.TotalValue}");
+` },
+    { name: "Product.cs", content: `class Product {
+    private string _name;
+    private double _price;
+    private int    _stock;
+
+    public Product(string name, double price, int stock) {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name cannot be empty.");
+        if (price < 0)
+            throw new ArgumentException("Price cannot be negative.");
+        if (stock < 0)
+            throw new ArgumentException("Stock cannot be negative.");
+        _name  = name.Trim();
+        _price = price;
+        _stock = stock;
+    }
+
+    public Product(string name, double price) : this(name, price, 0) { }
+
+    public Product(string name) : this(name, 0.0, 0) { }
+
+    public string Name {
+        get { return _name; }
+    }
+
+    public double Price {
+        get { return _price; }
+        set {
+            if (value < 0) throw new ArgumentException("Price cannot be negative.");
+            _price = value;
+        }
+    }
+
+    public int Stock {
+        get { return _stock; }
+        set {
+            if (value < 0) throw new ArgumentException("Stock cannot be negative.");
+            _stock = value;
+        }
+    }
+
+    public bool   InStock    { get { return _stock > 0; } }
+    public double TotalValue { get { return _price * _stock; } }
+}` }
+  ]}
+  instructions="This Product class combines both lessons: validated set accessors (14.1) and overloaded constructors with chaining (14.2). Run to see the full object architecture in action. Try creating a product with a negative price in the constructor and verify it fires the same exception as the setter."
+  enableStdin={false}
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Constructor Chain Execution Order
+
+Trace this code line by line. What prints, and in what order?
+
+```csharp
+class Box {
+    private int _width;
+    private int _height;
+
+    public Box(int width, int height) {
+        Console.WriteLine("Master constructor running");
+        _width  = width;
+        _height = height;
+    }
+
+    public Box(int size) : this(size, size) {
+        Console.WriteLine("Square overload body");
+    }
+
+    public int Area { get { return _width * _height; } }
+}
+
+Box b1 = new Box(4, 6);
+Console.WriteLine("Area: " + b1.Area);
+
+Box b2 = new Box(5);
+Console.WriteLine("Area: " + b2.Area);
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+Master constructor running
+Area: 24
+Master constructor running
+Square overload body
+Area: 25
+```
+
+- `new Box(4, 6)` → calls master constructor directly. Prints "Master constructor running", sets _width=4, _height=6.
+- `b1.Area` → 4 × 6 = 24
+- `new Box(5)` → calls one-param constructor which chains to master via `this(5, 5)`. Master runs **first** — prints "Master constructor running", sets _width=5, _height=5. Then control returns to the one-param constructor body — prints "Square overload body".
+- `b2.Area` → 5 × 5 = 25
+
+**Key takeaway**: With `: this(...)` chaining, the delegated constructor (master) always runs **first**, before the delegating constructor's body executes. The master constructor owns initialization; the overload body handles any additional logic specific to that creation path.
+</div>
+</details>
+</div>
+
+---
+
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: this() vs. Repeated Initialization</h4>
+  <p>When you have multiple constructor overloads, always favor <code>: this(...)</code> chaining over duplicating initialization code across constructors. Duplication in constructors is especially dangerous because it is easy to update one and forget another — and the bug is silent: all constructors compile, all create objects, but different paths produce different behavior. If a validation rule or default value ever needs to change, chaining ensures exactly one edit updates all creation paths simultaneously.</p>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-14-lesson-2-check"
+  title="🔍 Section 14.2 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What happens to the default no-argument constructor when you define your own constructor?",
+      options: [
+        "Both constructors remain available",
+        "The default constructor is removed — new ClassName() becomes a compile error",
+        "The default constructor runs before yours",
+        "C# automatically creates a backup no-arg constructor"
+      ],
+      correctAnswer: "The default constructor is removed — new ClassName() becomes a compile error",
+      explanation: "Once you define any constructor explicitly, C# no longer generates the implicit no-argument default constructor. Attempting new ClassName() without arguments becomes a compile error, which enforces the requirement to call your parameterized constructor."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "In a constructor chain using : this(...), which constructor executes first?",
+      options: [
+        "The delegating constructor body runs first, then the master",
+        "Both run simultaneously",
+        "The delegated constructor (the one after this) runs first",
+        "The order depends on which has more parameters"
+      ],
+      correctAnswer: "The delegated constructor (the one after this) runs first",
+      explanation: "The : this(...) syntax delegates to the specified constructor first. The master constructor completes its full execution — including all validation and field assignments — before control returns to the delegating constructor's body."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Both mechanisms mastered? Build a real <strong>Product Manager</strong> that enforces its own invariants from creation through every mutation.</p>
+  <a href="/week-14/lab/" class="vscode-button">Continue to Lab 14: Product Manager <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 { color: #fca5a5; margin-top: 0; }
+  .architect-rule p, .architect-rule code { color: #e2e8f0; }
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 { color: #4ec9b0; margin-top: 0; }
+  .pro-tip p { color: #e2e8f0; }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+`}</style>

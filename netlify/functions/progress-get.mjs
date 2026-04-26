@@ -1,6 +1,6 @@
 import { requireAuth } from "./_lib/auth0-verify.mjs";
 import { getRedis } from "./_lib/redis.mjs";
-import { isGracePeriodActive } from "./_lib/due-dates.mjs";
+import { isGracePeriodEnabled } from "./_lib/due-dates.mjs";
 
 /**
  * Netlify Function: Get user's progress
@@ -170,7 +170,7 @@ export default async function handler(request, context) {
     console.log('[progress-get] Quiz unlocks:', JSON.stringify(quizUnlocks));
 
     // Check if Week 15 grace period is active
-    const gracePeriod = isGracePeriodActive();
+    const gracePeriod = await isGracePeriodEnabled(redis);
 
     return new Response(
       JSON.stringify({ 

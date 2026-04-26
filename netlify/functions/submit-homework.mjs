@@ -3,7 +3,7 @@ import { requireAuth } from './_lib/auth0-verify.mjs';
 import { getLessonContext } from './_lib/lesson-contexts.mjs';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
-import { getLatePenaltyInfo, formatLatePenaltyMessage, applyGracePeriod, formatGracePeriodMessage, getWeekFromPageId } from './_lib/due-dates.mjs';
+import { getLatePenaltyInfo, formatLatePenaltyMessage, applyGracePeriod, formatGracePeriodMessage, getWeekFromPageId, isGracePeriodEnabled } from './_lib/due-dates.mjs';
 import { computeTelemetryIntegrity, mergeIntegrityAnalysis } from './_lib/integrity-rules.mjs';
 
 export async function handler(event, context) {
@@ -220,7 +220,8 @@ Return JSON:
         // Don't modify finalGrade — keep original aiGrade
       } else if (penaltyInfo.daysLate > 0) {
         // Check for Week 15 grace period
-        const graceResult = applyGracePeriod(assignmentId, aiGrade, penaltyInfo, new Date(submittedAt));
+        const graceEnabled = await isGracePeriodEnabled(redis);
+        const graceResult = applyGracePeriod(assignmentId, aiGrade, penaltyInfo, new Date(submittedAt), graceEnabled);
         if (graceResult.gracePeriod) {
           finalGrade = graceResult.finalScore;
           gracePeriodApplied = true;

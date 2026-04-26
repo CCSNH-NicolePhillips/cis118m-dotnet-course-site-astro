@@ -1,0 +1,352 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Lab 14 • Product Manager"
+description: "Build an encapsulated Product class with validated property accessors, overloaded constructors with this() chaining, and a List-based product catalog with foreach reporting"
+---
+
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Lab 14: Product Manager
+
+<DueDateBanner week={14} type="Lab" />
+
+**Time: 60 minutes**  
+**Points: 100**
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2>14.3: Encapsulation and Constructor Overloading in a Unified System</h2>
+      <p>
+        Sections 14.1 and 14.2 introduced the two architectural mechanisms that make classes self-defending: validated <code>set</code> accessors that reject invalid post-creation assignments, and overloaded constructors with <code>this()</code> chaining that enforce valid initial state at the moment of creation. This lab combines both. You will build a <code>Product</code> class that is impossible to instantiate or mutate into an invalid state, then use it in a <code>List&lt;Product&gt;</code> catalog with <code>foreach</code> reporting — integrating Week 13 collections with Week 14 object architecture.
+      </p>
+    </div>
+    <div class="header-image">
+      <img
+        src="/media/week%2014/14.3/Header%20Image.jpeg"
+        alt="Lab 14 architecture diagram showing a Product class with private backing fields connected to validated public property accessors, three constructor overloads chaining to a master constructor, a List of Product catalog populated via Add, and a foreach reporting loop producing formatted console output"
+      />
+    </div>
+  </div>
+</div>
+
+---
+
+## Integrity Protocol
+
+<div class="telemetry-note" role="note" aria-label="Academic integrity and telemetry notice">
+  <div class="telemetry-header">
+    <span class="telemetry-icon" aria-hidden="true">🛡️</span>
+    <h3>Academic Integrity Protocol — Lab 14</h3>
+  </div>
+  <div class="telemetry-content">
+    <p>
+      This is a graded lab assignment. It must represent your own individual engineering work. The following active monitoring is in effect for this submission:
+    </p>
+    <ul>
+      <li><strong>Keystroke recording:</strong> Edit activity is captured via <code>window.__editorTelemetry</code> and transmitted to the Instructor Dashboard.</li>
+      <li><strong>Paste event detection:</strong> All paste operations are logged with timestamps and byte counts.</li>
+      <li><strong>Active edit time:</strong> The total duration of active coding sessions is measured and reported.</li>
+      <li><strong>AI pattern scanning:</strong> Submitted code is scanned for AI-specific syntax patterns and structural signatures. Flagged submissions are archived in the Redis telemetry database for Instructor Dashboard review.</li>
+    </ul>
+    <p>
+      Suspiciously low edit time combined with correct output is a flag. Submissions that show paste-only activity with no edit history will be held for review. Use the AI Tutor for guidance — not for solutions.
+    </p>
+  </div>
+</div>
+
+---
+
+## Mission Objective
+
+Build a `Product` class that enforces its own state integrity through encapsulated properties and constructor overloading, then use it to build and report a product catalog stored in a `List<Product>`.
+
+<img src="/media/week%2014/14.3/Product%20Manager%20Architecture.jpeg" alt="Product Manager architecture flow diagram showing the Product class definition with private fields and validated properties on the left, three constructor paths chaining to the master constructor in the center, and the List of Product catalog with Add calls and foreach output reporting on the right" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## Technical Requirements
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Requirement</th>
+        <th scope="col">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Private Backing Fields</strong></td>
+        <td>Declare <code>private string _name</code>, <code>private double _price</code>, and <code>private int _stock</code> as the internal storage layer.</td>
+      </tr>
+      <tr>
+        <td><strong>Validated Properties</strong></td>
+        <td><code>Name</code>: reject empty/whitespace and trim. <code>Price</code>: reject negative values. <code>Stock</code>: reject negative values.</td>
+      </tr>
+      <tr>
+        <td><strong>Computed Properties</strong></td>
+        <td>Include <code>bool InStock</code> (derived from <code>_stock > 0</code>) and <code>double TotalValue</code> (derived from <code>_price * _stock</code>) with no backing fields.</td>
+      </tr>
+      <tr>
+        <td><strong>Master Constructor</strong></td>
+        <td>Write a three-parameter constructor <code>Product(string name, double price, int stock)</code> containing all validation logic and field assignments.</td>
+      </tr>
+      <tr>
+        <td><strong>Constructor Overloads</strong></td>
+        <td>Add a two-param <code>Product(string name, double price)</code> and a one-param <code>Product(string name)</code>, each using <code>: this(...)</code> to delegate to the master.</td>
+      </tr>
+      <tr>
+        <td><strong>List Catalog</strong></td>
+        <td>Create a <code>List&lt;Product&gt;</code>, add at least four products using different constructor overloads. Print <code>.Count</code> before and after removing one.</td>
+      </tr>
+      <tr>
+        <td><strong>foreach Reporting</strong></td>
+        <td>Use <code>foreach</code> to print each product's <code>Name</code>, <code>Price</code>, <code>Stock</code>, <code>InStock</code>, and <code>TotalValue</code> in a formatted output block.</td>
+      </tr>
+      <tr>
+        <td><strong>Validation Demo</strong></td>
+        <td>Include one <code>try/catch</code> block that attempts an invalid assignment (negative price or empty name) and prints the caught exception message.</td>
+      </tr>
+      <tr>
+        <td><strong>Brace Style</strong></td>
+        <td>K&amp;R style for all class definitions, constructors, and control structures.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Starter Code
+
+<TryItNowRunner
+  starterId="week-14-lab"
+  height={740}
+  files={[
+    { name: "Program.cs", content: `using System.Collections.Generic;
+
+// --- Part 1: Create products using different constructor overloads ---
+// TODO: create a Product with all three arguments (name, price, stock)
+// TODO: create a Product with just name and price (stock defaults to 0)
+// TODO: create a Product with just a name (price and stock both default)
+
+// --- Part 2: Demonstrate validation rejection ---
+try {
+    // TODO: attempt to create a Product with a negative price and catch the exception
+} catch (ArgumentException ex) {
+    Console.WriteLine("Validation blocked: " + ex.Message);
+}
+
+// --- Part 3: Build a List<Product> catalog ---
+List<Product> catalog = new List<Product>();
+// TODO: add at least four Product objects to catalog using .Add()
+
+Console.WriteLine("Catalog count: " + catalog.Count);
+
+// TODO: remove one product from catalog
+Console.WriteLine("After removal: " + catalog.Count);
+
+// --- Part 4: foreach report ---
+Console.WriteLine();
+Console.WriteLine("=== PRODUCT CATALOG REPORT ===");
+// TODO: use foreach to print each product's Name, Price, Stock, InStock, and TotalValue
+` },
+    { name: "Product.cs", content: `class Product {
+    // TODO: declare three private backing fields (_name, _price, _stock)
+
+    // TODO: write the master constructor Product(string name, double price, int stock)
+    //        with validation for all three parameters and field assignments
+
+    // TODO: write the two-param constructor Product(string name, double price)
+    //        using : this(...) to delegate to the master with stock = 0
+
+    // TODO: write the one-param constructor Product(string name)
+    //        using : this(...) to delegate with price = 0.0 and stock = 0
+
+    // TODO: write validated public properties for Name, Price, and Stock
+
+    // TODO: write computed properties InStock (bool) and TotalValue (double)
+}` }
+  ]}
+  instructions="Build the complete Product class from the TODO comments. The master constructor must validate all three parameters. The two delegating constructors must use : this(...) — no duplicate validation. The foreach report must show all five property values for each product."
+  enableStdin={false}
+/>
+
+---
+
+## Grading Rubric
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Criterion</th>
+        <th scope="col">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Private backing fields declared with correct naming convention</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+      <tr>
+        <td>Validated <code>Name</code>, <code>Price</code>, and <code>Stock</code> properties with correct guard logic</td>
+        <td style="text-align: right;">20</td>
+      </tr>
+      <tr>
+        <td>Computed <code>InStock</code> and <code>TotalValue</code> properties (no backing fields)</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+      <tr>
+        <td>Master constructor with validation and field assignments</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Two delegating constructors using <code>: this(...)</code> with no duplicate validation</td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>List catalog with at least four products, <code>.Count</code> output, and one <code>.Remove()</code></td>
+        <td style="text-align: right;">15</td>
+      </tr>
+      <tr>
+        <td>Formatted <code>foreach</code> report showing all five property values</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+      <tr>
+        <td>Compiles, produces correct output, and follows K&amp;R brace style</td>
+        <td style="text-align: right;">5</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Submission
+
+When your program produces the correct output:
+
+1. Verify your name is in a header comment at the top of the file
+2. Click **Save** to save your work
+3. Click **Submit Lab** below
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" type="button" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    Submit Lab
+  </button>
+  <div id="submit-status" aria-live="polite" aria-atomic="true" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" aria-live="polite" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
+<div class="next-section">
+  <p>Lab submitted? Continue to Homework 14.</p>
+  <a href="/week-14/homework/" class="vscode-button">Continue to Homework 14 &rarr;</a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+  .telemetry-note {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.08), rgba(255, 100, 0, 0.05));
+    border: 1px solid rgba(255, 140, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .telemetry-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .telemetry-icon { font-size: 1.25rem; }
+  .telemetry-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffa040;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .telemetry-content p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .telemetry-content ul {
+    margin: 0 0 0.75rem 1.25rem;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .telemetry-content li { margin: 0.25rem 0; }
+  .styled-table-container { overflow-x: auto; margin: 1.5rem 0; }
+  .styled-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .styled-table-container th,
+  .styled-table-container td {
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .styled-table-container th {
+    background: rgba(255,255,255,0.05);
+    font-weight: 600;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p { margin: 8px 0; color: rgba(255, 255, 255, 0.9); }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .telemetry-header h3 { color: #b05500 !important; }
+  body[data-theme="light"] .styled-table-container { background: #f8fafc !important; }
+  body[data-theme="light"] .styled-table-container th { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] .styled-table-container td { background: #ffffff !important; color: #1e293b !important; border-color: #cbd5e1 !important; }
+  body[data-theme="light"] .styled-table-container td strong { color: #0f172a !important; }
+  body[data-theme="light"] .styled-table-container code { background: #e2e8f0 !important; color: #1e293b !important; }
+  body[data-theme="light"] #submit-status { color: #1e293b !important; }
+  body[data-theme="light"] #ai-feedback { background: rgba(16, 185, 129, 0.12) !important; color: #1e293b !important; border: 1px solid rgba(16, 185, 129, 0.4) !important; }
+  body[data-theme="light"] #last-submitted { color: #475569 !important; }
+  #submit-lab-btn:focus-visible {
+    outline: 3px solid #22c55e;
+    outline-offset: 3px;
+  }
+`}</style>

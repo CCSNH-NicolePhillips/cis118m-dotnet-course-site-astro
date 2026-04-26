@@ -299,7 +299,7 @@ const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00'; // Week 15 due
 const GRACE_PERIOD_CAP   = 75; // Max score for grace period submissions
 
 /**
- * Check if the Week 15 grace period is currently active
+ * Check if the Week 15 grace period date window is active
  * @param {Date} [submissionTime] - Time to check (defaults to now)
  * @returns {boolean}
  */
@@ -307,6 +307,26 @@ export function isGracePeriodActive(submissionTime = new Date()) {
   const start = new Date(GRACE_PERIOD_START);
   const end   = new Date(GRACE_PERIOD_END);
   return submissionTime >= start && submissionTime <= end;
+}
+
+/**
+ * Check if the grace period is enabled (date window active OR instructor override).
+ * Requires Redis to check the instructor toggle.
+ * @param {import('@upstash/redis').Redis} redis
+ * @param {Date} [submissionTime]
+ * @returns {Promise<boolean>}
+ */
+export async function isGracePeriodEnabled(redis, submissionTime = new Date()) {
+  // Check instructor toggle first — if explicitly set, it overrides the date window
+  try {
+    const toggle = await redis.get('cis118m:grace-period-enabled');
+    if (toggle === 'true') return true;
+    if (toggle === 'false') return false;
+  } catch (e) {
+    console.error('[grace-period] Redis toggle check failed:', e);
+  }
+  // No explicit toggle set — fall back to date window
+  return isGracePeriodActive(submissionTime);
 }
 
 /**
@@ -321,11 +341,13 @@ export function isGracePeriodActive(submissionTime = new Date()) {
  * @param {number} originalScore - Score before any penalty (0-100)
  * @param {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean }} penaltyResult - Normal penalty calc result
  * @param {Date} [submissionTime] - Time of submission
+ * @param {boolean} [gracePeriodEnabled] - Pre-checked toggle (if undefined, checks date window only)
  * @returns {{ finalScore: number, penaltyPercent: number, daysLate: number, isZero: boolean, gracePeriod: boolean, gracePeriodCap?: number }}
  */
-export function applyGracePeriod(pageId, originalScore, penaltyResult, submissionTime = new Date()) {
-  // Only applies during the grace window
-  if (!isGracePeriodActive(submissionTime)) {
+export function applyGracePeriod(pageId, originalScore, penaltyResult, submissionTime = new Date(), gracePeriodEnabled = undefined) {
+  // Only applies if grace period is enabled
+  const active = gracePeriodEnabled !== undefined ? gracePeriodEnabled : isGracePeriodActive(submissionTime);
+  if (!active) {
     return { ...penaltyResult, gracePeriod: false };
   }
 
@@ -373,10 +395,12 @@ export function applyGracePeriod(pageId, originalScore, penaltyResult, submissio
  * 
  * @param {string} pageId - Quiz ID (e.g., "week-05-quiz")
  * @param {Date} [submissionTime]
+ * @param {boolean} [gracePeriodEnabled] - Pre-checked toggle (if undefined, checks date window only)
  * @returns {{ isGracePeriod: boolean, scoreCap: number|null, weekNum: number|null }}
  */
-export function getQuizGracePeriodInfo(pageId, submissionTime = new Date()) {
-  if (!isGracePeriodActive(submissionTime)) {
+export function getQuizGracePeriodInfo(pageId, submissionTime = new Date(), gracePeriodEnabled = undefined) {
+  const active = gracePeriodEnabled !== undefined ? gracePeriodEnabled : isGracePeriodActive(submissionTime);
+  if (!active) {
     return { isGracePeriod: false, scoreCap: null, weekNum: null };
   }
   

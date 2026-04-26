@@ -1,6 +1,6 @@
 import { getRedis } from './_lib/redis.mjs';
 import { requireAuth } from './_lib/auth0-verify.mjs';
-import { isPastDue, getDueDateForPageId, getQuizGracePeriodInfo } from './_lib/due-dates.mjs';
+import { isPastDue, getDueDateForPageId, getQuizGracePeriodInfo, isGracePeriodEnabled } from './_lib/due-dates.mjs';
 
 export async function handler(event, context) {
   // Only allow POST
@@ -37,7 +37,8 @@ export async function handler(event, context) {
     const pageId = quizId; // e.g., "week-01-required-quiz"
     
     // Check for Week 15 grace period (auto-unlocks past-due quizzes)
-    const graceInfo = getQuizGracePeriodInfo(pageId);
+    const graceEnabled = await isGracePeriodEnabled(redis);
+    const graceInfo = getQuizGracePeriodInfo(pageId, new Date(), graceEnabled);
     let gracePeriodApplied = false;
     
     // Check if quiz is past due date (quizzes cannot be submitted late)

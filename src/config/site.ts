@@ -145,12 +145,12 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' },
       { title: 'Weekly Assessment 13', href: '/week-13/weekly-assessment/' }
     ] },
-  { slug: '14', title: 'Week 14: Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [
+  { slug: '14', title: 'Week 14: Object Architecture', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-14/' },
-      { title: '14.1 Lesson 1', href: '/week-14/lesson-1/' },
-      { title: '14.2 Lesson 2', href: '/week-14/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-14/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-14/homework/' }
+      { title: '14.1 Encapsulation', href: '/week-14/lesson-1/' },
+      { title: '14.2 Constructors', href: '/week-14/lesson-2/' },
+      { title: 'Lab: Product Manager (Graded)', href: '/week-14/lab/' },
+      { title: 'Technical Reflection 14 (Graded)', href: '/week-14/homework/' }
     ] },
   { slug: '15', title: 'Week 15: ⚔️ FINAL BOSS FIGHT — Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-15/' },

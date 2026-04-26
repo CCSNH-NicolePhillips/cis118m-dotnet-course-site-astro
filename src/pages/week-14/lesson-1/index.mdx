@@ -1,0 +1,608 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 14.1 • Encapsulation"
+description: "Protect object state with private backing fields, public property accessors, and set validation logic that makes invalid assignments structurally impossible"
+---
+
+import Checkpoint from '../../../components/Checkpoint.astro';
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+import AnnotatedCode from '../../../components/AnnotatedCode.astro';
+import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
+
+# Section 14.1: Encapsulation
+
+<div class="section-header">
+  <div class="section-badge"><span aria-hidden="true">🔒</span> State Integrity</div>
+  <p class="section-time"><span aria-hidden="true">⏱️</span> Estimated Time: 35 minutes</p>
+</div>
+
+---
+
+<div class="concept-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h2><span aria-hidden="true">✦</span> The Firewall Between External Code and Internal State</h2>
+      <p>
+        In Week 12, every property was written as <code>public string Name &#123; get; set; &#125;</code> — a clean shorthand that grants external code unrestricted read and write access. But "unrestricted" is the problem. Nothing in that design prevents <code>product.Price = -50.00</code>, <code>student.Gpa = 99.9</code>, or <code>account.Balance = -1000</code>. These are syntactically legal C# statements, and the class accepts them without complaint. The auto-implemented property extends complete trust to the caller, and real systems cannot operate on that assumption.
+      </p>
+      <p>
+        <strong>Encapsulation</strong> is the architectural principle that a class is responsible for the validity of its own state. External code should not be able to corrupt an object — and the class design should make corruption structurally impossible, not merely inadvisable. The mechanism is a two-layer design: a <strong>private backing field</strong> that holds the raw value, and a <strong>public property</strong> whose <code>set</code> accessor acts as the validation firewall, applying business rules before any data reaches the field. This is the boundary that separates a data structure from a designed object.
+      </p>
+    </div>
+    <div class="header-image">
+      <img src="/media/week%2014/14.1/Header%20Image.jpeg" alt="Encapsulation firewall diagram showing external caller code on the left attempting to assign Price equals negative 50, a property set accessor with validation guard in the center blocking the invalid value, and the private backing field on the right representing protected internal state with a valid value stored" />
+    </div>
+  </div>
+</div>
+
+---
+
+## <span aria-hidden="true">🎬</span> Technical Briefing: Encapsulation
+
+<div class="video-section">
+  <p class="video-intro">Watch this briefing on encapsulation — private fields, public property accessors, and how validation logic in set accessors prevents invalid state from entering an object.</p>
+  <div class="video-container">
+    <iframe
+      src="https://www.youtube.com/embed/aZ84k4euSEY?si=placeholder"
+      title="14.1: Encapsulation — Private Fields, Public Properties, and Set Validation in C#"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      allowfullscreen
+      aria-label="Video: 14.1 Encapsulation — private backing fields, public property accessors, and validation logic in set accessors in C#">
+    </iframe>
+  </div>
+</div>
+
+---
+
+## <span aria-hidden="true">🧠</span> Why Public Fields and Auto-Properties Fail
+
+The simplest way to hold data in a class is a public field:
+
+```csharp
+class Product {
+    public string Name;
+    public double Price;
+    public int Stock;
+}
+```
+
+This compiles and runs, but provides zero protection. Any code anywhere can do this:
+
+```csharp
+Product p = new Product();
+p.Price = -99.99;   // Negative price — legal C#, illegal business rule
+p.Stock = -500;     // Negative inventory — no guard anywhere
+p.Name = "";        // Empty name — passes through silently
+```
+
+The class holds invalid state and has no way to detect it. It will report a price of -99.99 to every system that reads it — checkout, invoicing, inventory reports — all of them downstream of a corruption that entered through a simple assignment.
+
+Auto-implemented properties (`public double Price { get; set; }`) improve the syntax but not the safety. They are still unrestricted. The `set` accessor is implicit and performs no validation. Any caller can still assign any value. The only way to prevent invalid data under this design is to write validation in every calling location — and that guarantee erodes the moment the codebase grows, gains a second developer, or adds a new calling path that forgets the rules.
+
+The architectural fix is to move the validation responsibility into the class. External code should encounter a hard boundary — not a convention that polite callers are expected to follow, but a structural barrier they cannot bypass.
+
+---
+
+## <span aria-hidden="true">🏗️</span> Private Fields and Public Properties
+
+The encapsulation pattern replaces the exposed field with two elements: a **private backing field** and a **public property**. The field stores the data; the property controls all access to it:
+
+```csharp
+class Product {
+    private double _price;
+
+    public double Price {
+        get { return _price; }
+        set {
+            if (value < 0)
+                throw new ArgumentException("Price cannot be negative.");
+            _price = value;
+        }
+    }
+}
+```
+
+Now `_price` is invisible to external code. The `private` access modifier means only code written inside the `Product` class body can read or write it directly. External code must go through the `Price` property, and the `set` accessor applies the validation rule before any data reaches `_price`. If the value is invalid, the exception fires and `_price` is never touched.
+
+The naming convention carries architectural meaning: private backing fields use a leading underscore and camelCase (`_price`, `_stock`, `_name`). Public properties use PascalCase (`Price`, `Stock`, `Name`). This convention is universal in professional C# codebases and immediately signals the access level and role of each member to any reader.
+
+<AnnotatedCode
+  title="🔬 Anatomy of an Encapsulated Property"
+  tokens={[
+    { text: "private", type: "keyword", tooltip: "ACCESS MODIFIER: private restricts visibility to code inside this class only. No caller, no subclass, no external file can read or write _price directly — the compiler enforces this at compile time." },
+    { text: " double", type: "type", tooltip: "TYPE: the backing field stores the same data type as the property. Both field and property share the same type — double." },
+    { text: " _price", type: "parameter", tooltip: "BACKING FIELD NAME: underscore prefix + camelCase is the standard C# convention for private fields. The underscore visually distinguishes it from the public property." },
+    { text: ";\n\n    public", type: "keyword", tooltip: "ACCESS MODIFIER: public makes the property visible to all callers outside the class. External code can access Price but never _price." },
+    { text: " double", type: "type", tooltip: "PROPERTY TYPE: matches the backing field type exactly." },
+    { text: " Price", type: "string", tooltip: "PROPERTY NAME: PascalCase. This is the public interface — callers write product.Price, never product._price. The property is the only controlled path to the data." },
+    { text: " {\n        get", type: "keyword", tooltip: "GET ACCESSOR: runs when external code reads the property (e.g., double x = product.Price). Returns the value stored in the private backing field." },
+    { text: " { return _price; }\n        set", type: "keyword", tooltip: "SET ACCESSOR: runs when external code assigns to the property (e.g., product.Price = 50). The assigned value arrives in the implicit variable named 'value'." },
+    { text: " {\n            if (value < 0) throw ...;\n            _price = value;\n        }", type: "punctuation", tooltip: "VALIDATION LOGIC: the guard runs before _price is touched. Invalid values throw an exception and never reach the field. Only valid values proceed to the assignment _price = value." }
+  ]}
+/>
+
+---
+
+## <span aria-hidden="true">📐</span> The get and set Accessors in Depth
+
+The `get` and `set` keywords define the two halves of a property's public interface. Understanding each independently reveals the full power of the pattern.
+
+**The get accessor** executes when the property is read. In its simplest form it returns the backing field. But it can also derive a value from existing state on every read — a pattern called a **computed property**. A computed property has no backing field of its own; it calculates its value fresh from other fields every time it is accessed:
+
+```csharp
+class Product {
+    private double _price;
+    private int _stock;
+
+    public double Price {
+        get { return _price; }
+        set {
+            if (value < 0) throw new ArgumentException("Price cannot be negative.");
+            _price = value;
+        }
+    }
+
+    public int Stock {
+        get { return _stock; }
+        set {
+            if (value < 0) throw new ArgumentException("Stock cannot be negative.");
+            _stock = value;
+        }
+    }
+
+    public bool InStock {
+        get { return _stock > 0; }        // Derived — no backing field needed
+    }
+
+    public double TotalValue {
+        get { return _price * _stock; }   // Derived — combines two fields
+    }
+}
+```
+
+`InStock` and `TotalValue` never go stale. Because they recompute on every read, there is no separate `bool _inStock` field that could drift out of sync when `_stock` changes. Computed properties eliminate an entire class of consistency bugs.
+
+**The set accessor** executes when the property is assigned. The incoming value arrives in the implicitly-declared `value` variable — the same type as the property. This is where all validation logic belongs. The set accessor can also **normalize** the input before storing it:
+
+```csharp
+private string _name;
+
+public string Name {
+    get { return _name; }
+    set {
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("Name cannot be empty or whitespace.");
+        _name = value.Trim();   // Normalize: strip surrounding whitespace before storing
+    }
+}
+```
+
+Normalization inside the set accessor means the backing field always holds clean data. Callers do not need to remember to `.Trim()` before assigning — the class enforces it. This is a demonstration of the Single Responsibility Principle: the class owns its own data consistency rules.
+
+<DeepDiveTabs
+  title="🔒 Encapsulation in the Real World"
+  tabs={[
+    {
+      id: "atm",
+      label: "🏧 ATM Machine",
+      content: "An ATM never gives direct access to the bank vault. Every transaction goes through the machine's interface: it validates your PIN, checks your balance, and enforces withdrawal limits before any money moves. The vault is the private field — inaccessible from the outside. The ATM panel is the public property — the only controlled path in or out. A thief who bypasses the ATM to reach the vault directly hits a structural barrier, not a polite request.",
+      keyPoints: ["Vault (private field) is structurally inaccessible", "ATM panel (property) applies rules on every transaction", "Invalid operations are rejected at the interface — not by trusting the customer"]
+    },
+    {
+      id: "thermostat",
+      label: "🌡️ Smart Thermostat",
+      content: "A smart thermostat accepts a target temperature through its interface but silently clamps inputs to a safe range (60–85°F). You cannot directly alter the internal sensor reading — only the thermostat's own hardware does that. Your input is the value in the set accessor; the clamped, validated result is what gets stored in the private field. The thermostat class cannot be set to 500°F regardless of what the user submits.",
+      keyPoints: ["Input clamped to valid range at the interface (set accessor)", "Internal sensor state inaccessible to external users (private field)", "Validation embedded in the device — not the user's responsibility"]
+    },
+    {
+      id: "database",
+      label: "🗃️ Database Constraints",
+      content: "A database column with NOT NULL and CHECK (price >= 0) constraints enforces data integrity at the storage layer. The application layer cannot insert invalid data even if a developer forgets to validate in application code. An encapsulated property with a validated set accessor works identically — it is a code-level integrity constraint that cannot be bypassed, regardless of which caller touches the object. Class-level integrity mirrors database-level integrity.",
+      keyPoints: ["Constraint enforced at storage layer (backing field), not the application", "Cannot be bypassed by forgetting to validate in a caller", "A new call site that skips validation still hits the class-level guard"]
+    }
+  ]}
+/>
+
+<img src="/media/week%2014/14.1/Property%20Accessor%20Flow.jpeg" alt="Property accessor flow diagram showing external code making a read (get) call returning the private field value, and a write (set) call entering a validation decision branch — valid values assigned to the private field, invalid values routed to an exception throw" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## <span aria-hidden="true">🏗️</span> From the Field: Product Catalog Validation
+
+In a product catalog system, every `Product` entering the database must satisfy business rules: a non-negative price, a non-negative stock count, and a non-empty display name. These rules belong inside the `Product` class — not distributed across the checkout module, the inventory service, and the admin panel that all create and modify products. Moving validation out of the class means every caller must independently duplicate the logic, and duplication guarantees eventual divergence.
+
+```csharp
+class Product {
+    private string _name;
+    private double _price;
+    private int _stock;
+
+    public string Name {
+        get { return _name; }
+        set {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Product name cannot be empty.");
+            _name = value.Trim();
+        }
+    }
+
+    public double Price {
+        get { return _price; }
+        set {
+            if (value < 0)
+                throw new ArgumentException("Price cannot be negative.");
+            _price = value;
+        }
+    }
+
+    public int Stock {
+        get { return _stock; }
+        set {
+            if (value < 0)
+                throw new ArgumentException("Stock cannot be negative.");
+            _stock = value;
+        }
+    }
+
+    public bool InStock {
+        get { return _stock > 0; }
+    }
+
+    public double TotalValue {
+        get { return _price * _stock; }
+    }
+}
+```
+
+Every assignment path goes through a guarded gate. `Name` refuses empty and whitespace-only strings and normalizes the stored value. `Price` refuses any value below zero. `Stock` refuses negative quantities. `InStock` and `TotalValue` are computed properties — no additional backing fields, no risk of stale derived state. The class is self-defending: there is no assignment path that can produce a `Product` with a negative price, regardless of which module performs the assignment.
+
+<div class="architect-rule">
+
+#### <span aria-hidden="true">⚠️</span> Architect's Rule: Validation Belongs in the Class, Not the Caller
+
+Never place business rule validation exclusively in <code>Main</code> or in the calling code. If the validation lives outside the class, every call site must duplicate it. Callers will forget. Callers will disagree. New callers will be added without the pattern. Put validation in the <code>set</code> accessor once. From that point forward, no assignment anywhere in the codebase can store an invalid value. The class becomes a single source of truth for its own integrity rules.
+
+</div>
+
+<img src="/media/week%2014/14.1/Encapsulation%20Layers.jpeg" alt="Encapsulation layers diagram with three concentric zones: outermost zone labeled External Code containing Main and other classes, middle zone labeled Property Interface containing get and set accessors with validation logic, innermost core labeled Private State containing the private backing fields protected behind the interface boundary" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Encapsulated Product with Validation Guards
+
+<TryItNowRunner
+  starterId="week-14-lesson-1"
+  height={640}
+  files={[
+    { name: "Program.cs", content: `Product laptop = new Product();
+laptop.Name = "ThinkPad X1";
+laptop.Price = 1299.99;
+laptop.Stock = 12;
+
+Console.WriteLine("Product: " + laptop.Name);
+Console.WriteLine("Price: $" + laptop.Price);
+Console.WriteLine("Stock: " + laptop.Stock);
+Console.WriteLine("In Stock: " + laptop.InStock);
+Console.WriteLine("Total Value: $" + laptop.TotalValue);
+
+// Attempt an invalid price assignment
+try {
+    laptop.Price = -50.00;
+} catch (ArgumentException ex) {
+    Console.WriteLine("Blocked: " + ex.Message);
+}
+
+// Set stock to 0 and check InStock
+laptop.Stock = 0;
+Console.WriteLine("After stock set to 0 — InStock: " + laptop.InStock);
+` },
+    { name: "Product.cs", content: `class Product {
+    private string _name;
+    private double _price;
+    private int _stock;
+
+    public string Name {
+        get { return _name; }
+        set {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Product name cannot be empty.");
+            _name = value.Trim();
+        }
+    }
+
+    public double Price {
+        get { return _price; }
+        set {
+            if (value < 0)
+                throw new ArgumentException("Price cannot be negative.");
+            _price = value;
+        }
+    }
+
+    public int Stock {
+        get { return _stock; }
+        set {
+            if (value < 0)
+                throw new ArgumentException("Stock cannot be negative.");
+            _stock = value;
+        }
+    }
+
+    public bool InStock {
+        get { return _stock > 0; }
+    }
+
+    public double TotalValue {
+        get { return _price * _stock; }
+    }
+}` }
+  ]}
+  instructions="Run the code to see encapsulation in action. The try/catch block demonstrates the validation guard rejecting a negative price. Watch how InStock updates automatically when Stock changes — it is a computed property, not a stored field."
+  enableStdin={false}
+/>
+
+<div class="experiment-box">
+
+#### <span aria-hidden="true">🧪</span> Experiment: Testing the Firewall
+
+Modify the code above and predict the result BEFORE running:
+
+1. **Try `laptop.Stock = -1`** — does the same `ArgumentException` fire?
+2. **Try `laptop.Name = "   "`** (spaces only) — does `IsNullOrWhiteSpace` catch whitespace?
+3. **Try writing `laptop._price = 0`** directly in `Program.cs` — what compiler error do you see, and why?
+4. **Set Stock to 25 and read `TotalValue`** — does the computed value reflect the change immediately?
+
+**Discovery**: The compiler enforces `private` access at compile time — a direct field access attempt is a build error before the program ever runs. The firewall is not a suggestion; it is enforced by the language itself.
+
+</div>
+
+---
+
+## <span aria-hidden="true">🏗️</span> Try It: Guarded vs. Unguarded Side-by-Side
+
+<TryItNowRunner
+  starterId="week-14-lesson-1b"
+  height={600}
+  files={[
+    { name: "Program.cs", content: `// Unguarded: public field, zero protection
+BankAccountUnsafe unsafe = new BankAccountUnsafe();
+unsafe.Balance = -1000.00;   // Legal — nothing stops this
+Console.WriteLine("Unsafe balance: $" + unsafe.Balance);
+
+// Encapsulated: only Deposit and Withdraw can change Balance
+BankAccountSafe safe = new BankAccountSafe();
+safe.Deposit(500.00);
+Console.WriteLine("Safe balance after deposit: $" + safe.Balance);
+
+bool success = safe.Withdraw(200.00);
+Console.WriteLine("Withdrew $200: " + success);
+Console.WriteLine("Safe balance after withdrawal: $" + safe.Balance);
+
+bool overdraft = safe.Withdraw(1000.00);
+Console.WriteLine("Overdraft attempt: " + overdraft);
+Console.WriteLine("Safe balance unchanged: $" + safe.Balance);
+` },
+    { name: "BankAccountUnsafe.cs", content: `class BankAccountUnsafe {
+    public double Balance;   // Public field — no protection
+}` },
+    { name: "BankAccountSafe.cs", content: `class BankAccountSafe {
+    private double _balance;
+
+    public double Balance {
+        get { return _balance; }
+    }
+
+    public void Deposit(double amount) {
+        if (amount > 0) _balance += amount;
+    }
+
+    public bool Withdraw(double amount) {
+        if (amount <= 0 || amount > _balance) return false;
+        _balance -= amount;
+        return true;
+    }
+}` }
+  ]}
+  instructions="BankAccountSafe has no public setter for Balance. The only way to change the balance is through Deposit and Withdraw, and both enforce their own rules. Try adding unsafe.Balance = -500 to see the contrast."
+  enableStdin={false}
+/>
+
+---
+
+<div class="predict-challenge">
+
+#### <span aria-hidden="true">🎯</span> Predict the Output: Property Accessor Behavior
+
+What does this code print? Trace each get and set call before running.
+
+```csharp
+class Temperature {
+    private double _celsius;
+
+    public double Celsius {
+        get { return _celsius; }
+        set {
+            if (value < -273.15)
+                throw new ArgumentException("Below absolute zero.");
+            _celsius = value;
+        }
+    }
+
+    public double Fahrenheit {
+        get { return (_celsius * 9.0 / 5.0) + 32; }
+    }
+}
+
+Temperature t = new Temperature();
+t.Celsius = 100;
+Console.WriteLine(t.Celsius);
+Console.WriteLine(t.Fahrenheit);
+t.Celsius = 0;
+Console.WriteLine(t.Fahrenheit);
+```
+
+<details class="predict-reveal">
+<summary>Reveal Answer</summary>
+<div class="predict-answer">
+
+**Output**:
+```
+100
+212
+32
+```
+
+- `t.Celsius = 100` → set accessor runs, 100 >= -273.15 passes, `_celsius = 100`
+- `t.Celsius` → get accessor returns `_celsius` → `100`
+- `t.Fahrenheit` → computed get calculates `(100 × 9.0 / 5.0) + 32 = 212`
+- `t.Celsius = 0` → set accessor runs, `_celsius = 0`
+- `t.Fahrenheit` → computed get recalculates `(0 × 9.0 / 5.0) + 32 = 32`
+
+**Key takeaway**: `Fahrenheit` has no backing field and no setter. It recomputes from `_celsius` on every read — always current, never stale. Changing `Celsius` automatically "updates" `Fahrenheit` because the computation runs fresh every time.
+</div>
+</details>
+</div>
+
+---
+
+<div class="pro-tip">
+  <h4><span aria-hidden="true">💡</span> Pro Tip: Read-Only Properties with private set</h4>
+  <p>Sometimes you want external code to read a property but never write it directly from outside the class. Declare the setter as <code>private set</code> — callers can read the value freely, but any assignment from outside the class is a compile-time error. Only methods inside the class can mutate the value. This is exactly the pattern in <code>BankAccountSafe</code>: <code>Balance</code> is readable by anyone but writable only by <code>Deposit</code> and <code>Withdraw</code>. The class controls all mutation paths.</p>
+</div>
+
+---
+
+<Checkpoint
+  checkpointId="week-14-lesson-1-check"
+  title="🔍 Section 14.1 Knowledge Check"
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "What is the purpose of a private backing field in an encapsulated class?",
+      options: [
+        "To make the field faster to access than a property",
+        "To hold the actual data while the public property controls all access to it",
+        "To replace the need for a constructor",
+        "To allow access from any file in the project"
+      ],
+      correctAnswer: "To hold the actual data while the public property controls all access to it",
+      explanation: "The private backing field stores the actual value. External code never touches the field directly. The public property's get and set accessors are the only controlled interface — and the set accessor can apply validation before any data reaches the field."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "In a set accessor, where does the incoming assigned value arrive?",
+      options: [
+        "In a parameter named 'input'",
+        "Directly in the backing field before validation runs",
+        "In the implicitly declared variable named 'value'",
+        "In the get accessor first, then forwarded to set"
+      ],
+      correctAnswer: "In the implicitly declared variable named 'value'",
+      explanation: "The set accessor receives the value being assigned through the implicit keyword 'value'. Validation logic reads from 'value', and only if the validation passes does the code assign 'value' to the private backing field."
+    }
+  ]}
+/>
+
+---
+
+<div class="next-section">
+  <p>Properties guard state after an object is created. But what enforces valid state <strong>at the moment of creation</strong>?</p>
+  <a href="/week-14/lesson-2/" class="vscode-button">Continue to 14.2: Constructors <span aria-hidden="true">→</span></a>
+</div>
+
+<style>{`
+  .concept-header .header-content {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 2rem;
+    align-items: start;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 768px) {
+    .concept-header .header-content {
+      grid-template-columns: 1fr;
+    }
+  }
+  .architect-rule {
+    background: rgba(239, 68, 68, 0.1);
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h4 {
+    color: #fca5a5;
+    margin-top: 0;
+  }
+  .architect-rule p, .architect-rule code {
+    color: #e2e8f0;
+  }
+  .pro-tip {
+    background: rgba(78, 201, 176, 0.1);
+    border: 1px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .pro-tip h4 {
+    color: #4ec9b0;
+    margin-top: 0;
+  }
+  .pro-tip p {
+    color: #e2e8f0;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.15) 0%, rgba(107, 159, 255, 0.15) 100%);
+    border: 2px solid #4ec9b0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin: 32px 0;
+  }
+  .next-section p {
+    margin: 8px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .experiment-box {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .experiment-box h4 { color: #34d399; margin-top: 0; }
+  .predict-challenge {
+    background: rgba(245, 158, 11, 0.1);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .predict-challenge h4 { color: #fbbf24; margin-top: 0; }
+  .predict-reveal { margin-top: 1rem; cursor: pointer; }
+  .predict-reveal summary { color: #fbbf24; font-weight: 600; padding: 8px 0; }
+  .predict-answer {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+  }
+  body[data-theme="light"] .architect-rule { background: rgba(239, 68, 68, 0.05) !important; }
+  body[data-theme="light"] .architect-rule h4 { color: #dc2626 !important; }
+  body[data-theme="light"] .architect-rule p { color: #334155 !important; }
+  body[data-theme="light"] .pro-tip { background: rgba(78, 201, 176, 0.08) !important; border-color: #0d9488 !important; }
+  body[data-theme="light"] .pro-tip h4 { color: #0a7c62 !important; }
+  body[data-theme="light"] .pro-tip p { color: #334155 !important; }
+  body[data-theme="light"] .next-section { background: linear-gradient(135deg, rgba(78, 201, 176, 0.1) 0%, rgba(107, 159, 255, 0.1) 100%) !important; }
+  body[data-theme="light"] .next-section p { color: #333 !important; }
+  body[data-theme="light"] .experiment-box { background: rgba(16, 185, 129, 0.05) !important; border-color: #047857 !important; }
+  body[data-theme="light"] .experiment-box h4 { color: #047857 !important; }
+  body[data-theme="light"] .predict-challenge { background: rgba(245, 158, 11, 0.05) !important; border-color: #b45309 !important; }
+  body[data-theme="light"] .predict-challenge h4 { color: #92400e !important; }
+  body[data-theme="light"] .predict-reveal summary { color: #92400e !important; }
+  body[data-theme="light"] .predict-answer { background: rgba(0, 0, 0, 0.05) !important; }
+`}</style>
