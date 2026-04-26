@@ -963,7 +963,7 @@ Key Concepts:
 - identifier
 - PascalCase
 
-Summary: # Section 10.1: The Method Signature 📋 The Department Contract ⏱️ Estimated Time: 30 minutes --- From One Method to Many Every C# program has at least one method: Main . When you write static void Main() , you are using the complete method signature syntax without knowing it. This section makes tha...
+Summary: # Section 10.1: The Method Signature 📋 The Department Contract ⏱️ Estimated Time: 30 minutes --- ✦ From One Method to Many Every C# program has at least one method: Main . When you write static void Main() , you are using the complete method signature syntax without knowing it. This section makes t...
 
 ### 📖 Lesson: Week 10 • Lesson 2
 Key Concepts:
@@ -981,7 +981,7 @@ Key Concepts:
 - Output:
 - count, order, and type
 
-Summary: # Section 10.2: Parameters & Arguments 🔌 The Resource Intake ⏱️ Estimated Time: 30 minutes --- Making Methods Dynamic: The Parameter A method defined in Section 10.1 — static void PrintHeader() — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A t...
+Summary: # Section 10.2: Parameters & Arguments 🔌 The Resource Intake ⏱️ Estimated Time: 30 minutes --- ✦ Making Methods Dynamic: The Parameter A method defined in Section 10.1 — static void PrintHeader() — always does the same thing. It prints the same line, every time. This is useful, but it is limited. A...
 
 ### 📋 Quiz: Week 10 • Technical Assessment
 
@@ -1074,8 +1074,10 @@ Key Concepts:
 - Exits the method
 - Delivers a value
 - Does the caller need the result?
+- Change Add to return double instead of int.
+- Remove the return statement
 
-Summary: # Section 11.1: The Return Statement 🚪 The Exit Gate ⏱️ Estimated Time: 30 minutes --- From Action to Output In Week 10, every method you wrote was void — it performed an action (printing, displaying) and returned nothing. The caller triggered the method and moved on. This week, methods become prod...
+Summary: # Section 11.1: The Return Statement 🚪 The Exit Gate ⏱️ Estimated Time: 30 minutes --- ✦ From Action to Output In Week 10, every method you wrote was void — it performed an action (printing, displaying) and returned nothing. The caller triggered the method and moved on. This week, methods become pr...
 
 ### 📖 Lesson: Week 11 • Lesson 2
 Key Concepts:
@@ -1093,7 +1095,7 @@ Key Concepts:
 - display
 - separation of concerns
 
-Summary: # Section 11.2: Result Capture 📦 Variable Assignment Logic ⏱️ Estimated Time: 30 minutes --- The Caller's Side of the Return Contract Section 11.1 taught you how to write methods that deliver values via return . This section focuses on the caller's responsibility : how to receive, store, and use th...
+Summary: # Section 11.2: Result Capture 📦 Variable Assignment Logic ⏱️ Estimated Time: 30 minutes --- ✦ The Caller’s Side of the Return Contract Section 11.1 taught you how to write methods that deliver values via return . This section focuses on the caller's responsibility : how to receive, store, and use ...
 
 ### 📋 Quiz: Week 11 • Technical Assessment
 
@@ -1168,17 +1170,18 @@ Key Concepts:
 - fields
 - properties
 
-Summary: # Section 12.1: The Class Blueprint The Architectural Drawing Estimated Time: 30 minutes --- From Loose Variables to Structured Types Until now, modeling a student required three separate variables — string name , int id , double gpa . They are unconnected: nothing in the code binds them together as...
+Summary: # Section 12.1: The Class Blueprint 🏛️ The Architectural Drawing ⏱️ Estimated Time: 30 minutes --- ✦ From Loose Variables to Structured Types Until now, modeling a student required three separate variables — string name , int id , double gpa . They are unconnected: nothing in the code binds them to...
 
 ### 📖 Lesson: Section 12.2 • Object Instances
 Key Concepts:
+- oriented programming.
 - Allocates memory
 - Initializes properties
 - Returns a reference
 - dot operator
 - multiple objects
 
-Summary: # Section 12.2: Object Instances From Blueprint to Reality Estimated Time: 30 minutes --- Constructing Objects with new Section 12.1 defined the blueprint — a class that describes what data a type holds. But a blueprint is not a building. To create actual data, you must instantiate the class: constr...
+Summary: # Section 12.2: Object Instances 🏗️ From Blueprint to Reality ⏱️ Estimated Time: 30 minutes --- ✦ Constructing Objects with new Section 12.1 defined the blueprint — a class that describes what data a type holds. But a blueprint is not a building. To create actual data, you must instantiate the clas...
 
 ### 📋 Quiz: Week 12 • Technical Assessment
 
@@ -1241,15 +1244,28 @@ Key Concepts:
 - Points: 100
 - Submit Lab
 
-Summary: # Lab 13: Collection Manager **Time: 60 minutes** **Points: 100** --- ## Integrity Protocol 🛡️ Academic Integrity Protocol — Lab 13 This is a graded lab assignment. It must represent your own individual engineering work. The following active monitoring is in effect for this submission: Keystroke re...
+Summary: # Lab 13: Collection Manager **Time: 60 minutes** **Points: 100** 13.3: Arrays and Lists in a Unified Manager You have learned two collection strategies: fixed arrays for known-size datasets and List&lt;T&gt; for dynamic datasets. This lab combines both. You will build a collection manager that stor...
 
 ### 📖 Lesson: Section 13.1 • Fixed Arrays
+Key Concepts:
+- 1] always gives you the last element regardless of array size. This pattern is universal across every C# array.
+- Declares a variable
+- Allocates memory
+- Initializes all slots
+- empty until you assign objects to them
+- read-only sequential access
 
-Summary: # Section 13.1: Fixed Arrays Deterministic Capacity Estimated Time: 30 minutes --- ## Technical Briefing: Fixed Arrays Watch this briefing on fixed arrays — how to declare arrays with type[] syntax, use zero-based indexing, and iterate with .Length and foreach. --- ## Array Syntax and Indexing An ar...
+Summary: # Section 13.1: Fixed Arrays 📦 Deterministic Capacity ⏱️ Estimated Time: 30 minutes --- ✦ Storing Multiple Values in a Fixed Structure Until now, each variable held one value — one name, one ID, one GPA. But real programs work with sets of data : three students in a roster, five sensor readings fro...
 
 ### 📖 Lesson: Section 13.2 • List<T>
+Key Concepts:
+- Add 5 students
+- Call .Remove(students[0])
+- Print students.Count before and after every Add/Remove.
+- Try students[10]
+- Discovery
 
-Summary: # Section 13.2: List\ --- ## Technical Briefing: List\ --- ## Foreach Integration with Week 12 Class Objects foreach works directly with `List --- ## Try It: Dynamic Student List --- --- Section 13.2 complete? Continue to Lab 13. Continue to Lab 13: Collection Manager &rarr;...
+Summary: # Section 13.2: List\ --- ## 🎬 Technical Briefing: List\ --- ## 🔀 Foreach Integration with Week 12 Class Objects foreach works directly with List --- ## 📐 Array vs. List: When to Use Which Choosing between Student[] and List #### 🧪 Experiment: List Behavior Under Mutation Modify the code above a...
 
 ### 📋 Quiz: Week 13 • Technical Assessment
 
@@ -1295,36 +1311,74 @@ Quiz Questions (10 questions):
 
 Summary: # Week 14 Extra Practice: Encapsulation reps Pick **1–2** items (optional). - Make a Thermostat class that blocks temps below 50 or above 90. - Make a GameCharacter class with Health that can’t go below 0. - Challenge: Add a method that returns a formatted status string for printing. ## Open in Edit...
 
-### 📝 Homework: Week 14 • Week 14 Homework: Budget Tracker (encapsulation)
-
-Summary: # Week 14 Homework: Budget Tracker (encapsulation) ## Overview Create a simple Budget class where spending can’t exceed the current balance (unless you allow overdraft—your choice, but be clear). ## Requirements checklist (acceptance criteria) - [ ] Defines a Budget class with Balance - [ ] Deposit ...
-
-### 📚 Overview: Week 14
+### 📝 Homework: Homework 14 • Technical Reflection: Object Architecture
 Key Concepts:
-- Focus:
+- The Firewall Concept:
+- Access Modifiers and State Integrity:
+- encapsulation
+- backing field
+- access modifier
 
-Summary: # Week 14 **Focus:** OOP deeper: encapsulation + simple validation rules inside classes. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework...
+Summary: # Homework 14: Technical Reflection — Object Architecture ## Reflection Prompt In 3–5 sentences per question, answer all prompts with specific technical reasoning: 1. **The Firewall Concept:** Explain why placing validation logic inside the set accessor — rather than in Main or calling code — produc...
 
-### 🔬 Lab: Week 14 • Week 14 Lab: Encapsulated Inventory Item
+### 📚 Overview: Week 14 • Object Architecture
 
-Summary: # Week 14 Lab: Encapsulated Inventory Item ## Overview Create an Item class that protects Quantity so it can’t go negative. ## Requirements checklist (acceptance criteria) - [ ] Defines an Item class with Name and Quantity - [ ] Quantity cannot become negative (enforced inside the class) - [ ] Inclu...
+Summary: # Week 14: Object Architecture Mission Brief: From Exposed State to Engineered Integrity Weeks 12 and 13 established the object model: custom classes, object instantiation, and collections. But those classes used auto-implemented properties with unrestricted public access — any code could set any va...
 
-### 📖 Lesson: Week 14 • Lesson 1
+Code Example:
+```csharp
+class Student {
+    public string Name { get; set; }
+    public int Id { get; set; }
+    public double Gpa { get; set; }
+}
+```
+
+### 🔬 Lab: Lab 14 • Product Manager
 Key Concepts:
-- Encapsulation
-- private
-- public
-- 1) What does encapsulation help you prevent?
+- Time: 60 minutes
+- Points: 100
+- Submit Lab
 
-Summary: # Week 14 Lesson 1: Encapsulation (protect your data) ## Goal - Understand why we ‘protect’ fields - Use private fields with public properties - Add validation rules (no negative balances, etc.) ## What to know - **Encapsulation**: Keeping data safe by controlling how it changes. - **private**: Only...
+Summary: # Lab 14: Product Manager **Time: 60 minutes** **Points: 100** 14.3: Encapsulation and Constructor Overloading in a Unified System Sections 14.1 and 14.2 introduced the two architectural mechanisms that make classes self-defending: validated set accessors that reject invalid post-creation assignment...
 
-### 📖 Lesson: Week 14 • Lesson 2
+### 📖 Lesson: Section 14.1 • Encapsulation
 Key Concepts:
-- bool return
-- Contract
-- 1) Why return bool from a method like Withdraw?
+- private backing field
+- public property
+- The get accessor
+- computed property
+- The set accessor
 
-Summary: # Week 14 Lesson 2: Clean class design (methods that return success) ## Goal - Write methods that return bool for success/failure - Keep the main program simple (call methods, print results) - Make code test-friendly by returning values ## What to know - **bool return**: True/false result so code ca...
+Summary: # Section 14.1: Encapsulation 🔒 State Integrity ⏱️ Estimated Time: 35 minutes --- ✦ The Firewall Between External Code and Internal State In Week 12, every property was written as public string Name &#123; get; set; &#125; — a clean shorthand that grants external code unrestricted read and write ac...
+
+Code Example:
+```csharp
+class Product {
+    public string Name;
+    public double Price;
+    public int Stock;
+}
+```
+
+### 📖 Lesson: Section 14.2 • Constructors
+Key Concepts:
+- constructor
+- default constructor
+- Constructor overloading
+- constructor chaining
+- Try new Student("")
+
+Summary: # Section 14.2: Constructors ⚙️ Controlled Initialization ⏱️ Estimated Time: 35 minutes --- ✦ Setting the Initial State at the Moment of Creation Section 14.1 introduced encapsulation: validated set accessors that reject invalid values when properties are assigned after an object is created. But the...
+
+Code Example:
+```csharp
+Master constructor running
+Area: 24
+Master constructor running
+Square overload body
+Area: 25
+```
 
 ---
 

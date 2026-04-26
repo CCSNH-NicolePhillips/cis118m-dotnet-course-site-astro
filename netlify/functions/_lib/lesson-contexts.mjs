@@ -994,6 +994,83 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["array", "List", "foreach", "Length", "Count"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  // ===== WEEK 14 =====
+  "week-14-lab": {
+    title: "Week 14: Lab - Product Manager",
+    type: "lab",
+    week: "14",
+    taughtConcepts: `
+      - Private backing fields: private string _name, private double _price, private int _stock
+      - Public properties with validated set accessors: reject invalid values with ArgumentException
+      - Name property: reject null/empty/whitespace, trim valid input before storing
+      - Price property: reject negative values
+      - Stock property: reject negative values
+      - Computed properties: bool InStock (derived from _stock > 0), double TotalValue (derived from _price * _stock) — no backing fields
+      - Master constructor: Product(string name, double price, int stock) — all validation and field assignment in one place
+      - Constructor overloading: Product(string name, double price) and Product(string name) both using : this(...) to delegate to master
+      - this() chaining: delegating constructors pass default values (stock = 0, price = 0.0) and let master constructor own all validation
+      - List<Product> catalog: using System.Collections.Generic, .Add() to populate, .Remove() to delete, .Count before and after
+      - foreach reporting: iterating List<Product> and printing all five property values per product
+      - try/catch with ArgumentException: demonstrating validation rejection
+      - K&R (Egyptian) brace style throughout
+    `,
+    assignmentPrompt: `
+      Build a Product class with encapsulation and constructor overloading, then use it in a List<Product> catalog:
+      1. Declare private backing fields: _name (string), _price (double), _stock (int).
+      2. Write a master constructor Product(string name, double price, int stock) with validation for all three parameters.
+      3. Write two delegating constructors: Product(string name, double price) uses : this(name, price, 0) and Product(string name) uses : this(name, 0.0, 0). No duplicate validation.
+      4. Write validated public properties: Name (reject empty/whitespace, trim), Price (reject negative), Stock (reject negative).
+      5. Write computed properties: bool InStock (returns _stock > 0) and double TotalValue (returns _price * _stock). No backing fields.
+      6. In Program.cs: create a List<Product>, add at least 4 products using different constructor overloads, print .Count, remove one, print .Count again.
+      7. Use foreach to print each product's Name, Price, Stock, InStock, and TotalValue.
+      8. Include one try/catch block that attempts an invalid assignment (negative price or empty name) and prints the caught ArgumentException message.
+    `,
+    rubric: `
+      Private backing fields (10pts): Declares private string _name, private double _price, and private int _stock with correct underscore prefix naming convention.
+      Validated Name, Price, and Stock properties (20pts): Name rejects null/empty/whitespace and trims. Price rejects negative values. Stock rejects negative values. All three throw ArgumentException with descriptive message.
+      Computed InStock and TotalValue properties (10pts): InStock returns bool from _stock > 0. TotalValue returns double from _price * _stock. Neither has a backing field.
+      Master constructor with validation (15pts): Product(string name, double price, int stock) contains all validation logic and assigns all three backing fields.
+      Two delegating constructors using : this() (15pts): Product(string name, double price) delegates with stock = 0. Product(string name) delegates with price = 0.0 and stock = 0. No duplicate validation in either overload.
+      List catalog with .Count and .Remove() (15pts): Creates List<Product>, adds at least 4 products via .Add() using different constructor overloads, prints .Count before and after removing one product.
+      Formatted foreach report (10pts): foreach iterates the list and prints all five property values (Name, Price, Stock, InStock, TotalValue) for each product.
+      Compiles and K&R brace style (5pts): Code compiles and runs without errors. K&R brace style used throughout.
+    `,
+    requiredKeywords: ["private", "_name", "_price", "_stock", "List", "foreach", "ArgumentException", "this("],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-14-homework": {
+    title: "Week 14: Technical Reflection - Object Architecture",
+    type: "homework",
+    week: "14",
+    taughtConcepts: `
+      - Encapsulation: private backing fields hide internal storage; public properties with validated set accessors create a hard boundary
+      - Access modifiers: public exposes to external code, private locks to the class itself
+      - Validated set accessors prevent post-creation assignment of invalid values by throwing ArgumentException
+      - Computed properties (get-only): derive values from backing fields with no separate storage
+      - Master constructor: one constructor owns all validation and field assignments
+      - Constructor overloading: multiple constructors with different parameter counts
+      - this() keyword: delegating constructors call the master constructor to eliminate duplicate validation
+      - Why centralize validation in the class: caller code should not be responsible for object integrity
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer all prompts:
+      1. Encapsulation Mechanism: Explain the difference between a Week 12 auto-implemented property (public string Name { get; set; }) and a Week 14 encapsulated property with a private backing field and validated set accessor. What does validation in the set accessor prevent that the auto-implemented version cannot?
+      2. Access Modifier Design: Your Product class uses private for _name, _price, and _stock but public for Name, Price, and Stock. Explain why this split exists. What would break if you made the backing fields public? What would break if you made the properties private?
+      3. Constructor Overloading Strategy: Explain the role of the master constructor and why the two delegating constructors use : this(...) instead of containing their own validation. What maintenance problem does this() chaining solve?
+      4. Computed Properties: InStock and TotalValue are properties with no backing fields. Explain how they derive their values and why they are properties rather than methods. What would happen to InStock if you called it before setting any stock value?
+    `,
+    rubric: `
+      Encapsulation mechanism (25pts): Student correctly contrasts auto-implemented property (no validation, direct public access) with private backing field + validated set accessor. Explains that set validation throws on invalid input and prevents silent corruption.
+      Access modifier design (25pts): Student explains why backing fields are private (hidden storage, no direct external access) and properties are public (controlled interface). Describes what breaks in each scenario: public fields remove validation bypass protection, private properties make the class unusable from outside.
+      Constructor overloading strategy (25pts): Student identifies the master constructor as the single validation authority. Explains that this() chaining forces all overloads to route through master, eliminating duplicated validation logic and maintenance risk when rules change.
+      Computed properties (15pts): Student explains that InStock and TotalValue are derived from backing fields at read time, not stored. Explains why property syntax fits (noun-like, zero-argument access) vs method. Notes InStock returns false when _stock is 0 (default int value).
+      Clarity and terminology (10pts): Clear writing using terms like "encapsulation", "backing field", "accessor", "set", "get", "private", "public", "ArgumentException", "constructor", "overload", "this()".
+    `,
+    requiredKeywords: ["encapsulation", "private", "public", "constructor", "this"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
@@ -1096,6 +1173,13 @@ export const TUTOR_CONTEXTS = {
   'week-09-lesson-2': "Week 9 Section 9.2: Accumulation Patterns. Focus: Using the index variable to calculate sums and averages. Accumulator: declare int sum = 0 BEFORE the loop, add inside with sum += i. After loop: compute average. CRITICAL: must cast to (double) before dividing — integer division truncates. Display average with :F2 specifier for 2 decimal places. Common mistakes: initializing accumulator inside the loop (resets every iteration), forgetting the (double) cast.",
   'week-09-lab': "Week 9 Lab: Boss Fight II — The Arena. Three stages of counter-controlled for loops in one Main method. Stage I: multiplication table (for loop 1-10). Stage II: sum and average with accumulator and (double) cast. Stage III: nested for loops for triangle pattern — Console.Write() inside inner loop, Console.WriteLine() after inner loop. Must use for loops only (not while). 200 points.",
   'week-09-homework': "Week 9 Homework: While vs For Loop Reflection. Students compare for and while loop anatomy (all three clauses mapped), explain the off-by-one error with a specific incorrect and corrected example, and argue when to use each loop type with concrete real-world scenarios. Written reflection referencing sections 9.1, 9.2, and 8.1.",
+
+  // Week 14
+  'week-14': "Week 14: Object Architecture — Encapsulation and Constructor Overloading. Students learn two mechanisms that make classes self-defending: (1) private backing fields with validated set accessors that reject invalid post-creation assignments, and (2) overloaded constructors with this() chaining that enforce valid initial state at the moment of creation. Key concepts: private _field vs public Property, set accessor with ArgumentException guard, computed get-only properties (no backing field), master constructor owns all validation, : this() delegates from overloads to master. K&R brace style throughout.",
+  'week-14-lesson-1': "Week 14 Section 14.1: Encapsulation — The Firewall Between External Code and Internal State. Focus: Declaring private backing fields (_name, _price, _stock) as the internal storage layer. Public properties with validated set accessors enforce rules on every assignment attempt. Name: reject null/empty/whitespace, trim valid values. Price and Stock: reject negative values with ArgumentException. Computed properties (InStock, TotalValue) derive from backing fields with no storage of their own. The auto-implemented property (from Week 12) has no set guard — Week 14's private field + validated accessor pattern makes bad data structurally impossible.",
+  'week-14-lesson-2': "Week 14 Section 14.2: Constructor Overloading — Controlled Entry Point for Every New Object. Focus: Parameterized constructors enforce valid initial state at object creation. Constructor overloading: multiple constructor signatures that differ in parameter count. The master constructor (all three params) owns ALL validation and field assignment. Delegating constructors (two-param, one-param) use : this(name, price, 0) and : this(name, 0.0, 0) to forward to the master — zero duplicate validation. The default (parameterless) constructor is removed once any explicit constructor is defined.",
+  'week-14-lab': "Week 14 Lab: Product Manager. Students build a Product class with private backing fields (_name, _price, _stock), validated set accessors (Name trims and rejects empty, Price and Stock reject negatives), computed properties (InStock and TotalValue), a master constructor Product(string name, double price, int stock) with full validation, and two delegating constructors using : this(). In Program.cs: List<Product> catalog, at least 4 products added via .Add() using different constructor overloads, .Count before and after .Remove(), foreach report showing all 5 properties, and one try/catch demonstrating validation rejection.",
+  'week-14-homework': "Week 14 Homework: Technical Reflection on Object Architecture. Students answer 4 questions: (1) contrast Week 12 auto-implemented property with Week 14 private field + validated set accessor; (2) explain the public/private split — why backing fields are private and properties are public; (3) explain master constructor and why : this() eliminates duplicate validation; (4) explain computed properties (InStock, TotalValue) — derived at read time, no storage, why property not method.",
 };
 
 export function getTutorContext(pageId) {
