@@ -30,7 +30,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      <img src="/media/week%2014/14.1/Header%20Image.jpeg" alt="Encapsulation firewall diagram showing external caller code on the left attempting to assign Price equals negative 50, a property set accessor with validation guard in the center blocking the invalid value, and the private backing field on the right representing protected internal state with a valid value stored" />
+      <img src="/media/week%2014/14.1/Header%20Image.png" alt="Encapsulation firewall diagram showing external caller code on the left attempting to assign Price equals negative 50, a property set accessor with validation guard in the center blocking the invalid value, and the private backing field on the right representing protected internal state with a valid value stored" />
     </div>
   </div>
 </div>
@@ -205,7 +205,7 @@ Normalization inside the set accessor means the backing field always holds clean
   ]}
 />
 
-<img src="/media/week%2014/14.1/Property%20Accessor%20Flow.jpeg" alt="Property accessor flow diagram showing external code making a read (get) call returning the private field value, and a write (set) call entering a validation decision branch — valid values assigned to the private field, invalid values routed to an exception throw" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2014/14.1/Property%20Accessor%20Flow.png" alt="Property accessor flow diagram showing external code making a read (get) call returning the private field value, and a write (set) call entering a validation decision branch — valid values assigned to the private field, invalid values routed to an exception throw" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 
@@ -266,7 +266,7 @@ Never place business rule validation exclusively in <code>Main</code> or in the 
 
 </div>
 
-<img src="/media/week%2014/14.1/Encapsulation%20Layers.jpeg" alt="Encapsulation layers diagram with three concentric zones: outermost zone labeled External Code containing Main and other classes, middle zone labeled Property Interface containing get and set accessors with validation logic, innermost core labeled Private State containing the private backing fields protected behind the interface boundary" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2014/14.1/Encapsulation%20Layers.png" alt="Encapsulation layers diagram with three concentric zones: outermost zone labeled External Code containing Main and other classes, middle zone labeled Property Interface containing get and set accessors with validation logic, innermost core labeled Private State containing the private backing fields protected behind the interface boundary" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 

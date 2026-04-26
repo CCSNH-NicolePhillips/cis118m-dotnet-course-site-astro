@@ -30,7 +30,7 @@ import DeepDiveTabs from '../../../components/DeepDiveTabs.astro';
       </p>
     </div>
     <div class="header-image">
-      <img src="/media/week%2014/14.2/Header%20Image.jpeg" alt="Constructor overloading diagram showing a Product class blueprint with three labeled entry doors: a minimal constructor with just name, a two-parameter constructor with name and price, and a full constructor with name, price, and stock — each door showing which fields get initialized, with arrows from three different new Product calls to the matching constructor" />
+      <img src="/media/week%2014/14.2/Header%20Image.png" alt="Constructor overloading diagram showing a Product class blueprint with three labeled entry doors: a minimal constructor with just name, a two-parameter constructor with name and price, and a full constructor with name, price, and stock — each door showing which fields get initialized, with arrows from three different new Product calls to the matching constructor" />
     </div>
   </div>
 </div>
@@ -182,7 +182,7 @@ This design gives callers three valid creation paths while ensuring that a `Prod
   ]}
 />
 
-<img src="/media/week%2014/14.2/Constructor%20Overload%20Resolution.jpeg" alt="Constructor overload resolution diagram showing three new Product call expressions at the top — one with name only, one with name and price, one with all three parameters — and matching arrows pointing down to the corresponding constructor signatures, with labels showing how the compiler selects the overload based on argument count and type" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2014/14.2/Constructor%20Overload%20Resolution.png" alt="Constructor overload resolution diagram showing three new Product call expressions at the top — one with name only, one with name and price, one with all three parameters — and matching arrows pointing down to the corresponding constructor signatures, with labels showing how the compiler selects the overload based on argument count and type" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 
@@ -240,7 +240,7 @@ The `: this(name, price, 0)` syntax reads as "before running this constructor's 
   ]}
 />
 
-<img src="/media/week%2014/14.2/Constructor%20Chain%20Diagram.jpeg" alt="Constructor chain diagram showing three constructor boxes connected by arrows: the one-param constructor delegating via this to the two-param constructor, which delegates via this to the three-param master constructor containing all validation and field assignments, with labels showing default values supplied at each delegation step" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
+<img src="/media/week%2014/14.2/Constructor%20Chain%20Diagram.png" alt="Constructor chain diagram showing three constructor boxes connected by arrows: the one-param constructor delegating via this to the two-param constructor, which delegates via this to the three-param master constructor containing all validation and field assignments, with labels showing default values supplied at each delegation step" style="max-width: 100%; border-radius: 12px; margin: 24px 0;" />
 
 ---
 
