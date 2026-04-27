@@ -1,0 +1,164 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Week 14 • Technical Assessment"
+---
+
+import Quiz from '../../../components/Quiz.astro';
+import DueDateBanner from '../../../components/DueDateBanner.astro';
+
+# Week 14 Technical Assessment
+
+<DueDateBanner week={14} type="Quiz" />
+
+<div class="mission-brief">
+  <h2>Assessment Parameters</h2>
+  <ul>
+    <li><strong>Attempts:</strong> <strong>Unlimited</strong></li>
+    <li><strong>Scoring:</strong> Highest score is recorded</li>
+    <li><strong>Passing:</strong> 70% required</li>
+    <li><strong>Time:</strong> No time limit</li>
+    <li><strong>Answers:</strong> Revealed after final attempt</li>
+  </ul>
+</div>
+
+---
+
+<Quiz
+  quizId="week-14-quiz"
+  title="Week 14: Object Architecture (Graded)"
+  passingScore={70}
+  maxAttempts={0}
+  hideAnswersUntilFinal={true}
+  questions={[
+    {
+      id: "q1",
+      type: "multiple-choice",
+      question: "Inside a set accessor, what is the name of the implicit variable that holds the incoming assigned value?",
+      options: [
+        "input",
+        "value",
+        "data",
+        "param"
+      ],
+      correctAnswer: "value",
+      explanation: "The set accessor receives the assigned value through the implicitly declared variable named 'value'. Validation code reads from 'value' and only stores it in the backing field if it passes."
+    },
+    {
+      id: "q2",
+      type: "multiple-choice",
+      question: "What is the primary purpose of a private backing field in an encapsulated class?",
+      options: [
+        "To allow access to the field from any file in the project",
+        "To hold the actual data while the public property controls all access to it",
+        "To replace the need for a constructor",
+        "To make property reads faster than a public field"
+      ],
+      correctAnswer: "To hold the actual data while the public property controls all access to it",
+      explanation: "The private backing field stores the raw value. External code never touches it directly. The public property's get and set accessors are the only controlled interface — and the set can apply validation before any value reaches the field."
+    },
+    {
+      id: "q3",
+      type: "multiple-choice",
+      question: "What happens to the default no-argument constructor when you define your own constructor in a class?",
+      options: [
+        "Both constructors remain available side by side",
+        "The default constructor is removed — new ClassName() becomes a compile error",
+        "The default constructor runs before your constructor",
+        "C# automatically generates a backup no-arg constructor"
+      ],
+      correctAnswer: "The default constructor is removed — new ClassName() becomes a compile error",
+      explanation: "Once you define any constructor explicitly, C# no longer generates the implicit no-argument default. Calling new ClassName() without arguments becomes a compile error, which enforces the requirement to use your parameterized constructor."
+    },
+    {
+      id: "q4",
+      type: "multiple-choice",
+      question: "In a constructor chain using : this(...), which constructor executes first?",
+      options: [
+        "The delegating constructor body runs first, then the delegated constructor",
+        "Both constructors run simultaneously",
+        "The delegated constructor (the target of this()) runs first",
+        "The constructor with fewer parameters always runs first"
+      ],
+      correctAnswer: "The delegated constructor (the target of this()) runs first",
+      explanation: "The : this(...) syntax delegates to the specified constructor before the current constructor's body runs. The master constructor completes its full execution — including validation and field assignments — then control returns to the delegating constructor's body."
+    },
+    {
+      id: "q5",
+      type: "multiple-choice",
+      question: "A computed property like InStock has get { return _stock > 0; }. What does it NOT have compared to a validated property like Price?",
+      options: [
+        "A get accessor",
+        "A return statement",
+        "A private backing field and a set accessor",
+        "A public access modifier"
+      ],
+      correctAnswer: "A private backing field and a set accessor",
+      explanation: "Computed properties are get-only and have no backing field. They derive their value from existing fields at read time. InStock evaluates _stock > 0 every time it is read — nothing is stored, and there is no setter because the value is calculated, not assigned."
+    },
+    {
+      id: "q6",
+      type: "multiple-choice",
+      question: "What exception type should a set accessor throw when it receives an invalid value?",
+      options: [
+        "InvalidOperationException",
+        "NullReferenceException",
+        "ArgumentException",
+        "FormatException"
+      ],
+      correctAnswer: "ArgumentException",
+      explanation: "ArgumentException is the standard .NET exception for invalid argument values. In a set accessor, 'value' is the argument being passed in, so throwing ArgumentException communicates clearly that the caller supplied an unacceptable value."
+    },
+    {
+      id: "q7",
+      type: "multiple-choice",
+      question: "A Product object is created with Product(\"Widget\") using a one-param constructor that chains to the master with stock = 0. What does InStock return, and why?",
+      options: [
+        "true — the product exists so it must be in stock",
+        "null — stock was never explicitly set",
+        "false — _stock defaults to 0, so _stock > 0 evaluates to false",
+        "An exception — InStock cannot be read before Stock is assigned"
+      ],
+      correctAnswer: "false — _stock defaults to 0, so _stock > 0 evaluates to false",
+      explanation: "int fields default to 0 in C#. The one-param constructor chains to the master with stock = 0, which assigns _stock = 0. InStock evaluates _stock > 0 at read time, which is 0 > 0 = false. A product with zero stock is correctly reported as not in stock."
+    },
+    {
+      id: "q8",
+      type: "multiple-choice",
+      question: "Why should all validation logic live only in the master constructor, not duplicated across every overload?",
+      options: [
+        "Because the master constructor runs faster than overloads",
+        "Because duplicated validation across overloads will drift when a rule changes, silently leaving some creation paths broken",
+        "Because C# only allows one constructor to contain if statements",
+        "Because overloads cannot access private fields"
+      ],
+      correctAnswer: "Because duplicated validation across overloads will drift when a rule changes, silently leaving some creation paths broken",
+      explanation: "When validation is copied into each overload, updating one rule requires updating every copy. A missed update is silent: all overloads compile and create objects, but objects created through the outdated overload bypass the new rule. Chaining to a master constructor means one edit updates all creation paths."
+    },
+    {
+      id: "q9",
+      type: "multiple-choice",
+      question: "Which of these correctly defines a computed TotalValue property on a Product class with _price and _stock fields?",
+      options: [
+        "public double TotalValue { get; set; }",
+        "public double TotalValue { get { return _price * _stock; } }",
+        "private double TotalValue { return _price * _stock; }",
+        "public double TotalValue = _price * _stock;"
+      ],
+      correctAnswer: "public double TotalValue { get { return _price * _stock; } }",
+      explanation: "A computed property uses a get accessor with a return statement that derives the value from other fields. It has no backing field and no set accessor. The value is recalculated on every read, so it is always current without any manual update."
+    },
+    {
+      id: "q10",
+      type: "multiple-choice",
+      question: "What happens if code in Program.cs tries to write product._price = 99.99 directly, bypassing the Price property?",
+      options: [
+        "It works but skips the validation in the set accessor",
+        "It compiles but throws a NullReferenceException at runtime",
+        "The compiler produces an error — private members are not accessible outside the class",
+        "It works only if _price is assigned in the constructor first"
+      ],
+      correctAnswer: "The compiler produces an error — private members are not accessible outside the class",
+      explanation: "The private modifier restricts access to the declaring class only. Attempting to read or write a private member from outside the class is a compile-time error — the program will not build. This is encapsulation enforced by the language, not just a convention."
+    }
+  ]}
+/>

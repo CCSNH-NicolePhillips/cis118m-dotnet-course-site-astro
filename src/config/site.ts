@@ -150,7 +150,8 @@ export const WEEKS: WeekConfig[] = [
       { title: '14.1 Encapsulation', href: '/week-14/lesson-1/' },
       { title: '14.2 Constructors', href: '/week-14/lesson-2/' },
       { title: 'Lab: Product Manager (Graded)', href: '/week-14/lab/' },
-      { title: 'Technical Reflection 14 (Graded)', href: '/week-14/homework/' }
+      { title: 'Technical Reflection 14 (Graded)', href: '/week-14/homework/' },
+      { title: 'Weekly Assessment 14', href: '/week-14/weekly-assessment/' }
     ] },
   { slug: '15', title: 'Week 15: ⚔️ FINAL BOSS FIGHT — Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-15/' },
