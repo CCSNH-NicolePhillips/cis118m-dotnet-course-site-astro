@@ -141,7 +141,7 @@ export const WEEKS: WeekConfig[] = [
       { title: '00. Week Overview', href: '/week-13/' },
       { title: '13.1 Fixed Arrays', href: '/week-13/lesson-1/' },
       { title: '13.2 List<T>', href: '/week-13/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-13/lab/' },
+      { title: 'Lab: Collection Manager (Graded)', href: '/week-13/lab/' },
       { title: 'Technical Reflection (Graded)', href: '/week-13/homework/' },
       { title: 'Weekly Assessment 13', href: '/week-13/weekly-assessment/' }
     ] },
