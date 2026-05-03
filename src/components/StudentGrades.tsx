@@ -84,6 +84,8 @@ const BOSS_FIGHT_ONLY_WEEKS = new Set([5]); // Weeks with boss fight but NO quiz
 const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
 const BOSS_FIGHT_ID_WEEKS = new Set([5]); // Boss fights that use -boss-fight assignment ID
 const BOSS_FIGHT_WEEKS = new Set([5, 9]); // All boss fight weeks (for 2x weight + display)
+const FINAL_ONLY_WEEKS = new Set([15]);
+const WEEK_15_FINAL_LEGACY_IDS = ['week-15-homework', 'week-15-lab'];
 
 for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
@@ -103,10 +105,7 @@ for (let w = 2; w <= 14; w++) {
   }
 }
 
-// Week 15: Participation, Homework, Lab + Final Project (no quiz)
-ASSIGNMENTS.push({ id: 'week-15-participation', label: 'Participation', week: 15, type: 'participation' });
-ASSIGNMENTS.push({ id: 'week-15-homework', label: 'Homework', week: 15, type: 'homework' });
-ASSIGNMENTS.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
+// Week 15: Final project only
 ASSIGNMENTS.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
 
 interface ProgressEntry {
@@ -223,6 +222,23 @@ const countParticipationByWeek = (progress: ProgressData): { [week: number]: num
   return counts;
 };
 
+const normalizeWeek15Progress = (progress: ProgressData): ProgressData => {
+  if (progress['week-15-final']) {
+    return progress;
+  }
+
+  for (const legacyId of WEEK_15_FINAL_LEGACY_IDS) {
+    if (progress[legacyId]) {
+      return {
+        ...progress,
+        'week-15-final': { ...progress[legacyId] }
+      };
+    }
+  }
+
+  return progress;
+};
+
 const StudentGrades: React.FC = () => {
   const [progress, setProgress] = useState<ProgressData>({});
   const [loading, setLoading] = useState(true);
@@ -252,7 +268,7 @@ const StudentGrades: React.FC = () => {
       }
       
       const data = await res.json();
-      setProgress(data.progress || {});
+      setProgress(normalizeWeek15Progress(data.progress || {}));
     } catch (err) {
       console.error('Error loading progress:', err);
       setError('Error loading grades.');
@@ -600,13 +616,13 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Final Exam
+            Final Project
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.finalCount > 0 ? TYPE_COLORS.final.text : '#666' }}>
             {grades.finalCount > 0 ? grades.finalAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            {grades.finalCount === 0 ? 'Not yet taken' : `${grades.finalCount} exam`}
+            {grades.finalCount === 0 ? 'Not yet graded' : `${grades.finalCount} project${grades.finalCount !== 1 ? 's' : ''}`}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.final.text, marginTop: '6px' }}>
             Worth: 10% of grade
@@ -630,11 +646,13 @@ const StudentGrades: React.FC = () => {
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.quiz.text, fontSize: '0.8rem' }}>Quiz</th>
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.homework.text, fontSize: '0.8rem' }}>HW</th>
               <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.lab.text, fontSize: '0.8rem' }}>Lab/Boss</th>
+              <th style={{ padding: '12px', textAlign: 'center', color: TYPE_COLORS.final.text, fontSize: '0.8rem' }}>Final</th>
             </tr>
           </thead>
           <tbody>
             {Array.from({ length: TOTAL_WEEKS }, (_, i) => i + 1).map(week => {
               const wStr = String(week).padStart(2, '0');
+              const isFinalOnlyWeek = FINAL_ONLY_WEEKS.has(week);
               const partCount = participationByWeek[week] || 0;
               const expectedSections = getExpectedSections(week);
               const partScore = Math.min(100, (partCount / expectedSections) * 100);
@@ -659,6 +677,7 @@ const StudentGrades: React.FC = () => {
               const labScore = BOSS_FIGHT_ID_WEEKS.has(week)
                 ? progress[`week-${wStr}-boss-fight`]?.score
                 : progress[`week-${wStr}-lab`]?.score;
+              const finalScore = progress[`week-${wStr}-final`]?.score;
               
               // Check if week is past due (for showing 0 on unsubmitted)
               const weekPastDue = isWeekPastDue(week);
@@ -666,6 +685,10 @@ const StudentGrades: React.FC = () => {
               const isBossFightOnly = BOSS_FIGHT_ONLY_WEEKS.has(week);
 
               const renderScore = (score: number | undefined, color: string, assignmentType: string, assignmentId?: string) => {
+                if (isFinalOnlyWeek && assignmentType !== 'final') {
+                  return <span style={{ color: '#444' }}>—</span>;
+                }
+
                 // Boss-fight-only weeks don't have quiz or homework - always show dash
                 if (isNoQuizWeek && assignmentType === 'quiz') {
                   return <span style={{ color: '#444' }}>—</span>;
@@ -747,7 +770,9 @@ const StudentGrades: React.FC = () => {
                     Week {week}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {partCount > 0 ? (
+                    {isFinalOnlyWeek ? (
+                      <span style={{ color: '#444' }}>—</span>
+                    ) : partCount > 0 ? (
                       <span style={{
                         display: 'inline-block',
                         padding: '4px 10px',
@@ -786,6 +811,9 @@ const StudentGrades: React.FC = () => {
                       <span style={{ fontSize: '0.65rem', color: '#f44336', display: 'block', marginBottom: '2px' }}>⚔️ 2x</span>
                     )}
                     {renderScore(labScore, TYPE_COLORS.lab.text, 'lab', isBossFightWeek ? `week-${wStr}-boss-fight` : `week-${wStr}-lab`)}
+                  </td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                    {renderScore(finalScore, TYPE_COLORS.final.text, 'final', `week-${wStr}-final`)}
                   </td>
                 </tr>
               );

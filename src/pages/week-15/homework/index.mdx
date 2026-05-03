@@ -1,19 +1,22 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Homework 15 - Deployment Readiness Memo"
-description: "Document the verification plan, recovery triage, and demonstration path for the capstone submission"
+title: "Written Final Guide - Deployment Memo"
+description: "Support-page prompts for a written final memo that belongs inside the Week 15 capstone package"
 ---
 
-import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
-
-# Homework 15: Deployment Readiness Memo
+# Written Final Guide: Deployment Memo
 
 <div class="deadline-banner">
-  <span class="deadline-label">Due:</span>
-  <span>Saturday, May 9 at 11:59 PM Eastern</span>
+  <span class="deadline-label">If assigned:</span>
+  <span>Include this memo inside the final project package by Saturday, May 9 at 11:59 PM Eastern</span>
 </div>
 
-Answer every prompt in 3-5 sentences with specific technical reasoning.
+<div class="support-note">
+  <p>This page is support-only. It does not create a separate Week 15 homework grade.</p>
+  <p>If your instructor wants a written final memo, include it as part of the final project package so the recorded score stays in the Final Project category.</p>
+</div>
+
+Answer every prompt in 3-5 sentences with specific technical reasoning if you need a written final artifact.
 
 1. <strong>Architecture summary:</strong> Explain how your custom class architecture, encapsulated properties, <code>List&lt;T&gt;</code> data management, and modular methods interact during one normal operator workflow.
 2. <strong>Verification strategy:</strong> Describe at least four tests you will run before submission, including at least two edge cases that could fail if the system is weakly designed.
@@ -27,7 +30,11 @@ Answer every prompt in 3-5 sentences with specific technical reasoning.
   </p>
 </div>
 
-<EngineeringLogEditor client:load assignmentId="week-15-homework" />
+## Submission Note
+
+- If you complete this memo, include it with the final project evidence package.
+- The only graded Week 15 submission is the final project.
+- There is no separate Week 15 lab or homework score.
 
 ---
 
@@ -51,6 +58,19 @@ Answer every prompt in 3-5 sentences with specific technical reasoning.
   .deadline-label {
     font-weight: 700;
     color: #fbbf24;
+  }
+  .support-note {
+    background: rgba(30, 64, 175, 0.12);
+    border: 2px solid rgba(96, 165, 250, 0.35);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+  }
+  .support-note p {
+    margin: 0 0 0.35rem;
+  }
+  .support-note p:last-child {
+    margin-bottom: 0;
   }
   .architect-rule {
     background: rgba(30, 64, 175, 0.12);

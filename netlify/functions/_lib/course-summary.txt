@@ -1426,19 +1426,15 @@ Summary: # Week 15 Extra Practice Select one or two optional drills if you want 
 
 ### 📚 Overview: Final Project - Capstone System Delivery
 
-Summary: # Final Project: Capstone System Delivery Due: Saturday, May 9 at 11:59 PM Eastern Assessment emphasis: Primary graded deliverable for Week 15 The final project is the capstone system integration submission. The grading decision is based on whether the project demonstrates a coherent design, control...
+Summary: # Final Project: Capstone System Delivery Due: Saturday, May 9 at 11:59 PM Eastern Assessment emphasis: Only graded deliverable for Week 15 The final project is the capstone system integration submission. The grading decision is based on whether the project demonstrates a coherent design, controlled...
 
-### 📝 Homework: Homework 15 - Deployment Readiness Memo
+### 📝 Homework: Written Final Guide - Deployment Memo
 
-Summary: # Homework 15: Deployment Readiness Memo Due: Saturday, May 9 at 11:59 PM Eastern Answer every prompt in 3-5 sentences with specific technical reasoning. 1. Architecture summary: Explain how your custom class architecture, encapsulated properties, List&lt;T&gt; data management, and modular methods i...
+Summary: # Written Final Guide: Deployment Memo If assigned: Include this memo inside the final project package by Saturday, May 9 at 11:59 PM Eastern This page is support-only. It does not create a separate Week 15 homework grade. If your instructor wants a written final memo, include it as part of the fina...
 
 ### 📚 Overview: Week 15 - The Final Deployment
 
 Summary: # Week 15: The Final Deployment Window: May 04 - May 09 Final submission deadline: Saturday, May 9 at 11:59 PM Eastern Recovery Window Alert Missing assignments and quizzes from Weeks 01-14 may still be completed during Week 15. Recovered work is capped at 70%. This is the final opportunity for grad...
-
-### 🔬 Lab: Lab 15 - Architecture Review: Global System Design
-
-Summary: # Lab 15: Architecture Review - Global System Design Due: Saturday, May 9 at 11:59 PM Eastern Before the final submission is frozen, document the architecture that will hold the system together. This lab is the design review. The goal is to prove that the capstone has a clear class model, controlled...
 
 ### 📖 Lesson: Section 15.1 - Global System Architecture
 

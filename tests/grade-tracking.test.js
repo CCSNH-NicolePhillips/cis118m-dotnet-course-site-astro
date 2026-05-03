@@ -191,25 +191,13 @@ describe('Grade ID Alignment', () => {
       expect(grades['week-02-quiz:score']).toBe(95);
     });
 
-    it('should store week 15 assignments correctly', async () => {
-      await simulateProgressUpdate(testUserId, testEmail, 'week-15-quiz', 'completed', 88);
-      await simulateProgressUpdate(testUserId, testEmail, 'week-15-lab', 'completed', 100);
-      await simulateProgressUpdate(testUserId, testEmail, 'week-15-homework', 'completed', 92);
+    it('should store week 15 final project correctly', async () => {
+      await simulateProgressUpdate(testUserId, testEmail, 'week-15-final', 'completed', 97);
       
       const grades = await fetchStudentGrades(testUserId);
       
-      expect(grades['week-15-quiz:score']).toBe(88);
-      expect(grades['week-15-lab:score']).toBe(100);
-      expect(grades['week-15-homework:score']).toBe(92);
-    });
-
-    it('should store week 16 final with correct ID', async () => {
-      await simulateProgressUpdate(testUserId, testEmail, 'week-16-final', 'completed', 97);
-      
-      const grades = await fetchStudentGrades(testUserId);
-      
-      expect(grades['week-16-final:status']).toBe('completed');
-      expect(grades['week-16-final:score']).toBe(97);
+      expect(grades['week-15-final:status']).toBe('completed');
+      expect(grades['week-15-final:score']).toBe(97);
     });
   });
 });
@@ -223,6 +211,7 @@ describe('Gradebook Assignment Definitions', () => {
     'week-01-homework',
     'week-01-lab'
   ];
+  const EXPECTED_WEEK_15_IDS = ['week-15-final'];
 
   const EXPECTED_REGULAR_WEEK_IDS = (weekNum) => {
     const wStr = weekNum.toString().padStart(2, '0');
@@ -259,6 +248,10 @@ describe('Gradebook Assignment Definitions', () => {
     
     const week12Ids = EXPECTED_REGULAR_WEEK_IDS(12);
     expect(week12Ids[1]).toBe('week-12-quiz');
+  });
+
+  it('should keep week 15 final-project only', () => {
+    expect(EXPECTED_WEEK_15_IDS).toEqual(['week-15-final']);
   });
 });
 

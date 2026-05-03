@@ -110,12 +110,8 @@ function generateAssignments() {
     }
   }
   
-  // Week 15 - includes final at the end
-  assignments.push({ id: 'week-15-participation', name: 'Week 15 Participation', points: 100, isParticipation: true, week: '15' });
-  assignments.push({ id: 'week-15-lab', name: 'Week 15 Lab', points: 100, week: '15' });
-  assignments.push({ id: 'week-15-homework', name: 'Week 15 Homework', points: 100, week: '15' });
-  assignments.push({ id: 'week-15-quiz', name: 'Week 15 Quiz', points: 100, week: '15' });
-  assignments.push({ id: 'week-15-final', name: 'Final Project', points: 100, week: '15' });
+  // Week 15 - final project only
+  assignments.push({ id: 'week-15-final', name: 'Final Project', points: 100, week: '15', legacyIds: ['week-15-homework', 'week-15-lab'] });
   
   return assignments;
 }
@@ -273,11 +269,16 @@ export default async function handler(request, context) {
               score = parseFloat(progressData[progressKey]);
             }
             
-            // For boss fight weeks, also check legacy lab ID
-            if (score === null && assignment.legacyId) {
-              const legacyKey = `${assignment.legacyId}:score`;
-              if (progressData[legacyKey] !== undefined) {
-                score = parseFloat(progressData[legacyKey]);
+            const legacyIds = [assignment.legacyId, ...(assignment.legacyIds || [])].filter(Boolean);
+
+            // For boss fight weeks and migrated assignments, also check legacy IDs
+            if (score === null && legacyIds.length > 0) {
+              for (const legacyId of legacyIds) {
+                const legacyKey = `${legacyId}:score`;
+                if (progressData[legacyKey] !== undefined) {
+                  score = parseFloat(progressData[legacyKey]);
+                  break;
+                }
               }
             }
 
@@ -294,16 +295,23 @@ export default async function handler(request, context) {
               }
             }
             
-            // Also check completions under legacy ID
-            if (score === null && assignment.legacyId && completionsList.includes(assignment.legacyId)) {
-              const completionData = await redis.get(`completion:${linkedSub}:${assignment.legacyId}`);
-              if (completionData) {
-                try {
-                  const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
-                  if (parsed.score !== undefined) {
-                    score = parseFloat(parsed.score);
-                  }
-                } catch (e) {}
+            // Also check completions under legacy IDs
+            if (score === null && legacyIds.length > 0) {
+              for (const legacyId of legacyIds) {
+                if (!completionsList.includes(legacyId)) {
+                  continue;
+                }
+
+                const completionData = await redis.get(`completion:${linkedSub}:${legacyId}`);
+                if (completionData) {
+                  try {
+                    const parsed = typeof completionData === 'string' ? JSON.parse(completionData) : completionData;
+                    if (parsed.score !== undefined) {
+                      score = parseFloat(parsed.score);
+                      break;
+                    }
+                  } catch (e) {}
+                }
               }
             }
           }

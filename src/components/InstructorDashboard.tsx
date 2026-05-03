@@ -113,11 +113,8 @@ const generateAssignments = () => {
     }
   }
   
-  // Week 15 - Final week with participation, lab, homework, and Final Project (no quiz)
-  assignments.push({ id: 'week-15-participation', label: 'Part', week: 15, type: 'participation' });
-  assignments.push({ id: 'week-15-homework', label: 'HW', week: 15, type: 'homework' });
-  assignments.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
-  assignments.push({ id: 'week-15-final', label: 'Final', week: 15, type: 'final' });
+  // Week 15 - final project only
+  assignments.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
   
   return assignments;
 };
@@ -174,6 +171,30 @@ interface SubmissionModalData {
   assignmentId: string;
   assignmentLabel: string;
 }
+
+const WEEK_15_FINAL_LEGACY_IDS = ['week-15-homework', 'week-15-lab'];
+
+const normalizeWeek15RawProgress = (progress: StudentProgress = {}): StudentProgress => {
+  const finalPrefix = 'week-15-final:';
+  if (Object.keys(progress).some(key => key.startsWith(finalPrefix))) {
+    return progress;
+  }
+
+  for (const legacyId of WEEK_15_FINAL_LEGACY_IDS) {
+    const legacyPrefix = `${legacyId}:`;
+    if (Object.keys(progress).some(key => key.startsWith(legacyPrefix))) {
+      const normalized = { ...progress };
+      for (const [key, value] of Object.entries(progress)) {
+        if (key.startsWith(legacyPrefix)) {
+          normalized[key.replace(legacyPrefix, finalPrefix)] = value;
+        }
+      }
+      return normalized;
+    }
+  }
+
+  return progress;
+};
 
 // Count participation by week
 // Week 1: Counts every participation entry (original behavior - students already graded)
@@ -523,10 +544,14 @@ const InstructorDashboard: React.FC = () => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       
       const data = await res.json();
-      const studentsWithParsed = (data.students || []).map((s: Student) => ({
-        ...s,
-        parsedProgress: parseProgressData(s.progress)
-      }));
+      const studentsWithParsed = (data.students || []).map((s: Student) => {
+        const normalizedProgress = normalizeWeek15RawProgress(s.progress);
+        return {
+          ...s,
+          progress: normalizedProgress,
+          parsedProgress: parseProgressData(normalizedProgress)
+        };
+      });
       
       // Sort alphabetically by display name
       studentsWithParsed.sort((a: Student, b: Student) => {

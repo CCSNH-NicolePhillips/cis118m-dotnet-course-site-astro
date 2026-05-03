@@ -33,7 +33,7 @@ const WEEKS = [
   { week: 12, title: "Custom Data Types & Classes", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
   { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT" },
   { week: 14, title: "Program Integration", dueDate: "Sunday, May 3, 2026 at 11:59 PM EDT" },
-  { week: 15, title: "Final Project", dueDate: "Saturday, May 9, 2026 at 11:59 PM EDT" }
+  { week: 15, title: "The Final Deployment", dueDate: "Saturday, May 9, 2026 at 11:59 PM EDT" }
 ];
 
 // Build syllabus context for the AI
@@ -62,13 +62,15 @@ GRADING SCALE:
 - F: Below 60%
 
 DUE DATES:
-All weekly assignments are due every SUNDAY by 11:59 PM.
+Weekly assignments are generally due every SUNDAY by 11:59 PM.
+Week 15 is the exception: the final project closes Saturday, May 9, 2026 at 11:59 PM EDT.
 ${WEEKS.map(w => `Week ${w.week} (${w.title})${w.isBossFight ? ` ⚔️ BOSS FIGHT: ${w.bossFightName} (200 pts)` : ''}: Due ${w.dueDate}`).join('\n')}
 
 LATE POLICY:
 - Quizzes: Can be retaken until the due date. NO late submissions accepted.
 - Labs: 10% penalty per day late (up to 3 days maximum). After 3 days = 0 points.
 - Final Project: NO late submissions accepted.
+- Week 15 has no separate lab, homework, quiz, or participation grade. Only the final project is graded in the final category.
 - Extensions: Contact instructor BEFORE the due date for documented emergencies or illness.
 
 ACADEMIC INTEGRITY:
