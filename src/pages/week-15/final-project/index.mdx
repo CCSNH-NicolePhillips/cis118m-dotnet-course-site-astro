@@ -99,7 +99,8 @@ This starter compiles, but it is not finished. Complete the search and update fl
   completionPageId="week-15-final"
   height={620}
   files={[
-    { name: 'Program.cs', content: `using System;
+    { name: 'Program.cs', content: `// TODO: Replace this line with a header comment containing your name.
+using System;
 using System.Collections.Generic;
 
 List<DeploymentRecord> deployments = new List<DeploymentRecord>
@@ -147,42 +148,27 @@ while (isRunning)
     Console.WriteLine();
 }
 
+// This method is complete — use it as a reference for how to loop the list.
 static void PrintDeployments(List<DeploymentRecord> deployments)
 {
     Console.WriteLine("--- CURRENT DEPLOYMENTS ---");
-
     if (deployments.Count == 0)
     {
         Console.WriteLine("No deployment records found.");
         return;
     }
-
-    foreach (DeploymentRecord deployment in deployments)
+    foreach (DeploymentRecord d in deployments)
     {
-        Console.WriteLine($"{deployment.Title} | Owner: {deployment.Owner} | Status: {deployment.Status} | Blocked: {deployment.IsBlocked}");
+        Console.WriteLine($"{d.Title} | Owner: {d.Owner} | Status: {d.Status} | Blocked: {d.IsBlocked}");
     }
 }
 
 static void AddDeployment(List<DeploymentRecord> deployments)
 {
-    Console.Write("Title: ");
-    string title = Console.ReadLine() ?? string.Empty;
-
-    Console.Write("Owner: ");
-    string owner = Console.ReadLine() ?? string.Empty;
-
-    Console.Write("Status (Planned, Ready, Blocked, Done): ");
-    string status = Console.ReadLine() ?? string.Empty;
-
-    try
-    {
-        deployments.Add(new DeploymentRecord(title, owner, status));
-        Console.WriteLine("Deployment added.");
-    }
-    catch (ArgumentException ex)
-    {
-        Console.WriteLine(ex.Message);
-    }
+    // TODO: Prompt for title, owner, and status (Planned, Ready, Blocked, Done).
+    //       Create a new DeploymentRecord and add it to the list.
+    //       Use try/catch to handle ArgumentException if input is invalid.
+    Console.WriteLine("Add deployment not yet implemented.");
 }
 
 static void SearchByOwner(List<DeploymentRecord> deployments)
@@ -190,8 +176,10 @@ static void SearchByOwner(List<DeploymentRecord> deployments)
     Console.Write("Search owner: ");
     string owner = (Console.ReadLine() ?? string.Empty).Trim();
 
-    // TODO: Loop through deployments and print every matching record.
-    Console.WriteLine($"Search feature not finished for owner: {owner}");
+    // TODO: Use foreach to loop through deployments.
+    //       Print every record whose Owner matches (case-insensitive).
+    //       If no records match, print a not-found message.
+    Console.WriteLine("Search not yet implemented.");
 }
 
 static void UpdateStatus(List<DeploymentRecord> deployments)
@@ -199,81 +187,41 @@ static void UpdateStatus(List<DeploymentRecord> deployments)
     Console.Write("Deployment title to update: ");
     string title = (Console.ReadLine() ?? string.Empty).Trim();
 
-    // TODO: Find the record by title, prompt for a new status, and update it safely.
-    Console.WriteLine($"Status update not finished for deployment: {title}");
+    // TODO: Find the record with a matching Title.
+    //       Prompt for a new status and set it via the Status property.
+    //       Use try/catch to handle ArgumentException for invalid status values.
+    //       If the title is not found, print a not-found message.
+    Console.WriteLine("Update not yet implemented.");
 }
 ` },
     { name: 'DeploymentRecord.cs', content: `using System;
 
+// Build the DeploymentRecord class from scratch.
+//
+// Requirements:
+//   Private backing fields:
+//     _title (string), _owner (string), _status (string, default "Planned")
+//
+//   Public properties with validation:
+//     Title  — rejects null/empty (throw ArgumentException)
+//     Owner  — rejects null/empty (throw ArgumentException)
+//     Status — only accepts "Planned", "Ready", "Blocked", "Done"
+//              (throw ArgumentException for anything else)
+//
+//   Computed property (no backing field):
+//     IsBlocked (bool) — returns true when Status == "Blocked"
+//
+//   Constructors:
+//     DeploymentRecord(string title, string owner, string status)
+//     DeploymentRecord(string title, string owner)  — defaults status to "Planned" using : this()
+
 class DeploymentRecord
 {
-    private string _title = string.Empty;
-    private string _owner = string.Empty;
-    private string _status = "Planned";
-
-    public string Title
-    {
-        get => _title;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Title is required.");
-            }
-
-            _title = value.Trim();
-        }
-    }
-
-    public string Owner
-    {
-        get => _owner;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentException("Owner is required.");
-            }
-
-            _owner = value.Trim();
-        }
-    }
-
-    public string Status
-    {
-        get => _status;
-        set
-        {
-            string normalized = value.Trim();
-
-            if (normalized != "Planned" &&
-                normalized != "Ready" &&
-                normalized != "Blocked" &&
-                normalized != "Done")
-            {
-                throw new ArgumentException("Status must be Planned, Ready, Blocked, or Done.");
-            }
-
-            _status = normalized;
-        }
-    }
-
-    public bool IsBlocked => Status == "Blocked";
-
-    public DeploymentRecord(string title, string owner, string status)
-    {
-        Title = title;
-        Owner = owner;
-        Status = status;
-    }
-
-    public DeploymentRecord(string title, string owner)
-        : this(title, owner, "Planned")
-    {
-    }
-}` }
+    // Your implementation here
+}
+` }
   ]}
-  instructions="Complete the TODOs so the final project can add, list, search, and update deployment records with clear validation behavior."
+  instructions="Build the DeploymentRecord class from scratch, then complete AddDeployment, SearchByOwner, and UpdateStatus. PrintDeployments is provided as a working reference — study how it accesses the list and properties before writing your own methods."
   enableStdin={false}
 />
 
@@ -291,27 +239,23 @@ class DeploymentRecord
     </thead>
     <tbody>
       <tr>
-        <td><strong>Custom class architecture</strong> - Uses a real domain class instead of loose primitive variables.</td>
+        <td><strong>DeploymentRecord class</strong> - Private backing fields, validated Title/Owner/Status properties (ArgumentException on bad input), IsBlocked computed property, and two constructors with <code>: this()</code> delegation.</td>
+        <td style="text-align: right;">40</td>
+      </tr>
+      <tr>
+        <td><strong>AddDeployment method</strong> - Prompts for title, owner, and status; creates and adds a new record; catches ArgumentException without crashing.</td>
         <td style="text-align: right;">20</td>
       </tr>
       <tr>
-        <td><strong>Encapsulation and validation</strong> - Prevents invalid state through validated properties, constructors, or equivalent guards.</td>
-        <td style="text-align: right;">20</td>
+        <td><strong>SearchByOwner method</strong> - Uses foreach to find and print every record matching the owner (case-insensitive); reports when none found.</td>
+        <td style="text-align: right;">15</td>
       </tr>
       <tr>
-        <td><strong>List&lt;T&gt; data workflow</strong> - Adds, stores, and inspects multiple records through a list.</td>
-        <td style="text-align: right;">20</td>
+        <td><strong>UpdateStatus method</strong> - Finds a record by title, prompts for new status, sets it through the validated property, catches ArgumentException, reports not-found.</td>
+        <td style="text-align: right;">15</td>
       </tr>
       <tr>
-        <td><strong>Method decomposition and controller flow</strong> - Uses named methods for add, list, search, and update behavior.</td>
-        <td style="text-align: right;">20</td>
-      </tr>
-      <tr>
-        <td><strong>Search or update workflow</strong> - Demonstrates a successful lookup, update, or report path beyond simple listing.</td>
-        <td style="text-align: right;">10</td>
-      </tr>
-      <tr>
-        <td><strong>Compiles, runs, and communicates clearly</strong> - Produces readable output and handles invalid input without crashing.</td>
+        <td><strong>Compiles, runs, and communicates clearly</strong> - All four menu operations produce correct, readable output without crashing on valid input.</td>
         <td style="text-align: right;">10</td>
       </tr>
     </tbody>

@@ -1087,48 +1087,60 @@ export const lessonContexts = {
       - List<DeploymentRecord>: Add(), Count, foreach, and lookup/update by matching field
       - Named static methods for each workflow: PrintDeployments, AddDeployment, SearchByOwner, UpdateStatus
       - Switch-based controller loop: reads user choice, delegates to correct method, loops until exit
-      - try/catch ArgumentException: AddDeployment catches and prints validation errors without crashing
+      - try/catch ArgumentException: AddDeployment and UpdateStatus catch and print validation errors without crashing
       - K&R brace style throughout
     `,
     assignmentPrompt: `
-      IMPORTANT GRADING CONTEXT: The starter code provides the complete DeploymentRecord class,
-      constructor overloading, all validated properties, the List<DeploymentRecord>, PrintDeployments,
-      AddDeployment, and the switch/while controller loop. Students did NOT write this code — it is
-      provided scaffolding. Do NOT award points for scaffolding the student did not write.
+      IMPORTANT GRADING CONTEXT:
+      - The starter code provides only a SHELL for DeploymentRecord.cs with no implementation.
+        Students must write every private field, every property with validation, IsBlocked, and
+        both constructors themselves. The class body is empty — no credit for an empty class.
+      - PrintDeployments in Program.cs is provided as a working reference example only.
+        Students did NOT write PrintDeployments — do NOT award points for it.
+      - The menu/switch/while controller loop is provided scaffolding. No credit for that either.
 
-      Students must complete BOTH of the following TODOs to earn a passing grade:
-      1. SearchByOwner — replace the TODO stub: loop through the list using foreach, print every
-         record whose Owner matches the search string. Must actually find and print records.
-      2. UpdateStatus — replace the TODO stub: find a record by Title, prompt for a new status,
-         update it through the validated Status property, and catch ArgumentException for bad input.
-         Must actually locate a record and attempt an update.
-      3. Header comment with student name at the top of Program.cs.
+      Students must implement ALL of the following to earn a passing grade:
+      1. DeploymentRecord class — private fields, validated Title/Owner/Status properties
+         (ArgumentException on empty or invalid input), IsBlocked computed property,
+         and two constructors where the second delegates to the first with : this().
+      2. AddDeployment — prompt for title, owner, status; create a new DeploymentRecord;
+         add it to the list; catch ArgumentException and print the error message.
+      3. SearchByOwner — use foreach to find records whose Owner matches the input
+         (case-insensitive); print each match; print a not-found message if none match.
+      4. UpdateStatus — find a record by Title; prompt for a new status; set it via the
+         Status property; catch ArgumentException; print not-found if title is missing.
+      5. Header comment with student name at the top of Program.cs.
 
-      Grade ONLY what the student added. The scaffolding code (class definition, Print, Add, the
-      switch loop, the List initialization) earns zero points by itself.
+      A submission that only fills in one or two of these items is not a passing final.
     `,
     rubric: `
-      SearchByOwner implementation (35pts): STUDENT-WRITTEN CODE ONLY — the TODO stub earns 0.
-      Full credit: foreach loop searches the list, finds records by Owner match, and prints their
-      full details. Partial credit: attempts a loop but output is incomplete or broken.
-      Do NOT give points if the method still contains the original TODO comment and placeholder line.
+      DeploymentRecord class (40pts):
+        - Private backing fields present (5pts)
+        - Title property validates and rejects empty/null with ArgumentException (10pts)
+        - Owner property validates and rejects empty/null with ArgumentException (10pts)
+        - Status property rejects anything outside Planned/Ready/Blocked/Done (10pts)
+        - IsBlocked computed property with no backing field (5pts)
+        - Two constructors with : this() delegation (0pts if only one constructor, full 0 if class body is still empty)
+        An empty class body or unimplemented shell earns 0 for this entire section.
 
-      UpdateStatus implementation (35pts): STUDENT-WRITTEN CODE ONLY — the TODO stub earns 0.
-      Full credit: finds a record by Title, prompts for a new status, sets it via the validated
-      Status property, and catches ArgumentException. Partial credit: finds the record but update
-      path is incomplete. Do NOT give points if the method still contains the original TODO comment.
+      AddDeployment method (20pts):
+        Prompts for title, owner, and status; creates a new DeploymentRecord; adds to list;
+        catches ArgumentException and prints the error. TODO stub earns 0.
 
-      Header comment with student name (10pts): Program.cs has a comment at the top containing
-      the student's name (any format: //, /* */, or XML). Zero points if missing.
+      SearchByOwner method (15pts):
+        Uses foreach to loop the list, compares Owner values case-insensitively, prints each
+        matching record, prints not-found when no match. TODO stub earns 0.
 
-      Integration and correctness (10pts): The completed search and update flows work end-to-end
-      in context of the controller loop. Both menu options route correctly to the student's
-      implementations without crashing on valid input.
+      UpdateStatus method (15pts):
+        Finds a record by Title, prompts for new status, sets it through the Status property,
+        catches ArgumentException for bad values, reports when title is not found.
+        TODO stub earns 0.
 
-      Compiles and runs (10pts): Full program compiles without errors and produces readable output.
-      If the student completed both TODOs incorrectly (e.g., infinite loop), dock here.
+      Compiles, runs, readable output (10pts):
+        All four menu operations produce correct, readable console output without crashing
+        on valid input. Dock here if the class is incomplete and nothing compiles.
     `,
-    requiredKeywords: ["DeploymentRecord", "foreach", "Owner", "Status"],
+    requiredKeywords: ["private", "throw", "ArgumentException", "foreach", "catch"],
     gradingTone: "college-freshman-friendly"
   },
 
@@ -1300,39 +1312,7 @@ export const TUTOR_CONTEXTS = {
     gradingTone: 'college-freshman-friendly'
   },
 
-  'week-15-final': {
-    title: 'Week 15: Final Project - Deployment Tracker Capstone',
-    type: 'lab',
-    week: '15',
-    taughtConcepts: `
-      - Methods partition controller logic into focused operations
-      - Return values allow search and lookup results to drive later decisions
-      - Custom classes model domain entities and own their own validation rules
-      - List<T> manages multiple objects and supports add, search, update, and reporting workflows
-      - Encapsulation and constructors prevent invalid state from entering the system
-      - A final project must demonstrate readable runtime behavior, not just compile successfully
-    `,
-    assignmentPrompt: `
-      Complete the Week 15 final project by building an integrated console deployment tracker.
-      Required features:
-      1. At least one custom class with validation and constructor-controlled state.
-      2. A List<T> collection that stores multiple records.
-      3. A menu/controller flow with add, list, search, and update behavior.
-      4. Clear output and graceful handling of invalid input or missing records.
-      5. A working final submission that proves the system functions end to end.
-    `,
-    rubric: `
-      Custom class architecture (20pts): Uses a real class with meaningful responsibility rather than loose primitive variables.
-      Encapsulation and validation (20pts): Protects state with validated properties, constructors, or equivalent guards.
-      List<T> data workflow (20pts): Uses a list to add, store, and inspect multiple records.
-      Method decomposition and controller flow (20pts): Breaks behavior into named methods and keeps the menu/controller readable.
-      Search or update workflow (10pts): Demonstrates a successful lookup, update, or report path beyond simple listing.
-      Compiles, runs, and communicates clearly (10pts): Produces readable output and handles incorrect input without crashing.
-    `,
-    requiredKeywords: ['List', 'private', 'public', 'while'],
-    gradingTone: 'college-freshman-friendly'
-  },
-  'week-15': "Week 15: The Final Deployment. Students complete two Week 15 deliverables: a written final and a coding final project. Both are recorded in the final category. There is no Week 15 quiz or participation grade.",
+  'week-15':"Week 15: The Final Deployment. Students complete two Week 15 deliverables: a written final and a coding final project. Both are recorded in the final category. There is no Week 15 quiz or participation grade.",
   'week-15-lesson-1': "Week 15 Section 15.1: Global System Architecture. Focus: map controller flow, domain classes, list management, and validation boundaries before final submission.",
   'week-15-lesson-2': "Week 15 Section 15.2: Deployment Readiness. Focus: build a verification matrix, capture evidence, and plan an instructor-friendly demonstration path.",
   'week-15-homework': "Week 15 Written Final: Students answer the deployment-readiness prompts in a homework-style editor. This submission is separate from the coding final, but the score is recorded in the final category.",
