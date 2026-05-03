@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     12: '2026-04-19T23:59:59-04:00',
     13: '2026-04-26T23:59:59-04:00',
     14: '2026-05-03T23:59:59-04:00',
-    15: '2026-05-10T23:59:59-04:00',
+    15: '2026-05-09T23:59:59-04:00',
   };
   
   // Grace period constants
   const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00';
-  const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00';
-  const GRACE_PERIOD_CAP   = 75;
+  const GRACE_PERIOD_END   = '2026-05-09T23:59:59-04:00';
+  const GRACE_PERIOD_CAP   = 70;
   const isGracePeriodActive = () => {
     const now = new Date();
     return now >= new Date(GRACE_PERIOD_START) && now <= new Date(GRACE_PERIOD_END);
@@ -90,17 +90,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     if (isGracePeriodActive() && weekNum < 15) {
-      if (weekNum <= 13) {
-        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> Late penalty waived for this Week ${weekNum} homework. Your maximum score will be capped at ${GRACE_PERIOD_CAP}/100.`;
-        warningDiv.style.borderColor = "#eab308";
-        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
-        warningDiv.style.color = "#eab308";
-      } else if (weekNum === 14) {
-        warningDiv.innerHTML = `🔄 <strong>Grace Period Active:</strong> This Week 14 homework is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} late. Normal penalty applies, but your score will not drop below ${GRACE_PERIOD_CAP}/100.`;
-        warningDiv.style.borderColor = "#eab308";
-        warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
-        warningDiv.style.color = "#eab308";
-      }
+      warningDiv.innerHTML = `<strong>Recovery Window Active:</strong> Missing work from Weeks 01-14 may still be submitted during Week 15. The maximum score for this homework is capped at ${GRACE_PERIOD_CAP}/100.`;
+      warningDiv.style.borderColor = "#eab308";
+      warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
+      warningDiv.style.color = "#eab308";
     } else if (penaltyInfo.isZero) {
       warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This homework is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points. Contact your instructor for an extension.`;
       warningDiv.style.borderColor = "#ef4444";

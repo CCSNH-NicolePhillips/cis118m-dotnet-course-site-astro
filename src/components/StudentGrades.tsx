@@ -103,9 +103,8 @@ for (let w = 2; w <= 14; w++) {
   }
 }
 
-// Week 15: Participation, Quiz, Homework, Lab + Final Project
+// Week 15: Participation, Homework, Lab + Final Project (no quiz)
 ASSIGNMENTS.push({ id: 'week-15-participation', label: 'Participation', week: 15, type: 'participation' });
-ASSIGNMENTS.push({ id: 'week-15-quiz', label: 'Quiz', week: 15, type: 'quiz' });
 ASSIGNMENTS.push({ id: 'week-15-homework', label: 'Homework', week: 15, type: 'homework' });
 ASSIGNMENTS.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
 ASSIGNMENTS.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });

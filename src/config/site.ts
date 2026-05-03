@@ -153,12 +153,13 @@ export const WEEKS: WeekConfig[] = [
       { title: 'Technical Reflection 14 (Graded)', href: '/week-14/homework/' },
       { title: 'Weekly Assessment 14', href: '/week-14/weekly-assessment/' }
     ] },
-  { slug: '15', title: 'Week 15: ⚔️ FINAL BOSS FIGHT — Final Project', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00', pages: [
+  { slug: '15', title: 'Week 15: The Final Deployment', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-09T23:59:59-04:00', pages: [
       { title: '00. Week Overview', href: '/week-15/' },
-      { title: '15.1 Lesson 1', href: '/week-15/lesson-1/' },
-      { title: '15.2 Lesson 2', href: '/week-15/lesson-2/' },
-      { title: 'Lab (Graded)', href: '/week-15/lab/' },
-      { title: 'Technical Reflection (Graded)', href: '/week-15/homework/' }
+      { title: '15.1 Global System Architecture', href: '/week-15/lesson-1/' },
+      { title: '15.2 Deployment Readiness', href: '/week-15/lesson-2/' },
+      { title: 'Lab: Architecture Review (Graded)', href: '/week-15/lab/' },
+      { title: 'Deployment Memo (Graded)', href: '/week-15/homework/' },
+      { title: 'Final Project (Graded)', href: '/week-15/final-project/' }
     ] },
 ];
 

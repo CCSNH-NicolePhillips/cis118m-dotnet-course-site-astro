@@ -1,0 +1,394 @@
+---
+layout: ../../layouts/CourseLayout.astro
+title: "Week 15 - The Final Deployment"
+description: "Capstone system integration, recovery window policy, and final project delivery"
+---
+
+# Week 15: The Final Deployment
+
+<div class="deadline-banner">
+  <div>
+    <span class="deadline-label">Window:</span>
+    <span>May 04 - May 09</span>
+  </div>
+  <div>
+    <span class="deadline-label">Final submission deadline:</span>
+    <span>Saturday, May 9 at 11:59 PM Eastern</span>
+  </div>
+</div>
+
+<div class="recovery-alert" role="alert" aria-live="polite">
+  <h2>Recovery Window Alert</h2>
+  <p>Missing assignments and quizzes from Weeks 01-14 may still be completed during Week 15.</p>
+  <p>Recovered work is capped at 70%. This is the final opportunity for grade repair.</p>
+</div>
+
+<div class="mission-brief">
+  <h2>Mission Brief: System Integration Under Production Constraints</h2>
+  <p>
+    Week 15 is the capstone. No new language feature is introduced here. The engineering task is to integrate the architecture you have built since Week 10 into one coherent console application that accepts input, protects state integrity, manages collections correctly, and produces predictable operator output.
+  </p>
+  <p>
+    The final project must behave like a single system, not a stack of disconnected code fragments. Methods partition controller logic. Return values drive decisions. Custom classes model domain entities. <code>List&lt;T&gt;</code> manages many objects. Encapsulated properties and constructor rules prevent invalid state. This week is about assembling those parts into a dependable runtime design and submitting a technically defensible final delivery.
+  </p>
+</div>
+
+---
+
+<div class="section-cards">
+  <a href="/week-15/lesson-1/" class="section-card">
+    <div class="card-badge">15.1</div>
+    <div class="card-content">
+      <h3>Global System Architecture</h3>
+      <p>Map Weeks 10-14 into one controller layer, domain model, collection manager, and validation boundary plan.</p>
+    </div>
+  </a>
+  <a href="/week-15/lesson-2/" class="section-card">
+    <div class="card-badge">15.2</div>
+    <div class="card-content">
+      <h3>Deployment Readiness</h3>
+      <p>Define the verification matrix, demonstration flow, and submission package before you freeze the capstone build.</p>
+    </div>
+  </a>
+  <a href="/week-15/lab/" class="section-card">
+    <div class="card-badge">LAB</div>
+    <div class="card-content">
+      <h3>Architecture Review</h3>
+      <p>Submit the class map, property contracts, method inventory, and collection flow for the integrated system.</p>
+    </div>
+  </a>
+  <a href="/week-15/homework/" class="section-card">
+    <div class="card-badge">HW</div>
+    <div class="card-content">
+      <h3>Deployment Memo</h3>
+      <p>Document verification strategy, evidence capture, recovery triage, and the exact operator path the instructor should test.</p>
+    </div>
+  </a>
+  <a href="/week-15/final-project/" class="section-card final-card">
+    <div class="card-badge">FINAL</div>
+    <div class="card-content">
+      <h3>Capstone System Delivery</h3>
+      <p>Deliver the final project with the required architecture, runtime behavior, and proof that the system works end to end.</p>
+    </div>
+  </a>
+</div>
+
+<p class="quick-links">Optional reinforcement: <a href="/week-15/extra-practice/">Week 15 extra practice</a>.</p>
+
+---
+
+## Integration Stack: Weeks 10-14 in One Runtime Design
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Prior Week</th>
+        <th scope="col">Core Tool</th>
+        <th scope="col">Capstone Responsibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Week 10</td>
+        <td>Methods</td>
+        <td>Break menu actions into named operations instead of building a monolithic <code>Main</code> method.</td>
+      </tr>
+      <tr>
+        <td>Week 11</td>
+        <td>Return values</td>
+        <td>Use method results to drive validation, search, lookup, calculation, and control-flow decisions.</td>
+      </tr>
+      <tr>
+        <td>Week 12</td>
+        <td>Custom classes</td>
+        <td>Represent the domain with real object types instead of parallel primitive variables.</td>
+      </tr>
+      <tr>
+        <td>Week 13</td>
+        <td><code>List&lt;T&gt;</code></td>
+        <td>Manage many objects through add, search, iterate, remove, and report operations.</td>
+      </tr>
+      <tr>
+        <td>Week 14</td>
+        <td>Encapsulation and constructors</td>
+        <td>Reject invalid state at creation time and mutation time so the integrated system remains trustworthy.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="architect-rule">
+  <h3>Senior Architect Perspective</h3>
+  <p>
+    Capstone work is not judged by feature count alone. It is judged by whether the system has clear boundaries. If input validation, collection management, state protection, and reporting all collapse into <code>Main</code>, the project is still a prototype. A production-minded submission shows where control lives, where data lives, and where invalid operations are stopped.
+  </p>
+</div>
+
+---
+
+## Late Work Recovery Window
+
+<div class="policy-box">
+  <p><strong>Policy:</strong> During Week 15, students may submit any missing assignments or quizzes from Weeks 01-14 for a maximum score of 70%.</p>
+  <p><strong>Purpose:</strong> This is the final opportunity for grade repair.</p>
+  <p><strong>Boundary:</strong> The recovery window applies to missing work from Weeks 01-14. It does not replace the Week 15 capstone deadline.</p>
+</div>
+
+---
+
+## Final Project Technical Requirements
+
+<div class="requirement-grid">
+  <div class="requirement-card">
+    <h3>Custom Class Architecture</h3>
+    <p>At least one domain class must own real responsibility. The project cannot be implemented as primitive variables and free-floating helper code alone.</p>
+  </div>
+  <div class="requirement-card">
+    <h3>Encapsulated Properties</h3>
+    <p>Object state must be protected through validated properties, controlled constructors, or equivalent encapsulation that prevents invalid assignment.</p>
+  </div>
+  <div class="requirement-card">
+    <h3>List-based Data Management</h3>
+    <p>The system must manage multiple objects through a <code>List&lt;T&gt;</code>, including at least one lifecycle operation such as add, search, remove, update, or report.</p>
+  </div>
+  <div class="requirement-card">
+    <h3>Modular Method Logic</h3>
+    <p>Core behaviors must be decomposed into named methods with clear purpose and controlled data flow. A single oversized <code>Main</code> method is not sufficient.</p>
+  </div>
+</div>
+
+---
+
+## Week 15 Deliverables
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Deliverable</th>
+        <th scope="col">Role This Week</th>
+        <th scope="col">Assessment Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Lesson 15.1 and 15.2</td>
+        <td>Integration planning and verification readiness</td>
+        <td>Participation evidence</td>
+      </tr>
+      <tr>
+        <td>Lab 15: Architecture Review</td>
+        <td>Freeze the class map, property contracts, and method inventory</td>
+        <td>Graded</td>
+      </tr>
+      <tr>
+        <td>Homework 15: Deployment Memo</td>
+        <td>Define the demonstration path, test evidence, and recovery triage</td>
+        <td>Graded</td>
+      </tr>
+      <tr>
+        <td>Final Project</td>
+        <td>Primary capstone evaluation for Week 15</td>
+        <td>Major graded emphasis</td>
+      </tr>
+      <tr>
+        <td>Weekly Quiz</td>
+        <td>Not scheduled in Week 15</td>
+        <td>No Week 15 quiz</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+<div class="next-step">
+  <p>Start by defining the system boundary and method map before writing final submission code.</p>
+  <a href="/week-15/lesson-1/" class="vscode-button">Begin Section 15.1</a>
+</div>
+
+<style>{`
+  .deadline-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(249, 115, 22, 0.08) 100%);
+  }
+  .deadline-label {
+    font-weight: 700;
+    margin-right: 8px;
+    color: #fbbf24;
+  }
+  .recovery-alert {
+    margin: 20px 0;
+    padding: 18px 20px;
+    border-radius: 12px;
+    border: 2px solid rgba(248, 113, 113, 0.55);
+    background: linear-gradient(135deg, rgba(127, 29, 29, 0.22) 0%, rgba(153, 27, 27, 0.12) 100%);
+  }
+  .recovery-alert h2 {
+    margin: 0 0 0.5rem;
+    color: #fca5a5;
+    font-size: 1.05rem;
+  }
+  .recovery-alert p {
+    margin: 0 0 0.35rem;
+  }
+  .recovery-alert p:last-child {
+    margin-bottom: 0;
+  }
+  .mission-brief {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.08) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+  .mission-brief h2 {
+    margin-top: 0;
+    color: #4ec9b0;
+  }
+  .section-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0 1rem;
+  }
+  .section-card {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.25rem;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.45) 0%, rgba(30, 41, 59, 0.25) 100%);
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .section-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(78, 201, 176, 0.5);
+  }
+  .final-card {
+    border-color: rgba(251, 191, 36, 0.45);
+    background: linear-gradient(135deg, rgba(92, 52, 16, 0.35) 0%, rgba(120, 53, 15, 0.15) 100%);
+  }
+  .card-badge {
+    min-width: 58px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: #e2e8f0;
+  }
+  .card-content h3 {
+    margin: 0 0 0.35rem;
+    color: var(--text);
+    font-size: 1rem;
+  }
+  .card-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.92rem;
+  }
+  .quick-links {
+    margin: 0 0 2rem;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .policy-box {
+    border-radius: 12px;
+    border: 2px solid rgba(239, 68, 68, 0.55);
+    background: rgba(127, 29, 29, 0.15);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .policy-box p {
+    margin: 0 0 0.65rem;
+  }
+  .policy-box p:last-child {
+    margin-bottom: 0;
+  }
+  .requirement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .requirement-card {
+    border-radius: 12px;
+    border: 1px solid rgba(96, 165, 250, 0.35);
+    background: rgba(30, 64, 175, 0.12);
+    padding: 1.25rem;
+  }
+  .requirement-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: #93c5fd;
+    font-size: 1rem;
+  }
+  .requirement-card p {
+    margin: 0;
+  }
+  .architect-rule {
+    background: rgba(15, 118, 110, 0.14);
+    border: 2px solid rgba(45, 212, 191, 0.45);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #5eead4;
+  }
+  .next-step {
+    margin: 2rem 0 0;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(78, 201, 176, 0.35);
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
+    text-align: center;
+  }
+  .next-step p {
+    margin-top: 0;
+  }
+  :global(body[data-theme="light"]) .deadline-banner {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.18) 0%, rgba(251, 146, 60, 0.14) 100%);
+  }
+  :global(body[data-theme="light"]) .recovery-alert {
+    background: linear-gradient(135deg, rgba(254, 226, 226, 0.9) 0%, rgba(254, 242, 242, 0.95) 100%);
+    color: #7f1d1d;
+  }
+  :global(body[data-theme="light"]) .recovery-alert h2 {
+    color: #b91c1c;
+  }
+  :global(body[data-theme="light"]) .mission-brief h2,
+  :global(body[data-theme="light"]) .architect-rule h3,
+  :global(body[data-theme="light"]) .requirement-card h3 {
+    color: #0f766e;
+  }
+  :global(body[data-theme="light"]) .section-card,
+  :global(body[data-theme="light"]) .requirement-card,
+  :global(body[data-theme="light"]) .policy-box,
+  :global(body[data-theme="light"]) .architect-rule,
+  :global(body[data-theme="light"]) .next-step {
+    color: #334155;
+  }
+  :global(body[data-theme="light"]) .card-content p,
+  :global(body[data-theme="light"]) .quick-links {
+    color: #334155;
+  }
+  @media (max-width: 720px) {
+    .deadline-banner {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+`}</style>

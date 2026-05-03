@@ -1380,82 +1380,73 @@ Square overload body
 Area: 25
 ```
 
+### 📋 Quiz: Week 14 • Technical Assessment
+
+Summary: # Week 14 Technical Assessment Assessment Parameters Attempts: Unlimited Scoring: Highest score is recorded Passing: 70% required Time: No time limit Answers: Revealed after final attempt ---...
+
+Quiz Questions (10 questions):
+1. Q: Inside a set accessor, what is the name of the implicit variable that holds the incoming assigned value?
+   A: value
+   Why: The set accessor receives the assigned value through the implicitly declared variable named 'value'. Validation code reads from 'value' and only stores it in the backing field if it passes.
+2. Q: What is the primary purpose of a private backing field in an encapsulated class?
+   A: To hold the actual data while the public property controls all access to it
+   Why: The private backing field stores the raw value. External code never touches it directly. The public property's get and set accessors are the only controlled interface — and the set can apply validation before any value reaches the field.
+3. Q: What happens to the default no-argument constructor when you define your own constructor in a class?
+   A: The default constructor is removed — new ClassName() becomes a compile error
+   Why: Once you define any constructor explicitly, C# no longer generates the implicit no-argument default. Calling new ClassName() without arguments becomes a compile error, which enforces the requirement to use your parameterized constructor.
+4. Q: In a constructor chain using : this(...), which constructor executes first?
+   A: The delegated constructor (the target of this()) runs first
+   Why: The : this(...) syntax delegates to the specified constructor before the current constructor's body runs. The master constructor completes its full execution — including validation and field assignments — then control returns to the delegating constructor's body.
+5. Q: A computed property like InStock has get { return _stock > 0; }. What does it NOT have compared to a validated property like Price?
+   A: A private backing field and a set accessor
+   Why: Computed properties are get-only and have no backing field. They derive their value from existing fields at read time. InStock evaluates _stock > 0 every time it is read — nothing is stored, and there is no setter because the value is calculated, not assigned.
+6. Q: What exception type should a set accessor throw when it receives an invalid value?
+   A: ArgumentException
+   Why: ArgumentException is the standard .NET exception for invalid argument values. In a set accessor, 'value' is the argument being passed in, so throwing ArgumentException communicates clearly that the caller supplied an unacceptable value.
+7. Q: A Product object is created with Product(\
+   A: false — _stock defaults to 0, so _stock > 0 evaluates to false
+   Why: int fields default to 0 in C#. The one-param constructor chains to the master with stock = 0, which assigns _stock = 0. InStock evaluates _stock > 0 at read time, which is 0 > 0 = false. A product with zero stock is correctly reported as not in stock.
+8. Q: Why should all validation logic live only in the master constructor, not duplicated across every overload?
+   A: Because duplicated validation across overloads will drift when a rule changes, silently leaving some creation paths broken
+   Why: When validation is copied into each overload, updating one rule requires updating every copy. A missed update is silent: all overloads compile and create objects, but objects created through the outdated overload bypass the new rule. Chaining to a master constructor means one edit updates all creation paths.
+9. Q: Which of these correctly defines a computed TotalValue property on a Product class with _price and _stock fields?
+   A: public double TotalValue { get { return _price * _stock; } }
+   Why: A computed property uses a get accessor with a return statement that derives the value from other fields. It has no backing field and no set accessor. The value is recalculated on every read, so it is always current without any manual update.
+10. Q: What happens if code in Program.cs tries to write product._price = 99.99 directly, bypassing the Price property?
+   A: The compiler produces an error — private members are not accessible outside the class
+   Why: The private modifier restricts access to the declaring class only. Attempting to read or write a private member from outside the class is a compile-time error — the program will not build. This is encapsulation enforced by the language, not just a convention.
+
 ---
 
 ## Week 15: Final Project
 
-### 📚 Overview: Week 15 • Extra Practice
+### 📚 Overview: Week 15 - Extra Practice
 
-Summary: # Week 15 Extra Practice: Final project warm-ups Pick **1–2** items (optional). - Write a method FindStudentById and create 6 test cases for it. - Create a menu loop (1 add, 2 list, 3 search, 4 quit). - Challenge: Save/load from CSV with basic validation (skip bad lines). ## Open in Editor - Use: /e...
+Summary: # Week 15 Extra Practice Select one or two optional drills if you want a stronger deployment rehearsal. 1. Write a one-page interface map showing which method calls create objects, search the list, and print reports. 2. Build a manual verification matrix with at least six tests, including three edge...
 
-### 📝 Homework: Week 15 • Week 15 Homework: Starter Code + One Feature
+### 📚 Overview: Final Project - Capstone System Delivery
 
-Summary: # Week 15 Homework: Starter Code + One Feature ## Overview Create the project skeleton and implement ONE feature end-to-end (including acceptance checks). ## Requirements checklist (acceptance criteria) - [ ] Project compiles and runs - [ ] Includes at least one class you designed - [ ] Implements 1...
+Summary: # Final Project: Capstone System Delivery Due: Saturday, May 9 at 11:59 PM Eastern Assessment emphasis: Primary graded deliverable for Week 15 The final project is the capstone system integration submission. The grading decision is based on whether the project demonstrates a coherent design, control...
 
-### 📚 Overview: Week 15
-Key Concepts:
-- This is it.
-- May 10th
-- Focus:
+### 📝 Homework: Homework 15 - Deployment Readiness Memo
 
-Summary: # ⚔️ Week 15: FINAL BOSS FIGHT > **This is it.** No Week 16. No extra chances. Build your capstone project and submit by **May 10th**. This is the final boss — defeat it. **Focus:** Build and submit your final project. Apply everything you've learned. ## This week’s pages - Lesson 1: [./lesson-1/](....
+Summary: # Homework 15: Deployment Readiness Memo Due: Saturday, May 9 at 11:59 PM Eastern Answer every prompt in 3-5 sentences with specific technical reasoning. 1. Architecture summary: Explain how your custom class architecture, encapsulated properties, List&lt;T&gt; data management, and modular methods i...
 
-### 🔬 Lab: Week 15 • Week 15 Lab: Final Project Proposal
+### 📚 Overview: Week 15 - The Final Deployment
 
-Summary: # Week 15 Lab: Final Project Proposal ## Overview Create a short proposal for your final project: what it is, features, and what ‘done’ means. ## Requirements checklist (acceptance criteria) - [ ] Project title + one-sentence description - [ ] List 4–6 MVP features - [ ] Each feature has 2–3 accepta...
+Summary: # Week 15: The Final Deployment Window: May 04 - May 09 Final submission deadline: Saturday, May 9 at 11:59 PM Eastern Recovery Window Alert Missing assignments and quizzes from Weeks 01-14 may still be completed during Week 15. Recovered work is capped at 70%. This is the final opportunity for grad...
 
-### 📖 Lesson: Week 15 • Lesson 1
-Key Concepts:
-- Method
+### 🔬 Lab: Lab 15 - Architecture Review: Global System Design
 
-Summary: # Week 15 Lesson 1: Review map (what tool solves what problem?) ## Goal - Know when to use loops, lists, methods, and classes - Practice reading code and predicting output - Build a personal ‘cheat sheet’ of patterns ## What to know - **Loop**: Repeat work (while for retry, for for counting). - **Li...
+Summary: # Lab 15: Architecture Review - Global System Design Due: Saturday, May 9 at 11:59 PM Eastern Before the final submission is frozen, document the architecture that will hold the system together. This lab is the design review. The goal is to prove that the capstone has a clear class model, controlled...
 
-### 📖 Lesson: Week 15 • Lesson 2
-Key Concepts:
-- Feature
-- Acceptance criteria
-- 1) What’s the purpose of acceptance criteria?
+### 📖 Lesson: Section 15.1 - Global System Architecture
 
-Summary: # Week 15 Lesson 2: Final project planning (feature list + acceptance criteria) ## Goal - Choose a final project idea (small, realistic) - Write features as checklists - Define ‘done’ with acceptance criteria ## What to know - **Feature**: A user-visible capability (Add student, Search, Save). - **A...
+Summary: # 15.1 Global System Architecture ## Integration Objective Week 15 begins with architecture, not code volume. Before you attempt final polishing, you need a system map that explains how control enters the program, how objects are created, where collections live, and which methods own each behavior. ...
 
----
+### 📖 Lesson: Section 15.2 - Deployment Readiness
 
-## Week 16: Week 16
-
-### 📚 Overview: Week 16 • Extra Practice
-
-Summary: # Week 16 Extra Practice: If you have extra time Pick **1–2** items (optional). - Add an ‘edit’ feature (update an object’s property). - Add input validation everywhere (Trim, case-insensitive comparisons). - Challenge: Save automatically after every change. ## Open in Editor - Use: /editor/?week=16...
-
-### 📝 Homework: Week 16 • Week 16 Homework: (Optional) Extra Feature
-
-Summary: # Week 16 Homework: (Optional) Extra Feature ## Overview If you want extra practice, add one small feature that improves your project (not required unless your instructor says so). ## Requirements checklist (acceptance criteria) - [ ] Adds exactly 1 new feature (example: edit, remove, sort, or expor...
-
-### 📚 Overview: Week 16
-Key Concepts:
-- Focus:
-
-Summary: # Week 16 **Focus:** Final project: finish, test, and submit. ## This week’s pages - Lesson 1: [./lesson-1/](./lesson-1/) — - Lesson 2: [./lesson-2/](./lesson-2/) — - Extra practice: [./extra-practice/](./extra-practice/) — - Lab: [./lab/](./lab/) — - Homework: [./homework/](./homework/) — ## By the...
-
-### 🔬 Lab: Week 16 • Week 16 Lab: Final Project Submission
-
-Summary: # Week 16 Lab: Final Project Submission ## Overview Finish and submit your final project. Show that it works and that you tested it. ## Requirements checklist (acceptance criteria) - [ ] Implements at least 4 MVP features from your proposal - [ ] Uses at least one class and at least one List of obje...
-
-### 📖 Lesson: Week 16 • Lesson 1
-Key Concepts:
-- Edge cases
-- Happy path
-- Polish
-- 1) Name two edge cases you should test for a search feature.
-
-Summary: # Week 16 Lesson 1: Finishing strong (testing + polish) ## Goal - Run through a test checklist before submitting - Handle common edge cases (empty input, not found, invalid numbers) - Make output readable for grading ## What to know - **Edge cases**: Empty, 0, negative, large numbers, not found, fil...
-
-### 📖 Lesson: Week 16 • Lesson 2
-Key Concepts:
-- Evidence
-- Reflection
-- 1) What are 3 things you usually submit for the final?
-
-Summary: # Week 16 Lesson 2: Final submission checklist (what to turn in) ## Goal - Submit everything needed for grading - Provide proof your project runs - Reflect briefly on what you learned ## What to know - **Evidence**: Screenshots and sample output that prove features work. - **Reflection**: Short: wha...
+Summary: # 15.2 Deployment Readiness Deployment readiness means more than "the code runs on my machine." It means the instructor can execute the project, observe the intended features, test edge conditions, and verify that the architecture matches the written specification. A capstone submission is incomplet...
 
 ---
 

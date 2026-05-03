@@ -36,7 +36,7 @@ export async function handler(event, context) {
     const redis = getRedis();
     const pageId = quizId; // e.g., "week-01-required-quiz"
     
-    // Check for Week 15 grace period (auto-unlocks past-due quizzes)
+    // Check for Week 15 recovery window (auto-unlocks past-due quizzes from Weeks 01-14)
     const graceEnabled = await isGracePeriodEnabled(redis);
     const graceInfo = getQuizGracePeriodInfo(pageId, new Date(), graceEnabled);
     let gracePeriodApplied = false;
@@ -45,9 +45,9 @@ export async function handler(event, context) {
     const dueDate = getDueDateForPageId(pageId);
     if (dueDate && isPastDue(pageId, new Date(), email)) {
       if (graceInfo.isGracePeriod) {
-        // Grace period auto-unlock — allow submission with score cap
+        // Recovery window auto-unlock - allow submission with score cap
         gracePeriodApplied = true;
-        console.log(`[submit-quiz] Grace period auto-unlock for ${sub}/${pageId} (cap: ${graceInfo.scoreCap})`);
+        console.log(`[submit-quiz] Recovery window auto-unlock for ${sub}/${pageId} (cap: ${graceInfo.scoreCap})`);
       } else {
         // Check if instructor has unlocked this quiz for this student
         const unlockKey = `quiz:unlock:${sub}:${pageId}`;
@@ -156,7 +156,7 @@ export async function handler(event, context) {
 
     let responseMessage = passed ? 'Assessment completed successfully.' : 'Submission recorded.';
     if (gracePeriodApplied && effectiveScore !== score) {
-      responseMessage = `🔄 GRACE PERIOD: Score capped at ${graceInfo.scoreCap}/100. ${responseMessage}`;
+      responseMessage = `RECOVERY WINDOW: Score capped at ${graceInfo.scoreCap}/100. ${responseMessage}`;
     }
 
     return {

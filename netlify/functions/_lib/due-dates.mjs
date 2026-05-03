@@ -4,12 +4,12 @@
  * Centralized logic for checking due dates and calculating late penalties.
  * Used by submit-quiz, submit-lab, and submit-homework functions.
  * 
- * WEEK 15 GRACE PERIOD:
- * When Week 15 unlocks (May 4, 2026), students can submit/resubmit late work:
- *   - Weeks 1-13: Late penalty WAIVED, max score capped at 75
- *   - Week 14: Normal late penalty applies, but score FLOORS at 75
- *   - Quizzes: Auto-unlocked, score capped at 75
- * Only applies to NEW submissions made during the grace window.
+ * WEEK 15 RECOVERY WINDOW:
+ * When Week 15 unlocks (May 4, 2026), students can submit missing work from Weeks 01-14:
+ *   - Assignments and quizzes from Weeks 01-14 are capped at 70
+ *   - The recovery window is the final opportunity for grade repair
+ *   - Week 15 itself keeps its normal due date
+ * Only applies to NEW submissions made during the recovery window.
  */
 
 /**
@@ -88,7 +88,7 @@ const WEEK_DUE_DATES = {
   12: '2026-04-19T23:59:59-04:00', // Week 12 due Sunday 4/19
   13: '2026-04-26T23:59:59-04:00', // Week 13 due Sunday 4/26
   14: '2026-05-03T23:59:59-04:00', // Week 14 due Sunday 5/3
-  15: '2026-05-10T23:59:59-04:00', // Week 15 due Sunday 5/10
+  15: '2026-05-09T23:59:59-04:00', // Week 15 due Saturday 5/9
 };
 
 /**
@@ -286,20 +286,20 @@ export function allowsLateWithPenalty(pageId) {
 }
 
 // ============================================================
-// WEEK 15 GRACE PERIOD
+// WEEK 15 RECOVERY WINDOW
 // ============================================================
 
 /**
- * Week 15 Grace Period Window
+ * Week 15 Recovery Window
  * - Opens when Week 15 unlocks (May 4, 2026 midnight EDT)
- * - Closes when Week 15 is due (May 10, 2026 11:59 PM EDT)
+ * - Closes when Week 15 is due (May 9, 2026 11:59 PM EDT)
  */
 const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00'; // Week 15 unlock
-const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00'; // Week 15 due
-const GRACE_PERIOD_CAP   = 75; // Max score for grace period submissions
+const GRACE_PERIOD_END   = '2026-05-09T23:59:59-04:00'; // Week 15 due
+const GRACE_PERIOD_CAP   = 70; // Max score for recovery window submissions
 
 /**
- * Check if the Week 15 grace period date window is active
+ * Check if the Week 15 recovery window date range is active
  * @param {Date} [submissionTime] - Time to check (defaults to now)
  * @returns {boolean}
  */
@@ -310,7 +310,7 @@ export function isGracePeriodActive(submissionTime = new Date()) {
 }
 
 /**
- * Check if the grace period is enabled (date window active OR instructor override).
+ * Check if the recovery window is enabled (date range active OR instructor override).
  * Requires Redis to check the instructor toggle.
  * @param {import('@upstash/redis').Redis} redis
  * @param {Date} [submissionTime]
@@ -330,12 +330,11 @@ export async function isGracePeriodEnabled(redis, submissionTime = new Date()) {
 }
 
 /**
- * Apply Week 15 grace period adjustments to a penalty result.
+ * Apply Week 15 recovery window adjustments to a penalty result.
  * 
  * Policy:
- *   Weeks 1-13: Late penalty WAIVED, score capped at 75
- *   Week 14:    Normal late penalty applies, score FLOORS at 75
- *   Week 15+:   No grace period (Week 15 has its own due date)
+ *   Weeks 1-14: Late penalty WAIVED, score capped at 70
+ *   Week 15+:   No recovery treatment (Week 15 has its own due date)
  * 
  * @param {string} pageId - Assignment ID (e.g., "week-03-lab")
  * @param {number} originalScore - Score before any penalty (0-100)
@@ -357,8 +356,8 @@ export function applyGracePeriod(pageId, originalScore, penaltyResult, submissio
     return { ...penaltyResult, gracePeriod: false };
   }
 
-  if (weekNum <= 13) {
-    // Weeks 1-13: Waive the late penalty entirely, cap at 75
+  if (weekNum <= 14) {
+    // Weeks 1-14: Waive the late penalty entirely, cap at 70
     const cappedScore = Math.min(originalScore, GRACE_PERIOD_CAP);
     return {
       finalScore: cappedScore,
@@ -370,28 +369,12 @@ export function applyGracePeriod(pageId, originalScore, penaltyResult, submissio
     };
   }
 
-  if (weekNum === 14) {
-    // Week 14: Normal penalty applies, but score can't drop below 75
-    // Formula: min(originalScore, max(penalizedScore, 75))
-    // - The floor of 75 prevents the penalty from being too harsh
-    // - But the score can never exceed the original earned score
-    const floored = Math.min(originalScore, Math.max(penaltyResult.finalScore, GRACE_PERIOD_CAP));
-    return {
-      finalScore: floored,
-      penaltyPercent: penaltyResult.penaltyPercent,
-      daysLate: penaltyResult.daysLate,
-      isZero: false,
-      gracePeriod: true,
-      gracePeriodCap: GRACE_PERIOD_CAP
-    };
-  }
-
   return { ...penaltyResult, gracePeriod: false };
 }
 
 /**
- * Get grace period info for a quiz submission.
- * During grace period, past-due quizzes are auto-unlocked with score capped at 75.
+ * Get recovery window info for a quiz submission.
+ * During the recovery window, past-due quizzes from Weeks 01-14 are auto-unlocked with score capped at 70.
  * 
  * @param {string} pageId - Quiz ID (e.g., "week-05-quiz")
  * @param {Date} [submissionTime]
@@ -409,22 +392,19 @@ export function getQuizGracePeriodInfo(pageId, submissionTime = new Date(), grac
     return { isGracePeriod: false, scoreCap: null, weekNum };
   }
   
-  // All past-due quizzes (weeks 1-14) are unlocked with score capped at 75
+  // All past-due quizzes (Weeks 01-14) are unlocked with score capped at 70
   return { isGracePeriod: true, scoreCap: GRACE_PERIOD_CAP, weekNum };
 }
 
 /**
- * Format a grace period message for the student
+ * Format a recovery window message for the student
  * @param {number} weekNum
  * @param {number} cappedScore
  * @returns {string}
  */
 export function formatGracePeriodMessage(weekNum, cappedScore) {
-  if (weekNum <= 13) {
-    return `🔄 GRACE PERIOD: Late penalty waived for Week ${weekNum}. Maximum score capped at ${GRACE_PERIOD_CAP}/100.`;
-  }
-  if (weekNum === 14) {
-    return `🔄 GRACE PERIOD: Late penalty applied with a floor of ${GRACE_PERIOD_CAP}/100 for Week ${weekNum}. Final score: ${cappedScore}/100.`;
+  if (weekNum <= 14) {
+    return `RECOVERY WINDOW: Week ${weekNum} work is capped at ${GRACE_PERIOD_CAP}/100 during the Week 15 recovery period. Final score: ${cappedScore}/100.`;
   }
   return '';
 }

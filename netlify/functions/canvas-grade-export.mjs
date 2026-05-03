@@ -42,7 +42,7 @@ const WEEKS = [
   { slug: '12', dueDate: '2026-04-19T23:59:59-04:00', unlockDate: '2026-04-13T00:00:00-04:00' },
   { slug: '13', dueDate: '2026-04-26T23:59:59-04:00', unlockDate: '2026-04-20T00:00:00-04:00' },
   { slug: '14', dueDate: '2026-05-03T23:59:59-04:00', unlockDate: '2026-04-27T00:00:00-04:00' },
-  { slug: '15', dueDate: '2026-05-10T23:59:59-04:00', unlockDate: '2026-05-04T00:00:00-04:00' },
+  { slug: '15', dueDate: '2026-05-09T23:59:59-04:00', unlockDate: '2026-05-04T00:00:00-04:00' },
 ];
 
 function isWeekPastDue(weekSlug) {

@@ -113,9 +113,8 @@ const generateAssignments = () => {
     }
   }
   
-  // Week 15 - Final week with regular assignments plus Final Project
+  // Week 15 - Final week with participation, lab, homework, and Final Project (no quiz)
   assignments.push({ id: 'week-15-participation', label: 'Part', week: 15, type: 'participation' });
-  assignments.push({ id: 'week-15-quiz', label: 'Quiz', week: 15, type: 'quiz' });
   assignments.push({ id: 'week-15-homework', label: 'HW', week: 15, type: 'homework' });
   assignments.push({ id: 'week-15-lab', label: 'Lab', week: 15, type: 'lab' });
   assignments.push({ id: 'week-15-final', label: 'Final', week: 15, type: 'final' });

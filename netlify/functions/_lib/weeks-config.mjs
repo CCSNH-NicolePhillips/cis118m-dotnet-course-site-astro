@@ -22,7 +22,7 @@ export const WEEKS = [
   { id: 'week-12', title: '12. Custom Data Types & Classes', unlockDate: '2026-04-13T00:00:00-04:00', dueDate: '2026-04-19T23:59:59-04:00' },
   { id: 'week-13', title: '13. Lists', unlockDate: '2026-04-20T00:00:00-04:00', dueDate: '2026-04-26T23:59:59-04:00' },
   { id: 'week-14', title: '14. Program Integration', unlockDate: '2026-04-27T00:00:00-04:00', dueDate: '2026-05-03T23:59:59-04:00' },
-  { id: 'week-15', title: '15. Final Project Development', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-10T23:59:59-04:00' },
+  { id: 'week-15', title: '15. Final Project Development', unlockDate: '2026-05-04T00:00:00-04:00', dueDate: '2026-05-09T23:59:59-04:00' },
   { id: 'week-16', title: '16. Review & Reflection', unlockDate: '2026-05-11T00:00:00-04:00', dueDate: '2026-05-17T23:59:59-04:00' },
 ];
 

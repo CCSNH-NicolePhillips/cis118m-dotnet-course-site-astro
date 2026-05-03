@@ -169,13 +169,13 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
       12: '2026-04-19T23:59:59-04:00',
       13: '2026-04-26T23:59:59-04:00',
       14: '2026-05-03T23:59:59-04:00',
-      15: '2026-05-10T23:59:59-04:00',
+      15: '2026-05-09T23:59:59-04:00',
     };
     
-    // Week 15 grace period window
+    // Week 15 recovery window
     const GRACE_PERIOD_START = '2026-05-04T00:00:00-04:00';
-    const GRACE_PERIOD_END   = '2026-05-10T23:59:59-04:00';
-    const GRACE_PERIOD_CAP   = 75;
+    const GRACE_PERIOD_END   = '2026-05-09T23:59:59-04:00';
+    const GRACE_PERIOD_CAP   = 70;
     
     const isGracePeriodActive = () => {
       const now = new Date();
@@ -574,18 +574,19 @@ const effectiveMaxAttempts = maxAttempts === 0 ? 999999 : maxAttempts;
     loadProgress().then(() => {
       // Check if quiz is past due on page load (after unlock status is known)
       if (checkPastDue() && !isQuizUnlocked) {
-        // Check if grace period is active — auto-unlock with notice
-        if (isGracePeriodActive()) {
-          // Grace period: show the form with a cap notice instead of locking
+        const recoveryWeekNum = getWeekFromQuizId(quizId);
+        // Check if recovery window is active - auto-unlock Weeks 01-14 with notice
+        if (recoveryWeekNum && recoveryWeekNum < 15 && isGracePeriodActive()) {
+          // Recovery window: show the form with a cap notice instead of locking
           form.style.display = 'block';
           if (pastDueDiv) pastDueDiv.style.display = 'none';
           
           const graceNotice = document.createElement('div');
           graceNotice.className = 'grace-period-notice';
           graceNotice.style.cssText = 'background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; padding: 12px 16px; border-radius: 8px; margin-bottom: 20px; color: #eab308;';
-          graceNotice.innerHTML = `<strong>🔄 GRACE PERIOD</strong> — This quiz is past its original due date, but has been reopened for the Week 15 grace window. Your maximum score will be capped at ${GRACE_PERIOD_CAP}/100.`;
+          graceNotice.innerHTML = `<strong>RECOVERY WINDOW</strong> - This quiz is past its original due date, but it is available during the Week 15 recovery window. The maximum score for recovered Week 01-14 quizzes is capped at ${GRACE_PERIOD_CAP}/100.`;
           form.insertBefore(graceNotice, form.firstChild);
-          console.log('[Quiz] Grace period auto-unlock for:', quizId);
+          console.log('[Quiz] Recovery window auto-unlock for:', quizId);
         } else {
           const dueDate = getFormattedDueDate();
           if (pastDueDiv && dueInfoDiv) {

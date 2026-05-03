@@ -1,0 +1,72 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Homework 15 - Deployment Readiness Memo"
+description: "Document the verification plan, recovery triage, and demonstration path for the capstone submission"
+---
+
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Homework 15: Deployment Readiness Memo
+
+<div class="deadline-banner">
+  <span class="deadline-label">Due:</span>
+  <span>Saturday, May 9 at 11:59 PM Eastern</span>
+</div>
+
+Answer every prompt in 3-5 sentences with specific technical reasoning.
+
+1. <strong>Architecture summary:</strong> Explain how your custom class architecture, encapsulated properties, <code>List&lt;T&gt;</code> data management, and modular methods interact during one normal operator workflow.
+2. <strong>Verification strategy:</strong> Describe at least four tests you will run before submission, including at least two edge cases that could fail if the system is weakly designed.
+3. <strong>Recovery-window triage:</strong> If you still have missing work from Weeks 01-14, identify exactly which items you will recover during the Week 15 window and how you will schedule them without undermining the capstone submission. If you have no missing work, state that explicitly.
+4. <strong>Instructor runbook:</strong> Write the exact demonstration path an instructor should follow to verify your project in under five minutes, including which commands or menu options reveal the strongest architectural evidence.
+
+<div class="architect-rule">
+  <h3>Senior Architect Expectation</h3>
+  <p>
+    Your memo should sound like a deployment handoff document. Use concrete language: method names, object names, validation rules, and test scenarios. Avoid vague claims such as "it works" or "the code is organized." Explain how the system proves those claims.
+  </p>
+</div>
+
+<EngineeringLogEditor client:load assignmentId="week-15-homework" />
+
+---
+
+## Reference Material
+
+- <a href="/week-15/lesson-1/">Section 15.1: Global System Architecture</a>
+- <a href="/week-15/lesson-2/">Section 15.2: Deployment Readiness</a>
+- <a href="/week-15/final-project/">Final Project: Capstone System Delivery</a>
+
+<style>{`
+  .deadline-banner {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    padding: 14px 18px;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(249, 115, 22, 0.08) 100%);
+  }
+  .deadline-label {
+    font-weight: 700;
+    color: #fbbf24;
+  }
+  .architect-rule {
+    background: rgba(30, 64, 175, 0.12);
+    border: 2px solid rgba(96, 165, 250, 0.4);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #93c5fd;
+  }
+  :global(body[data-theme="light"]) .architect-rule {
+    color: #334155;
+  }
+  :global(body[data-theme="light"]) .architect-rule h3 {
+    color: #1d4ed8;
+  }
+`}</style>

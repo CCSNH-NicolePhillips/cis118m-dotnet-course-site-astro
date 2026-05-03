@@ -326,11 +326,12 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-14-homework': "Topic: Reflection. Focus: When to use arrays vs lists.",
   
   // Week 15
-  'week-15': "Topic: Exception Handling. Focus: Error management.",
-  'week-15-lesson-1': "Topic: Exception Handling. Focus: try-catch blocks for error management.",
-  'week-15-lesson-2': "Topic: Debugging. Focus: Finding and fixing bugs systematically.",
-  'week-15-lab': "Topic: Robust Code. Mission: Programs that handle errors gracefully.",
-  'week-15-homework': "Topic: Reflection. Focus: Understanding defensive programming.",
+  'week-15': "Week 15: The Final Deployment. This is the capstone system-integration week. Students must integrate methods, return values, custom classes, List<T>, encapsulation, and constructor rules into one coherent final project. There is no Week 15 quiz. The Week 15 recovery window allows missing assignments and quizzes from Weeks 01-14 to be submitted for a maximum score of 70%.",
+  'week-15-lesson-1': "Topic: Global System Architecture. Focus: map Weeks 10-14 into a controller layer, domain model, List<T> collection manager, and validation boundary plan.",
+  'week-15-lesson-2': "Topic: Deployment Readiness. Focus: verification matrix design, edge-case testing, evidence capture, and final submission packaging.",
+  'week-15-lab': "Topic: Architecture Review. Mission: produce a technical design review showing custom class architecture, encapsulated properties, List<T> ownership, and modular method decomposition.",
+  'week-15-homework': "Topic: Deployment Memo. Focus: explain the test strategy, recovery-window triage, and instructor demonstration path for the capstone system.",
+  'week-15-final-project': "Topic: Final Project Submission. Focus: deliver an integrated console system demonstrating custom class architecture, encapsulated properties, list-based data management, and modular method logic.",
   
 };
 

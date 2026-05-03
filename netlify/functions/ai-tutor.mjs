@@ -33,7 +33,7 @@ const WEEKS = [
   { week: 12, title: "Custom Data Types & Classes", dueDate: "Sunday, April 19, 2026 at 11:59 PM EDT" },
   { week: 13, title: "Lists & Collections", dueDate: "Sunday, April 26, 2026 at 11:59 PM EDT" },
   { week: 14, title: "Program Integration", dueDate: "Sunday, May 3, 2026 at 11:59 PM EDT" },
-  { week: 15, title: "Final Project", dueDate: "Sunday, May 10, 2026 at 11:59 PM EDT" }
+  { week: 15, title: "Final Project", dueDate: "Saturday, May 9, 2026 at 11:59 PM EDT" }
 ];
 
 // Build syllabus context for the AI

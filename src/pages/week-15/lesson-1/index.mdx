@@ -1,0 +1,190 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 15.1 - Global System Architecture"
+description: "Integrate methods, return values, classes, collections, and encapsulation into one deployable console system"
+---
+
+# 15.1 Global System Architecture
+
+## Integration Objective
+
+Week 15 begins with architecture, not code volume. Before you attempt final polishing, you need a system map that explains how control enters the program, how objects are created, where collections live, and which methods own each behavior. The objective is to turn the Weeks 10-14 toolset into one predictable runtime.
+
+---
+
+## Architectural Layers
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Layer</th>
+        <th scope="col">Primary Responsibility</th>
+        <th scope="col">Typical Week 15 Implementation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Controller</td>
+        <td>Read commands, route user intent, and coordinate calls</td>
+        <td><code>RunMenu()</code>, menu loop, command dispatch methods</td>
+      </tr>
+      <tr>
+        <td>Domain model</td>
+        <td>Represent real entities and enforce legal state</td>
+        <td><code>Student</code>, <code>InventoryItem</code>, <code>TaskRecord</code>, or another custom class</td>
+      </tr>
+      <tr>
+        <td>Collection manager</td>
+        <td>Store and iterate over many domain objects</td>
+        <td><code>List&lt;Student&gt;</code>, <code>List&lt;InventoryItem&gt;</code>, search loops, reports</td>
+      </tr>
+      <tr>
+        <td>Validation boundary</td>
+        <td>Reject invalid data before it corrupts the system</td>
+        <td>Validated properties, guarded constructors, input checks before mutation</td>
+      </tr>
+      <tr>
+        <td>Reporting layer</td>
+        <td>Produce readable output for operators and grading review</td>
+        <td>Formatted summaries, totals, not-found messages, success confirmation</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Reference System Skeleton
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+class InventoryItem
+{
+    private int _quantity;
+
+    public string Name { get; }
+
+    public int Quantity
+    {
+        get => _quantity;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), "Quantity cannot be negative.");
+            }
+
+            _quantity = value;
+        }
+    }
+
+    public InventoryItem(string name, int quantity)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Name is required.", nameof(name));
+        }
+
+        Name = name.Trim();
+        Quantity = quantity;
+    }
+}
+
+static void RunMenu(List<InventoryItem> items)
+{
+    bool isRunning = true;
+
+    while (isRunning)
+    {
+        Console.WriteLine("1. Add  2. List  3. Search  4. Quit");
+        string command = Console.ReadLine() ?? string.Empty;
+
+        switch (command)
+        {
+            case "1":
+                AddItem(items);
+                break;
+            case "2":
+                PrintReport(items);
+                break;
+            case "3":
+                SearchItem(items);
+                break;
+            case "4":
+                isRunning = false;
+                break;
+        }
+    }
+}
+```
+
+The important capstone lesson is not the sample domain. It is the separation of responsibilities. Control stays in the menu loop. State integrity stays in the class. Collection operations stay in methods that receive the list they need.
+
+---
+
+## Integration Sequence
+
+1. Define the domain class first, including the properties and validation rules that make invalid state impossible.
+2. Declare the <code>List&lt;T&gt;</code> that owns all runtime records for the application session.
+3. Write one method per operator action: add, search, list, update, remove, save, or load.
+4. Use return values for lookup and calculation operations so decisions are based on method results instead of duplicated logic.
+5. Build the controller loop last, after the underlying methods and class contracts already exist.
+
+---
+
+## Boundary Failures to Eliminate
+
+- Duplicating validation logic in multiple menu branches instead of centralizing it in the class.
+- Creating objects directly inside report loops with no constructor contract.
+- Storing parallel primitive lists instead of one <code>List&lt;CustomClass&gt;</code>.
+- Printing inside every helper method when the method should return data to its caller.
+- Allowing a single method to read input, mutate the list, calculate totals, and format reports all at once.
+
+<div class="architect-rule">
+  <h3>Senior Architect Perspective</h3>
+  <p>
+    Integration quality is visible in the call graph. A strong capstone project lets you point to the class boundary, the collection owner, and the exact method where each behavior starts and ends. If you cannot describe the path of data through the system, the architecture is still accidental.
+  </p>
+</div>
+
+---
+
+<div class="next-section">
+  <p>Next step: convert the architecture map into a verification and submission plan.</p>
+  <a href="/week-15/lesson-2/" class="vscode-button">Continue to Section 15.2</a>
+</div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(15, 118, 110, 0.14);
+    border: 2px solid rgba(45, 212, 191, 0.45);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #5eead4;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+  .next-section p {
+    margin-top: 0;
+  }
+  :global(body[data-theme="light"]) .architect-rule,
+  :global(body[data-theme="light"]) .next-section {
+    color: #334155;
+  }
+  :global(body[data-theme="light"]) .architect-rule h3 {
+    color: #0f766e;
+  }
+`}</style>

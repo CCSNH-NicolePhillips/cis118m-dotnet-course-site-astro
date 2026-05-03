@@ -1,0 +1,149 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Final Project - Capstone System Delivery"
+description: "Final submission requirements for the Week 15 capstone project"
+---
+
+# Final Project: Capstone System Delivery
+
+<div class="deadline-banner">
+  <div>
+    <span class="deadline-label">Due:</span>
+    <span>Saturday, May 9 at 11:59 PM Eastern</span>
+  </div>
+  <div>
+    <span class="deadline-label">Assessment emphasis:</span>
+    <span>Primary graded deliverable for Week 15</span>
+  </div>
+</div>
+
+The final project is the capstone system integration submission. The grading decision is based on whether the project demonstrates a coherent design, controlled runtime behavior, and visible proof that the integrated system works.
+
+---
+
+## Required Technical Evidence
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Mandatory requirement</th>
+        <th scope="col">What the instructor must be able to verify</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Custom class architecture</td>
+        <td>At least one real domain class exists and owns meaningful responsibility beyond passive storage.</td>
+      </tr>
+      <tr>
+        <td>Encapsulated properties</td>
+        <td>State protection exists through validated properties, controlled constructors, or equivalent guarded mutation boundaries.</td>
+      </tr>
+      <tr>
+        <td>List-based data management</td>
+        <td>The system manages multiple domain objects through a <code>List&lt;T&gt;</code> and performs lifecycle operations on that list.</td>
+      </tr>
+      <tr>
+        <td>Modular method logic</td>
+        <td>The core workflow is decomposed into named methods with clear input and output responsibilities.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Minimum Runtime Capabilities
+
+- The program starts cleanly and presents a readable operator path.
+- Invalid input is handled without crashing the application or corrupting object state.
+- The project demonstrates at least one add or create workflow and at least one retrieval, search, or report workflow.
+- Output is labeled clearly enough that an instructor can verify feature behavior without reverse-engineering the code.
+- If file persistence is included, both first-run behavior and reload behavior are demonstrated.
+
+---
+
+## Submission Package
+
+1. Source code for the final project.
+2. Two to four screenshots or output captures showing the major workflows.
+3. A short run sequence or demonstration guide for the instructor.
+4. Any supporting data files required to reproduce the system state.
+5. The Week 15 lab and homework documents completed as supporting engineering artifacts.
+
+---
+
+## Recovery Window Boundary
+
+The Week 15 recovery window covers missing assignments and quizzes from Weeks 01-14 only, with a maximum score of 70% on recovered work. It does not replace the final project deadline or lower the expectation for the capstone submission.
+
+<div class="architect-rule">
+  <h3>Senior Architect Perspective</h3>
+  <p>
+    A final project is not a summary of topics covered. It is a working system that demonstrates control boundaries, valid state transitions, and maintainable structure. The strongest submissions make those properties obvious in both the code and the runtime behavior.
+  </p>
+</div>
+
+---
+
+<div class="next-section">
+  <p>Use the supporting Week 15 artifacts to tighten the design before submission.</p>
+  <p><a href="/week-15/lab/">Lab 15: Architecture Review</a> | <a href="/week-15/homework/">Homework 15: Deployment Memo</a></p>
+</div>
+
+<style>{`
+  .deadline-banner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(249, 115, 22, 0.08) 100%);
+  }
+  .deadline-label {
+    font-weight: 700;
+    margin-right: 8px;
+    color: #fbbf24;
+  }
+  .architect-rule {
+    background: rgba(15, 118, 110, 0.14);
+    border: 2px solid rgba(45, 212, 191, 0.45);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #5eead4;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+  .next-section p {
+    margin: 0 0 0.5rem;
+  }
+  .next-section p:last-child {
+    margin-bottom: 0;
+  }
+  :global(body[data-theme="light"]) .architect-rule,
+  :global(body[data-theme="light"]) .next-section {
+    color: #334155;
+  }
+  :global(body[data-theme="light"]) .architect-rule h3 {
+    color: #0f766e;
+  }
+  @media (max-width: 720px) {
+    .deadline-banner {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+`}</style>

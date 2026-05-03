@@ -1,0 +1,136 @@
+---
+layout: ../../../layouts/CourseLayout.astro
+title: "Section 15.2 - Deployment Readiness"
+description: "Define the verification matrix, evidence capture plan, recovery triage, and final submission package"
+---
+
+# 15.2 Deployment Readiness
+
+Deployment readiness means more than "the code runs on my machine." It means the instructor can execute the project, observe the intended features, test edge conditions, and verify that the architecture matches the written specification. A capstone submission is incomplete until it is testable and reviewable.
+
+---
+
+## Verification Matrix
+
+Build a short matrix before final submission. Every major feature should have one normal execution path and at least one stress case.
+
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Feature</th>
+        <th scope="col">Happy-path check</th>
+        <th scope="col">Edge-case check</th>
+        <th scope="col">Evidence to capture</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Add record</td>
+        <td>Create a valid object and confirm it enters the list</td>
+        <td>Attempt empty text or a negative value and verify rejection</td>
+        <td>Screenshot or console output showing both cases</td>
+      </tr>
+      <tr>
+        <td>Search or lookup</td>
+        <td>Find an existing record and print the result</td>
+        <td>Search for a missing key and verify the not-found path</td>
+        <td>Output block with both an existing and missing example</td>
+      </tr>
+      <tr>
+        <td>List report</td>
+        <td>Show multiple records with labeled output</td>
+        <td>Run with an empty collection and verify graceful handling</td>
+        <td>Report screenshot with labels visible</td>
+      </tr>
+      <tr>
+        <td>Persistence, if used</td>
+        <td>Save data, restart, and reload successfully</td>
+        <td>Test missing file or malformed line handling</td>
+        <td>Cold-start and reload evidence</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+---
+
+## Submission Package
+
+The Week 15 final delivery should be assembled as an engineering package:
+
+1. Source code for the complete capstone project.
+2. A short run sequence explaining what the instructor should type first.
+3. Two to four screenshots or output captures showing major features.
+4. Evidence that invalid input is handled without corrupting the system state.
+5. Any required data files if the project reads or writes persistent storage.
+
+---
+
+## Recovery Window Triage
+
+If you still have missing work from Weeks 01-14, treat recovery as a controlled backlog, not as a reason to postpone the capstone baseline.
+
+1. Stabilize the final project architecture first.
+2. Complete the highest-value missing recovery items during the Week 15 window.
+3. Assume every recovered assignment or quiz is capped at 70%.
+4. Do not let recovery work consume the final testing pass for the capstone submission.
+
+---
+
+## Deployment Checklist
+
+- Run the project from a clean start without editing code during the demonstration.
+- Confirm at least one custom class, one encapsulated property boundary, one <code>List&lt;T&gt;</code> workflow, and multiple named methods are visible in the final code.
+- Remove placeholder output and ambiguous prompts.
+- Verify that the instructor can reach the major features in under five minutes.
+- Confirm there is no missing Week 15 quiz deliverable. The primary assessment emphasis this week is the final project.
+
+<div class="architect-rule">
+  <h3>Senior Architect Perspective</h3>
+  <p>
+    Untested code is an unverified claim. A final project earns architectural trust when the implementation, verification matrix, and submission evidence all tell the same story. If the screenshots demonstrate one flow but the code relies on fragile assumptions, the system is not ready for deployment.
+  </p>
+</div>
+
+---
+
+<div class="next-section">
+  <p>Complete the written design review and deployment memo before freezing the final build.</p>
+  <p><a href="/week-15/lab/">Open Lab 15: Architecture Review</a> | <a href="/week-15/homework/">Open Homework 15: Deployment Memo</a></p>
+</div>
+
+<style>{`
+  .architect-rule {
+    background: rgba(30, 64, 175, 0.12);
+    border: 2px solid rgba(96, 165, 250, 0.4);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .architect-rule h3 {
+    margin-top: 0;
+    color: #93c5fd;
+  }
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+  .next-section p {
+    margin: 0 0 0.5rem;
+  }
+  .next-section p:last-child {
+    margin-bottom: 0;
+  }
+  :global(body[data-theme="light"]) .architect-rule,
+  :global(body[data-theme="light"]) .next-section {
+    color: #334155;
+  }
+  :global(body[data-theme="light"]) .architect-rule h3 {
+    color: #1d4ed8;
+  }
+`}</style>
