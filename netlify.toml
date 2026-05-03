@@ -125,6 +125,13 @@
   status = 200
   force = true
 
+# Route /api/due-dates to the due-dates function (must be before catch-all)
+[[redirects]]
+  from = "/api/due-dates"
+  to = "/.netlify/functions/due-dates"
+  status = 200
+  force = true
+
 # Route /api/* to the runner-proxy function (catch-all)
 [[redirects]]
   from = "/api/*"
