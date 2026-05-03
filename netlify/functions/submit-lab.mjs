@@ -312,6 +312,12 @@ Return JSON:
       }
     }
 
+    // Ensure feedback is never null — covers the case where grading was skipped entirely
+    // (e.g., missing GEMINI_API_KEY or no lesson context for this starterId)
+    if (!aiFeedback) {
+      aiFeedback = 'Your submission has been received. Grading is not configured for this assignment — your instructor will review it.';
+    }
+
     // Derive assignment ID for storage
     const assignmentId = starterId.replace(/-\d+$/, ''); // week-01-lab-1 -> week-01-lab
     const weekMatch = starterId.match(/week-(\d+)/);
