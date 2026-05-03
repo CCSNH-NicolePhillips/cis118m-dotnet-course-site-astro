@@ -492,7 +492,7 @@ const EngineeringLogEditor = ({
               fontSize: '0.9rem'
             }}>
               <span style={{ fontSize: '1.2em' }}>✓</span>
-              SUBMITTED FOR REVIEW
+              AI GRADE RECORDED
             </div>
           ) : (
             <button
@@ -508,7 +508,7 @@ const EngineeringLogEditor = ({
                 fontWeight: 'bold'
               }}
             >
-              {isGrading ? 'Processing...' : (submissionStatus === 'needs-revision' ? 'Revise & Resubmit' : 'Submit for Review')}
+              {isGrading ? 'Processing...' : (submissionStatus === 'needs-revision' ? 'Revise & Resubmit' : 'Submit for AI Grading')}
             </button>
           )}
         </div>
@@ -560,7 +560,7 @@ const EngineeringLogEditor = ({
         </div>
       </div>
 
-      {/* Technical Review Feedback */}
+      {/* AI Grader Response */}
       {(feedback || score !== null) && (
         <div style={{ 
           marginTop: '15px', 
@@ -580,7 +580,7 @@ const EngineeringLogEditor = ({
               ? '✓ SUBMISSION ACCEPTED // PASSING GRADE RECORDED' 
               : submissionStatus === 'needs-revision' 
                 ? '⚠ REVISION REQUIRED // RESUBMISSION ALLOWED'
-                : 'TECHNICAL REVIEW REPORT // ARCHITECT_V1'}
+                : 'AI GRADER RESPONSE'}
           </div>
           {score !== null && (
             <div style={{ marginBottom: '10px' }}>
