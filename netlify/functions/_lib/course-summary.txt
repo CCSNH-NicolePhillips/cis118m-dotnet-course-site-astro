@@ -1424,13 +1424,15 @@ Quiz Questions (10 questions):
 
 Summary: # Week 15 Extra Practice Select one or two optional drills if you want a stronger deployment rehearsal. 1. Write a one-page interface map showing which method calls create objects, search the list, and print reports. 2. Build a manual verification matrix with at least six tests, including three edge...
 
-### 📚 Overview: Final Project - Deployment Tracker Capstone
+### 📚 Overview: Final Project 15 • Deployment Tracker Capstone
+Key Concepts:
+- Points: 100
 
-Summary: # Final Project: Deployment Tracker Capstone Due: Saturday, May 9 at 11:59 PM Eastern Recorded as: Final category This page uses the lab-style runner and submit button, but the recorded score goes to the Final category. The written final is a separate submission on the Week 15 written-final page. ##...
+Summary: # Final Project 15: Deployment Tracker Capstone **Points: 100** 15.3: Full-System Deployment Tracker Weeks 10-14 built the architecture for a complete console system: named methods, returned values, custom classes, validated state, and List&lt;T&gt; collection workflows. This final project combines ...
 
-### 📝 Homework: Written Final - Deployment Readiness Reflection
+### 📝 Homework: Homework 15 • Written Final: Deployment Readiness Reflection
 
-Summary: # Written Final: Deployment Readiness Reflection Due: Saturday, May 9 at 11:59 PM Eastern Recorded as: Final category This page uses the homework-style editor, but the recorded score goes to the Final category. Submit this written final separately from the coding final project. ## Reflection Prompt ...
+Summary: # Homework 15: Written Final - Deployment Readiness Reflection ## Reflection Prompt In 3-5 sentences per question, answer all prompts: 1. Architecture summary: Explain how your custom class, validation rules, List&lt;T&gt; workflow, and named methods interact during one normal user scenario. 2. Veri...
 
 ### 📚 Overview: Week 15 - The Final Deployment
 
