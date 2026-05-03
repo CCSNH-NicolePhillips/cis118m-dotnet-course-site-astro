@@ -1,4 +1,4 @@
-// Lab submission script - fetches code from cloud and submits with AI grading
+// Code submission script - fetches code from cloud and submits with AI grading
 document.addEventListener("DOMContentLoaded", async () => {
   const submitBtn = document.getElementById("submit-lab-btn");
   const statusDiv = document.getElementById("submit-status");
@@ -61,8 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Get starterId from URL or iframe - dynamically extracts the starter
+  // Get starterId from button data, URL, or iframe - dynamically extracts the starter
   const getStarterId = () => {
+    const explicitStarterId = submitBtn?.dataset?.starterId?.trim();
+    if (explicitStarterId) {
+      return explicitStarterId;
+    }
+
     const path = window.location.pathname;
     
     // Check for boss-fight pattern first
@@ -82,6 +87,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       return `week-${weekNum}-lab`;
     }
+
+    const finalMatch = path.match(/\/week-(\d+)\/final-project/);
+    if (finalMatch) {
+      return `week-${finalMatch[1]}-final`;
+    }
     
     // Try to get starterId from embedded iframe's src
     const iframe = document.querySelector('iframe[src*="embedded"]');
@@ -97,6 +107,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   const starterId = getStarterId();
+  const submissionType = (() => {
+    const explicitType = submitBtn?.dataset?.submissionType?.trim();
+    if (explicitType) {
+      return explicitType;
+    }
+    if (starterId.includes('boss-fight')) {
+      return 'boss-fight';
+    }
+    if (starterId.endsWith('-final')) {
+      return 'final';
+    }
+    return 'lab';
+  })();
+  const assignmentLabel = (() => {
+    const explicitLabel = submitBtn?.dataset?.assignmentLabel?.trim();
+    if (explicitLabel) {
+      return explicitLabel;
+    }
+    if (submissionType === 'final') {
+      return 'Final Project';
+    }
+    if (submissionType === 'boss-fight') {
+      return 'Boss Fight';
+    }
+    return 'Lab';
+  })();
+  const assignmentLabelLower = assignmentLabel.toLowerCase();
+  const submitButtonLabel = submitBtn?.dataset?.submitLabel?.trim() || `Submit ${assignmentLabel}`;
   console.log('[Submit] Using starterId:', starterId);
   
   // Get week number from starterId
@@ -131,17 +169,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     if (isGracePeriodActive() && weekNum < 15) {
-      warningDiv.innerHTML = `<strong>Recovery Window Active:</strong> Missing work from Weeks 01-14 may still be submitted during Week 15. The maximum score for this lab is capped at ${GRACE_PERIOD_CAP}/100.`;
+      warningDiv.innerHTML = `<strong>Recovery Window Active:</strong> Missing work from Weeks 01-14 may still be submitted during Week 15. The maximum score for this ${assignmentLabelLower} is capped at ${GRACE_PERIOD_CAP}/100.`;
       warningDiv.style.borderColor = "#eab308";
       warningDiv.style.background = "rgba(234, 179, 8, 0.15)";
       warningDiv.style.color = "#eab308";
     } else if (penaltyInfo.isZero) {
-      warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This lab is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points. Contact your instructor for an extension.`;
+      warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This ${assignmentLabelLower} is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points. Contact your instructor for an extension.`;
       warningDiv.style.borderColor = "#ef4444";
       warningDiv.style.background = "rgba(239, 68, 68, 0.15)";
       warningDiv.style.color = "#ef4444";
     } else {
-      warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This lab is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% penalty will be applied to your score.`;
+      warningDiv.innerHTML = `⚠️ <strong>Late Submission Warning:</strong> This ${assignmentLabelLower} is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% penalty will be applied to your score.`;
     }
   }
   
@@ -150,8 +188,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     const token = await getAccessToken();
     if (token) {
-      // Determine submission type from starterId (boss-fight or lab)
-      const submissionType = starterId.includes('boss-fight') ? 'boss-fight' : 'lab';
       const response = await fetch(`/api/get-submission?week=${weekNumber}&type=${submissionType}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -234,14 +270,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   submitBtn.addEventListener("click", async () => {
     // Resubmission confirmation — warn if student already has a grade
     if (existingGrade !== null) {
-      let confirmMsg = `You already have a grade of ${existingGrade}/100 for this lab.\n\nResubmitting will re-grade your work and replace your current score.`;
+      let confirmMsg = `You already have a grade of ${existingGrade}/100 for this ${assignmentLabelLower}.\n\nResubmitting will re-grade your work and replace your current score.`;
       if (penaltyInfo.daysLate > 0) {
         if (isGracePeriodActive() && weekNum < 15) {
           confirmMsg += `\n\nRECOVERY WINDOW: Missing work from Weeks 01-14 is capped at ${GRACE_PERIOD_CAP}/100 during Week 15.`;
         } else if (penaltyInfo.isZero) {
-          confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points.`;
+          confirmMsg += `\n\n⚠️ WARNING: This ${assignmentLabelLower} is ${penaltyInfo.daysLate} days past due. Submissions more than 3 days late receive 0 points.`;
         } else {
-          confirmMsg += `\n\n⚠️ WARNING: This lab is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% late penalty will be applied to your new score.`;
+          confirmMsg += `\n\n⚠️ WARNING: This ${assignmentLabelLower} is ${penaltyInfo.daysLate} day${penaltyInfo.daysLate > 1 ? 's' : ''} past due. A ${penaltyInfo.penaltyPercent}% late penalty will be applied to your new score.`;
         }
       }
       confirmMsg += '\n\nAre you sure you want to resubmit?';
@@ -251,14 +287,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     submitBtn.disabled = true;
-    submitBtn.textContent = "Submitting & Grading...";
+    submitBtn.textContent = `Submitting ${assignmentLabel}...`;
     statusDiv.textContent = "";
     if (aiFeedbackDiv) aiFeedbackDiv.style.display = "none";
     
     try {
       const token = await getAccessToken();
       if (!token) {
-        throw new Error("Please log in to submit your lab");
+        throw new Error(`Please log in to submit your ${assignmentLabelLower}`);
       }
 
       let code = null;
@@ -336,7 +372,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         statusDiv.style.color = "#4CAF50";
         
         if (data.score !== null && data.score !== undefined) {
-          statusDiv.textContent = `✓ Lab graded! Score: ${data.score}/100`;
+          statusDiv.textContent = `✓ ${assignmentLabel} graded! Score: ${data.score}/100`;
           
           // Show AI feedback with late penalty info if applicable
           if (aiFeedbackDiv) {
@@ -366,7 +402,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           }
         } else {
-          statusDiv.textContent = "✓ Lab submitted successfully!";
+          statusDiv.textContent = `✓ ${assignmentLabel} submitted successfully!`;
         }
         
         const date = new Date(data.submittedAt);
@@ -380,7 +416,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusDiv.textContent = "✗ Error: " + error.message;
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Submit Lab for Grading";
+      submitBtn.textContent = submitButtonLabel;
     }
   });
 });

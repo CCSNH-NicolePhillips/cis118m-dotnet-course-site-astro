@@ -199,6 +199,60 @@ export const lessonContexts: Record<string, LessonContext> = {
       Clarity (10pts): Clear, understandable writing using terms like "progress statement", "sentinel value", "pre-check", "post-check"
     `
   },
+
+  "week-15-homework": {
+    title: "Week 15: Written Final - Deployment Readiness Reflection",
+    taughtConcepts: `
+      - Final capstone work must integrate methods, return values, custom classes, List<T>, and encapsulation into one coherent system
+      - A strong deployment plan explains architecture boundaries, not just features
+      - Verification requires both happy-path checks and edge-case checks before submission
+      - The Week 15 recovery window applies only to missing Weeks 01-14 work and is capped at 70%
+      - The written final and coding final project are both recorded in the final category
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer all prompts:
+      1. Architecture summary: Explain how your custom class, List<T> workflow, validation rules, and named methods work together during one normal user scenario.
+      2. Verification matrix: Describe at least four tests you will run before submission, including at least two edge cases.
+      3. Recovery-window triage: If you still have missing work from Weeks 01-14, identify what you will recover and how you will protect your final-project schedule. If you have no missing work, state that explicitly.
+      4. Instructor runbook: Write the exact path an instructor should follow to verify your project in under five minutes.
+    `,
+    rubric: `
+      Architecture summary (25pts): Explains how the class model, list operations, validation, and methods interact during a concrete workflow.
+      Verification matrix (25pts): Identifies multiple specific tests, including edge cases, with clear technical intent.
+      Recovery triage (20pts): Correctly explains the Week 15 recovery-window limit and presents a realistic plan.
+      Instructor runbook (20pts): Provides a short, specific demonstration path that makes the strongest evidence easy to verify.
+      Clarity and technical vocabulary (10pts): Uses concrete technical language instead of vague claims.
+    `
+  },
+
+  "week-15-final": {
+    title: "Week 15: Final Project - Deployment Tracker Capstone",
+    taughtConcepts: `
+      - Methods partition controller logic into focused operations
+      - Return values allow search and lookup results to drive later decisions
+      - Custom classes model domain entities and own their own validation rules
+      - List<T> manages multiple objects and supports add, search, update, and reporting workflows
+      - Encapsulation and constructors prevent invalid state from entering the system
+      - A final project must demonstrate readable runtime behavior, not just compile successfully
+    `,
+    assignmentPrompt: `
+      Complete the Week 15 final project by building an integrated console deployment tracker.
+      Required features:
+      1. At least one custom class with validation and constructor-controlled state.
+      2. A List<T> collection that stores multiple records.
+      3. A menu/controller flow with add, list, search, and update behavior.
+      4. Clear output and graceful handling of invalid input or missing records.
+      5. A working final submission that proves the system functions end to end.
+    `,
+    rubric: `
+      Custom class architecture (20pts): Uses a real class with meaningful responsibility rather than loose primitive variables.
+      Encapsulation and validation (20pts): Protects state with validated properties, constructors, or equivalent guards.
+      List<T> data workflow (20pts): Uses a list to add, store, and inspect multiple records.
+      Method decomposition and controller flow (20pts): Breaks behavior into named methods and keeps the menu/controller readable.
+      Search or update workflow (10pts): Demonstrates a successful lookup, update, or report path beyond simple listing.
+      Compiles, runs, and communicates clearly (10pts): Produces readable output and handles incorrect input without crashing.
+    `
+  },
 };
 
 export function getLessonContext(assignmentId: string): LessonContext | null {
@@ -326,11 +380,11 @@ export const TUTOR_CONTEXTS: Record<string, string> = {
   'week-14-homework': "Topic: Reflection. Focus: When to use arrays vs lists.",
   
   // Week 15
-  'week-15': "Week 15: The Final Deployment. This is the capstone system-integration week. Students must integrate methods, return values, custom classes, List<T>, encapsulation, and constructor rules into one coherent final project. The only graded Week 15 deliverable is the final project; there is no separate Week 15 lab, homework, quiz, or participation grade. The Week 15 recovery window allows missing assignments and quizzes from Weeks 01-14 to be submitted for a maximum score of 70%.",
+  'week-15': "Week 15: The Final Deployment. This is the capstone integration week. Students submit a written final and a coding final project, and both scores are recorded in the final category. There is no Week 15 quiz or participation grade. The Week 15 recovery window allows missing assignments and quizzes from Weeks 01-14 to be submitted for a maximum score of 70%.",
   'week-15-lesson-1': "Topic: Global System Architecture. Focus: map Weeks 10-14 into a controller layer, domain model, List<T> collection manager, and validation boundary plan.",
   'week-15-lesson-2': "Topic: Deployment Readiness. Focus: verification matrix design, edge-case testing, evidence capture, and final submission packaging.",
-  'week-15-homework': "Topic: Written Final Guide. Focus: use the deployment memo prompts only as supporting documentation inside the final project package, not as a separate graded homework.",
-  'week-15-final-project': "Topic: Final Project Submission. Focus: deliver an integrated console system demonstrating custom class architecture, encapsulated properties, list-based data management, and modular method logic. This is the only graded Week 15 deliverable.",
+  'week-15-homework': "Topic: Written Final Reflection. Focus: answer the deployment-readiness prompts in the homework-style editor. This page submits separately, but the score is recorded in the final category.",
+  'week-15-final-project': "Topic: Final Project Submission. Focus: complete the lab-style coding final and submit it from the Week 15 final-project page. This score is also recorded in the final category.",
   
 };
 

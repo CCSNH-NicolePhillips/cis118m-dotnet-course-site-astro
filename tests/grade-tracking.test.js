@@ -199,6 +199,15 @@ describe('Grade ID Alignment', () => {
       expect(grades['week-15-final:status']).toBe('completed');
       expect(grades['week-15-final:score']).toBe(97);
     });
+
+    it('should store week 15 written final correctly', async () => {
+      await simulateProgressUpdate(testUserId, testEmail, 'week-15-homework', 'completed', 94);
+      
+      const grades = await fetchStudentGrades(testUserId);
+      
+      expect(grades['week-15-homework:status']).toBe('completed');
+      expect(grades['week-15-homework:score']).toBe(94);
+    });
   });
 });
 
@@ -211,7 +220,7 @@ describe('Gradebook Assignment Definitions', () => {
     'week-01-homework',
     'week-01-lab'
   ];
-  const EXPECTED_WEEK_15_IDS = ['week-15-final'];
+  const EXPECTED_WEEK_15_IDS = ['week-15-homework', 'week-15-final'];
 
   const EXPECTED_REGULAR_WEEK_IDS = (weekNum) => {
     const wStr = weekNum.toString().padStart(2, '0');
@@ -250,8 +259,8 @@ describe('Gradebook Assignment Definitions', () => {
     expect(week12Ids[1]).toBe('week-12-quiz');
   });
 
-  it('should keep week 15 final-project only', () => {
-    expect(EXPECTED_WEEK_15_IDS).toEqual(['week-15-final']);
+  it('should keep week 15 written final and final project IDs', () => {
+    expect(EXPECTED_WEEK_15_IDS).toEqual(['week-15-homework', 'week-15-final']);
   });
 });
 

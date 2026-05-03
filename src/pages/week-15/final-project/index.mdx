@@ -1,10 +1,12 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Final Project - Capstone System Delivery"
-description: "Final submission requirements for the Week 15 capstone project"
+title: "Final Project - Deployment Tracker Capstone"
+description: "Lab-style coding final recorded in the Week 15 final category"
 ---
 
-# Final Project: Capstone System Delivery
+import TryItNowRunner from '../../../components/TryItNowRunner.astro';
+
+# Final Project: Deployment Tracker Capstone
 
 <div class="deadline-banner">
   <div>
@@ -12,46 +14,46 @@ description: "Final submission requirements for the Week 15 capstone project"
     <span>Saturday, May 9 at 11:59 PM Eastern</span>
   </div>
   <div>
-    <span class="deadline-label">Assessment emphasis:</span>
-    <span>Only graded deliverable for Week 15</span>
+    <span class="deadline-label">Recorded as:</span>
+    <span>Final category</span>
   </div>
 </div>
 
-The final project is the capstone system integration submission. The grading decision is based on whether the project demonstrates a coherent design, controlled runtime behavior, and visible proof that the integrated system works.
-
 <div class="grading-note">
-  <p>The Week 15 recorded grade belongs in the Final Project category.</p>
-  <p>There is no separate Week 15 lab, homework, quiz, or participation grade. If your instructor wants a written final memo, include it inside this final project package.</p>
+  <p>This page uses the lab-style runner and submit button, but the recorded score goes to the Final category.</p>
+  <p>The written final is a separate submission on the Week 15 written-final page.</p>
 </div>
 
----
+## Project Brief
 
-## Required Technical Evidence
+Build an integrated console deployment tracker that demonstrates the full Weeks 10-14 stack in one system. Your final project must show a custom class, controlled validation, <code>List&lt;T&gt;</code> collection management, and a readable controller flow that lets the instructor verify the system quickly.
+
+## Required Features
 
 <div class="styled-table-container">
   <table>
     <thead>
       <tr>
-        <th scope="col">Mandatory requirement</th>
-        <th scope="col">What the instructor must be able to verify</th>
+        <th scope="col">Requirement</th>
+        <th scope="col">What the instructor must see</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Custom class architecture</td>
-        <td>At least one real domain class exists and owns meaningful responsibility beyond passive storage.</td>
+        <td>Custom class with guarded state</td>
+        <td>A real class owns the deployment data and prevents invalid values from being stored.</td>
       </tr>
       <tr>
-        <td>Encapsulated properties</td>
-        <td>State protection exists through validated properties, controlled constructors, or equivalent guarded mutation boundaries.</td>
+        <td>List-based workflow</td>
+        <td>The program adds, stores, searches, or updates multiple deployment records in a <code>List&lt;T&gt;</code>.</td>
       </tr>
       <tr>
-        <td>List-based data management</td>
-        <td>The system manages multiple domain objects through a <code>List&lt;T&gt;</code> and performs lifecycle operations on that list.</td>
+        <td>Named methods</td>
+        <td>The controller loop delegates to methods such as add, list, search, or update instead of collapsing everything into <code>Main</code>.</td>
       </tr>
       <tr>
-        <td>Modular method logic</td>
-        <td>The core workflow is decomposed into named methods with clear input and output responsibilities.</td>
+        <td>Readable runtime output</td>
+        <td>The instructor can identify the successful path and the validation/failure path from the console output.</td>
       </tr>
     </tbody>
   </table>
@@ -59,42 +61,272 @@ The final project is the capstone system integration submission. The grading dec
 
 ---
 
-## Minimum Runtime Capabilities
+## Code Editor
 
-- The program starts cleanly and presents a readable operator path.
-- Invalid input is handled without crashing the application or corrupting object state.
-- The project demonstrates at least one add or create workflow and at least one retrieval, search, or report workflow.
-- Output is labeled clearly enough that an instructor can verify feature behavior without reverse-engineering the code.
-- If file persistence is included, both first-run behavior and reload behavior are demonstrated.
+This starter compiles, but it is not finished. Complete the search and update flows, strengthen the runtime path, and verify the class boundary before you submit.
+
+<TryItNowRunner
+  starterId="week-15-final"
+  completionPageId="week-15-final"
+  height={620}
+  files={[
+    { name: 'Program.cs', content: `using System;
+using System.Collections.Generic;
+
+List<DeploymentRecord> deployments = new List<DeploymentRecord>
+{
+    new DeploymentRecord("API Rollout", "Ada", "Ready"),
+    new DeploymentRecord("Database Patch", "Grace", "Blocked")
+};
+
+bool isRunning = true;
+while (isRunning)
+{
+    Console.WriteLine("=== DEPLOYMENT TRACKER ===");
+    Console.WriteLine("1. List deployments");
+    Console.WriteLine("2. Add deployment");
+    Console.WriteLine("3. Search by owner");
+    Console.WriteLine("4. Update status");
+    Console.WriteLine("5. Exit");
+    Console.Write("Choose an option: ");
+    string choice = Console.ReadLine() ?? string.Empty;
+    Console.WriteLine();
+
+    switch (choice)
+    {
+        case "1":
+            PrintDeployments(deployments);
+            break;
+        case "2":
+            AddDeployment(deployments);
+            break;
+        case "3":
+            SearchByOwner(deployments);
+            break;
+        case "4":
+            UpdateStatus(deployments);
+            break;
+        case "5":
+            isRunning = false;
+            Console.WriteLine("Exiting deployment tracker.");
+            break;
+        default:
+            Console.WriteLine("Invalid option. Choose 1-5.");
+            break;
+    }
+
+    Console.WriteLine();
+}
+
+static void PrintDeployments(List<DeploymentRecord> deployments)
+{
+    Console.WriteLine("--- CURRENT DEPLOYMENTS ---");
+
+    if (deployments.Count == 0)
+    {
+        Console.WriteLine("No deployment records found.");
+        return;
+    }
+
+    foreach (DeploymentRecord deployment in deployments)
+    {
+        Console.WriteLine($"{deployment.Title} | Owner: {deployment.Owner} | Status: {deployment.Status} | Blocked: {deployment.IsBlocked}");
+    }
+}
+
+static void AddDeployment(List<DeploymentRecord> deployments)
+{
+    Console.Write("Title: ");
+    string title = Console.ReadLine() ?? string.Empty;
+
+    Console.Write("Owner: ");
+    string owner = Console.ReadLine() ?? string.Empty;
+
+    Console.Write("Status (Planned, Ready, Blocked, Done): ");
+    string status = Console.ReadLine() ?? string.Empty;
+
+    try
+    {
+        deployments.Add(new DeploymentRecord(title, owner, status));
+        Console.WriteLine("Deployment added.");
+    }
+    catch (ArgumentException ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+}
+
+static void SearchByOwner(List<DeploymentRecord> deployments)
+{
+    Console.Write("Search owner: ");
+    string owner = (Console.ReadLine() ?? string.Empty).Trim();
+
+    // TODO: Loop through deployments and print every matching record.
+    Console.WriteLine($"Search feature not finished for owner: {owner}");
+}
+
+static void UpdateStatus(List<DeploymentRecord> deployments)
+{
+    Console.Write("Deployment title to update: ");
+    string title = (Console.ReadLine() ?? string.Empty).Trim();
+
+    // TODO: Find the record by title, prompt for a new status, and update it safely.
+    Console.WriteLine($"Status update not finished for deployment: {title}");
+}
+` },
+    { name: 'DeploymentRecord.cs', content: `using System;
+
+class DeploymentRecord
+{
+    private string _title = string.Empty;
+    private string _owner = string.Empty;
+    private string _status = "Planned";
+
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Title is required.");
+            }
+
+            _title = value.Trim();
+        }
+    }
+
+    public string Owner
+    {
+        get => _owner;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("Owner is required.");
+            }
+
+            _owner = value.Trim();
+        }
+    }
+
+    public string Status
+    {
+        get => _status;
+        set
+        {
+            string normalized = value.Trim();
+
+            if (normalized != "Planned" &&
+                normalized != "Ready" &&
+                normalized != "Blocked" &&
+                normalized != "Done")
+            {
+                throw new ArgumentException("Status must be Planned, Ready, Blocked, or Done.");
+            }
+
+            _status = normalized;
+        }
+    }
+
+    public bool IsBlocked => Status == "Blocked";
+
+    public DeploymentRecord(string title, string owner, string status)
+    {
+        Title = title;
+        Owner = owner;
+        Status = status;
+    }
+
+    public DeploymentRecord(string title, string owner)
+        : this(title, owner, "Planned")
+    {
+    }
+}` }
+  ]}
+  instructions="Complete the TODOs so the final project can add, list, search, and update deployment records with clear validation behavior."
+  enableStdin={false}
+/>
 
 ---
 
-## Submission Package
+## Grading Rubric
 
-1. Source code for the final project.
-2. Two to four screenshots or output captures showing the major workflows.
-3. A short run sequence or demonstration guide for the instructor.
-4. Any supporting data files required to reproduce the system state.
-5. If assigned, a written final memo or deployment guide included inside the final project package rather than submitted as a separate grade.
-
----
-
-## Recovery Window Boundary
-
-The Week 15 recovery window covers missing assignments and quizzes from Weeks 01-14 only, with a maximum score of 70% on recovered work. It does not replace the final project deadline or lower the expectation for the capstone submission.
-
-<div class="architect-rule">
-  <h3>Senior Architect Perspective</h3>
-  <p>
-    A final project is not a summary of topics covered. It is a working system that demonstrates control boundaries, valid state transitions, and maintainable structure. The strongest submissions make those properties obvious in both the code and the runtime behavior.
-  </p>
+<div class="styled-table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Criterion</th>
+        <th scope="col">Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Custom class architecture</strong> - Uses a real domain class instead of loose primitive variables.</td>
+        <td style="text-align: right;">20</td>
+      </tr>
+      <tr>
+        <td><strong>Encapsulation and validation</strong> - Prevents invalid state through validated properties, constructors, or equivalent guards.</td>
+        <td style="text-align: right;">20</td>
+      </tr>
+      <tr>
+        <td><strong>List&lt;T&gt; data workflow</strong> - Adds, stores, and inspects multiple records through a list.</td>
+        <td style="text-align: right;">20</td>
+      </tr>
+      <tr>
+        <td><strong>Method decomposition and controller flow</strong> - Uses named methods for add, list, search, and update behavior.</td>
+        <td style="text-align: right;">20</td>
+      </tr>
+      <tr>
+        <td><strong>Search or update workflow</strong> - Demonstrates a successful lookup, update, or report path beyond simple listing.</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+      <tr>
+        <td><strong>Compiles, runs, and communicates clearly</strong> - Produces readable output and handles invalid input without crashing.</td>
+        <td style="text-align: right;">10</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 ---
 
+## Submission
+
+When your program produces the correct output:
+
+1. Verify your name is in a header comment at the top of the file.
+2. Click <strong>Save</strong> to save your work.
+3. Click <strong>Submit Final Project</strong> below.
+
+<div id="lab-submit-container" style="margin: 24px 0;">
+  <button id="submit-lab-btn" type="button" data-starter-id="week-15-final" data-submission-type="final" data-assignment-label="Final Project" data-submit-label="Submit Final Project" style="
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  ">
+    Submit Final Project
+  </button>
+  <div id="submit-status" aria-live="polite" aria-atomic="true" style="margin-top: 1rem; font-weight: bold;"></div>
+  <div id="ai-feedback" aria-live="polite" style="margin-top: 1rem; padding: 1rem; background: rgba(78, 201, 176, 0.1); border-radius: 8px; display: none;"></div>
+  <div id="last-submitted" style="margin-top: 0.5rem; color: #666; font-size: 14px;"></div>
+</div>
+
+<script src="/scripts/submit-lab.js"></script>
+
+---
+
 <div class="next-section">
-  <p>Use the supporting Week 15 guidance to tighten the design before submission.</p>
-  <p><a href="/week-15/homework/">Written Final Guide</a> | <a href="/week-15/lesson-2/">Deployment Readiness</a></p>
+  <p>Final project submitted? Review the written final or the deployment-readiness checklist one more time before the class closes.</p>
+  <p><a href="/week-15/homework/">Open the Written Final</a> | <a href="/week-15/lesson-2/">Open Deployment Readiness</a></p>
 </div>
 
 <style>{`
@@ -113,13 +345,6 @@ The Week 15 recovery window covers missing assignments and quizzes from Weeks 01
     margin-right: 8px;
     color: #fbbf24;
   }
-  .architect-rule {
-    background: rgba(15, 118, 110, 0.14);
-    border: 2px solid rgba(45, 212, 191, 0.45);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-  }
   .grading-note {
     margin: 20px 0;
     padding: 18px 20px;
@@ -132,10 +357,6 @@ The Week 15 recovery window covers missing assignments and quizzes from Weeks 01
   }
   .grading-note p:last-child {
     margin-bottom: 0;
-  }
-  .architect-rule h3 {
-    margin-top: 0;
-    color: #5eead4;
   }
   .next-section {
     background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
@@ -151,12 +372,19 @@ The Week 15 recovery window covers missing assignments and quizzes from Weeks 01
   .next-section p:last-child {
     margin-bottom: 0;
   }
-  :global(body[data-theme="light"]) .architect-rule,
   :global(body[data-theme="light"]) .next-section {
     color: #334155;
   }
-  :global(body[data-theme="light"]) .architect-rule h3 {
-    color: #0f766e;
+  :global(body[data-theme="light"]) #submit-status {
+    color: #1e293b !important;
+  }
+  :global(body[data-theme="light"]) #ai-feedback {
+    background: rgba(16, 185, 129, 0.12) !important;
+    color: #1e293b !important;
+    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+  }
+  :global(body[data-theme="light"]) #last-submitted {
+    color: #475569 !important;
   }
   @media (max-width: 720px) {
     .deadline-banner {

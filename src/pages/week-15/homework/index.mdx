@@ -1,55 +1,68 @@
 ---
 layout: ../../../layouts/CourseLayout.astro
-title: "Written Final Guide - Deployment Memo"
-description: "Support-page prompts for a written final memo that belongs inside the Week 15 capstone package"
+title: "Written Final - Deployment Readiness Reflection"
+description: "Homework-style written final recorded in the Week 15 final category"
 ---
 
-# Written Final Guide: Deployment Memo
+import EngineeringLogEditor from '../../../components/EngineeringLogEditor';
+
+# Written Final: Deployment Readiness Reflection
 
 <div class="deadline-banner">
-  <span class="deadline-label">If assigned:</span>
-  <span>Include this memo inside the final project package by Saturday, May 9 at 11:59 PM Eastern</span>
+  <div>
+    <span class="deadline-label">Due:</span>
+    <span>Saturday, May 9 at 11:59 PM Eastern</span>
+  </div>
+  <div>
+    <span class="deadline-label">Recorded as:</span>
+    <span>Final category</span>
+  </div>
 </div>
 
-<div class="support-note">
-  <p>This page is support-only. It does not create a separate Week 15 homework grade.</p>
-  <p>If your instructor wants a written final memo, include it as part of the final project package so the recorded score stays in the Final Project category.</p>
+<div class="grading-note">
+  <p>This page uses the homework-style editor, but the recorded score goes to the Final category.</p>
+  <p>Submit this written final separately from the coding final project.</p>
 </div>
 
-Answer every prompt in 3-5 sentences with specific technical reasoning if you need a written final artifact.
+## Reflection Prompt
 
-1. <strong>Architecture summary:</strong> Explain how your custom class architecture, encapsulated properties, <code>List&lt;T&gt;</code> data management, and modular methods interact during one normal operator workflow.
-2. <strong>Verification strategy:</strong> Describe at least four tests you will run before submission, including at least two edge cases that could fail if the system is weakly designed.
-3. <strong>Recovery-window triage:</strong> If you still have missing work from Weeks 01-14, identify exactly which items you will recover during the Week 15 window and how you will schedule them without undermining the capstone submission. If you have no missing work, state that explicitly.
-4. <strong>Instructor runbook:</strong> Write the exact demonstration path an instructor should follow to verify your project in under five minutes, including which commands or menu options reveal the strongest architectural evidence.
+In 3-5 sentences per question, answer all prompts:
+
+1. <strong>Architecture summary:</strong> Explain how your custom class, validation rules, <code>List&lt;T&gt;</code> workflow, and named methods interact during one normal user scenario.
+2. <strong>Verification matrix:</strong> Describe at least four tests you will run before submission, including at least two edge cases that could fail if the system is weakly designed.
+3. <strong>Recovery-window triage:</strong> If you still have missing work from Weeks 01-14, identify exactly which items you will recover during the Week 15 window and how you will protect your final-project schedule. If you have no missing work, state that explicitly.
+4. <strong>Instructor runbook:</strong> Write the exact demonstration path an instructor should follow to verify your project in under five minutes, including which menu actions or commands reveal the strongest architectural evidence.
 
 <div class="architect-rule">
   <h3>Senior Architect Expectation</h3>
   <p>
-    Your memo should sound like a deployment handoff document. Use concrete language: method names, object names, validation rules, and test scenarios. Avoid vague claims such as "it works" or "the code is organized." Explain how the system proves those claims.
+    Write this like a deployment handoff document. Use concrete language: method names, class names, validation rules, test cases, and the exact instructor workflow. Avoid vague claims such as "it works" or "the code is organized."
   </p>
 </div>
 
-## Submission Note
-
-- If you complete this memo, include it with the final project evidence package.
-- The only graded Week 15 submission is the final project.
-- There is no separate Week 15 lab or homework score.
+<EngineeringLogEditor client:load assignmentId="week-15-homework" />
 
 ---
 
 ## Reference Material
 
-- <a href="/week-15/lesson-1/">Section 15.1: Global System Architecture</a>
-- <a href="/week-15/lesson-2/">Section 15.2: Deployment Readiness</a>
-- <a href="/week-15/final-project/">Final Project: Capstone System Delivery</a>
+- [Section 15.1: Global System Architecture](/week-15/lesson-1/)
+- [Section 15.2: Deployment Readiness](/week-15/lesson-2/)
+- [Final Project: Deployment Tracker Capstone](/week-15/final-project/)
+
+---
+
+<div class="next-section">
+  <p>Written final submitted? Continue to the coding final project.</p>
+  <a href="/week-15/final-project/" class="vscode-button">Continue to Final Project &rarr;</a>
+</div>
 
 <style>{`
   .deadline-banner {
-    display: inline-flex;
-    gap: 10px;
-    align-items: center;
-    padding: 14px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    padding: 16px 20px;
     margin: 20px 0;
     border-radius: 12px;
     border: 1px solid rgba(234, 179, 8, 0.5);
@@ -57,19 +70,20 @@ Answer every prompt in 3-5 sentences with specific technical reasoning if you ne
   }
   .deadline-label {
     font-weight: 700;
+    margin-right: 8px;
     color: #fbbf24;
   }
-  .support-note {
+  .grading-note {
     background: rgba(30, 64, 175, 0.12);
     border: 2px solid rgba(96, 165, 250, 0.35);
     border-radius: 12px;
     padding: 1rem 1.25rem;
     margin: 1.25rem 0;
   }
-  .support-note p {
+  .grading-note p {
     margin: 0 0 0.35rem;
   }
-  .support-note p:last-child {
+  .grading-note p:last-child {
     margin-bottom: 0;
   }
   .architect-rule {
@@ -83,10 +97,31 @@ Answer every prompt in 3-5 sentences with specific technical reasoning if you ne
     margin-top: 0;
     color: #93c5fd;
   }
-  :global(body[data-theme="light"]) .architect-rule {
+  .next-section {
+    background: linear-gradient(135deg, rgba(78, 201, 176, 0.12) 0%, rgba(107, 159, 255, 0.08) 100%);
+    border: 1px solid rgba(78, 201, 176, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0 0;
+    text-align: center;
+  }
+  .next-section p {
+    margin: 0 0 0.75rem;
+  }
+  .next-section p:last-child {
+    margin-bottom: 0;
+  }
+  :global(body[data-theme="light"]) .architect-rule,
+  :global(body[data-theme="light"]) .next-section {
     color: #334155;
   }
   :global(body[data-theme="light"]) .architect-rule h3 {
     color: #1d4ed8;
+  }
+  @media (max-width: 720px) {
+    .deadline-banner {
+      flex-direction: column;
+      gap: 10px;
+    }
   }
 `}</style>

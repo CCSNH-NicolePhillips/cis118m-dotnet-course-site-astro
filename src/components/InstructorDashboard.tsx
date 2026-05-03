@@ -113,7 +113,8 @@ const generateAssignments = () => {
     }
   }
   
-  // Week 15 - final project only
+  // Week 15 - written final and final project, both in the final category
+  assignments.push({ id: 'week-15-homework', label: 'Written Final', week: 15, type: 'final' });
   assignments.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
   
   return assignments;
@@ -172,7 +173,7 @@ interface SubmissionModalData {
   assignmentLabel: string;
 }
 
-const WEEK_15_FINAL_LEGACY_IDS = ['week-15-homework', 'week-15-lab'];
+const WEEK_15_FINAL_PROJECT_LEGACY_IDS = ['week-15-lab'];
 
 const normalizeWeek15RawProgress = (progress: StudentProgress = {}): StudentProgress => {
   const finalPrefix = 'week-15-final:';
@@ -180,7 +181,7 @@ const normalizeWeek15RawProgress = (progress: StudentProgress = {}): StudentProg
     return progress;
   }
 
-  for (const legacyId of WEEK_15_FINAL_LEGACY_IDS) {
+  for (const legacyId of WEEK_15_FINAL_PROJECT_LEGACY_IDS) {
     const legacyPrefix = `${legacyId}:`;
     if (Object.keys(progress).some(key => key.startsWith(legacyPrefix))) {
       const normalized = { ...progress };
@@ -1523,7 +1524,7 @@ const InstructorDashboard: React.FC = () => {
                   <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.quiz.text, minWidth: '55px' }} title="Quizzes Weighted (20%)">Quiz</th>
                   <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.homework.text, minWidth: '55px' }} title="Homework Weighted (20%)">HW</th>
                   <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.participation.text, minWidth: '55px' }} title="Participation Weighted (10%)">Part</th>
-                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.final.text, minWidth: '55px' }} title="Final Capstone (10%)">Final</th>
+                  <th style={{ ...thStyle, background: '#3d3d3d', color: TYPE_COLORS.final.text, minWidth: '55px' }} title="Final Category (10%)">Final</th>
                   <th style={{ ...thStyle, background: '#4d4d4d', minWidth: '65px' }} title="Course Total">Total</th>
                 </>
               )}

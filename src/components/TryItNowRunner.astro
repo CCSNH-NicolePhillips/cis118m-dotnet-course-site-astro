@@ -3,6 +3,7 @@ interface Props {
   code?: string;
   files?: Array<{name: string, content: string}>;
   starterId: string;
+  completionPageId?: string;
   height?: number;
   instructions?: string;
   showFullEditorLink?: boolean;
@@ -16,6 +17,7 @@ const {
   code: codeProp, 
   files: filesProp,
   starterId, 
+  completionPageId,
   height = 200,
   instructions,
   showFullEditorLink = false,
@@ -37,7 +39,7 @@ const runnerId = `runner-${Math.random().toString(36).substr(2, 9)}`;
 const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
 ---
 
-<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin ? "true" : "false"} data-enable-interactive={enableInteractiveTerminal ? "true" : "false"} data-runner-ws-url={runnerWsUrl}>
+<div class="try-it-now-runner" data-runner-id={runnerId} data-validation-regex={validationRegex} data-default-height={height} data-enable-stdin={enableStdin ? "true" : "false"} data-enable-interactive={enableInteractiveTerminal ? "true" : "false"} data-runner-ws-url={runnerWsUrl} data-completion-page-id={completionPageId ?? ''}>
   {instructions && (
     <div class="instructions">
       <span class="icon" aria-hidden="true">▶️</span>
@@ -846,17 +848,20 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
               // Trigger celebration animation
               triggerCelebration();
               
-              // Save lab completion for gradebook (if this is a lab)
+              // Save completion for the gradebook when validation succeeds.
               try {
                 if (window.__auth && typeof window.__auth.getAccessToken === 'function') {
                   const token = await window.__auth.getAccessToken().catch(() => null);
                   if (token) {
-                    // Derive lab ID from starterId or URL path
-                    const labIdFromStarter = starterId?.match(/^(week-\d+)-/)?.[0] + 'lab';
+                    const explicitCompletionPageId = container.dataset.completionPageId || '';
+                    const starterWeekPrefix = starterId?.match(/^(week-\d+)-/)?.[1] || null;
                     const weekMatch = window.location.pathname.match(/\/week-(\d+)\//);
-                    const labId = labIdFromStarter || (weekMatch ? `week-${weekMatch[1].padStart(2, '0')}-lab` : null);
+                    const derivedCompletionPageId = starterWeekPrefix
+                      ? `${starterWeekPrefix}-lab`
+                      : (weekMatch ? `week-${weekMatch[1].padStart(2, '0')}-lab` : null);
+                    const resolvedCompletionPageId = explicitCompletionPageId || derivedCompletionPageId;
                     
-                    if (labId) {
+                    if (resolvedCompletionPageId) {
                       await fetch('/api/progress-update', {
                         method: 'POST',
                         headers: { 
@@ -864,17 +869,17 @@ const runnerWsUrl = import.meta.env.PUBLIC_RUNNER_WS_URL ?? "";
                           'Content-Type': 'application/json' 
                         },
                         body: JSON.stringify({
-                          pageId: labId,
+                          pageId: resolvedCompletionPageId,
                           status: 'completed',
                           score: 100
                         }),
                       }).catch(() => {});
-                      console.log('[TryItNowRunner] Lab completion recorded:', labId);
+                      console.log('[TryItNowRunner] Completion recorded:', resolvedCompletionPageId);
                     }
                   }
                 }
-              } catch (labErr) {
-                console.error('[TryItNowRunner] Lab completion save failed:', labErr);
+              } catch (completionErr) {
+                console.error('[TryItNowRunner] Completion save failed:', completionErr);
               }
             }
           }

@@ -52,7 +52,9 @@ GRADING WEIGHTS:
 - Quizzes (Checkpoint Quizzes): 20%
 - Homework (Auto-Checks): 20%
 - Participation (Activity): 10%
-- Final Capstone Project: 10%
+- Final Category: 10%
+  * Week 15 Written Final: 100 points
+  * Week 15 Final Project: 100 points
 
 GRADING SCALE:
 - A: 90-100%
@@ -70,7 +72,7 @@ LATE POLICY:
 - Quizzes: Can be retaken until the due date. NO late submissions accepted.
 - Labs: 10% penalty per day late (up to 3 days maximum). After 3 days = 0 points.
 - Final Project: NO late submissions accepted.
-- Week 15 has no separate lab, homework, quiz, or participation grade. Only the final project is graded in the final category.
+- Week 15 has no quiz or participation grade. The written final and final project are both recorded in the final category.
 - Extensions: Contact instructor BEFORE the due date for documented emergencies or illness.
 
 ACADEMIC INTEGRITY:
@@ -236,6 +238,26 @@ function detectMissedAssignments(assignments) {
     if (dueDate > now) continue;
     
     const weekNum = week.week.toString().padStart(2, '0');
+
+    if (week.week === 15) {
+      const writtenFinalId = 'week-15-homework';
+      const finalProjectId = 'week-15-final';
+
+      if (!assignments[writtenFinalId] || (assignments[writtenFinalId].score === undefined && assignments[writtenFinalId].bestScore === undefined)) {
+        missed.push({ type: 'Written Final', week: week.week, title: week.title });
+      } else if (parseFloat(assignments[writtenFinalId].score || assignments[writtenFinalId].bestScore || 0) === 0) {
+        missed.push({ type: 'Written Final', week: week.week, title: week.title, zeroScore: true });
+      }
+
+      if (!assignments[finalProjectId] || (assignments[finalProjectId].score === undefined && assignments[finalProjectId].bestScore === undefined)) {
+        missed.push({ type: 'Final Project', week: week.week, title: week.title });
+      } else if (parseFloat(assignments[finalProjectId].score || assignments[finalProjectId].bestScore || 0) === 0) {
+        missed.push({ type: 'Final Project', week: week.week, title: week.title, zeroScore: true });
+      }
+
+      continue;
+    }
+
     const labId = `week-${weekNum}-lab`;
     const homeworkId = `week-${weekNum}-homework`;
     const quizId = `week-${weekNum}-quiz`;
@@ -429,12 +451,12 @@ async function fetchStudentGrades(userId) {
         }
       } else if (id.includes('-quiz')) {
         quizScores.push(score);
+      } else if (id === 'week-15-homework' || id.includes('-final')) {
+        finalScores.push(score);
       } else if (id.includes('-homework')) {
         homeworkScores.push(score);
       } else if (id.includes('-participation')) {
         participationScores.push(score);
-      } else if (id.includes('-final')) {
-        finalScores.push(score);
       }
     }
     
@@ -471,7 +493,7 @@ async function fetchStudentGrades(userId) {
     if (quizAvg !== null) lines.push(`Quiz Average: ${quizAvg.toFixed(1)}/100 (weight: 20%)`);
     if (homeworkAvg !== null) lines.push(`Homework Average: ${homeworkAvg.toFixed(1)}/100 (weight: 20%)`);
     if (participationAvg !== null) lines.push(`Participation Average: ${participationAvg.toFixed(1)}/100 (weight: 10%)`);
-    if (finalAvg !== null) lines.push(`Final Project Average: ${finalAvg.toFixed(1)}/100 (weight: 10%)`);
+    if (finalAvg !== null) lines.push(`Final Category Average: ${finalAvg.toFixed(1)}/100 (weight: 10%)`);
     if (cumulativeGrade !== null) {
       lines.push(`OVERALL CUMULATIVE GRADE: ${cumulativeGrade.toFixed(1)}/100 (${letterGrade(cumulativeGrade)})`);
       lines.push(`Note: Based on ${Math.round(totalWeight * 100)}% of total course weight (only categories with submissions are counted).`);
@@ -653,8 +675,8 @@ export async function handler(event, context) {
   
   // If student is asking about a specific submission, fetch that code
   let requestedSubmissionCode = '';
-  const submissionMatch = message.match(/(?:my|show|see|view|look at|review).*(?:lab|submission|code|work).*(?:week\s*)?(\d+)/i) ||
-                          message.match(/week\s*(\d+).*(?:lab|submission|code|work)/i);
+  const submissionMatch = message.match(/(?:my|show|see|view|look at|review).*(?:lab|submission|code|work|project|final).*(?:week\s*)?(\d+)/i) ||
+                          message.match(/week\s*(\d+).*(?:lab|submission|code|work|project|final)/i);
   if (submissionMatch && userId && Object.keys(studentGradesData.submissions).length === 0) {
     // Fetch submissions separately if not already included
     try {
@@ -668,7 +690,9 @@ export async function handler(event, context) {
   // If asking about a specific week's code, extract it
   if (submissionMatch) {
     const weekNum = submissionMatch[1].padStart(2, '0');
-    const possibleKeys = [`week-${weekNum}-lab`, `week-${weekNum}-boss-fight`];
+    const possibleKeys = weekNum === '15'
+      ? ['week-15-final', 'week-15-homework']
+      : [`week-${weekNum}-lab`, `week-${weekNum}-boss-fight`];
     for (const key of possibleKeys) {
       if (studentGradesData.submissions[key]) {
         requestedSubmissionCode = `\nSTUDENT'S SUBMITTED CODE FOR ${key.toUpperCase()}:\n\`\`\`csharp\n${studentGradesData.submissions[key].slice(0, 3000)}\n\`\`\`\n`;

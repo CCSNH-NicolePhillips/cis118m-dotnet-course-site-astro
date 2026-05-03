@@ -4,44 +4,34 @@ Date: 2026-05-03
 
 ## Additional Changes
 
-- Added a top-of-page recovery-window alert to `src/pages/week-15/index.mdx`.
-- Added `WEEK-15-ARCHITECTURE-DIAGRAMS.md` with four Mermaid diagram drafts:
-  - Global System Architecture
-  - Class and Responsibility Map
-  - Add-Record Sequence Flow
-  - Verification and Failure-Boundary Map
-- Corrected the Week 15 close date from May 10 to May 9 across source config, due-date helpers, runtime policy scripts, and Week 15 page copy.
-- Removed the separate Week 15 lab and homework grading buckets so the final project is the only graded Week 15 deliverable.
-- Deleted `src/pages/week-15/lab/index.mdx` and converted `src/pages/week-15/homework/index.mdx` into an ungraded written-final support guide.
-- Updated the student grade view, instructor dashboard, Canvas export, and AI tutor context so Week 15 grades resolve to the Final Project category only.
-- Added legacy fallback handling so existing Week 15 homework or lab scores still surface under `week-15-final` if they were recorded before the grading-model change.
+- Kept the previously completed Week 15 policy updates in place: the class closes on Saturday, May 9, and the recovery-window alert still states that missing work from Weeks 01-14 may be submitted for up to 70% credit.
+- Replaced the rejected single-deliverable Week 15 model with two visible submission surfaces that follow the earlier week format:
+  - `src/pages/week-15/homework/index.mdx` is now a homework-style Written Final page using `EngineeringLogEditor` with `assignmentId="week-15-homework"`.
+  - `src/pages/week-15/final-project/index.mdx` is now a lab-style Final Project page using `TryItNowRunner` plus a visible submit button.
+- Updated `public/scripts/submit-lab.js` and `src/components/TryItNowRunner.astro` so the coding final can reuse the existing lab submission pipeline while recording against `week-15-final`.
+- Updated student grades, instructor grades, Canvas export, AI tutor logic, and lesson contexts so both `week-15-homework` and `week-15-final` count in the Final category.
+- Preserved legacy handling by mapping old `week-15-lab` progress forward to `week-15-final`.
+- Updated Week 15 overview and navigation copy so students now see `Written Final (Graded)` and `Final Project (Graded)`, with no Week 15 quiz and no separate Week 15 lab grading bucket.
 
 ## Validation
 
-- Ran `npm run build` after adding the alert and diagram artifact.
-- Ran `npm run build` again after correcting the Week 15 close date to May 9.
-- Ran `npm test -- tests/grade-tracking.test.js` after converting Week 15 to final-project-only grading.
-- Ran `npm run build` again after removing the Week 15 lab route and updating grading/tutor metadata.
-- Ran a browser-backed local spot-check against the built app with mocked Auth0 and API responses to force a legacy `week-15-homework` score path through the student and instructor grade views.
-- Build completed successfully.
-- Verified the updated Week 15 routes were still generated, including:
-  - `src/pages/week-15/index.mdx`
-  - `src/pages/week-15/lesson-1/index.mdx`
-  - `src/pages/week-15/lesson-2/index.mdx`
-  - `src/pages/week-15/homework/index.mdx`
-  - `src/pages/week-15/final-project/index.mdx`
-- Verified post-build generated summaries and content metadata now show `Saturday, May 9 at 11:59 PM Eastern` and `May 04 - May 09` for Week 15.
-- Verified there were no remaining `May 10` or `2026-05-10` matches in the searchable workspace after rebuild.
-- Verified the focused grade-tracking test passed with Week 15 modeled as `week-15-final` only.
-- Verified the rebuilt course-content index no longer includes `src/pages/week-15/lab/index.mdx`.
-- Verified there were no remaining live Week 15 lab or quiz grading references outside the intentional legacy fallback keys for old Week 15 scores.
-- Verified the student grade view rendered Week 15 as `Part — / Quiz — / HW — / Lab — / Final 92`, confirming the legacy Week 15 homework score resolved only to the final column.
-- Verified the instructor gradebook rendered a `W15 Final Project` column and showed the legacy student's `92` there, with no Week 15 homework or lab column remaining.
+- Ran `npm test -- tests/grade-tracking.test.js`.
+- Result: passed, 22/22 tests green, including Week 15 assignment-id coverage for `week-15-homework` and `week-15-final`.
+- Ran `npm run build`.
+- Result: passed and regenerated:
+  - `netlify/functions/_lib/course-content.json`
+  - `netlify/functions/_lib/course-summary.txt`
+  - `netlify/functions/_lib/course-summary.mjs`
+- Verified built Week 15 output includes the restored student-facing strings:
+  - `dist/week-15/homework/index.html` contains `Written Final: Deployment Readiness Reflection`.
+  - `dist/week-15/final-project/index.html` contains `Submit Final Project` and the expected `data-starter-id="week-15-final"` plus `data-submission-type="final"` metadata.
+  - `dist/week-15/index.html` contains `Week 15 Grading Model`.
+- Verified built navigation includes `Written Final (Graded)` and `Final Project (Graded)` for Week 15.
+- Noted an existing unrelated CSS minifier warning from `src/components/DeepDiveTabs.astro` during build; no Week 15 validation failed because of it.
 
 ## Result
 
-- The missing-work notice is now a visible alert near the top of the Week 15 overview.
-- The diagram drafts are available as a reusable instructor artifact for Week 15 planning or slide preparation.
-- The Week 15 class close and submission deadline now resolve consistently to Saturday, May 9 across content, due-date logic, and regenerated tutor summaries.
-- Week 15 now grades only the final project, and that score resolves to the Final Project category across the student dashboard, instructor dashboard, and Canvas export.
-- The Week 15 lab route has been removed, while the written memo prompts remain available only as optional support content inside the final project package.
+- Week 15 now matches the established weekly structure instead of hiding submission pages.
+- Students have a visible written final submission page and a visible coding final submission page.
+- Both Week 15 deliverables resolve to the Final category across the student dashboard, instructor dashboard, Canvas export, and tutor/progress logic.
+- The May 9 class close date, recovery-window notice, and no-quiz Week 15 policy remain in place.

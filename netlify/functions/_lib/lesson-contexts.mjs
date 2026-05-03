@@ -1180,6 +1180,74 @@ export const TUTOR_CONTEXTS = {
   'week-14-lesson-2': "Week 14 Section 14.2: Constructor Overloading — Controlled Entry Point for Every New Object. Focus: Parameterized constructors enforce valid initial state at object creation. Constructor overloading: multiple constructor signatures that differ in parameter count. The master constructor (all three params) owns ALL validation and field assignment. Delegating constructors (two-param, one-param) use : this(name, price, 0) and : this(name, 0.0, 0) to forward to the master — zero duplicate validation. The default (parameterless) constructor is removed once any explicit constructor is defined.",
   'week-14-lab': "Week 14 Lab: Product Manager. Students build a Product class with private backing fields (_name, _price, _stock), validated set accessors (Name trims and rejects empty, Price and Stock reject negatives), computed properties (InStock and TotalValue), a master constructor Product(string name, double price, int stock) with full validation, and two delegating constructors using : this(). In Program.cs: List<Product> catalog, at least 4 products added via .Add() using different constructor overloads, .Count before and after .Remove(), foreach report showing all 5 properties, and one try/catch demonstrating validation rejection.",
   'week-14-homework': "Week 14 Homework: Technical Reflection on Object Architecture. Students answer 4 questions: (1) contrast Week 12 auto-implemented property with Week 14 private field + validated set accessor; (2) explain the public/private split — why backing fields are private and properties are public; (3) explain master constructor and why : this() eliminates duplicate validation; (4) explain computed properties (InStock, TotalValue) — derived at read time, no storage, why property not method.",
+
+  // Week 15
+  'week-15-homework': {
+    title: 'Week 15: Written Final - Deployment Readiness Reflection',
+    type: 'homework',
+    week: '15',
+    taughtConcepts: `
+      - Final capstone work must integrate methods, return values, custom classes, List<T>, and encapsulation into one coherent system
+      - A strong deployment plan explains architecture boundaries, not just features
+      - Verification requires both happy-path checks and edge-case checks before submission
+      - The Week 15 recovery window applies only to missing Weeks 01-14 work and is capped at 70%
+      - The written final and coding final project are both recorded in the final category
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer all prompts:
+      1. Architecture summary: Explain how your custom class, List<T> workflow, validation rules, and named methods work together during one normal user scenario.
+      2. Verification matrix: Describe at least four tests you will run before submission, including at least two edge cases.
+      3. Recovery-window triage: If you still have missing work from Weeks 01-14, identify what you will recover and how you will protect your final-project schedule. If you have no missing work, state that explicitly.
+      4. Instructor runbook: Write the exact path an instructor should follow to verify your project in under five minutes.
+    `,
+    rubric: `
+      Architecture summary (25pts): Explains how the class model, list operations, validation, and methods interact during a concrete workflow.
+      Verification matrix (25pts): Identifies multiple specific tests, including edge cases, with clear technical intent.
+      Recovery triage (20pts): Correctly explains the Week 15 recovery-window limit and presents a realistic plan.
+      Instructor runbook (20pts): Provides a short, specific demonstration path that makes the strongest evidence easy to verify.
+      Clarity and technical vocabulary (10pts): Uses concrete technical language instead of vague claims.
+    `,
+    requiredKeywords: ['List', 'validation', 'method', 'test'],
+    gradingTone: 'college-freshman-friendly'
+  },
+
+  'week-15-final': {
+    title: 'Week 15: Final Project - Deployment Tracker Capstone',
+    type: 'lab',
+    week: '15',
+    taughtConcepts: `
+      - Methods partition controller logic into focused operations
+      - Return values allow search and lookup results to drive later decisions
+      - Custom classes model domain entities and own their own validation rules
+      - List<T> manages multiple objects and supports add, search, update, and reporting workflows
+      - Encapsulation and constructors prevent invalid state from entering the system
+      - A final project must demonstrate readable runtime behavior, not just compile successfully
+    `,
+    assignmentPrompt: `
+      Complete the Week 15 final project by building an integrated console deployment tracker.
+      Required features:
+      1. At least one custom class with validation and constructor-controlled state.
+      2. A List<T> collection that stores multiple records.
+      3. A menu/controller flow with add, list, search, and update behavior.
+      4. Clear output and graceful handling of invalid input or missing records.
+      5. A working final submission that proves the system functions end to end.
+    `,
+    rubric: `
+      Custom class architecture (20pts): Uses a real class with meaningful responsibility rather than loose primitive variables.
+      Encapsulation and validation (20pts): Protects state with validated properties, constructors, or equivalent guards.
+      List<T> data workflow (20pts): Uses a list to add, store, and inspect multiple records.
+      Method decomposition and controller flow (20pts): Breaks behavior into named methods and keeps the menu/controller readable.
+      Search or update workflow (10pts): Demonstrates a successful lookup, update, or report path beyond simple listing.
+      Compiles, runs, and communicates clearly (10pts): Produces readable output and handles incorrect input without crashing.
+    `,
+    requiredKeywords: ['List', 'private', 'public', 'while'],
+    gradingTone: 'college-freshman-friendly'
+  },
+  'week-15': "Week 15: The Final Deployment. Students complete two Week 15 deliverables: a written final and a coding final project. Both are recorded in the final category. There is no Week 15 quiz or participation grade.",
+  'week-15-lesson-1': "Week 15 Section 15.1: Global System Architecture. Focus: map controller flow, domain classes, list management, and validation boundaries before final submission.",
+  'week-15-lesson-2': "Week 15 Section 15.2: Deployment Readiness. Focus: build a verification matrix, capture evidence, and plan an instructor-friendly demonstration path.",
+  'week-15-homework': "Week 15 Written Final: Students answer the deployment-readiness prompts in a homework-style editor. This submission is separate from the coding final, but the score is recorded in the final category.",
+  'week-15-final-project': "Week 15 Final Project: Students complete a lab-style coding final that demonstrates a custom class, validation, List<T> workflows, and modular methods. This score is also recorded in the final category.",
 };
 
 export function getTutorContext(pageId) {

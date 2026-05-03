@@ -157,7 +157,7 @@ export const WEEKS: WeekConfig[] = [
       { title: '00. Week Overview', href: '/week-15/' },
       { title: '15.1 Global System Architecture', href: '/week-15/lesson-1/' },
       { title: '15.2 Deployment Readiness', href: '/week-15/lesson-2/' },
-      { title: 'Written Final Guide', href: '/week-15/homework/' },
+      { title: 'Written Final (Graded)', href: '/week-15/homework/' },
       { title: 'Final Project (Graded)', href: '/week-15/final-project/' }
     ] },
 ];

@@ -110,8 +110,9 @@ function generateAssignments() {
     }
   }
   
-  // Week 15 - final project only
-  assignments.push({ id: 'week-15-final', name: 'Final Project', points: 100, week: '15', legacyIds: ['week-15-homework', 'week-15-lab'] });
+  // Week 15 - written final and final project, both in the final category
+  assignments.push({ id: 'week-15-homework', name: 'Week 15 Written Final', points: 100, week: '15' });
+  assignments.push({ id: 'week-15-final', name: 'Week 15 Final Project', points: 100, week: '15', legacyIds: ['week-15-lab'] });
   
   return assignments;
 }

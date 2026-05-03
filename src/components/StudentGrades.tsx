@@ -85,7 +85,7 @@ const NO_QUIZ_WEEKS = new Set([5, 9]); // Weeks that skip quiz only
 const BOSS_FIGHT_ID_WEEKS = new Set([5]); // Boss fights that use -boss-fight assignment ID
 const BOSS_FIGHT_WEEKS = new Set([5, 9]); // All boss fight weeks (for 2x weight + display)
 const FINAL_ONLY_WEEKS = new Set([15]);
-const WEEK_15_FINAL_LEGACY_IDS = ['week-15-homework', 'week-15-lab'];
+const WEEK_15_FINAL_PROJECT_LEGACY_IDS = ['week-15-lab'];
 
 for (let w = 2; w <= 14; w++) {
   const wStr = String(w).padStart(2, '0');
@@ -105,7 +105,8 @@ for (let w = 2; w <= 14; w++) {
   }
 }
 
-// Week 15: Final project only
+// Week 15: Written final and final project, both counted in the final category
+ASSIGNMENTS.push({ id: 'week-15-homework', label: 'Written Final', week: 15, type: 'final' });
 ASSIGNMENTS.push({ id: 'week-15-final', label: 'Final Project', week: 15, type: 'final' });
 
 interface ProgressEntry {
@@ -223,20 +224,14 @@ const countParticipationByWeek = (progress: ProgressData): { [week: number]: num
 };
 
 const normalizeWeek15Progress = (progress: ProgressData): ProgressData => {
-  if (progress['week-15-final']) {
+  if (progress['week-15-final'] || !progress['week-15-lab']) {
     return progress;
   }
 
-  for (const legacyId of WEEK_15_FINAL_LEGACY_IDS) {
-    if (progress[legacyId]) {
-      return {
-        ...progress,
-        'week-15-final': { ...progress[legacyId] }
-      };
-    }
-  }
-
-  return progress;
+  return {
+    ...progress,
+    'week-15-final': { ...progress['week-15-lab'] }
+  };
 };
 
 const StudentGrades: React.FC = () => {
@@ -616,13 +611,13 @@ const StudentGrades: React.FC = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase', marginBottom: '8px' }}>
-            Final Project
+            Final Category
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 'bold', color: grades.finalCount > 0 ? TYPE_COLORS.final.text : '#666' }}>
             {grades.finalCount > 0 ? grades.finalAvg.toFixed(0) : '—'}
           </div>
           <div style={{ fontSize: '0.8rem', color: '#666' }}>
-            {grades.finalCount === 0 ? 'Not yet graded' : `${grades.finalCount} project${grades.finalCount !== 1 ? 's' : ''}`}
+            {grades.finalCount === 0 ? 'Not yet graded' : `avg of ${grades.finalCount} final item${grades.finalCount !== 1 ? 's' : ''}`}
           </div>
           <div style={{ fontSize: '0.8rem', color: TYPE_COLORS.final.text, marginTop: '6px' }}>
             Worth: 10% of grade
@@ -677,6 +672,7 @@ const StudentGrades: React.FC = () => {
               const labScore = BOSS_FIGHT_ID_WEEKS.has(week)
                 ? progress[`week-${wStr}-boss-fight`]?.score
                 : progress[`week-${wStr}-lab`]?.score;
+              const writtenFinalScore = week === 15 ? progress['week-15-homework']?.score : undefined;
               const finalScore = progress[`week-${wStr}-final`]?.score;
               
               // Check if week is past due (for showing 0 on unsubmitted)
@@ -813,7 +809,20 @@ const StudentGrades: React.FC = () => {
                     {renderScore(labScore, TYPE_COLORS.lab.text, 'lab', isBossFightWeek ? `week-${wStr}-boss-fight` : `week-${wStr}-lab`)}
                   </td>
                   <td style={{ padding: '10px 12px', textAlign: 'center' }}>
-                    {renderScore(finalScore, TYPE_COLORS.final.text, 'final', `week-${wStr}-final`)}
+                    {week === 15 ? (
+                      <div style={{ display: 'grid', gap: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontSize: '0.65rem', color: '#888', textTransform: 'uppercase', minWidth: '48px' }}>Written</span>
+                          {renderScore(writtenFinalScore, TYPE_COLORS.final.text, 'final', 'week-15-homework')}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontSize: '0.65rem', color: '#888', textTransform: 'uppercase', minWidth: '48px' }}>Project</span>
+                          {renderScore(finalScore, TYPE_COLORS.final.text, 'final', 'week-15-final')}
+                        </div>
+                      </div>
+                    ) : (
+                      renderScore(finalScore, TYPE_COLORS.final.text, 'final', `week-${wStr}-final`)
+                    )}
                   </td>
                 </tr>
               );
