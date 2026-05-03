@@ -403,6 +403,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         } else {
           statusDiv.textContent = `✓ ${assignmentLabel} submitted successfully!`;
+
+          if (aiFeedbackDiv && data.feedback) {
+            aiFeedbackDiv.style.display = "block";
+            aiFeedbackDiv.innerHTML = `
+              <strong style="color: #4ec9b0;">Submission received</strong>
+              <p style="margin: 0.5rem 0 0 0;">${data.feedback}</p>
+            `;
+          }
         }
         
         const date = new Date(data.submittedAt);

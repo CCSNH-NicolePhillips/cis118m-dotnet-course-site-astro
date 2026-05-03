@@ -15,6 +15,7 @@ Date: 2026-05-03
 - Restored the Week 15 written final and final project pages to the same homework/lab layout patterns used in earlier weeks:
   - `src/pages/week-15/homework/index.mdx` now uses the standard homework page structure with `DueDateBanner`, the reflection prompt, the architect note, and the shared `EngineeringLogEditor` wording.
   - `src/pages/week-15/final-project/index.mdx` now uses the standard lab page structure with `DueDateBanner`, integrity protocol, mission objective, technical requirements, starter code, rubric, and submission sections.
+- Fixed the Week 15 final-project feedback regression in `public/scripts/submit-lab.js` so lab-style pages now render the returned feedback panel even when the server response does not include an immediate numeric score.
 
 ## Validation
 
@@ -25,6 +26,7 @@ Date: 2026-05-03
   - `netlify/functions/_lib/course-content.json`
   - `netlify/functions/_lib/course-summary.txt`
   - `netlify/functions/_lib/course-summary.mjs`
+- Validated `public/scripts/submit-lab.js` with workspace diagnostics after the no-score feedback fix.
 - Verified built Week 15 output includes the restored student-facing strings:
   - `dist/week-15/homework/index.html` contains `Homework 15: Written Final - Deployment Readiness Reflection`.
   - `dist/week-15/final-project/index.html` contains `Submit Final Project` and the expected `data-starter-id="week-15-final"` plus `data-submission-type="final"` metadata.
@@ -38,5 +40,6 @@ Date: 2026-05-03
 - Week 15 now matches the established weekly structure instead of hiding submission pages.
 - The Week 15 written final and coding final now follow the same homework/lab layout patterns as the earlier graded assignments.
 - Students have a visible written final submission page and a visible coding final submission page.
+- The lab-style submission flow now shows returned feedback even when grading falls back to a no-score response, instead of silently showing only "submitted successfully".
 - Both Week 15 deliverables resolve to the Final category across the student dashboard, instructor dashboard, Canvas export, and tutor/progress logic.
 - The May 9 class close date, recovery-window notice, and no-quiz Week 15 policy remain in place.
