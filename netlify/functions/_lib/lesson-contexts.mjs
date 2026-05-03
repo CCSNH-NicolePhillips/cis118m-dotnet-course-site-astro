@@ -1071,6 +1071,74 @@ export const lessonContexts = {
     `,
     requiredKeywords: ["encapsulation", "private", "public", "constructor", "this"],
     gradingTone: "college-freshman-friendly"
+  },
+
+  // ===== WEEK 15 =====
+  "week-15-final": {
+    title: "Week 15: Final Project - Deployment Tracker Capstone",
+    type: "lab",
+    week: "15",
+    taughtConcepts: `
+      Integration of Weeks 10-14 concepts into a complete console system:
+      - Custom class (DeploymentRecord) with private backing fields: _title, _owner, _status
+      - Validated set accessors: Title and Owner reject null/empty, Status rejects any value not in {Planned, Ready, Blocked, Done}
+      - Computed bool property: IsBlocked (derived from Status == "Blocked", no backing field)
+      - Constructor overloading with this() chaining: master constructor(title, owner, status) owns all validation; overload(title, owner) delegates via : this(title, owner, "Planned")
+      - List<DeploymentRecord>: Add(), Count, foreach, and lookup/update by matching field
+      - Named static methods for each workflow: PrintDeployments, AddDeployment, SearchByOwner, UpdateStatus
+      - Switch-based controller loop: reads user choice, delegates to correct method, loops until exit
+      - try/catch ArgumentException: AddDeployment catches and prints validation errors without crashing
+      - K&R brace style throughout
+    `,
+    assignmentPrompt: `
+      Complete and extend the Deployment Tracker starter so it passes all four flows:
+      1. PrintDeployments — already implemented; must list all records with Title, Owner, Status, IsBlocked.
+      2. AddDeployment — already implemented; reads title, owner, status from console and catches ArgumentException.
+      3. SearchByOwner — complete the TODO: loop through the list, print every record whose Owner matches the search string (case-insensitive comparison is acceptable).
+      4. UpdateStatus — complete the TODO: find a record by Title, prompt for a new status, and update it via the validated Status property; catch ArgumentException if the new status is invalid.
+      5. Header comment with student name at the top of Program.cs.
+      6. The program must compile and run without crashing on valid input.
+    `,
+    rubric: `
+      Custom class architecture (20pts): DeploymentRecord class exists with private _title, _owner, _status fields and matching public properties. No loose primitive variables used for deployment data.
+      Encapsulation and validation (20pts): Title and Owner validated properties reject null/empty/whitespace. Status rejects any value outside {Planned, Ready, Blocked, Done}. IsBlocked computed property returns correct bool from Status.
+      List<T> data workflow (20pts): List<DeploymentRecord> is used. Records are added via .Add(), list is iterated with foreach, and .Count is accessible.
+      Method decomposition and controller flow (20pts): Named static methods handle each workflow (print, add, search, update). Switch-based controller loop delegates correctly to each method without collapsing logic into Main.
+      Search or update workflow (10pts): SearchByOwner finds and prints matching records, OR UpdateStatus finds a record by title and applies a valid new status through the validated property. At least one TODO is fully implemented.
+      Compiles and runs clearly (10pts): Program compiles without errors, runs without crashing on valid input, and produces readable console output that shows list, add, and at least one of search or update.
+    `,
+    requiredKeywords: ["DeploymentRecord", "List", "foreach", "switch", "private"],
+    gradingTone: "college-freshman-friendly"
+  },
+
+  "week-15-homework": {
+    title: "Week 15: Written Final - Deployment Readiness Reflection",
+    type: "homework",
+    week: "15",
+    taughtConcepts: `
+      Synthesis of the full course architecture (Weeks 01-14):
+      - Custom class design: private backing fields, validated properties, computed properties, constructor overloading
+      - List<T> workflows: Add, Count, foreach, lookup, update
+      - Method decomposition: named methods, parameters, return values, controller loops
+      - Testing mindset: identifying edge cases, validation boundaries, failure paths
+      - Technical communication: writing a deployment handoff document using concrete class names, method names, and test scenarios
+    `,
+    assignmentPrompt: `
+      In 3-5 sentences per question, answer all four prompts using concrete technical language:
+      1. Architecture summary: Explain how your custom class, validation rules, List<T> workflow, and named methods interact during one normal user scenario (e.g., adding a new deployment record).
+      2. Verification matrix: Describe at least four tests you will run before submission, including at least two edge cases that could fail if the system is weakly designed (e.g., empty title, invalid status string).
+      3. Recovery-window triage: If you still have missing work from Weeks 01-14, identify exactly which items you plan to recover and how you will protect your final-project schedule. If you have no missing work, state that explicitly.
+      4. Instructor runbook: Write the exact demonstration path an instructor should follow to verify your project in under five minutes, including which menu actions reveal the strongest architectural evidence.
+    `,
+    rubric: `
+      Architecture summary (25pts): Student explains how DeploymentRecord class, validated set accessors, List<DeploymentRecord>, and named methods collaborate in at least one concrete scenario. Uses method names and class names rather than vague descriptions.
+      Verification matrix (25pts): Student describes four or more specific tests. At least two are edge cases targeting validation boundaries (empty string, invalid status). Tests are concrete enough that another person could run them.
+      Recovery-window triage (20pts): Student either explicitly states no missing work, or identifies specific missing assignments from Weeks 01-14 and states a concrete plan. Vague "I'll catch up" answers do not earn full points.
+      Instructor runbook (20pts): Student provides a concrete step-by-step path an instructor can follow: specific menu choices, what output to expect, and which actions demonstrate the validation and search/update behavior.
+      Clarity and technical vocabulary (10pts): Writing uses course vocabulary: class, property, validation, ArgumentException, List<T>, foreach, method, constructor. Avoids vague claims like "it works correctly."
+    `,
+    requiredKeywords: ["class", "List", "method", "validation"],
+    gradingTone: "college-freshman-friendly"
   }
 };
 
