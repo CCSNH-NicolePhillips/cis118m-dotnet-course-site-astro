@@ -431,6 +431,11 @@ const InstructorDashboard: React.FC = () => {
   const [scheduleSaving, setScheduleSaving] = useState(false);
   const [scheduleMsg, setScheduleMsg] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Recovery window toggle state
+  const [gracePeriodEnabled, setGracePeriodEnabled] = useState<boolean | null>(null);
+  const [gracePeriodSaving, setGracePeriodSaving] = useState(false);
+  const [gracePeriodMsg, setGracePeriodMsg] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   // Filter assignments based on current filters
   const filteredAssignments = useMemo(() => {
     return ASSIGNMENTS.filter(a => {
@@ -572,7 +577,7 @@ const InstructorDashboard: React.FC = () => {
 
   useEffect(() => {
     loadGradebook();
-    // Also load schedule overrides
+    // Also load schedule overrides and grace period state
     (async () => {
       try {
         const token = await getAccessToken();
@@ -583,6 +588,7 @@ const InstructorDashboard: React.FC = () => {
         if (res.ok) {
           const data = await res.json();
           setScheduleOverrides(data.overrides || {});
+          setGracePeriodEnabled(data.gracePeriodEnabled === true);
         }
       } catch (err) {
         console.error('Failed to load schedule overrides:', err);
@@ -1294,6 +1300,58 @@ const InstructorDashboard: React.FC = () => {
             </button>
           )}
         </label>
+      </div>
+
+      {/* Recovery Window Toggle */}
+      <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <button
+          disabled={gracePeriodSaving || gracePeriodEnabled === null}
+          onClick={async () => {
+            setGracePeriodSaving(true);
+            setGracePeriodMsg(null);
+            try {
+              const token = await getAccessToken();
+              const next = !gracePeriodEnabled;
+              const res = await fetch('/.netlify/functions/schedule-manager', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'TOGGLE_GRACE_PERIOD', enabled: next })
+              });
+              const data = await res.json();
+              if (res.ok) {
+                setGracePeriodEnabled(next);
+                setGracePeriodMsg({ type: 'success', message: next ? 'Recovery window ON — missing Wks 01-14 capped at 70%' : 'Recovery window OFF' });
+              } else {
+                setGracePeriodMsg({ type: 'error', message: data.error || 'Failed' });
+              }
+            } catch (err) {
+              setGracePeriodMsg({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+            } finally {
+              setGracePeriodSaving(false);
+            }
+          }}
+          style={{
+            background: gracePeriodEnabled ? '#f59e0b' : '#2d2d2d',
+            color: gracePeriodEnabled ? '#000' : '#ddd',
+            border: `1px solid ${gracePeriodEnabled ? '#f59e0b' : '#888'}`,
+            padding: '8px 16px',
+            borderRadius: '4px',
+            cursor: gracePeriodSaving ? 'wait' : 'pointer',
+            fontWeight: 'bold',
+            fontSize: '0.9rem',
+            opacity: gracePeriodEnabled === null ? 0.5 : 1
+          }}
+        >
+          {gracePeriodSaving ? '...' : gracePeriodEnabled ? '🟡 Recovery Window: ON' : '⚫ Recovery Window: OFF'}
+        </button>
+        {gracePeriodMsg && (
+          <span style={{ fontSize: '0.8rem', color: gracePeriodMsg.type === 'success' ? '#4ec9b0' : '#ce9178' }}>
+            {gracePeriodMsg.message}
+          </span>
+        )}
+        {gracePeriodEnabled === null && (
+          <span style={{ fontSize: '0.8rem', color: '#888' }}>loading...</span>
+        )}
       </div>
 
       {/* Schedule Manager Toggle */}

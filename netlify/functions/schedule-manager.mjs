@@ -40,17 +40,21 @@ export default async function handler(request, context) {
     const redis = getRedis();
 
     if (request.method === 'GET') {
-      // Return all schedule overrides
-      const overrides = await redis.get(REDIS_KEY);
+      // Return schedule overrides and grace period state
+      const [overridesRaw, gracePeriodRaw] = await Promise.all([
+        redis.get(REDIS_KEY),
+        redis.get('cis118m:grace-period-enabled')
+      ]);
       let parsed = {};
-      if (overrides) {
+      if (overridesRaw) {
         try {
-          parsed = typeof overrides === 'string' ? JSON.parse(overrides) : overrides;
+          parsed = typeof overridesRaw === 'string' ? JSON.parse(overridesRaw) : overridesRaw;
         } catch { parsed = {}; }
       }
+      const gracePeriodEnabled = gracePeriodRaw === 'true';
 
       return new Response(
-        JSON.stringify({ overrides: parsed }),
+        JSON.stringify({ overrides: parsed, gracePeriodEnabled }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -58,6 +62,22 @@ export default async function handler(request, context) {
     if (request.method === 'POST') {
       const body = await request.json();
       const { week, unlockDate, dueDate, action } = body;
+
+      if (action === 'TOGGLE_GRACE_PERIOD') {
+        const enabled = body.enabled === true;
+        await redis.set('cis118m:grace-period-enabled', enabled ? 'true' : 'false');
+        await redis.lpush("cis118m:audit:overrides", JSON.stringify({
+          action: "TOGGLE_GRACE_PERIOD",
+          enabled,
+          instructor: user.email,
+          timestamp: new Date().toISOString()
+        }));
+        await redis.ltrim("cis118m:audit:overrides", 0, 999);
+        return new Response(
+          JSON.stringify({ ok: true, gracePeriodEnabled: enabled }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
 
       if (action === 'RESET_WEEK') {
         // Remove override for a specific week
