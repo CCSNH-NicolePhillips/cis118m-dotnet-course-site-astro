@@ -1091,23 +1091,44 @@ export const lessonContexts = {
       - K&R brace style throughout
     `,
     assignmentPrompt: `
-      Complete and extend the Deployment Tracker starter so it passes all four flows:
-      1. PrintDeployments — already implemented; must list all records with Title, Owner, Status, IsBlocked.
-      2. AddDeployment — already implemented; reads title, owner, status from console and catches ArgumentException.
-      3. SearchByOwner — complete the TODO: loop through the list, print every record whose Owner matches the search string (case-insensitive comparison is acceptable).
-      4. UpdateStatus — complete the TODO: find a record by Title, prompt for a new status, and update it via the validated Status property; catch ArgumentException if the new status is invalid.
-      5. Header comment with student name at the top of Program.cs.
-      6. The program must compile and run without crashing on valid input.
+      IMPORTANT GRADING CONTEXT: The starter code provides the complete DeploymentRecord class,
+      constructor overloading, all validated properties, the List<DeploymentRecord>, PrintDeployments,
+      AddDeployment, and the switch/while controller loop. Students did NOT write this code — it is
+      provided scaffolding. Do NOT award points for scaffolding the student did not write.
+
+      Students must complete BOTH of the following TODOs to earn a passing grade:
+      1. SearchByOwner — replace the TODO stub: loop through the list using foreach, print every
+         record whose Owner matches the search string. Must actually find and print records.
+      2. UpdateStatus — replace the TODO stub: find a record by Title, prompt for a new status,
+         update it through the validated Status property, and catch ArgumentException for bad input.
+         Must actually locate a record and attempt an update.
+      3. Header comment with student name at the top of Program.cs.
+
+      Grade ONLY what the student added. The scaffolding code (class definition, Print, Add, the
+      switch loop, the List initialization) earns zero points by itself.
     `,
     rubric: `
-      Custom class architecture (20pts): DeploymentRecord class exists with private _title, _owner, _status fields and matching public properties. No loose primitive variables used for deployment data.
-      Encapsulation and validation (20pts): Title and Owner validated properties reject null/empty/whitespace. Status rejects any value outside {Planned, Ready, Blocked, Done}. IsBlocked computed property returns correct bool from Status.
-      List<T> data workflow (20pts): List<DeploymentRecord> is used. Records are added via .Add(), list is iterated with foreach, and .Count is accessible.
-      Method decomposition and controller flow (20pts): Named static methods handle each workflow (print, add, search, update). Switch-based controller loop delegates correctly to each method without collapsing logic into Main.
-      Search or update workflow (10pts): SearchByOwner finds and prints matching records, OR UpdateStatus finds a record by title and applies a valid new status through the validated property. At least one TODO is fully implemented.
-      Compiles and runs clearly (10pts): Program compiles without errors, runs without crashing on valid input, and produces readable console output that shows list, add, and at least one of search or update.
+      SearchByOwner implementation (35pts): STUDENT-WRITTEN CODE ONLY — the TODO stub earns 0.
+      Full credit: foreach loop searches the list, finds records by Owner match, and prints their
+      full details. Partial credit: attempts a loop but output is incomplete or broken.
+      Do NOT give points if the method still contains the original TODO comment and placeholder line.
+
+      UpdateStatus implementation (35pts): STUDENT-WRITTEN CODE ONLY — the TODO stub earns 0.
+      Full credit: finds a record by Title, prompts for a new status, sets it via the validated
+      Status property, and catches ArgumentException. Partial credit: finds the record but update
+      path is incomplete. Do NOT give points if the method still contains the original TODO comment.
+
+      Header comment with student name (10pts): Program.cs has a comment at the top containing
+      the student's name (any format: //, /* */, or XML). Zero points if missing.
+
+      Integration and correctness (10pts): The completed search and update flows work end-to-end
+      in context of the controller loop. Both menu options route correctly to the student's
+      implementations without crashing on valid input.
+
+      Compiles and runs (10pts): Full program compiles without errors and produces readable output.
+      If the student completed both TODOs incorrectly (e.g., infinite loop), dock here.
     `,
-    requiredKeywords: ["DeploymentRecord", "List", "foreach", "switch", "private"],
+    requiredKeywords: ["DeploymentRecord", "foreach", "Owner", "Status"],
     gradingTone: "college-freshman-friendly"
   },
 
