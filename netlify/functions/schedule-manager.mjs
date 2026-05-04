@@ -51,10 +51,11 @@ export default async function handler(request, context) {
           parsed = typeof overridesRaw === 'string' ? JSON.parse(overridesRaw) : overridesRaw;
         } catch { parsed = {}; }
       }
-      const gracePeriodEnabled = gracePeriodRaw === 'true';
+      // null = auto (date-based), 'true' = forced on, 'false' = forced off
+      const gracePeriodMode = gracePeriodRaw === 'true' ? 'on' : gracePeriodRaw === 'false' ? 'off' : 'auto';
 
       return new Response(
-        JSON.stringify({ overrides: parsed, gracePeriodEnabled }),
+        JSON.stringify({ overrides: parsed, gracePeriodMode }),
         { status: 200, headers: { "Content-Type": "application/json" } }
       );
     }
@@ -64,17 +65,28 @@ export default async function handler(request, context) {
       const { week, unlockDate, dueDate, action } = body;
 
       if (action === 'TOGGLE_GRACE_PERIOD') {
-        const enabled = body.enabled === true;
-        await redis.set('cis118m:grace-period-enabled', enabled ? 'true' : 'false');
+        const mode = body.mode; // 'auto' | 'on' | 'off'
+        if (mode === 'auto') {
+          await redis.del('cis118m:grace-period-enabled'); // null = date-based automatic
+        } else if (mode === 'on') {
+          await redis.set('cis118m:grace-period-enabled', 'true');
+        } else if (mode === 'off') {
+          await redis.set('cis118m:grace-period-enabled', 'false');
+        } else {
+          return new Response(
+            JSON.stringify({ error: 'Invalid mode. Use auto, on, or off.' }),
+            { status: 400, headers: { "Content-Type": "application/json" } }
+          );
+        }
         await redis.lpush("cis118m:audit:overrides", JSON.stringify({
           action: "TOGGLE_GRACE_PERIOD",
-          enabled,
+          mode,
           instructor: user.email,
           timestamp: new Date().toISOString()
         }));
         await redis.ltrim("cis118m:audit:overrides", 0, 999);
         return new Response(
-          JSON.stringify({ ok: true, gracePeriodEnabled: enabled }),
+          JSON.stringify({ ok: true, gracePeriodMode: mode }),
           { status: 200, headers: { "Content-Type": "application/json" } }
         );
       }

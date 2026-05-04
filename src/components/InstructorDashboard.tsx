@@ -431,8 +431,8 @@ const InstructorDashboard: React.FC = () => {
   const [scheduleSaving, setScheduleSaving] = useState(false);
   const [scheduleMsg, setScheduleMsg] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  // Recovery window toggle state
-  const [gracePeriodEnabled, setGracePeriodEnabled] = useState<boolean | null>(null);
+  // Recovery window state: 'auto' = date-based (on May 4-9 automatically), 'on' = forced on, 'off' = forced off, null = loading
+  const [gracePeriodMode, setGracePeriodMode] = useState<'auto' | 'on' | 'off' | null>(null);
   const [gracePeriodSaving, setGracePeriodSaving] = useState(false);
   const [gracePeriodMsg, setGracePeriodMsg] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -588,7 +588,7 @@ const InstructorDashboard: React.FC = () => {
         if (res.ok) {
           const data = await res.json();
           setScheduleOverrides(data.overrides || {});
-          setGracePeriodEnabled(data.gracePeriodEnabled === true);
+          setGracePeriodMode(data.gracePeriodMode ?? 'auto');
         }
       } catch (err) {
         console.error('Failed to load schedule overrides:', err);
@@ -1303,54 +1303,66 @@ const InstructorDashboard: React.FC = () => {
       </div>
 
       {/* Recovery Window Toggle */}
-      <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-        <button
-          disabled={gracePeriodSaving || gracePeriodEnabled === null}
-          onClick={async () => {
-            setGracePeriodSaving(true);
-            setGracePeriodMsg(null);
-            try {
-              const token = await getAccessToken();
-              const next = !gracePeriodEnabled;
-              const res = await fetch('/.netlify/functions/schedule-manager', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'TOGGLE_GRACE_PERIOD', enabled: next })
-              });
-              const data = await res.json();
-              if (res.ok) {
-                setGracePeriodEnabled(next);
-                setGracePeriodMsg({ type: 'success', message: next ? 'Recovery window ON — missing Wks 01-14 capped at 70%' : 'Recovery window OFF' });
-              } else {
-                setGracePeriodMsg({ type: 'error', message: data.error || 'Failed' });
-              }
-            } catch (err) {
-              setGracePeriodMsg({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
-            } finally {
-              setGracePeriodSaving(false);
-            }
-          }}
-          style={{
-            background: gracePeriodEnabled ? '#f59e0b' : '#2d2d2d',
-            color: gracePeriodEnabled ? '#000' : '#ddd',
-            border: `1px solid ${gracePeriodEnabled ? '#f59e0b' : '#888'}`,
-            padding: '8px 16px',
-            borderRadius: '4px',
-            cursor: gracePeriodSaving ? 'wait' : 'pointer',
-            fontWeight: 'bold',
-            fontSize: '0.9rem',
-            opacity: gracePeriodEnabled === null ? 0.5 : 1
-          }}
-        >
-          {gracePeriodSaving ? '...' : gracePeriodEnabled ? '🟡 Recovery Window: ON' : '⚫ Recovery Window: OFF'}
-        </button>
+      <div style={{ marginBottom: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '6px' }}>
+          {(['auto', 'on', 'off'] as const).map((mode) => {
+            const labels = { auto: '🟢 Auto (May 4–9)', on: '🟡 Force ON', off: '🔴 Force OFF' };
+            const active = gracePeriodMode === mode;
+            return (
+              <button
+                key={mode}
+                disabled={gracePeriodSaving || gracePeriodMode === null || active}
+                onClick={async () => {
+                  setGracePeriodSaving(true);
+                  setGracePeriodMsg(null);
+                  try {
+                    const token = await getAccessToken();
+                    const res = await fetch('/.netlify/functions/schedule-manager', {
+                      method: 'POST',
+                      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ action: 'TOGGLE_GRACE_PERIOD', mode })
+                    });
+                    const data = await res.json();
+                    if (res.ok) {
+                      setGracePeriodMode(mode);
+                      const msgs = { auto: 'Auto — window activates May 4 at midnight automatically', on: 'Forced ON — 70% cap active now', off: 'Forced OFF — recovery window disabled' };
+                      setGracePeriodMsg({ type: 'success', message: msgs[mode] });
+                    } else {
+                      setGracePeriodMsg({ type: 'error', message: data.error || 'Failed' });
+                    }
+                  } catch (err) {
+                    setGracePeriodMsg({ type: 'error', message: `Error: ${err instanceof Error ? err.message : 'Unknown'}` });
+                  } finally {
+                    setGracePeriodSaving(false);
+                  }
+                }}
+                style={{
+                  background: active ? (mode === 'auto' ? '#16a34a' : mode === 'on' ? '#f59e0b' : '#dc2626') : '#2d2d2d',
+                  color: active ? '#000' : '#888',
+                  border: `1px solid ${active ? (mode === 'auto' ? '#16a34a' : mode === 'on' ? '#f59e0b' : '#dc2626') : '#555'}`,
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  cursor: active || gracePeriodSaving ? 'default' : 'pointer',
+                  fontWeight: active ? 'bold' : 'normal',
+                  fontSize: '0.8rem',
+                }}
+              >
+                {labels[mode]}
+              </button>
+            );
+          })}
+          {gracePeriodMode === null && <span style={{ fontSize: '0.8rem', color: '#888' }}>loading...</span>}
+        </div>
+        <div style={{ fontSize: '0.75rem', color: '#888' }}>
+          Recovery Window — missing Wks 01–14 capped at 70%.
+          {gracePeriodMode === 'auto' && ' 🟢 Will activate automatically at midnight May 4.'}
+          {gracePeriodMode === 'on' && ' 🟡 Forced on regardless of date.'}
+          {gracePeriodMode === 'off' && ' 🔴 Forced off — date window is overridden.'}
+        </div>
         {gracePeriodMsg && (
-          <span style={{ fontSize: '0.8rem', color: gracePeriodMsg.type === 'success' ? '#4ec9b0' : '#ce9178' }}>
+          <div style={{ marginTop: '4px', fontSize: '0.8rem', color: gracePeriodMsg.type === 'success' ? '#4ec9b0' : '#ce9178' }}>
             {gracePeriodMsg.message}
-          </span>
-        )}
-        {gracePeriodEnabled === null && (
-          <span style={{ fontSize: '0.8rem', color: '#888' }}>loading...</span>
+          </div>
         )}
       </div>
 
