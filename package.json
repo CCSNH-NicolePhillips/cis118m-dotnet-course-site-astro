@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "audit:canvas": "node scripts/audit-canvas-export.mjs"
+    "audit:canvas": "node scripts/audit-canvas-export.mjs",
+    "canvas:push": "node scripts/push-grades-to-canvas.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.91.1",
