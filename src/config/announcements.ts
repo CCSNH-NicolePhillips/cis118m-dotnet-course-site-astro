@@ -32,6 +32,28 @@ export interface Announcement {
 
 export const ANNOUNCEMENTS: Announcement[] = [
   {
+    id: '2026-05-10-course-complete',
+    date: 'May 10, 2026',
+    title: 'Course Complete — Thank You',
+    icon: '🎓',
+    active: true,
+    startsAt: '2026-05-10T00:00:00',
+    body: `
+      <p>Architects,</p>
+
+      <p>Thank you for a great semester in <strong>CIS118M</strong>. The course is now officially over and the term has ended.</p>
+
+      <p><strong>No additional assignments, quizzes, labs, or homework can be completed for credit</strong>, and no new submissions will be accepted.</p>
+
+      <p>If you have a question about a posted grade, please message me with the specific assignment name.</p>
+
+      <p style="margin-top:16px; color:#888; font-size:13px;">
+        — Prof. P<br/>
+        <span style="font-size:12px;">Adjunct Professor, MCC</span>
+      </p>
+    `
+  },
+  {
     id: '2026-03-12-spring-break',
     date: 'March 12, 2026',
     title: 'Spring Break — No Class or Work Due',
@@ -63,7 +85,7 @@ export const ANNOUNCEMENTS: Announcement[] = [
     date: 'March 2, 2026',
     title: 'Code Integrity & Telemetry Protocols',
     icon: '🛡️',
-    active: true,
+    active: false,
     body: `
       <p style="margin-bottom:14px;">Architects,</p>
       
