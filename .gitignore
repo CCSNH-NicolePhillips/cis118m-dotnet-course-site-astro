@@ -7,6 +7,13 @@ IMAGE-PROMPTS-*.md
 .env
 .env.*
 
+# Local grade exports (may contain student data)
+canvas-grades-*.csv
+grades-export-from-site*.csv
+
+# Local tool config
+.claude/
+
 # .NET build artifacts
 **/bin/
 **/obj/
