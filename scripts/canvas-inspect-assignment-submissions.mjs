@@ -18,6 +18,8 @@ function parseArgs(argv) {
     token: process.env.CANVAS_TOKEN || null,
     assignment: null,
     limit: 5,
+    includeHistory: false,
+    includeUser: false,
   };
 
   for (let i = 2; i < argv.length; i++) {
@@ -43,6 +45,16 @@ function parseArgs(argv) {
 
     if (t === '--limit') {
       args.limit = Number(argv[++i] ?? 5);
+      continue;
+    }
+
+    if (t === '--include-history') {
+      args.includeHistory = true;
+      continue;
+    }
+
+    if (t === '--include-user') {
+      args.includeUser = true;
       continue;
     }
 
@@ -99,9 +111,9 @@ async function canvasFetch(url, { token, method = 'GET', headers = {}, body } = 
   return { res, json };
 }
 
-async function listAllSubmissionsForAssignment({ base, courseId, assignmentId, token }) {
+async function listAllSubmissionsForAssignment({ base, courseId, assignmentId, token, includeQuery = '' }) {
   const results = [];
-  let url = `${base}/api/v1/courses/${encodeURIComponent(courseId)}/assignments/${encodeURIComponent(assignmentId)}/submissions?per_page=100`;
+  let url = `${base}/api/v1/courses/${encodeURIComponent(courseId)}/assignments/${encodeURIComponent(assignmentId)}/submissions?per_page=100${includeQuery}`;
 
   while (url) {
     const { res, json } = await canvasFetch(url, { token });
@@ -116,11 +128,17 @@ async function listAllSubmissionsForAssignment({ base, courseId, assignmentId, t
 async function main() {
   const args = parseArgs(process.argv);
 
+  const includeParams = [];
+  if (args.includeHistory) includeParams.push('include[]=submission_history');
+  if (args.includeUser) includeParams.push('include[]=user');
+  const includeQuery = includeParams.length ? `&${includeParams.join('&')}` : '';
+
   const subs = await listAllSubmissionsForAssignment({
     base: args.base,
     courseId: args.course,
     assignmentId: args.assignment,
     token: args.token,
+    includeQuery,
   });
 
   console.log(`Submissions: ${subs.length}`);
@@ -132,6 +150,7 @@ async function main() {
     posted_grade: s.posted_grade,
     entered_score: s.entered_score,
     entered_grade: s.entered_grade,
+    submission_history: args.includeHistory ? s.submission_history : undefined,
     workflow_state: s.workflow_state,
     submission_type: s.submission_type,
     excused: s.excused,
