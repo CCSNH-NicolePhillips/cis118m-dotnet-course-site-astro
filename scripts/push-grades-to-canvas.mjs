@@ -109,6 +109,8 @@ function parseArgs(argv) {
 
   // Normalize base
   args.base = String(args.base).replace(/\/+$/, '');
+  // Accept base URLs that include /api/v1 (common copy/paste)
+  args.base = args.base.replace(/\/api\/v1$/i, '');
 
   return args;
 }
